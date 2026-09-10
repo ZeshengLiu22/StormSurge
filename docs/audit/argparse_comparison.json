@@ -18,6 +18,28 @@
       "action": "_StoreAction",
       "type": "float"
     },
+    "perceiver_pmean_mode": {
+      "flags": [
+        "--perceiver_pmean_mode"
+      ],
+      "default": "tokens",
+      "choices": [
+        "tokens",
+        "global",
+        "both"
+      ],
+      "action": "_StoreAction",
+      "type": "str"
+    },
+    "pmean_dim": {
+      "flags": [
+        "--pmean_dim"
+      ],
+      "default": 32,
+      "choices": null,
+      "action": "_StoreAction",
+      "type": "int"
+    },
     "tail_tanh_clip": {
       "flags": [
         "--tail_tanh_clip"
@@ -26,6 +48,15 @@
       "choices": null,
       "action": "_StoreAction",
       "type": "float"
+    },
+    "use_pmean": {
+      "flags": [
+        "--use_pmean"
+      ],
+      "default": false,
+      "choices": null,
+      "action": "_StoreTrueAction",
+      "type": null
     }
   },
   "added": {
@@ -63,6 +94,21 @@
       "action": "_StoreAction",
       "type": null
     },
+    "dual_ablation": {
+      "flags": [
+        "--dual_ablation"
+      ],
+      "default": "none",
+      "choices": [
+        "none",
+        "no_gate_bce",
+        "no_excess_loss",
+        "no_branch_supervision",
+        "fixed_gate"
+      ],
+      "action": "_StoreAction",
+      "type": null
+    },
     "dual_loss": {
       "flags": [
         "--dual_loss"
@@ -85,6 +131,15 @@
       ],
       "action": "_StoreAction",
       "type": null
+    },
+    "exceedance_percentile": {
+      "flags": [
+        "--exceedance_percentile"
+      ],
+      "default": 95.0,
+      "choices": null,
+      "action": "_StoreAction",
+      "type": "float"
     },
     "excess_loss_weight": {
       "flags": [
@@ -220,5 +275,6 @@
       }
     }
   },
-  "unchanged_count": 76
+  "unchanged_count": 73,
+  "scope": "Training parser declarations only; post-parse validation and ablation resolution are described in ORIGINAL_COMPARISON.md."
 }

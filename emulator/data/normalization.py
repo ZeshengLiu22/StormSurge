@@ -6,10 +6,6 @@ import torch
 def normalize_inputs(batch, stats, x_clip=0.0, augmentation=None):
     batch.x = (batch.x.float() - stats["x_center"]) / stats["x_scale"]
     batch.x_hist = (batch.x_hist.float() - stats["x_center"]) / stats["x_scale"]
-    if "pmean_center" in stats:
-        batch.p_mean_hist = (batch.p_mean_hist.float() - stats["pmean_center"]) / stats["pmean_scale"]
-        if x_clip > 0:
-            batch.p_mean_hist = batch.p_mean_hist.clamp(-x_clip, x_clip)
     if x_clip > 0:
         batch.x = batch.x.clamp(-x_clip, x_clip)
         batch.x_hist = batch.x_hist.clamp(-x_clip, x_clip)

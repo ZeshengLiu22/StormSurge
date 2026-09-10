@@ -8,20 +8,29 @@ from torch import nn
 import torch.nn.functional as F
 
 from emulator.common.runtime import log_message
+from emulator.common.dual import DUAL_ABLATIONS
 
 
 def enforce_dual_loss(config):
-    """Resolve disabled dual supervision before snapshots or loss computation."""
+    """Enforce full supervision unless a named ablation disables specific terms."""
+    if config.dual_ablation not in DUAL_ABLATIONS:
+        raise ValueError(f"Unknown dual ablation: {config.dual_ablation}")
+    disabled = DUAL_ABLATIONS[config.dual_ablation]
+    for name in disabled:
+        setattr(config, name, 0.0)
+    if config.dual_ablation == "no_branch_supervision":
+        config.dual_loss = 0
+        return
     corrections = []
     if not config.dual_loss:
         config.dual_loss = 1
         corrections.append("dual_loss=1 (was 0)")
     for name in ("body_loss_weight", "excess_loss_weight", "gate_loss_weight"):
-        if getattr(config, name) == 0:
+        if name not in disabled and getattr(config, name) == 0:
             setattr(config, name, 1.0)
             corrections.append(f"{name}=1 (was 0)")
     if corrections and int(os.environ.get("RANK", "0")) == 0:
-        log_message("WARNING: head_type=dual requires dual loss (body + excess + gate); "
+        log_message(f"WARNING: head_type=dual requires dual loss for dual_ablation={config.dual_ablation}; "
                     "forcing " + ", ".join(corrections) + ".")
 
 
@@ -36,7 +45,8 @@ def dual_loss_terms(output, target_norm, y_std):
     event = (target_norm > output.threshold).any(dim=1, keepdim=True)
     body = ((output.body - body_target) * y_std).square().mean()
     excess = (((output.excess - excess_target) * y_std).square() * event).mean()
-    gate = F.binary_cross_entropy_with_logits(output.gate_logits, event.float()) * y_std.square().mean()
+    gate = (F.binary_cross_entropy_with_logits(output.gate_logits, event.float()) * y_std.square().mean()
+            if output.gate_logits is not None else body.new_zeros(()))
     return body, excess, gate
 
 
@@ -56,6 +66,7 @@ class LossConfig:
     body_loss_weight: float = 1.0
     excess_loss_weight: float = 1.0
     gate_loss_weight: float = 1.0
+    dual_ablation: str = "none"
 
 
 class ForecastLoss(nn.Module):
@@ -89,8 +100,12 @@ class ForecastLoss(nn.Module):
             mask = torch.sigmoid((self.wmse_threshold - target.abs().amax(dim=1)) / max(c.slope_mask_s, 1e-6))
             loss = loss + c.slope_lambda * (penalty * mask[:, None]).mean()
         if output.body is not None:
+            if (output.gate_logits is None) != (c.dual_ablation == "fixed_gate"):
+                raise ValueError("The loss and model must select the same fixed_gate ablation.")
             # Also enforce this for callers that construct LossConfig directly.
             enforce_dual_loss(c)
+            if not c.dual_loss:
+                return loss
             body, excess, gate = dual_loss_terms(output, (target - self.y_mean) / self.y_std, self.y_std)
             dual_loss = c.body_loss_weight * body + c.excess_loss_weight * excess + c.gate_loss_weight * gate
             loss = loss + dual_loss

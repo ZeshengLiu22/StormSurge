@@ -12,7 +12,7 @@
  /Data
 --- original/DUAL_HEAD_EXPLAINED.md
 +++ StormSurge/DUAL_HEAD_EXPLAINED.md
-@@ -0,0 +1,183 @@
+@@ -0,0 +1,217 @@
 +# 新 dual head：从监督目标到推理公式
 +
 +这是待验证的方法设计，不是已经证明优于 single head 的结论。代码选项为
@@ -24,12 +24,19 @@
 +令 X 表示 forcing history、空间结构和站点信息，K=6 表示输出时刻数。
 +这里的 K 不等于 history 长度 H。令 Y_h 为第 h 个输出时刻的目标 surge，单位为 m。
 +
-+阈值 τ 仅从 TRAIN 计算：先对每个训练窗口取 max_h Y_h，再取这些最大值的第 95 百分位。
++阈值 τ 仅从 TRAIN 计算：先对每个训练窗口取 max_h Y_h，再取这些最大值的第 `exceedance_percentile` 百分位（默认95）。
++该参数与最终预测 tail loss 的 `tail_frac` 独立；改变 tail-loss 子集不会改变 decoder 的事件定义。
 +事件 E 是“这个预测窗口中至少有一个输出超过 τ”：
 +
 +\[
 +E=\mathbf 1\{\max_hY_h>\tau\}.
 +\]
++
++真实 TRAIN 事件比例为 `q_E = mean(max_h Y_h > τ)`，可能因为分位点 ties 而不同于 .05。
++可学习 gate 的 bias 初始化为 `logit(clip(q_E, 1e-6, 1-1e-6))`；截断只保证初始化有限。
++checkpoint 的 `dual_metadata` 保存物理 `tau_phys`、原始 `event_prior=q_E`、实际 `gate_init_prior`、
++事件数、TRAIN 窗口数、百分位和消融模式。归一化后的 τ′ 仍随 model_config/state_dict 保存。
++全相同标签等无事件 TRAIN 可以得到 q_E=0；不把它伪装成5%。
 +
 +逐时刻把真值精确拆成两部分：
 +
@@ -122,10 +129,26 @@
 +\qquad L=L_{\mathrm{pred}}+L_{\mathrm{dual}}.
 +\]
 +
-+三项辅助监督统一命名为 **dual loss**。当前所有 `head_type=dual` 训练都必须包含完整的 dual loss，独立于所选 `loss_mode`。
++三项辅助监督统一命名为 **dual loss**。正式模型使用 `dual_ablation=none`，必须包含完整的 dual loss，独立于所选 `loss_mode`。
 +`DUAL_LOSS=1`（Python：`--dual_loss 1`）为默认；若设为0，自动恢复为1并在训练日志输出带时间戳的 warning。
 +三个辅助项的权重若为0，也分别恢复为默认1并写入同一条 warning；正权重保持配置值。
 +修正后的有效值写入运行配置 JSON 和 checkpoint。Baseline／single head 不使用 dual loss；原来的 tail/slope 配置仍独立控制最终预测项。
++Tail loss 保持 `max(y) >= tail_threshold`；dual 的事件定义保持严格 `max(y) > tau_phys`，两者各自拟合阈值。
++
++机制消融必须显式选择 `--dual_ablation`（shell：`DUAL_ABLATION`）：
++
++| 模式 | 直接分支监督 | 事件 gate |
++|---|---|---|
++| `none` | L_b、L_r、L_g | 学习 |
++| `no_gate_bce` | L_b、L_r | 仍通过 L_pred 学习 |
++| `no_excess_loss` | L_b、L_g | 学习 |
++| `no_branch_supervision` | 无，仅 L_pred | 学习 |
++| `fixed_gate` | L_b、L_r | `p(X) ≡ q_E` |
++
++消融只将指定项的有效权重置0；仍启用的项不能通过权重0意外关闭。`no_branch_supervision` 将 `dual_loss` 置0。
++固定 gate 不建立可学习 gate MLP，原始 q_E 作为 buffer 保存，允许精确取0或1；没有 BCE 项。
++其参数预算少一个 gate MLP，应在结果中注明。其他消融保留相同 decoder 参数量和最终预测 loss。
++固定 gate 输出 `gate_logits=None`、`gate_probability=q_E`，其余模式返回有限 logits 和 sigmoid 概率。
 +
 +没有事件的 batch 令 L_r=0。L_r 与其他项统一按整个 batch 平均；非事件窗口被 mask 掉，其 excess 梯度仍为零。
 +早期原型除以事件样本数，会将这项相对整体样本风险放大约 1/事件频率，稀有事件时还随 batch 的事件数量波动。
@@ -179,7 +202,7 @@
 +条件均值会对不确定峰值作概率折中。
 +
 +需要固定 backbone/H/预算，以 single+MSE、single+tail/slope、新 dual+MSE、
-+新 dual+tail/slope 为主要对照。当前版本所有 dual 实验保留完整的 dual loss，不提供关闭 gate BCE 或分支监督的训练组合。
++新 dual+tail/slope 为主要对照。再使用上述显式机制消融检查 gate BCE、excess监督、整体分支监督和输入相关 gate 的贡献。
 +同时报告总体/peak RMSE、事件 PR-AUC、Brier/可靠性图，以及固定 gate 对照。
 +单独移除共同训练模型的一个 head 是诊断，不能替代独立训练 single 的性能比较。
 +
@@ -195,10 +218,21 @@
 +因此，新 backbone 的 gamma 与本说明取消的旧 dual-head 整体系数 alpha 是不同位置的参数。
 +单头和新双头共用同一套 backbone，比较时必须采用相同的稳定结构、确定性设置和训练预算。
 +
-+实现位置：[`heads.py`](emulator/models/heads.py) 负责前向，[`losses.py`](emulator/training/losses.py) 负责监督。训练日志只保留物理 RMSE/MAE；论文中需要的 gate 校准等专项分析应另行离线开展。
++实现位置：[`heads.py`](emulator/models/heads.py) 负责前向，[`losses.py`](emulator/training/losses.py) 负责监督，
++[`stats.py`](emulator/data/stats.py) 拟合 TRAIN 阈值和事件比例。
++
++推理增加 `--dual_diagnostics`（两个 shell launcher 使用 `DUAL_DIAGNOSTICS=1`）时，输出：
++
++- `dual_diagnostics.npz`：p_i、物理 body/excess、p×excess、严格事件标签 E_i、真值/预测/tags、TRAIN τ/q_E 和模式。
++- `dual_diagnostics.json`：总体和逐年 Brier、stepwise average precision、trapezoid PR-AUC、10个等宽可靠性分箱、事件/非事件 gate 直方图、事件窗口RMSE和分支误差。
++
++PR 面积的两种定义分别命名；没有正事件时 PR 指标为 null，空可靠性分箱也为 null。
++事件阈值始终读取 TRAIN metadata，不在 test 或 external 数据上重新拟合。
++原始概率和分支轨迹支持后续可靠性图、贡献分析和误差检查；当前不自动生成图片。
++诊断直接复用推理的那次 forward。训练/验证 epoch 不收集上述数组，日志继续只记录原来的四项物理误差。
 --- original/README.md
 +++ StormSurge/README.md
-@@ -1,483 +1,132 @@
+@@ -1,483 +1,148 @@
 -# PACT Storm-Surge Emulator
 +# StormSurge
  
@@ -365,10 +399,10 @@
 +All ten loss modes are retained: `mse`, `wmse`, `mse_tail`, `wmse_tail`, `mse_wtail`, and each with `_slope`. Weighted-tail modes retain weighted tail errors. The slope soft mask uses the TRAIN pointwise `wmse_q` threshold; the tail loss uses the TRAIN window-peak threshold. The old residual head's alpha, gate-bias and tanh-clip controls are removed.
  
 -## Data
-+**Dual loss** is the body + excess + gate supervision, added to the selected prediction loss whenever `HEAD_TYPE=dual`. `DUAL_LOSS=1` / `--dual_loss 1` is the default. A dual run requesting `DUAL_LOSS=0` is forced back to 1; any zero `BODY_LOSS_WEIGHT`, `EXCESS_LOSS_WEIGHT` or `GATE_LOSS_WEIGHT` is also restored to 1. Corrections produce one timestamped `WARNING` in the training log, and the effective values are saved in the per-run JSON and checkpoint. Positive weights keep their configured values. Baseline/single runs have no dual loss. The prediction `loss_mode` and its tail/slope settings are independent and unchanged; in particular, dual + `mse` means MSE + mandatory dual loss. In Python, `dual_loss_terms` computes the three terms and `ForecastLoss` enforces and adds their weighted sum.
++**Dual loss** supervises body, excess and the window-event gate in addition to the selected prediction loss. With `DUAL_ABLATION=none` (default), `DUAL_LOSS=0` and zero branch weights are corrected to 1 with one timestamped warning. Positive weights are retained. Effective settings are saved before training. Baseline/single runs have no dual loss. Excess loss masks non-event windows and averages over the whole `B × K`, without dividing by event count or prevalence.
  
 -Training and evaluation expect graph roots containing `*graphs.pt` files. Graph data and checkpoint binaries are excluded from Git. Populate `Data/` (or link it to your existing data directory), and supply a checkpoint at `CKPT_PATH` before inference. The standard configured graph roots are:
-+Normalization (`zscore`, `robust`, `mag`), augmentation, year splits/shuffling/future filtering, external test roots, station feature switches and optional `--use_pmean` (`tokens`, `global`, `both`) are retained. Pressure normalization uses TRAIN only, and enabling pressure requires the corresponding metadata. All shipped profiles leave it disabled.
++`EXCEEDANCE_PERCENTILE=95` / `--exceedance_percentile 95` defines the dual threshold from TRAIN window maxima. `TAIL_FRAC=0.05` controls the final prediction's tail auxiliary loss independently: dual events use `max(Y) > tau`, while tail loss keeps `max(Y) >= tail_threshold`. The gate is initialized from the actual strict-event TRAIN prevalence, including ties. Checkpoints and summaries save `dual_metadata` with `tau_phys`, `event_prior`, `gate_init_prior`, event count, TRAIN window count, percentile and ablation. Only learned-logit initialization clips prevalence to `[1e-6, 1-1e-6]`; the empirical value is preserved.
  
 -```text
 -./Data/Grid4_New/NCEP/graphs
@@ -378,22 +412,25 @@
 -./Data/Grid4_New/CMIP6_MPI/graphs
 -./Data/Grid4_New/CMIP6_MRI/graphs
 -```
-+The original training protocol is restored: DDP seeds each process with `seed + rank`; its samplers use the original default seed 0. Z-score statistics use the training device and distributed sums, preserving the original FP32/FP64 arithmetic order. Robust/mag statistics use TRAIN node samples; `x_nodes_per_graph <= 0` means at most 256 nodes per graph, without reducing the model's input graph. Augmentation at probability 1 skips the probability draw, preserving the original RNG sequence. The original lower bounds remain `1e-6` for `wmse_s`/`slope_mask_s` and `1e-12` for `slope_charb_eps`/`slope_huber_delta`; normal configured values are unaffected.
++Use a named experiment to disable supervision deliberately:
  
 -Each graph file contains a list of PyG `Data` objects and is named `<year0>_<year1>_<station>_<version>_graphs.pt`. Station filtering matches the filename's station field, including case. Inference warns and falls back to all stations if the requested station is absent; direct external evaluation can use `--strict_station_test` to reject that case. PACT also reads optional station metadata from `station_json/<station>.json`.
-+Cosine with linear warmup remains the configured scheduler. The original `rop` option and its controls are also available. `--deterministic 0` and `--max_grad_norm 0` are defaults; positive `max_grad_norm` explicitly requests clipping. There is no retry or rollback guard. `--stable_arch` accepts only the current setting `1`, and `--dual_mode` only `exceedance`; neither selects an old implementation. Bare switches such as `--amp`, `--tf32`, `--pin_memory` and `--persistent_workers` retain their original argparse behavior. Shipped profiles enable BF16 and TF32.
++| `DUAL_ABLATION` / `--dual_ablation` | Active branch losses | Gate |
++|---|---|---|
++| `none` | body, excess, BCE | learned |
++| `no_gate_bce` | body, excess | learned through prediction loss |
++| `no_excess_loss` | body, BCE | learned |
++| `no_branch_supervision` | none; prediction loss only | learned |
++| `fixed_gate` | body, excess | constant empirical TRAIN prevalence |
  
 -### Station metadata
-+## Metrics and artifacts
++Inactive weights are set to 0; active zero weights are restored to 1. These modes require a PACT dual head. Matched ready-to-run profiles are in [`configs/dual_ablations`](configs/dual_ablations), each sourcing Stable Dual. For example: `bash train.sh configs/dual_ablations/train_config_NCEP_Battery_Fixed_Gate.sh`.
  
 -All shipped training and inference configs use `USE_SITE_ELEVATION=1` (true) and `USE_BATHYMETRY=0` (false). These independent switches select PACT station features; the separate baseline family does not consume station metadata. Python CLI equivalents are `--use_site_elevation` and `--use_bathymetry`, accepting `0`/`1` or `False`/`True`.
-+Each epoch prints `[YYYY-MM-DD|HH:MM:SS]`, followed by exactly eight errors in the target's physical units (surge **meters**):
++Normalization (`zscore`, `robust`, `mag`), augmentation, year splits/shuffling/future filtering, external test roots and station feature switches are retained. Forcing inputs use the five-channel `[u,v,p',lon,lat]` layout, with spatial-mean pressure removal during preprocessing.
  
 -Latitude/longitude and their four sin/cos features are always included. Site elevation uses `elevation_m / 10`, and optional bathymetry uses `bathymetry_m / 10`. The vector order is `[lat/90, lon/180, (elevation/10), sin(lat), cos(lat), sin(lon), cos(lon), (bathymetry/10)]`, with angles converted to radians for sin/cos and disabled fields omitted. The station encoder input dimension follows the selected fields:
-+| Split | All windows | Top 5% peak windows |
-+|---|---|---|
-+| Train | RMSE, MAE | RMSE, MAE |
-+| Val | RMSE, MAE | RMSE, MAE |
++The original training protocol is restored: DDP seeds each process with `seed + rank`; its samplers use the original default seed 0. Z-score statistics use the training device and distributed sums, preserving the original FP32/FP64 arithmetic order. Robust/mag statistics use TRAIN node samples; `x_nodes_per_graph <= 0` means at most 256 nodes per graph, without reducing the model's input graph. Augmentation at probability 1 skips the probability draw, preserving the original RNG sequence. The original lower bounds remain `1e-6` for `wmse_s`/`slope_mask_s` and `1e-12` for `slope_charb_eps`/`slope_huber_delta`; normal configured values are unaffected.
  
 -| Site elevation | Bathymetry | Feature dimension |
 -| --- | --- | ---: |
@@ -401,15 +438,30 @@
 -| Off | Off | 6 |
 -| Off | On | 7 |
 -| On | On | 8 |
-+Top 5% means the `ceil(0.05 × N)` windows with the largest true maximum over the forecast horizon, within the whole split. Errors include all forecast positions in those windows. Validation restores dataset order and the original NumPy argsort/FP32 peak calculation; online Train metrics use stable sample-ID ordering for ties. This reporting subset is independent of the TRAIN threshold used by the losses.
++Cosine with linear warmup remains the configured scheduler. The original `rop` option and its controls are also available. `--deterministic 0` and `--max_grad_norm 0` are defaults; positive `max_grad_norm` explicitly requests clipping. There is no retry or rollback guard. `--stable_arch` accepts only the current setting `1`, and `--dual_mode` only `exceedance`; neither selects an old implementation. Bare switches such as `--amp`, `--tf32`, `--pin_memory` and `--persistent_workers` retain their original argparse behavior. Shipped profiles enable BF16 and TF32.
  
 -Each station JSON stores `bathymetry_m` and its node ID/coordinates under `bathymetry_node`. Node coordinates describe the depth measurement location; the existing station coordinates remain the model's geographic inputs. Enabling bathymetry requires a finite `bathymetry_m` value. The existing seven-feature vector is preserved exactly by the default settings.
-+Train metrics reuse online training predictions, including dropout/augmentation and changing weights; Val uses eval mode. There is no second diagnostic validation pass. DDP validation restores DistributedSampler padding: Val All includes duplicate padding samples, as in the original trainer; Val Peak counts each sample once. Val All also retains the original FP32 batch means and FP64 weighted accumulation. Training uses padding for synchronized updates, but its reported metrics count each sample once.
++## Metrics and artifacts
  
 -Both switches are saved in checkpoint arguments and config snapshots. Direct inference reads checkpoint settings when the CLI flags are omitted; inference launchers pass the configured values and reject mismatches, including a swap between elevation-only and bathymetry-only features despite their equal dimensions. New checkpoints must record both flags. Training and inference metadata report the selected flags and actual station-feature dimension.
-+A launcher run can contain many combinations. Each has a unique stem in its artifact filenames:
++Each epoch prints `[YYYY-MM-DD|HH:MM:SS]`, followed by exactly eight errors in the target's physical units (surge **meters**):
  
 -### Time windows and preprocessing
++| Split | All windows | Top 5% peak windows |
++|---|---|---|
++| Train | RMSE, MAE | RMSE, MAE |
++| Val | RMSE, MAE | RMSE, MAE |
+ 
+-NCEP forcing is sampled every 6 hours. CMIP6 preprocessing selects every other 3-hour record to produce the same 6-hour cadence. For a forcing cutoff `t`, each graph targets six hourly surge values **`t, t+1h, ..., t+5h`**. The next graph covers `t+6h` through `t+11h`, so the outputs concatenate without overlap. For example, forcing through 00:00 produces surge for 00:00–05:00; forcing through 06:00 produces 06:00–11:00.
++Top 5% means the `ceil(0.05 × N)` windows with the largest true maximum over the forecast horizon, within the whole split. Errors include all forecast positions in those windows. Validation restores dataset order and the original NumPy argsort/FP32 peak calculation; online Train metrics use stable sample-ID ordering for ties. This reporting subset is independent of the TRAIN threshold used by the losses.
+ 
+-The alignment script uses separate input origins: forcing starts at Oct 25 00:00, while hourly station records start at Oct 25 01:00. Graph centers begin at Nov 1 00:00 on both axes, with earlier forcing retained for history; the different recording origins do not shift the labels. CSV `time` values are validated against the hourly convention when present; legacy files without that column use the assumed axis with a warning.
++Train metrics reuse online training predictions, including dropout/augmentation and changing weights; Val uses eval mode. There is no second diagnostic validation pass. DDP validation restores DistributedSampler padding: Val All includes duplicate padding samples, as in the original trainer; Val Peak counts each sample once. Val All also retains the original FP32 batch means and FP64 weighted accumulation. Training uses padding for synchronized updates, but its reported metrics count each sample once.
+ 
+-Current `hist48` graphs store forcing through the center time and up to 48 hours of history. A 12-hour model uses three slices (`t-12h`, `t-6h`, `t`); a 0-hour baseline uses only `t`. Select one graph version per year/station in each root. When regenerating data, set the source paths in the forcing scripts and the manual `year_list` in `preprocessing/preprocessing_simulation.py` (currently `[2005]`), then use `preprocessing/time_align_unified.py` to build aligned graphs.
++A launcher run can contain many combinations. Each has a unique stem in its artifact filenames:
+ 
+-## Model Options
 +- `metrics_<stem>.jsonl`: epoch plus eight errors; best model selection uses **Val All RMSE**.
 +- `best_<stem>.pth`: model config/weights, normalization, station features, exact split tags and training config.
 +- `config_<stem>.json`: resolved Python arguments; `config_used.sh` retains the resolved shell sweep.
@@ -417,17 +469,9 @@
 +- `test_preds_<stem>.npz`: physical `y_true`, `y_pred` and tags for the best checkpoint.
 +- `train_<tag>.log`: launcher command, timestamped epoch metrics and final wall time. Long log names are shortened with a hash; the complete tag remains inside the log.
  
--NCEP forcing is sampled every 6 hours. CMIP6 preprocessing selects every other 3-hour record to produce the same 6-hour cadence. For a forcing cutoff `t`, each graph targets six hourly surge values **`t, t+1h, ..., t+5h`**. The next graph covers `t+6h` through `t+11h`, so the outputs concatenate without overlap. For example, forcing through 00:00 produces surge for 00:00–05:00; forcing through 06:00 produces 06:00–11:00.
+-The spatial encoder is selected with `ENCODER_TYPE="GraphSAGE"` or `ENCODER_TYPE="CNN"`. The CNN path reads `grid_H` and `grid_W` from each graph, reshapes flattened node features from `(H*W, F)` to `(F, H, W)`, applies same-resolution 3x3 convolutions, and returns one `hidden_channels` token per grid node. No grid dimensions are hardcoded in the model or launcher.
 +`training_seconds` includes epoch metrics/checkpoint overhead. `wall_seconds` also includes data preparation and the final test. Each training process prints its final wall time; the launcher ends with wall time for the whole sweep.
  
--The alignment script uses separate input origins: forcing starts at Oct 25 00:00, while hourly station records start at Oct 25 01:00. Graph centers begin at Nov 1 00:00 on both axes, with earlier forcing retained for history; the different recording origins do not shift the labels. CSV `time` values are validated against the hourly convention when present; legacy files without that column use the assumed axis with a warning.
--
--Current `hist48` graphs store forcing through the center time and up to 48 hours of history. A 12-hour model uses three slices (`t-12h`, `t-6h`, `t`); a 0-hour baseline uses only `t`. Select one graph version per year/station in each root. When regenerating data, set the source paths in the forcing scripts and the manual `year_list` in `preprocessing/preprocessing_simulation.py` (currently `[2005]`), then use `preprocessing/time_align_unified.py` to build aligned graphs.
--
--## Model Options
--
--The spatial encoder is selected with `ENCODER_TYPE="GraphSAGE"` or `ENCODER_TYPE="CNN"`. The CNN path reads `grid_H` and `grid_W` from each graph, reshapes flattened node features from `(H*W, F)` to `(F, H, W)`, applies same-resolution 3x3 convolutions, and returns one `hidden_channels` token per grid node. No grid dimensions are hardcoded in the model or launcher.
--
 -`NUM_LAYERS` defaults to 2. GraphSAGE requires at least 2 layers and rejects 0 or 1 explicitly; CNN continues to support 1 or more layers.
 -
 -`CNN_INTERMEDIATE_CHANNEL` defaults to 29 for new training. Intermediate CNN layers use this width, while the last layer outputs `HIDDEN_CHANNELS`. With five input features, two layers, and `HIDDEN_CHANNELS=128`, the CNN is `5 -> 29 -> 128` with 34,870 parameters, compared with 34,304 for GraphSAGE. Kernel size, grid resolution, and the downstream 128-dimensional interface are unchanged.
@@ -549,6 +593,8 @@
  
 -Other single-run examples:
 +The default evaluates exact held-out test tags saved during training. `--test_root_dir` evaluates all years in an external directory. `--scope all` is an explicit alternative for evaluating the supplied root, and `--years` filters the selected scope. The scope is recorded in `metrics.json`. `--save_npz` controls prediction export. Loader, AMP and TF32 options use their inference CLI settings.
++
++For dual checkpoints with TRAIN event metadata, `--dual_diagnostics` (shell: `DUAL_DIAGNOSTICS=1`) additionally writes `dual_diagnostics.npz` and `dual_diagnostics.json`. Arrays contain aligned `y_true`, `y_pred`, `tags`, `gate_probability`, `body_phys`, `excess_phys`, `contribution_phys`, `event`, and the TRAIN threshold/prior. JSON reports overall/per-year Brier, stepwise average precision, trapezoidal PR-AUC, reliability bins, event/non-event gate histograms and conditional errors. Undefined metrics and empty bins are `null`; no threshold is fitted on evaluation data. This explicit export also works without `--save_npz`; regular prediction files retain their original three fields, and epoch training/validation logs do not collect these diagnostics.
 +
 +Inference reports each year's physical RMSE, MAE, sample count and runtime, then sample-weighted ALL/past/future errors. Past is 1979–2014 and future is 2070–2099, classified by the starting year. The average annual runtime excludes `2014_2015`, while accuracy still includes its samples. Other years contribute to ALL only. Reports are computed even without `--save_npz`.
 +
@@ -770,7 +816,7 @@
 +`environment_training.yml` and `environment_dataprep.yml` are restored byte-for-byte from the original Emulator, including the training recipe's PyTorch 2.8+cu128 and original data-preparation versions. Restoring these files does not modify an installed environment. The full test suite needs the data-preparation packages (`pandas`, `netCDF4`, `xarray`) as well as torch/PyG.
 --- original/STABILITY_AND_DUAL_HEAD.md
 +++ StormSurge/STABILITY_AND_DUAL_HEAD.md
-@@ -0,0 +1,40 @@
+@@ -0,0 +1,42 @@
 +# 当前 v2 的稳定结构与清理边界
 +
 +v2 只实现当前结构。版本号分支、旧 bypass 原型、旧 residual dual head、重试/回滚 guard 和历史 checkpoint 兼容均已删除。原命令入口保留 `--stable_arch 1` 和 `--dual_mode exceedance`，它们只接受当前实现。
@@ -794,11 +840,13 @@
 +
 +`--head_type dual` 只表示当前的 body/exceedance head，完整公式见 [DUAL_HEAD_EXPLAINED.md](DUAL_HEAD_EXPLAINED.md)。三个辅助损失对应 body、事件窗口的 conditional excess 和 window-event gate。
 +
-+三项统一称为 **dual loss**，在 dual head 下强制启用，独立于 `loss_mode`。`--dual_loss 0` 或任一辅助权重为0时，恢复对应默认值1，并输出带时间戳的 warning 到训练日志；已有正权重保留。有效设置写入运行配置和 checkpoint。Single／baseline 不使用 dual loss。
++三项统一称为 **dual loss**。正式模型使用默认 `--dual_ablation none`，强制启用完整监督，独立于 `loss_mode`。`--dual_loss 0` 或任一辅助权重为0时恢复对应默认值1，并输出带时间戳的 warning；已有正权重保留。显式消融可选 `no_gate_bce`、`no_excess_loss`、`no_branch_supervision`、`fixed_gate`，只关闭该模式指定的项。有效设置写入运行配置和 checkpoint。Single／baseline 不接受这些消融。
++
++`--exceedance_percentile 95` 从 TRAIN 窗口峰值拟合 dual 阈值，独立于 tail-loss 的 `--tail_frac`。Gate 初始化使用严格超阈的实际 TRAIN 比例 q_E，物理 τ、q_E、事件数和有效初始化概率都保存。可学习 logit 的初始化将 q_E 夹到[1e-6,1−1e-6]；固定 gate 使用原始 q_E，作为无可学习参数的 buffer。
 +
 +Excess 辅助项先 mask 非事件窗口，再按整个 `B × K` 平均；不能恢复成除以事件数。后者会在稀有事件时放大辅助项相对于主任务的权重。这里的 mask 是监督定义，不是运行时 guard。
 +
-+模型统一返回 `ForecastOutput`。Single 只填 prediction；dual 同时填损失必须使用的 body、excess、gate_logits 和 threshold。预测不读取真值。
++模型统一返回 `ForecastOutput`。Single 只填 prediction；dual 填 body、excess、threshold 和 gate_probability。可学习 gate 还返回 gate_logits；fixed_gate 的 logits 为 None，BCE 不参与训练。预测不读取真值。
 +
 +## 运行设置
 +
@@ -808,7 +856,7 @@
 +
 +## 日志与验证解释
 +
-+每轮只记录 Train/Val × All/Top5% × RMSE/MAE，全部为物理单位。每行保留 `[YYYY-MM-DD|HH:MM:SS]`；运行摘要保存训练循环时间、总 wall time 和最终 Test 指标，终端最后也输出 wall time。旧 guard 模块、诊断 checkpoint、gate/attention/variance 统计和专门诊断脚本均已删除。
++每轮只记录 Train/Val × All/Top5% × RMSE/MAE，全部为物理单位。每行保留 `[YYYY-MM-DD|HH:MM:SS]`；运行摘要保存训练循环时间、总 wall time 和最终 Test 指标，终端最后也输出 wall time。旧 guard、额外诊断 forward 和 attention/variance 统计仍已删除。仅显式 `infer.py --dual_diagnostics` 导出 gate/body/excess/事件数组和独立校准报告，不加入常规 epoch 日志。
 +
 +清理后的验证区分两件事：相同权重下的计算等价，以及新代码能正确完成训练和推理。短程检查不能证明所有站点、H、seed 的长期训练都不会失稳；最终精度仍需从头训练后比较。精简初始化/模块结构后，同 seed 的整个随机数消耗顺序也不承诺与历史程序一致。
 --- original/changelog.md
@@ -922,9 +970,32 @@
 -All 23 regression tests passed using CPU fixtures. These checks do not measure training performance or predictive skill. The earlier compatibility comparison against the baseline implementation applied to `45d9529`; compatibility with those old configurations is no longer maintained.
 -
 -This change does not generate or launch the 288-run experiment matrix, alter losses or head defaults, or add a validation-only search mode. The existing training entry point still evaluates test after training; the planned architecture-search workflow must configure its evaluation policy separately.
+--- original/configs/configs_infer/infer_config_common.sh
++++ StormSurge/configs/configs_infer/infer_config_common.sh
+@@ -11,6 +11,7 @@
+ USE_SITE_ELEVATION=1
+ USE_BATHYMETRY=0
+ YEARS=""
++DUAL_DIAGNOSTICS=0
+ 
+ CUDA_LAUNCH_BLOCKING_FLAG=0
+ TORCH_GPU_PROBE=1
 --- original/configs/configs_train/train_config_common.sh
 +++ StormSurge/configs/configs_train/train_config_common.sh
-@@ -47,9 +47,12 @@
+@@ -21,12 +21,6 @@
+ FUTURE_ONLY=0
+ FUTURE_YEAR_THRESHOLD=2030
+ 
+-# NOTE: token-mode p_mean becomes [forcing T][p_mean T]; recurrent temporal
+-# blocks therefore see length 2T. It stays disabled in all shipped configs.
+-USE_PMEAN=0
+-PMEAN_DIM=32
+-PERCEIVER_PMEAN_MODE="tokens"
+-
+ LOSS_MODE_LIST=("mse")
+ TAIL_FRAC="0.05"
+ TAIL_LAMBDA_LIST=("0.1")
+@@ -47,9 +41,14 @@
  
  # Dual prediction head only; ignored when HEAD_TYPE="single".
  GATE_MODE="window"
@@ -933,6 +1004,8 @@
 -ALPHA_INIT_LOGIT="0"
 +DUAL_MODE="exceedance"
 +DUAL_LOSS=1
++EXCEEDANCE_PERCENTILE=95
++DUAL_ABLATION="none"
 +STABLE_ARCH=1
 +BODY_LOSS_WEIGHT=1
 +EXCESS_LOSS_WEIGHT=1
@@ -942,7 +1015,20 @@
  TIME_READ_HEADS="8"
 --- original/configs/configs_train_single/train_config_common.sh
 +++ StormSurge/configs/configs_train_single/train_config_common.sh
-@@ -48,9 +48,12 @@
+@@ -22,12 +22,6 @@
+ FUTURE_ONLY=0
+ FUTURE_YEAR_THRESHOLD=2030
+ 
+-# NOTE: token-mode p_mean becomes [forcing T][p_mean T]; recurrent temporal
+-# blocks therefore see length 2T. It stays disabled in all shipped configs.
+-USE_PMEAN=0
+-PMEAN_DIM=32
+-PERCEIVER_PMEAN_MODE="tokens"
+-
+ LOSS_MODE_LIST=("mse")
+ TAIL_FRAC="0.05"
+ TAIL_LAMBDA_LIST=("0.1")
+@@ -48,9 +42,14 @@
  
  # Dual prediction head only; ignored when HEAD_TYPE="single".
  GATE_MODE="window"
@@ -951,6 +1037,8 @@
 -ALPHA_INIT_LOGIT="0"
 +DUAL_MODE="exceedance"
 +DUAL_LOSS=1
++EXCEEDANCE_PERCENTILE=95
++DUAL_ABLATION="none"
 +STABLE_ARCH=1
 +BODY_LOSS_WEIGHT=1
 +EXCESS_LOSS_WEIGHT=1
@@ -958,6 +1046,38 @@
  
  NODE_READ_HEADS="8"
  TIME_READ_HEADS="8"
+--- original/configs/dual_ablations/train_config_NCEP_Battery_Fixed_Gate.sh
++++ StormSurge/configs/dual_ablations/train_config_NCEP_Battery_Fixed_Gate.sh
+@@ -0,0 +1,5 @@
++#!/usr/bin/env bash
++# Matched to Stable Dual; only the named mechanism and artifact directory change.
++source "$(dirname "${BASH_SOURCE[0]}")/../train_config_NCEP_Battery_Stable_Dual.sh"
++DUAL_ABLATION="fixed_gate"
++ALL_RESULTS_ROOT="./All_Results/Dual_Ablations/fixed_gate"
+--- original/configs/dual_ablations/train_config_NCEP_Battery_No_Branch_Supervision.sh
++++ StormSurge/configs/dual_ablations/train_config_NCEP_Battery_No_Branch_Supervision.sh
+@@ -0,0 +1,5 @@
++#!/usr/bin/env bash
++# Matched to Stable Dual; only the named mechanism and artifact directory change.
++source "$(dirname "${BASH_SOURCE[0]}")/../train_config_NCEP_Battery_Stable_Dual.sh"
++DUAL_ABLATION="no_branch_supervision"
++ALL_RESULTS_ROOT="./All_Results/Dual_Ablations/no_branch_supervision"
+--- original/configs/dual_ablations/train_config_NCEP_Battery_No_Excess_Loss.sh
++++ StormSurge/configs/dual_ablations/train_config_NCEP_Battery_No_Excess_Loss.sh
+@@ -0,0 +1,5 @@
++#!/usr/bin/env bash
++# Matched to Stable Dual; only the named mechanism and artifact directory change.
++source "$(dirname "${BASH_SOURCE[0]}")/../train_config_NCEP_Battery_Stable_Dual.sh"
++DUAL_ABLATION="no_excess_loss"
++ALL_RESULTS_ROOT="./All_Results/Dual_Ablations/no_excess_loss"
+--- original/configs/dual_ablations/train_config_NCEP_Battery_No_Gate_BCE.sh
++++ StormSurge/configs/dual_ablations/train_config_NCEP_Battery_No_Gate_BCE.sh
+@@ -0,0 +1,5 @@
++#!/usr/bin/env bash
++# Matched to Stable Dual; only the named mechanism and artifact directory change.
++source "$(dirname "${BASH_SOURCE[0]}")/../train_config_NCEP_Battery_Stable_Dual.sh"
++DUAL_ABLATION="no_gate_bce"
++ALL_RESULTS_ROOT="./All_Results/Dual_Ablations/no_gate_bce"
 --- original/configs/train_config_NCEP_Battery_Stable_Dual.sh
 +++ StormSurge/configs/train_config_NCEP_Battery_Stable_Dual.sh
 @@ -0,0 +1,5 @@
@@ -1104,9 +1224,31 @@
 -    "print0",
 -    "ddp_all_reduce_sum",
 -]
+--- original/emulator/common/dual.py
++++ StormSurge/emulator/common/dual.py
+@@ -0,0 +1,19 @@
++"""Explicit dual experiments and finite initialization of learned event logits."""
++
++import math
++
++
++DUAL_ABLATIONS = {
++    "none": (),
++    "no_gate_bce": ("gate_loss_weight",),
++    "no_excess_loss": ("excess_loss_weight",),
++    "no_branch_supervision": ("body_loss_weight", "excess_loss_weight", "gate_loss_weight"),
++    "fixed_gate": ("gate_loss_weight",),
++}
++
++
++def initial_gate_prior(event_prior):
++    if not math.isfinite(event_prior) or not 0 <= event_prior <= 1:
++        raise ValueError("TRAIN event prior must be finite and in [0, 1].")
++    # Preserve the empirical prevalence separately; clipping only makes logit finite.
++    return min(max(event_prior, 1e-6), 1 - 1e-6)
 --- original/emulator/common/inference_artifacts.sh
 +++ StormSurge/emulator/common/inference_artifacts.sh
-@@ -21,7 +21,7 @@
+@@ -21,10 +21,10 @@
  write_infer_config_snapshot() {
    local output_path="$1" name value
    local config_vars=(
@@ -1114,7 +1256,11 @@
 +    INFER_PY PYTHON_BIN USE_TMUX ROOT_DIR TEST_ROOT_DIR STATION STATION_JSON_DIR MODEL MODEL_LABEL
      USE_SITE_ELEVATION USE_BATHYMETRY
      ENCODER_TYPE TEMPORAL_BLOCK HEAD_TYPE HISTORY_HOURS BATCH_SIZE YEARS
-     CNN_INTERMEDIATE_CHANNEL
+-    CNN_INTERMEDIATE_CHANNEL
++    CNN_INTERMEDIATE_CHANNEL DUAL_DIAGNOSTICS
+     USE_AMP AMP_DTYPE USE_TF32 TORCH_THREADS NUM_WORKERS PIN_MEMORY
+     PERSISTENT_WORKERS PREFETCH_FACTOR MP_CONTEXT DO_CONDA CONDA_MODULE
+     CONDA_SH CONDA_ENV CUDA_LAUNCH_BLOCKING_FLAG TORCH_GPU_PROBE FAIL_IF_NO_SLURM
 --- original/emulator/common/io_utils.py
 +++ StormSurge/emulator/common/io_utils.py
 @@ -1,26 +0,0 @@
@@ -1313,7 +1459,7 @@
 +__all__ = ['ForcingGraphStore', 'ForcingGraphView', 'build_loader', 'normalize_inputs', 'station_features_from_json', 'fit_loss_thresholds', 'fit_statistics']
 --- original/emulator/data/graph_store.py
 +++ StormSurge/emulator/data/graph_store.py
-@@ -1,351 +1,92 @@
+@@ -1,351 +1,82 @@
 -"""Graph dataset storage and split/view helpers.
 +"""CPU graph storage and deterministic splits by complete year groups."""
  
@@ -1651,12 +1797,11 @@
 -    """
 -
 -    def __init__(self, store: ForcingGraphStore, indices, history_steps: int):
-+    def __init__(self, store, indices, history_steps, use_pmean=False):
++    def __init__(self, store, indices, history_steps):
          self.store = store
          self.indices = list(indices)
 -        self.history_steps = int(history_steps)
 +        self.window = history_steps + 1
-+        self.use_pmean = use_pmean
 +        if self.window < 1:
 +            raise ValueError("History must be nonnegative.")
 +        for index in self.indices:
@@ -1665,12 +1810,6 @@
 +            available = history.size(0) if history is not None else 1
 +            if available < self.window:
 +                raise ValueError(f"{store.graph_tags[index]} has {available} history steps; need {self.window}.")
-+            if use_pmean:
-+                pressure = getattr(graph, "p_mean_hist", None)
-+                if pressure is None:
-+                    pressure = getattr(graph, "p_mean_curr", None)
-+                if pressure is None or torch.as_tensor(pressure).numel() < self.window:
-+                    raise ValueError(f"{store.graph_tags[index]} lacks the {self.window}-step p_mean history requested by --use_pmean.")
  
      def __len__(self):
          return len(self.indices)
@@ -1725,9 +1864,6 @@
 +        for name in ("grid_H", "grid_W"):
 +            if name in graph:
 +                data[name] = int(graph[name])
-+        if self.use_pmean:
-+            pressure = graph.p_mean_hist if "p_mean_hist" in graph else graph.p_mean_curr
-+            data.p_mean_hist = torch.as_tensor(pressure).float().reshape(-1)[-self.window:].view(1, -1)
          return data
 -
 -
@@ -1740,7 +1876,7 @@
 -]
 --- original/emulator/data/normalization.py
 +++ StormSurge/emulator/data/normalization.py
-@@ -1,118 +1,26 @@
+@@ -1,118 +1,22 @@
 -"""Feature and target normalization utilities.
 -
 -The normalization path is deliberately shared by training and inference so
@@ -1809,10 +1945,6 @@
 +def normalize_inputs(batch, stats, x_clip=0.0, augmentation=None):
 +    batch.x = (batch.x.float() - stats["x_center"]) / stats["x_scale"]
 +    batch.x_hist = (batch.x_hist.float() - stats["x_center"]) / stats["x_scale"]
-+    if "pmean_center" in stats:
-+        batch.p_mean_hist = (batch.p_mean_hist.float() - stats["pmean_center"]) / stats["pmean_scale"]
-+        if x_clip > 0:
-+            batch.p_mean_hist = batch.p_mean_hist.clamp(-x_clip, x_clip)
      if x_clip > 0:
 -        batch.x.clamp_(-x_clip, x_clip)
 -
@@ -2003,7 +2135,7 @@
 -]
 --- original/emulator/data/stats.py
 +++ StormSurge/emulator/data/stats.py
-@@ -1,310 +1,110 @@
+@@ -1,310 +1,102 @@
 -"""Training-data statistics for normalization and loss shaping.
 -
 -All statistics are computed on the training split only, and distributed-safe
@@ -2026,8 +2158,7 @@
 -    rank = get_rank()
 -    world = get_world_size()
 +def fit_statistics(store, indices, x_norm="zscore", p_lo=1.0, p_hi=99.0,
-+                   nodes_per_graph=256, seed=42, use_pmean=False, history_steps=0,
-+                   device=None):
++                   nodes_per_graph=256, seed=42, device=None):
 +    """All ranks participate; return CPU statistics for checkpoint storage.
  
 -    local_indices = train_indices[rank::world]
@@ -2119,26 +2250,6 @@
 -    var = (sum_x2 / count).to(torch.float32) - mean**2
 -    std = torch.sqrt(var + 1e-6)
 -    return mean, std
-+    if use_pmean:
-+        fitted = torch.zeros(2, dtype=torch.float32, device=device)
-+        if rank == 0:
-+            pressure = []
-+            for i in indices:
-+                graph = store.graphs[i]
-+                value = graph.p_mean_hist if "p_mean_hist" in graph else graph.p_mean_curr
-+                pressure.append(torch.as_tensor(value).detach().cpu().reshape(-1)[-(history_steps + 1):].float().numpy())
-+            values = np.concatenate(pressure)
-+            if x_norm == "zscore":
-+                center, scale = values.mean(dtype=np.float64), values.std(dtype=np.float64)
-+            elif x_norm == "robust":
-+                low, high = np.percentile(values, [p_lo, p_hi])
-+                center, scale = .5 * (float(low) + float(high)), .5 * (float(high) - float(low))
-+            else:
-+                center, scale = 0., np.percentile(np.abs(values), p_hi)
-+            fitted.copy_(torch.tensor([center, max(scale, 1e-6)], dtype=torch.float32, device=device))
-+        if distributed:
-+            dist.broadcast(fitted, src=0)
-+        stats.update(pmean_center=fitted[0].cpu(), pmean_scale=fitted[1].cpu())
 +    return stats
  
  
@@ -2409,11 +2520,24 @@
 -    "compute_y_stats_distributed_from_store",
 -    "compute_train_loss_thresholds_from_store",
 -]
-+def fit_loss_thresholds(store, indices, tail_frac=0.05, wmse_percentile=95.0, wmse_use_abs=True):
++def fit_loss_thresholds(store, indices, tail_frac=0.05, wmse_percentile=95.0, wmse_use_abs=True,
++                        exceedance_percentile=95.0):
++    """Fit independent tail/weighted-loss thresholds and a strict dual event on TRAIN."""
++    if not indices:
++        raise ValueError("Cannot fit loss thresholds on an empty training split.")
++    if not 0 < tail_frac < 1 or not 0 <= wmse_percentile <= 100 or not 0 < exceedance_percentile < 100:
++        raise ValueError("Invalid TRAIN loss percentile settings.")
 +    y = torch.stack([store.graphs[i].y.reshape(-1).float() for i in indices]).numpy()
-+    peak_threshold = float(np.percentile(y.max(axis=1), 100 * (1 - tail_frac)))
++    if not np.isfinite(y).all():
++        raise ValueError("TRAIN labels must be finite to fit event thresholds.")
++    peaks = y.max(axis=1)
++    peak_threshold = float(np.percentile(peaks, 100 * (1 - tail_frac)))
 +    wmse_threshold = float(np.percentile(np.abs(y) if wmse_use_abs else y, wmse_percentile))
-+    return peak_threshold, wmse_threshold
++    tau_phys = float(np.percentile(peaks, exceedance_percentile))
++    event_count = int(np.count_nonzero(peaks.astype(np.float64) > tau_phys))
++    return dict(tail_threshold=peak_threshold, wmse_threshold=wmse_threshold, tau_phys=tau_phys,
++                event_prior=event_count / len(indices), event_count=event_count,
++                train_windows=len(indices), exceedance_percentile=exceedance_percentile)
 --- original/emulator/inference/__init__.py
 +++ StormSurge/emulator/inference/__init__.py
 @@ -1,10 +1,5 @@
@@ -2430,6 +2554,72 @@
 -    "classify_past_future",
 -]
 +__all__ = ["classify_past_future", "infer_dataset_tag", "parse_year_tag"]
+--- original/emulator/inference/dual_diagnostics.py
++++ StormSurge/emulator/inference/dual_diagnostics.py
+@@ -0,0 +1,63 @@
++"""Offline, physical-unit diagnostics for a dual prediction export."""
++
++import numpy as np
++
++
++def summarize_dual(arrays, tau_phys, bins=10):
++    """Use a fixed TRAIN threshold; tied scores enter the PR curve as one group.
++
++    Average precision integrates the stepwise PR curve. pr_auc_trapezoid uses
++    linear interpolation. Neither is defined when the evaluation set has no events.
++    Empty reliability bins and undefined conditional metrics are JSON null.
++    """
++    truth = np.asarray(arrays["y_true"], dtype=np.float64)
++    prediction = np.asarray(arrays["y_pred"], dtype=np.float64)
++    probability = np.asarray(arrays["gate_probability"], dtype=np.float64).reshape(-1)
++    body = np.asarray(arrays["body_phys"], dtype=np.float64)
++    excess = np.asarray(arrays["excess_phys"], dtype=np.float64)
++    if (truth.ndim != 2 or truth.shape != prediction.shape or truth.shape != body.shape
++            or truth.shape != excess.shape or len(probability) != len(truth)):
++        raise ValueError("Dual diagnostics require aligned (N,K) predictions and N probabilities.")
++    if not all(np.isfinite(value).all() for value in (truth, prediction, probability, body, excess, tau_phys)):
++        raise ValueError("Dual diagnostics require finite values.")
++    if bins < 1 or np.any((probability < 0) | (probability > 1)):
++        raise ValueError("Probabilities must be in [0,1] and bins positive.")
++    event = np.any(truth > tau_phys, axis=1)
++    count, positives = len(event), int(event.sum())
++    edges = np.linspace(0, 1, bins + 1)
++    membership = np.minimum(np.searchsorted(edges, probability, side="right") - 1, bins - 1)
++    reliability = []
++    for index in range(bins):
++        selected = membership == index
++        reliability.append(dict(lower=float(edges[index]), upper=float(edges[index + 1]),
++                                count=int(selected.sum()),
++                                mean_probability=float(probability[selected].mean()) if selected.any() else None,
++                                event_rate=float(event[selected].mean()) if selected.any() else None))
++    average_precision = pr_auc = None
++    precision, recall = [], []
++    if positives:
++        order = np.argsort(-probability, kind="stable")
++        ends = np.r_[np.flatnonzero(np.diff(probability[order])), count - 1]
++        tp = np.cumsum(event[order])[ends]
++        precision = np.r_[1., tp / (ends + 1)]
++        recall = np.r_[0., tp / positives]
++        average_precision = float(np.sum(np.diff(recall) * precision[1:]))
++        pr_auc = float(np.sum(np.diff(recall) * (precision[1:] + precision[:-1]) * .5))
++        precision, recall = precision.tolist(), recall.tolist()
++
++    def rmse(error, selected):
++        return float(np.sqrt(np.mean(error[selected] ** 2))) if selected.any() else None
++
++    gate_groups = {}
++    for name, selected in (("event", event), ("non_event", ~event)):
++        values = probability[selected]
++        gate_groups[name] = dict(count=len(values), mean=float(values.mean()) if len(values) else None,
++                                 histogram=np.histogram(values, bins=edges)[0].tolist())
++    error = prediction - truth
++    return dict(samples=count, events=positives, event_prevalence=positives / count if count else None,
++                brier=float(np.mean((probability - event) ** 2)) if count else None,
++                average_precision=average_precision, pr_auc_trapezoid=pr_auc,
++                precision=precision, recall=recall, reliability=reliability, gate_groups=gate_groups,
++                event_window_rmse=rmse(error, event), non_event_window_rmse=rmse(error, ~event),
++                body_rmse=rmse(body - np.minimum(truth, tau_phys), np.ones(count, dtype=bool)),
++                excess_event_rmse=rmse(excess - np.maximum(truth - tau_phys, 0), event))
 --- original/emulator/inference/engine.py
 +++ StormSurge/emulator/inference/engine.py
 @@ -1,103 +0,0 @@
@@ -2600,7 +2790,7 @@
 +__all__ = ['Baseline', 'ModelConfig', 'PACT', 'build_model', 'ForecastOutput']
 --- original/emulator/models/architectures.py
 +++ StormSurge/emulator/models/architectures.py
-@@ -1,891 +1,157 @@
+@@ -1,891 +1,147 @@
 -"""Graph and perceiver-style architectures.
 +"""Compose spatial encoding, station readout, temporal memory and forecast head."""
  
@@ -2622,9 +2812,10 @@
  from torch_geometric.utils import to_dense_batch
  
 -from emulator.data.station_metadata import StationMetaEncoder
++from emulator.common.dual import DUAL_ABLATIONS
++
 +from .heads import ExceedanceHead, ForecastOutput, SingleHead
 +from .spatial import SpatialEncoder
-+from .pressure import PressureFeatures
 +from .temporal import TemporalMLP, TemporalRNN, TemporalTransformer
  
  
@@ -3082,9 +3273,6 @@
 +    cnn_intermediate_channel: int = 29
 +    history_steps: int = 2
 +    max_time_steps: int = 32
-+    use_pmean: bool = False
-+    pmean_dim: int = 32
-+    perceiver_pmean_mode: str = "tokens"
 +    node_read_heads: int = 8
 +    time_read_heads: int = 8
 +    temporal_layers: int = 2
@@ -3094,6 +3282,7 @@
 +    station_feat_dim: int = 0
 +    peak_threshold_norm: list[float] | None = None
 +    peak_prior: float = 0.05
++    dual_ablation: str = "none"
  
  
  class PACT(nn.Module):
@@ -3129,14 +3318,13 @@
 +            raise ValueError(f"Unknown temporal block: {c.temporal_block}")
 +        self.horizon_embed = nn.Embedding(c.out_channels, hidden)
 +        self.forecast_readout = nn.MultiheadAttention(hidden, c.time_read_heads, batch_first=True)
-+        self.pressure = PressureFeatures(c) if c.use_pmean else None
-+        head_dim = hidden + (self.pressure.global_dim if self.pressure is not None else 0)
 +        if c.head_type == "single":
-+            self.head = SingleHead(hidden, c.head_dropout, input_dim=head_dim)
++            self.head = SingleHead(hidden, c.head_dropout)
 +        elif c.head_type == "dual":
 +            if c.peak_threshold_norm is None or len(c.peak_threshold_norm) != c.out_channels:
 +                raise ValueError("Dual head requires one TRAIN-derived threshold per horizon.")
-+            self.head = ExceedanceHead(hidden, c.head_dropout, c.peak_threshold_norm, c.peak_prior, input_dim=head_dim)
++            self.head = ExceedanceHead(hidden, c.head_dropout, c.peak_threshold_norm, c.peak_prior,
++                                       fixed_gate=c.dual_ablation == "fixed_gate")
 +        else:
 +            raise ValueError(f"Unknown head: {c.head_type}")
  
@@ -3476,12 +3664,6 @@
 +        memory = torch.stack(station_history, dim=1)
 +        # Lag zero always means current forcing, independently of H.
 +        lag_ids = torch.arange(steps - 1, -1, -1, device=memory.device)
-+        pressure_vector = None
-+        if self.pressure is not None:
-+            pressure_tokens, pressure_vector = self.pressure(batch.p_mean_hist)
-+            if pressure_tokens is not None:
-+                memory = torch.cat((memory, pressure_tokens), dim=1)
-+                lag_ids = lag_ids.repeat(2)
 +        memory = self.temporal(memory + self.lag_embed(lag_ids))
 +        horizons = self.horizon_embed.weight.unsqueeze(0).expand(batch.num_graphs, -1, -1)
 +        context, _ = self.forecast_readout(horizons, memory, memory, need_weights=False)
@@ -3585,8 +3767,6 @@
 -            )
 -        return y, aux
 +            context = context + horizons  # Retain horizon identity in the H=0 control.
-+        if pressure_vector is not None:
-+            context = torch.cat((context, pressure_vector[:, None].expand(-1, context.size(1), -1)), dim=-1)
 +        context = F.layer_norm(context.float(), (context.size(-1),))
 +        return self.head(context)
  
@@ -3613,8 +3793,7 @@
 +                                      c.dropout, c.encoder_type, c.cnn_intermediate_channel)
 +        self.rnn = nn.LSTM(c.hidden_channels, c.hidden_channels, batch_first=True) if c.history_steps else None
 +        self.dropout = nn.Dropout(c.dropout)
-+        self.pressure = PressureFeatures(c, baseline=True) if c.use_pmean else None
-+        self.head = nn.Linear(c.hidden_channels + (c.pmean_dim if c.use_pmean else 0), c.out_channels)
++        self.head = nn.Linear(c.hidden_channels, c.out_channels)
 +
 +    def forward(self, batch, station_feat=None):
 +        grid_shape = self.spatial.grid_shape(batch)
@@ -3626,17 +3805,18 @@
 +            context, _ = self.rnn(torch.stack(sequence, dim=1))
 +            context = context[:, -1]
 +        context = self.dropout(context)
-+        if self.pressure is not None:
-+            _, vector = self.pressure(batch.p_mean_hist)
-+            context = torch.cat((context, vector), dim=-1)
 +        return ForecastOutput(self.head(context))
 +
 +
 +def build_model(config: ModelConfig):
++    if config.dual_ablation not in DUAL_ABLATIONS:
++        raise ValueError(f"Unknown dual ablation: {config.dual_ablation}")
++    if config.dual_ablation != "none" and (config.model != "pact" or config.head_type != "dual"):
++        raise ValueError("Dual ablations require a PACT dual head.")
 +    return {"pact": PACT, "baseline": Baseline}[config.model](config)
 --- original/emulator/models/heads.py
 +++ StormSurge/emulator/models/heads.py
-@@ -0,0 +1,60 @@
+@@ -0,0 +1,69 @@
 +"""Forecast heads and the one output contract used by training and inference."""
 +
 +import math
@@ -3646,6 +3826,8 @@
 +from torch import nn
 +import torch.nn.functional as F
 +
++from emulator.common.dual import initial_gate_prior
++
 +
 +class ForecastOutput(NamedTuple):
 +    prediction: torch.Tensor
@@ -3653,18 +3835,19 @@
 +    excess: torch.Tensor | None = None
 +    gate_logits: torch.Tensor | None = None
 +    threshold: torch.Tensor | None = None
++    gate_probability: torch.Tensor | None = None
 +
 +
-+def head_mlp(hidden, dropout, input_dim=None):
++def head_mlp(hidden, dropout):
 +    # All three dual-head branches use this same small architecture.
-+    return nn.Sequential(nn.Linear(input_dim or hidden, 2 * hidden), nn.LeakyReLU(0.1),
++    return nn.Sequential(nn.Linear(hidden, 2 * hidden), nn.LeakyReLU(0.1),
 +                         nn.Dropout(dropout), nn.Linear(2 * hidden, 1))
 +
 +
 +class SingleHead(nn.Module):
-+    def __init__(self, hidden, dropout, input_dim=None):
++    def __init__(self, hidden, dropout):
 +        super().__init__()
-+        self.regression = head_mlp(hidden, dropout, input_dim)
++        self.regression = head_mlp(hidden, dropout)
 +
 +    def forward(self, context):
 +        return ForecastOutput(self.regression(context).squeeze(-1))
@@ -3676,17 +3859,21 @@
 +    Labels enter the loss only. The TRAIN-derived threshold is fixed in the
 +    checkpoint; the window gate and both regression branches are learned.
 +    """
-+    def __init__(self, hidden, dropout, threshold, prior, input_dim=None):
++    def __init__(self, hidden, dropout, threshold, prior, fixed_gate=False):
 +        super().__init__()
 +        threshold = torch.as_tensor(threshold, dtype=torch.float32).reshape(1, -1)
-+        if not torch.isfinite(threshold).all() or not 0 < prior < 1:
-+            raise ValueError("Dual head needs finite TRAIN thresholds and a prior in (0, 1).")
++        init_prior = initial_gate_prior(prior)
++        if not torch.isfinite(threshold).all():
++            raise ValueError("Dual head needs finite TRAIN thresholds.")
 +        self.register_buffer("threshold", threshold.clone())
-+        self.body = head_mlp(hidden, dropout, input_dim)
-+        self.excess = head_mlp(hidden, dropout, input_dim)
-+        self.gate = head_mlp(hidden, dropout, input_dim)
-+        nn.init.zeros_(self.gate[-1].weight)
-+        nn.init.constant_(self.gate[-1].bias, math.log(prior / (1 - prior)))
++        self.body = head_mlp(hidden, dropout)
++        self.excess = head_mlp(hidden, dropout)
++        self.gate = None if fixed_gate else head_mlp(hidden, dropout)
++        if fixed_gate:
++            self.register_buffer("fixed_gate_probability", torch.tensor(float(prior)))
++        else:
++            nn.init.zeros_(self.gate[-1].weight)
++            nn.init.constant_(self.gate[-1].bias, math.log(init_prior / (1 - init_prior)))
 +        nn.init.zeros_(self.excess[-1].weight)
 +        nn.init.constant_(self.excess[-1].bias, math.log(math.expm1(0.1)))
 +
@@ -3694,42 +3881,11 @@
 +        raw_body = self.body(context).squeeze(-1).float()
 +        body = self.threshold - F.softplus(self.threshold - raw_body)
 +        excess = F.softplus(self.excess(context).squeeze(-1).float())
-+        gate_logits = self.gate(context.mean(dim=1)).float()
-+        prediction = body + gate_logits.sigmoid() * excess
-+        return ForecastOutput(prediction, body, excess, gate_logits, self.threshold)
---- original/emulator/models/pressure.py
-+++ StormSurge/emulator/models/pressure.py
-@@ -0,0 +1,30 @@
-+"""Optional pressure metadata encoders for the original p_mean ablations."""
-+
-+from torch import nn
-+import torch.nn.functional as F
-+
-+
-+class PressureFeatures(nn.Module):
-+    def __init__(self, config, baseline=False):
-+        super().__init__()
-+        c = config
-+        self.window = c.history_steps + 1
-+        tokens = not baseline and c.perceiver_pmean_mode in ("tokens", "both")
-+        global_vector = baseline or c.perceiver_pmean_mode in ("global", "both")
-+        self.tokens = nn.Sequential(nn.Linear(1, c.hidden_channels), nn.LayerNorm(c.hidden_channels)) if tokens else None
-+        self.width = self.window if baseline else c.max_time_steps
-+        self.global_dim = c.pmean_dim if global_vector else 0
-+        self.global_encoder = None
-+        if global_vector:
-+            layers = [nn.Linear(self.width, c.pmean_dim), nn.LeakyReLU(0.1),
-+                      nn.Linear(c.pmean_dim, c.pmean_dim)]
-+            if not baseline:
-+                layers.append(nn.LayerNorm(c.pmean_dim))
-+            self.global_encoder = nn.Sequential(*layers)
-+
-+    def forward(self, history):
-+        if history.size(1) != self.window:
-+            raise ValueError("p_mean history must match the forcing history window.")
-+        tokens = self.tokens(history.unsqueeze(-1)) if self.tokens is not None else None
-+        vector = self.global_encoder(F.pad(history, (self.width - self.window, 0))) if self.global_encoder is not None else None
-+        return tokens, vector
++        gate_logits = self.gate(context.mean(dim=1)).float() if self.gate is not None else None
++        probability = (gate_logits.sigmoid() if gate_logits is not None
++                       else self.fixed_gate_probability.expand(context.size(0), 1))
++        prediction = body + probability * excess
++        return ForecastOutput(prediction, body, excess, gate_logits, self.threshold, probability)
 --- original/emulator/models/spatial.py
 +++ StormSurge/emulator/models/spatial.py
 @@ -0,0 +1,49 @@
@@ -3855,7 +4011,7 @@
 +__all__ = ['EpochResult', 'run_epoch', 'ForecastLoss', 'LossConfig', 'dual_loss_terms', 'format_metrics']
 --- original/emulator/training/arguments.py
 +++ StormSurge/emulator/training/arguments.py
-@@ -0,0 +1,259 @@
+@@ -0,0 +1,244 @@
 +"""The established train.py command-line interface used by the shell configs."""
 +
 +import argparse
@@ -3863,6 +4019,7 @@
 +from pathlib import Path
 +
 +from emulator.common.cli import parse_bool_int, temporal_block_name
++from emulator.common.dual import DUAL_ABLATIONS
 +from .losses import enforce_dual_loss
 +
 +
@@ -3963,6 +4120,8 @@
 +                        help="1: use |y| in weight; 0: use y directly.")
 +    parser.add_argument("--tail_frac", type=float, default=0.05,
 +                        help="Top fraction by GT peak (max over horizons) for tail auxiliary loss.")
++    parser.add_argument("--exceedance_percentile", type=float, default=95.0,
++                        help="TRAIN window-maximum percentile defining the dual event; independent of tail_frac.")
 +    parser.add_argument("--tail_lambda", type=float, default=0.10,
 +                        help="Weight for tail auxiliary loss. Start small: 0.05~0.2.")
 +    parser.add_argument("--slope_lambda", type=float, default=0.01,
@@ -4013,28 +4172,6 @@
 +        "--cnn_intermediate_channel", type=int, default=29,
 +        help="CNN channels before the final spatial layer; output remains hidden_channels.",
 +    )
-+    parser.add_argument("--use_pmean", action="store_true", help="Enable the pressure-feature ablation.")
-+    parser.add_argument(
-+        "--pmean_dim",
-+        type=int,
-+        default=32,
-+        help=(
-+            "Embedding dimension used by the baseline's p_mean encoder when --use_pmean is enabled. "
-+            "(For perceiver3, p_mean tokens are projected directly to hidden_channels.)"
-+        ),
-+    )
-+    parser.add_argument(
-+        "--perceiver_pmean_mode",
-+        type=str,
-+        default="tokens",
-+        choices=["tokens", "global", "both"],
-+        help=(
-+            "When --model perceiver3 and --use_pmean is set: choose how p_mean_hist is injected. "
-+            "tokens=append time-aligned p_mean tokens (Option 3); "
-+            "global=encode p_mean_hist into a global vector and concatenate to the forecasting head (Option 1-style); "
-+            "both=enable both tokens and global."
-+        ),
-+    )
 +    parser.add_argument(
 +        "--head_type",
 +        type=str.lower,
@@ -4046,7 +4183,9 @@
 +    parser.add_argument("--gate_mode", choices=["window"], default="window", help="Supervised event probability for the whole forecast window.")
 +    parser.add_argument("--dual_mode", choices=["exceedance"], default="exceedance", help="Current supervised dual head; single-head runs ignore this setting.")
 +    parser.add_argument("--dual_loss", type=parse_bool_int, choices=[0, 1], default=1,
-+                        help="Body + excess + gate supervision. Mandatory for dual heads; 0 is corrected to 1 with a warning.")
++                        help="Branch supervision; required unless --dual_ablation explicitly removes it.")
++    parser.add_argument("--dual_ablation", choices=tuple(DUAL_ABLATIONS), default="none",
++                        help="Explicit mechanism experiment; none enforces full branch supervision.")
 +    parser.add_argument("--body_loss_weight", type=float, default=1.0)
 +    parser.add_argument("--excess_loss_weight", type=float, default=1.0)
 +    parser.add_argument("--gate_loss_weight", type=float, default=1.0)
@@ -4102,7 +4241,7 @@
 +        parser.error("Invalid learning-rate or warmup settings.")
 +    if args.warmup_epochs < 0:
 +        parser.error("--warmup_epochs must be nonnegative.")
-+    if not 0 < args.tail_frac < 1 or not 0 <= args.wmse_q <= 100:
++    if not 0 < args.tail_frac < 1 or not 0 <= args.wmse_q <= 100 or not 0 < args.exceedance_percentile < 100:
 +        parser.error("Invalid TRAIN loss percentile settings.")
 +    for name in ("max_grad_norm", "body_loss_weight", "excess_loss_weight", "gate_loss_weight", "tail_lambda", "slope_lambda"):
 +        if not math.isfinite(getattr(args, name)) or getattr(args, name) < 0:
@@ -4113,11 +4252,13 @@
 +    if args.head_type == "dual":
 +        enforce_dual_loss(args)
 +    else:
++        if args.dual_ablation != "none":
++            parser.error("--dual_ablation requires --model perceiver3 --head_type dual.")
 +        args.dual_loss = 0
 +    return args
 --- original/emulator/training/engine.py
 +++ StormSurge/emulator/training/engine.py
-@@ -1,586 +1,99 @@
+@@ -1,586 +1,112 @@
 -"""Training and evaluation loops.
 +"""One forward per batch for training, validation, testing and inference."""
  
@@ -4289,14 +4430,17 @@
 +def run_epoch(model, loader, device, stats, *, station_feat=None, optimizer=None,
 +              criterion=None, scaler=None, grad_accum_steps=1, max_grad_norm=0.0, use_amp=False,
 +              amp_dtype=torch.bfloat16, x_clip=0.0, augmentation=None,
-+              save_predictions=False, distributed=False):
++              save_predictions=False, distributed=False, save_dual_diagnostics=False):
 +    training = optimizer is not None
++    if save_dual_diagnostics and (training or distributed or not save_predictions):
++        raise ValueError("Dual diagnostics require a single-process prediction export in evaluation mode.")
 +    model.train(training)
 +    # Evaluation does not need gradient synchronization.
 +    network = model.module if not training and isinstance(model, DistributedDataParallel) else model
 +    if training:
 +        optimizer.zero_grad(set_to_none=True)
 +    windows, truth, predictions, tags = [], [], [], []
++    dual_arrays = {name: [] for name in ("gate_probability", "body_phys", "excess_phys")} if save_dual_diagnostics else None
 +    # Original evaluation: FP32 batch means, weighted/accumulated in FP64.
 +    evaluation_sums = torch.zeros(3, dtype=torch.float64, device=device) if not training else None
 +    with torch.set_grad_enabled(training):
@@ -4767,6 +4911,12 @@
 +            if save_predictions:
 +                truth.append(target.cpu())
 +                predictions.append(prediction.detach().cpu())
++            if save_dual_diagnostics:
++                if output.body is None or output.excess is None or output.gate_probability is None:
++                    raise ValueError("Dual diagnostics require a dual-head model.")
++                dual_arrays["gate_probability"].append(output.gate_probability.float().reshape(-1).cpu())
++                dual_arrays["body_phys"].append((output.body.float() * stats["y_std"] + stats["y_mean"]).cpu())
++                dual_arrays["excess_phys"].append((output.excess.float() * stats["y_std"]).cpu())
 +    records = torch.cat(windows).cpu().numpy() if windows else np.empty((0, 4))
 +    if distributed:
 +        gathered = [None] * dist.get_world_size()
@@ -4780,6 +4930,10 @@
 +        arrays = {"y_true": torch.cat(truth).numpy() if truth else np.empty((0, width), np.float32),
 +                  "y_pred": torch.cat(predictions).numpy() if predictions else np.empty((0, width), np.float32),
 +                  "tags": np.asarray(tags, dtype=str)}
++        if save_dual_diagnostics:
++            arrays.update({name: torch.cat(values).numpy() if values else
++                           np.empty((0,) if name == "gate_probability" else (0, width), np.float32)
++                           for name, values in dual_arrays.items()})
 +    # Val All includes sampler padding; Peak reuses the unique predictions.
 +    metrics = summarize_windows(records, validation=not training)
 +    if not training:
@@ -4792,7 +4946,7 @@
 +    return EpochResult(metrics, arrays)
 --- original/emulator/training/losses.py
 +++ StormSurge/emulator/training/losses.py
-@@ -1,86 +1,97 @@
+@@ -1,86 +1,112 @@
 -"""Loss functions used by training.
 +"""Physical-unit objectives. Metrics are computed separately from these losses."""
  
@@ -4809,6 +4963,7 @@
 +import torch.nn.functional as F
 +
 +from emulator.common.runtime import log_message
++from emulator.common.dual import DUAL_ABLATIONS
  
  
 -def weighted_mse_loss(
@@ -4831,17 +4986,25 @@
 -    w = 1.0 + alpha * torch.sigmoid((yy - q_value) / s)
 -    return (w * (pred - target).pow(2)).mean()
 +def enforce_dual_loss(config):
-+    """Resolve disabled dual supervision before snapshots or loss computation."""
++    """Enforce full supervision unless a named ablation disables specific terms."""
++    if config.dual_ablation not in DUAL_ABLATIONS:
++        raise ValueError(f"Unknown dual ablation: {config.dual_ablation}")
++    disabled = DUAL_ABLATIONS[config.dual_ablation]
++    for name in disabled:
++        setattr(config, name, 0.0)
++    if config.dual_ablation == "no_branch_supervision":
++        config.dual_loss = 0
++        return
 +    corrections = []
 +    if not config.dual_loss:
 +        config.dual_loss = 1
 +        corrections.append("dual_loss=1 (was 0)")
 +    for name in ("body_loss_weight", "excess_loss_weight", "gate_loss_weight"):
-+        if getattr(config, name) == 0:
++        if name not in disabled and getattr(config, name) == 0:
 +            setattr(config, name, 1.0)
 +            corrections.append(f"{name}=1 (was 0)")
 +    if corrections and int(os.environ.get("RANK", "0")) == 0:
-+        log_message("WARNING: head_type=dual requires dual loss (body + excess + gate); "
++        log_message(f"WARNING: head_type=dual requires dual loss for dual_ablation={config.dual_ablation}; "
 +                    "forcing " + ", ".join(corrections) + ".")
  
  
@@ -4860,7 +5023,8 @@
 +    event = (target_norm > output.threshold).any(dim=1, keepdim=True)
 +    body = ((output.body - body_target) * y_std).square().mean()
 +    excess = (((output.excess - excess_target) * y_std).square() * event).mean()
-+    gate = F.binary_cross_entropy_with_logits(output.gate_logits, event.float()) * y_std.square().mean()
++    gate = (F.binary_cross_entropy_with_logits(output.gate_logits, event.float()) * y_std.square().mean()
++            if output.gate_logits is not None else body.new_zeros(()))
 +    return body, excess, gate
  
  
@@ -4887,6 +5051,7 @@
 +    body_loss_weight: float = 1.0
 +    excess_loss_weight: float = 1.0
 +    gate_loss_weight: float = 1.0
++    dual_ablation: str = "none"
  
  
 -def slope_matching_loss_softmask(
@@ -4958,8 +5123,12 @@
 +            mask = torch.sigmoid((self.wmse_threshold - target.abs().amax(dim=1)) / max(c.slope_mask_s, 1e-6))
 +            loss = loss + c.slope_lambda * (penalty * mask[:, None]).mean()
 +        if output.body is not None:
++            if (output.gate_logits is None) != (c.dual_ablation == "fixed_gate"):
++                raise ValueError("The loss and model must select the same fixed_gate ablation.")
 +            # Also enforce this for callers that construct LossConfig directly.
 +            enforce_dual_loss(c)
++            if not c.dual_loss:
++                return loss
 +            body, excess, gate = dual_loss_terms(output, (target - self.y_mean) / self.y_std, self.y_std)
 +            dual_loss = c.body_loss_weight * body + c.excess_loss_weight * excess + c.gate_loss_weight * gate
 +            loss = loss + dual_loss
@@ -5002,7 +5171,7 @@
 +    return f'{label} ' + ' '.join(pairs)
 --- original/infer.py
 +++ StormSurge/infer.py
-@@ -1,66 +1,36 @@
+@@ -1,66 +1,37 @@
  #!/usr/bin/env python3
 -"""Storm Surge Emulator inference endpoint.
 -
@@ -5066,6 +5235,7 @@
 +from emulator.data import ForcingGraphStore, ForcingGraphView, build_loader, station_features_from_json
 +from emulator.models import ModelConfig, build_model
 +from emulator.inference import classify_past_future, infer_dataset_tag, parse_year_tag
++from emulator.inference.dual_diagnostics import summarize_dual
 +from emulator.training import format_metrics, run_epoch
 +from emulator.training.metrics import summarize_windows
 +
@@ -5086,7 +5256,7 @@
      parser.add_argument("--station", type=str, default=None)
      parser.add_argument("--station_json_dir", type=str, default="./station_json")
      parser.add_argument(
-@@ -74,10 +44,8 @@
+@@ -74,10 +45,8 @@
      parser.add_argument(
          "--strict_station_test",
          action="store_true",
@@ -5099,7 +5269,7 @@
      parser.add_argument("--model", type=str, default="", choices=["", "baseline", "perceiver3"])
      parser.add_argument(
          "--encoder_type",
-@@ -85,51 +53,42 @@
+@@ -85,53 +54,46 @@
          default="",
          choices=["", "GraphSAGE", "CNN"],
          help=(
@@ -5156,8 +5326,12 @@
 -    # timing / outputs
      parser.add_argument("--gpu_sync_timing", action="store_true", help="Synchronize CUDA for accurate timing")
      parser.add_argument("--save_npz", action="store_true")
++    parser.add_argument("--dual_diagnostics", action="store_true",
++                        help="Export gate/body/excess/event arrays and calibration metrics for a dual checkpoint.")
      parser.add_argument(
-@@ -156,552 +115,179 @@
+         "--model_label",
+         type=str,
+@@ -156,552 +118,198 @@
              "All_Inference_Results/<Station>_<ModelLabel>_<Source>_To_<Target>_<timestamp>/outputs/."
          ),
      )
@@ -5308,6 +5482,9 @@
 +    args = parse_args(argv)
 +    checkpoint = torch.load(args.ckpt, map_location="cpu", weights_only=False)
 +    config = ModelConfig(**checkpoint["model_config"])
++    dual_metadata = checkpoint.get("dual_metadata")
++    if args.dual_diagnostics and (config.head_type != "dual" or dual_metadata is None):
++        raise ValueError("--dual_diagnostics requires a dual checkpoint with TRAIN event metadata.")
 +    training = checkpoint["training_config"]
 +    expected = {"model": "perceiver3" if config.model == "pact" else "baseline",
 +                "encoder_type": config.encoder_type}
@@ -5787,7 +5964,7 @@
 +        year_to_indices["_".join(store.graph_tags[index].split("_")[:2])].append(index)
 +    results, yearly_predictions, timing_year_seconds = {}, [], []
 +    for year, year_indices in sorted(year_to_indices.items()):
-+        dataset = ForcingGraphView(store, year_indices, config.history_steps, config.use_pmean)
++        dataset = ForcingGraphView(store, year_indices, config.history_steps)
 +        loader = build_loader(dataset, None, args.batch_size, args.num_workers, args.pin_memory,
 +                              args.persistent_workers, args.prefetch_factor, args.mp_context)
 +        if cuda and args.gpu_sync_timing:
@@ -5796,7 +5973,7 @@
 +        result = run_epoch(model, loader, device, stats, station_feat=station_feat, x_clip=training["x_clip"],
 +                           use_amp=args.amp and cuda,
 +                           amp_dtype={"bf16": torch.bfloat16, "fp16": torch.float16}[args.amp_dtype],
-+                           save_predictions=True)
++                           save_predictions=True, save_dual_diagnostics=args.dual_diagnostics)
 +        if cuda and args.gpu_sync_timing:
 +            torch.cuda.synchronize()
 +        seconds = time.perf_counter() - start
@@ -5809,7 +5986,7 @@
 +        # Reports always use the evaluated predictions; save_npz controls disk I/O only.
 +        yearly_predictions.append(result.predictions)
 +    arrays = {name: np.concatenate([item[name] for item in yearly_predictions])
-+              for name in ("y_true", "y_pred", "tags")}
++              for name in yearly_predictions[0]}
 +    elapsed = sum(results[year]["seconds"] for year in year_to_indices)
 +    error = arrays["y_pred"].astype(np.float64) - arrays["y_true"].astype(np.float64)
 +    records = np.column_stack((np.arange(len(indices)), arrays["y_true"].max(axis=1),
@@ -5842,13 +6019,29 @@
 +            model_file_tag += f"_{config.head_type}"
 +    report_stem = f"{test_tag}_{station_tag}_{model_name}{model_file_tag}"
 +    if args.save_npz:
-+        np.savez_compressed(out_dir / "predictions.npz", **arrays)
++        np.savez_compressed(out_dir / "predictions.npz", **{name: arrays[name] for name in ("y_true", "y_pred", "tags")})
 +        np.savez(out_dir / f"preds_{report_stem}_ALLYEARS.npz", y_true=arrays["y_true"],
 +                 y_pred=arrays["y_pred"], tags=arrays["tags"].astype(object))
++    if args.dual_diagnostics:
++        tau_phys = dual_metadata["tau_phys"]
++        event = np.any(arrays["y_true"].astype(np.float64) > tau_phys, axis=1)
++        np.savez_compressed(out_dir / "dual_diagnostics.npz", **arrays, event=event,
++                            contribution_phys=arrays["gate_probability"][:, None] * arrays["excess_phys"],
++                            tau_phys=tau_phys, event_prior=dual_metadata["event_prior"],
++                            dual_ablation=config.dual_ablation)
++        diagnostic_report = dict(train=dual_metadata,
++                                 scope="external_all_years" if external else "held_out_years",
++                                 years=sorted(year_to_indices), overall=summarize_dual(arrays, tau_phys),
++                                 by_year={year: summarize_dual(item, tau_phys)
++                                          for year, item in zip(sorted(year_to_indices), yearly_predictions)},
++                                 metric_note="PR average_precision is stepwise; pr_auc_trapezoid is linearly interpolated. "
++                                             "Undefined metrics and empty bins are null. Threshold is fixed from TRAIN.")
++        (out_dir / "dual_diagnostics.json").write_text(json.dumps(diagnostic_report, indent=2, allow_nan=False))
++        log_message(f"Dual diagnostics: {out_dir / 'dual_diagnostics.json'}")
 +    wall_seconds = time.perf_counter() - wall_start
 +    metadata = {"metrics": metrics, "runtime_seconds": elapsed, "wall_seconds": wall_seconds,
 +                "samples": len(indices), "scope": "external_all_years" if external else "held_out_years",
-+                "years": sorted(year_to_indices), "results": results}
++                "years": sorted(year_to_indices), "results": results, "dual_metadata": dual_metadata}
 +    (out_dir / "metrics.json").write_text(json.dumps(metadata, indent=2))
 +    report = dict(timestamp=datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S UTC"),
 +                  test_tag=test_tag, source_tag=source, target_tag=target, station=station_tag,
@@ -5867,7 +6060,7 @@
 +                  if not external else None,
 +                  years_evaluated=metadata["years"], inference_args=vars(args).copy(), checkpoint_args=training,
 +                  results=results, metric_space="physical", metric_note="RMSE/MAE on denormalized predictions in original y units.",
-+                  use_pmean=config.use_pmean, perceiver_pmean_mode=config.perceiver_pmean_mode, x_clip=training["x_clip"])
++                  x_clip=training["x_clip"], dual_metadata=dual_metadata, dual_ablation=config.dual_ablation)
 +    (out_dir / f"metrics_per_year_{report_stem}.json").write_text(json.dumps(report, indent=2, default=str))
 +    log_message(format_metrics("External" if external else "Test", metrics))
 +    log_message(f"Wall time: {wall_seconds:.3f} s | Outputs: {out_dir}")
@@ -5884,7 +6077,15 @@
  : "${CONDA_MODULE:=anaconda}"
  : "${CONDA_SH:=/software/u22/anaconda/python3.9/etc/profile.d/conda.sh}"
  : "${CONDA_ENV:=torchpyg-cu124}"
-@@ -199,7 +200,9 @@
+@@ -70,6 +71,7 @@
+ : "${PERSISTENT_WORKERS:=0}"
+ : "${PREFETCH_FACTOR:=0}"
+ : "${MP_CONTEXT:=fork}"
++: "${DUAL_DIAGNOSTICS:=0}"
+ 
+ # Required
+ : "${CKPT_PATH:=}"
+@@ -199,7 +201,9 @@
  
  init_conda
  
@@ -5895,7 +6096,24 @@
    PYTHON_BIN="${CONDA_PREFIX}/bin/python"
  else
    PYTHON_BIN="$(command -v python)"
-@@ -322,9 +325,12 @@
+@@ -268,6 +272,8 @@
+ if [[ "${USE_TF32}" -eq 1 ]]; then TF32_ARGS=(--tf32); fi
+ 
+ AMP_ARGS=()
++DIAGNOSTIC_ARGS=()
++if [[ "${DUAL_DIAGNOSTICS}" == "1" ]]; then DIAGNOSTIC_ARGS+=(--dual_diagnostics); fi
+ if [[ "${USE_AMP}" -eq 1 ]]; then AMP_ARGS=(--amp --amp_dtype "${AMP_DTYPE}"); fi
+ 
+ STATION_ARGS=()
+@@ -307,6 +313,7 @@
+   --ckpt "${CKPT_RESOLVED}"
+   --out_dir "${OUT_DIR}"
+   --save_npz
++  "${DIAGNOSTIC_ARGS[@]}"
+   "${YEARS_ARGS[@]}"
+   "${AMP_ARGS[@]}"
+   "${TF32_ARGS[@]}"
+@@ -322,9 +329,12 @@
  
  chmod +x "${RUNNER}"
  printf -v RUNNER_COMMAND 'bash %q' "${RUNNER}"
@@ -5915,7 +6133,15 @@
 +echo "Runner: ${RUNNER}"
 --- original/infer_multi.sh
 +++ StormSurge/infer_multi.sh
-@@ -133,7 +133,9 @@
+@@ -65,6 +65,7 @@
+ : "${PERSISTENT_WORKERS:=0}"
+ : "${PREFETCH_FACTOR:=0}"
+ : "${MP_CONTEXT:=fork}"
++: "${DUAL_DIAGNOSTICS:=0}"
+ 
+ : "${CKPT_PATH:=}"
+ 
+@@ -133,7 +134,9 @@
  
  init_conda
  
@@ -5926,9 +6152,26 @@
    PYTHON_BIN="${CONDA_PREFIX}/bin/python"
  else
    PYTHON_BIN="$(command -v python)"
+@@ -149,6 +152,8 @@
+ if [[ "${USE_TF32}" -eq 1 ]]; then TF32_ARGS=(--tf32); fi
+ 
+ AMP_ARGS=()
++DIAGNOSTIC_ARGS=()
++if [[ "${DUAL_DIAGNOSTICS}" == "1" ]]; then DIAGNOSTIC_ARGS+=(--dual_diagnostics); fi
+ if [[ "${USE_AMP}" -eq 1 ]]; then AMP_ARGS=(--amp --amp_dtype "${AMP_DTYPE}"); fi
+ 
+ STATION_ARGS=()
+@@ -274,6 +279,7 @@
+     --ckpt "${CKPT_RESOLVED}"
+     --out_dir "${OUT_DIR}"
+     --save_npz
++    "${DIAGNOSTIC_ARGS[@]}"
+     "${YEARS_ARGS[@]}"
+     "${AMP_ARGS[@]}"
+     "${TF32_ARGS[@]}"
 --- original/preprocessing/forcing_cmip6.py
 +++ StormSurge/preprocessing/forcing_cmip6.py
-@@ -0,0 +1,75 @@
+@@ -0,0 +1,74 @@
 +#!/usr/bin/env python3
 +"""Prepare AWI/CNRM/EC_EARTH/MPI/MRI forcing with one shared transformation."""
 +
@@ -5952,9 +6195,8 @@
 +    lon, lat = np.meshgrid(longitude[lon_mask], latitude[lat_mask])
 +    coordinates = np.broadcast_to(np.stack((lon, lat), axis=-1), (*values.shape[:-1], 2))
 +    result = np.concatenate((values, coordinates), axis=-1)
-+    pressure_mean = result[..., 2].mean(axis=(1, 2))
-+    result[..., 2] -= pressure_mean[:, None, None]
-+    return result, pressure_mean, latitude[lat_mask], longitude[lon_mask]
++    result[..., 2] -= result[..., 2].mean(axis=(1, 2), keepdims=True)
++    return result, latitude[lat_mask], longitude[lon_mask]
 +
 +
 +def main(argv=None):
@@ -5994,16 +6236,246 @@
 +        if forcing.ndim != 2 or forcing.shape[1] != 3 or len(forcing) % (latitude.size * longitude.size):
 +            print(f"WARNING: incomplete or invalid forcing shape {forcing.shape} in {path}, skipping.")
 +            continue
-+        values, pressure, _, _ = prepare_forcing(forcing, latitude, longitude)
++        values, _, _ = prepare_forcing(forcing, latitude, longitude)
 +        # 3h forcing is retained for analysis; graph construction consumes 6h NPZ.
 +        for step, stride, suffix in ((3, 1, "_3h"), (6, 2, "")):
 +            np.save(args.out_dir / f"forcing_local{suffix}_{year}.npy", values[::stride])
 +            np.savez(args.out_dir / f"forcing_local{suffix}_{year}.npz", forcing=values[::stride],
-+                     p_mean_t=pressure[::stride], year=year, dt_hours=step, **metadata)
++                     year=year, dt_hours=step, **metadata)
 +
 +
 +if __name__ == "__main__":
 +    main()
+--- original/preprocessing/preprocessing_forcing_CMIP6_AWI_Mean_Removal.py
++++ StormSurge/preprocessing/preprocessing_forcing_CMIP6_AWI_Mean_Removal.py
+@@ -145,19 +145,16 @@
+     )
+ 
+     # ----------------------------------------------------------
+-    # NEW: per-time-step spatial mean removal for pressure (local box)
++    # Per-time-step spatial mean removal for pressure (local box)
+     # p_anom(t,x,y) = p(t,x,y) - mean_{x,y}(p(t,x,y))
+-    # Save p_mean_t as (TIME_3h,)
+     # ----------------------------------------------------------
+     p3 = forcing_5d_local_3h[..., P_IDX]                     # (TIME_3h, nlat, nlon)
+-    p_mean_t_3h = p3.mean(axis=(1, 2))                       # (TIME_3h,)
+-    forcing_5d_local_3h[..., P_IDX] = p3 - p_mean_t_3h[:, None, None]
++    forcing_5d_local_3h[..., P_IDX] = p3 - p3.mean(axis=(1, 2), keepdims=True)
+ 
+     # -------------------------
+     # Downsample 3h -> 6h
+     # -------------------------
+     forcing_5d_local_6h = forcing_5d_local_3h[::2]           # every other step
+-    p_mean_t_6h = p_mean_t_3h[::2]
+     TIME_6h = forcing_5d_local_6h.shape[0]
+ 
+     # Timestamp printing (your assumed convention)
+@@ -180,7 +177,6 @@
+     np.savez(
+         out_path_3h_npz,
+         forcing=forcing_5d_local_3h,   # pressure is anomaly
+-        p_mean_t=p_mean_t_3h,          # spatial mean of ABS pressure each timestep
+         year=year,
+         dt_hours=3,
+         LAT_MIN=LAT_MIN, LAT_MAX=LAT_MAX, LON_MIN=LON_MIN, LON_MAX=LON_MAX,
+@@ -192,7 +188,6 @@
+     np.savez(
+         out_path_6h_npz,
+         forcing=forcing_5d_local_6h,   # pressure is anomaly
+-        p_mean_t=p_mean_t_6h,
+         year=year,
+         dt_hours=6,
+         LAT_MIN=LAT_MIN, LAT_MAX=LAT_MAX, LON_MIN=LON_MIN, LON_MAX=LON_MAX,
+@@ -211,4 +206,4 @@
+     )
+ 
+ print("\nDone. Saved processed CMIP6_AWI local forcing under:", out_dir)
+-print("Each year now has both .npy and .npz (npz includes p_mean_t).")
++print("Each year has both .npy and .npz forcing outputs.")
+--- original/preprocessing/preprocessing_forcing_CMIP6_CNRM_Mean_Removal.py
++++ StormSurge/preprocessing/preprocessing_forcing_CMIP6_CNRM_Mean_Removal.py
+@@ -145,19 +145,16 @@
+     )
+ 
+     # ----------------------------------------------------------
+-    # NEW: per-time-step spatial mean removal for pressure (local box)
++    # Per-time-step spatial mean removal for pressure (local box)
+     # p_anom(t,x,y) = p(t,x,y) - mean_{x,y}(p(t,x,y))
+-    # Save p_mean_t as (TIME_3h,)
+     # ----------------------------------------------------------
+     p3 = forcing_5d_local_3h[..., P_IDX]                     # (TIME_3h, nlat, nlon)
+-    p_mean_t_3h = p3.mean(axis=(1, 2))                       # (TIME_3h,)
+-    forcing_5d_local_3h[..., P_IDX] = p3 - p_mean_t_3h[:, None, None]
++    forcing_5d_local_3h[..., P_IDX] = p3 - p3.mean(axis=(1, 2), keepdims=True)
+ 
+     # -------------------------
+     # Downsample 3h -> 6h
+     # -------------------------
+     forcing_5d_local_6h = forcing_5d_local_3h[::2]           # every other step
+-    p_mean_t_6h = p_mean_t_3h[::2]
+     TIME_6h = forcing_5d_local_6h.shape[0]
+ 
+     # Timestamp printing (your assumed convention)
+@@ -180,7 +177,6 @@
+     np.savez(
+         out_path_3h_npz,
+         forcing=forcing_5d_local_3h,   # pressure is anomaly
+-        p_mean_t=p_mean_t_3h,          # spatial mean of ABS pressure each timestep
+         year=year,
+         dt_hours=3,
+         LAT_MIN=LAT_MIN, LAT_MAX=LAT_MAX, LON_MIN=LON_MIN, LON_MAX=LON_MAX,
+@@ -192,7 +188,6 @@
+     np.savez(
+         out_path_6h_npz,
+         forcing=forcing_5d_local_6h,   # pressure is anomaly
+-        p_mean_t=p_mean_t_6h,
+         year=year,
+         dt_hours=6,
+         LAT_MIN=LAT_MIN, LAT_MAX=LAT_MAX, LON_MIN=LON_MIN, LON_MAX=LON_MAX,
+@@ -211,4 +206,4 @@
+     )
+ 
+ print("\nDone. Saved processed CMIP6_CNRM local forcing under:", out_dir)
+-print("Each year now has both .npy and .npz (npz includes p_mean_t).")
++print("Each year has both .npy and .npz forcing outputs.")
+--- original/preprocessing/preprocessing_forcing_CMIP6_EC_EARTH_Mean_Removal.py
++++ StormSurge/preprocessing/preprocessing_forcing_CMIP6_EC_EARTH_Mean_Removal.py
+@@ -145,19 +145,16 @@
+     )
+ 
+     # ----------------------------------------------------------
+-    # NEW: per-time-step spatial mean removal for pressure (local box)
++    # Per-time-step spatial mean removal for pressure (local box)
+     # p_anom(t,x,y) = p(t,x,y) - mean_{x,y}(p(t,x,y))
+-    # Save p_mean_t as (TIME_3h,)
+     # ----------------------------------------------------------
+     p3 = forcing_5d_local_3h[..., P_IDX]                     # (TIME_3h, nlat, nlon)
+-    p_mean_t_3h = p3.mean(axis=(1, 2))                       # (TIME_3h,)
+-    forcing_5d_local_3h[..., P_IDX] = p3 - p_mean_t_3h[:, None, None]
++    forcing_5d_local_3h[..., P_IDX] = p3 - p3.mean(axis=(1, 2), keepdims=True)
+ 
+     # -------------------------
+     # Downsample 3h -> 6h
+     # -------------------------
+     forcing_5d_local_6h = forcing_5d_local_3h[::2]           # every other step
+-    p_mean_t_6h = p_mean_t_3h[::2]
+     TIME_6h = forcing_5d_local_6h.shape[0]
+ 
+     # Timestamp printing (your assumed convention)
+@@ -180,7 +177,6 @@
+     np.savez(
+         out_path_3h_npz,
+         forcing=forcing_5d_local_3h,   # pressure is anomaly
+-        p_mean_t=p_mean_t_3h,          # spatial mean of ABS pressure each timestep
+         year=year,
+         dt_hours=3,
+         LAT_MIN=LAT_MIN, LAT_MAX=LAT_MAX, LON_MIN=LON_MIN, LON_MAX=LON_MAX,
+@@ -192,7 +188,6 @@
+     np.savez(
+         out_path_6h_npz,
+         forcing=forcing_5d_local_6h,   # pressure is anomaly
+-        p_mean_t=p_mean_t_6h,
+         year=year,
+         dt_hours=6,
+         LAT_MIN=LAT_MIN, LAT_MAX=LAT_MAX, LON_MIN=LON_MIN, LON_MAX=LON_MAX,
+@@ -211,4 +206,4 @@
+     )
+ 
+ print("\nDone. Saved processed CMIP6_EC_EARTH local forcing under:", out_dir)
+-print("Each year now has both .npy and .npz (npz includes p_mean_t).")
++print("Each year has both .npy and .npz forcing outputs.")
+--- original/preprocessing/preprocessing_forcing_CMIP6_MPI_Mean_Removal.py
++++ StormSurge/preprocessing/preprocessing_forcing_CMIP6_MPI_Mean_Removal.py
+@@ -145,19 +145,16 @@
+     )
+ 
+     # ----------------------------------------------------------
+-    # NEW: per-time-step spatial mean removal for pressure (local box)
++    # Per-time-step spatial mean removal for pressure (local box)
+     # p_anom(t,x,y) = p(t,x,y) - mean_{x,y}(p(t,x,y))
+-    # Save p_mean_t as (TIME_3h,)
+     # ----------------------------------------------------------
+     p3 = forcing_5d_local_3h[..., P_IDX]                     # (TIME_3h, nlat, nlon)
+-    p_mean_t_3h = p3.mean(axis=(1, 2))                       # (TIME_3h,)
+-    forcing_5d_local_3h[..., P_IDX] = p3 - p_mean_t_3h[:, None, None]
++    forcing_5d_local_3h[..., P_IDX] = p3 - p3.mean(axis=(1, 2), keepdims=True)
+ 
+     # -------------------------
+     # Downsample 3h -> 6h
+     # -------------------------
+     forcing_5d_local_6h = forcing_5d_local_3h[::2]           # every other step
+-    p_mean_t_6h = p_mean_t_3h[::2]
+     TIME_6h = forcing_5d_local_6h.shape[0]
+ 
+     # Timestamp printing (your assumed convention)
+@@ -180,7 +177,6 @@
+     np.savez(
+         out_path_3h_npz,
+         forcing=forcing_5d_local_3h,   # pressure is anomaly
+-        p_mean_t=p_mean_t_3h,          # spatial mean of ABS pressure each timestep
+         year=year,
+         dt_hours=3,
+         LAT_MIN=LAT_MIN, LAT_MAX=LAT_MAX, LON_MIN=LON_MIN, LON_MAX=LON_MAX,
+@@ -192,7 +188,6 @@
+     np.savez(
+         out_path_6h_npz,
+         forcing=forcing_5d_local_6h,   # pressure is anomaly
+-        p_mean_t=p_mean_t_6h,
+         year=year,
+         dt_hours=6,
+         LAT_MIN=LAT_MIN, LAT_MAX=LAT_MAX, LON_MIN=LON_MIN, LON_MAX=LON_MAX,
+@@ -211,4 +206,4 @@
+     )
+ 
+ print("\nDone. Saved processed CMIP6_MPI local forcing under:", out_dir)
+-print("Each year now has both .npy and .npz (npz includes p_mean_t).")
++print("Each year has both .npy and .npz forcing outputs.")
+--- original/preprocessing/preprocessing_forcing_CMIP6_MRI_Mean_Removal.py
++++ StormSurge/preprocessing/preprocessing_forcing_CMIP6_MRI_Mean_Removal.py
+@@ -145,19 +145,16 @@
+     )
+ 
+     # ----------------------------------------------------------
+-    # NEW: per-time-step spatial mean removal for pressure (local box)
++    # Per-time-step spatial mean removal for pressure (local box)
+     # p_anom(t,x,y) = p(t,x,y) - mean_{x,y}(p(t,x,y))
+-    # Save p_mean_t as (TIME_3h,)
+     # ----------------------------------------------------------
+     p3 = forcing_5d_local_3h[..., P_IDX]                     # (TIME_3h, nlat, nlon)
+-    p_mean_t_3h = p3.mean(axis=(1, 2))                       # (TIME_3h,)
+-    forcing_5d_local_3h[..., P_IDX] = p3 - p_mean_t_3h[:, None, None]
++    forcing_5d_local_3h[..., P_IDX] = p3 - p3.mean(axis=(1, 2), keepdims=True)
+ 
+     # -------------------------
+     # Downsample 3h -> 6h
+     # -------------------------
+     forcing_5d_local_6h = forcing_5d_local_3h[::2]           # every other step
+-    p_mean_t_6h = p_mean_t_3h[::2]
+     TIME_6h = forcing_5d_local_6h.shape[0]
+ 
+     # Timestamp printing (your assumed convention)
+@@ -180,7 +177,6 @@
+     np.savez(
+         out_path_3h_npz,
+         forcing=forcing_5d_local_3h,   # pressure is anomaly
+-        p_mean_t=p_mean_t_3h,          # spatial mean of ABS pressure each timestep
+         year=year,
+         dt_hours=3,
+         LAT_MIN=LAT_MIN, LAT_MAX=LAT_MAX, LON_MIN=LON_MIN, LON_MAX=LON_MAX,
+@@ -192,7 +188,6 @@
+     np.savez(
+         out_path_6h_npz,
+         forcing=forcing_5d_local_6h,   # pressure is anomaly
+-        p_mean_t=p_mean_t_6h,
+         year=year,
+         dt_hours=6,
+         LAT_MIN=LAT_MIN, LAT_MAX=LAT_MAX, LON_MIN=LON_MIN, LON_MAX=LON_MAX,
+@@ -211,4 +206,4 @@
+     )
+ 
+ print("\nDone. Saved processed CMIP6_MRI local forcing under:", out_dir)
+-print("Each year now has both .npy and .npz (npz includes p_mean_t).")
++print("Each year has both .npy and .npz forcing outputs.")
 --- original/preprocessing/preprocessing_forcing_NCEP_Mean_Removal.py
 +++ StormSurge/preprocessing/preprocessing_forcing_NCEP_Mean_Removal.py
 @@ -1,9 +1,10 @@
@@ -6021,7 +6493,7 @@
  
  # Global grid size
  NWLAT = 94
-@@ -55,118 +56,108 @@
+@@ -55,118 +56,104 @@
  assert lat.shape[0] == NWLAT
  assert lon.shape[0] == NWLON
  
@@ -6149,12 +6621,9 @@
 +        # ----------------------------------------------------------
 +        # Per-time-step spatial-mean removal for pressure
 +        #   p_anom(t,x,y) = p(t,x,y) - mean_{x,y}(p(t,x,y))
-+        # Also SAVE the mean pressure per timestep as an extra array:
-+        #   p_mean_t: (TIME,)
 +        # ----------------------------------------------------------
 +        p = forcing_5d_local[..., P_IDX]                        # (TIME, nlat, nlon)
-+        p_mean_t = p.mean(axis=(1, 2))                          # (TIME,)
-+        forcing_5d_local[..., P_IDX] = p - p_mean_t[:, None, None]
++        forcing_5d_local[..., P_IDX] = p - p.mean(axis=(1, 2), keepdims=True)
  
 -    # Subset to local region: (TIME, nlat, nlon, 3)
 -    forcing_4d_local = forcing_4d[:, lat_mask, :][:, :, lon_mask, :]
@@ -6163,7 +6632,6 @@
 +        np.savez(
 +            out_path_npz,
 +            forcing=forcing_5d_local,     # (TIME,nlat,nlon,5) with pressure anomaly
-+            p_mean_t=p_mean_t,            # (TIME,) spatial mean of absolute pressure per timestep
 +            # Grid and time provenance
 +            year=year,
 +            dt_hours=6,
@@ -6277,7 +6745,169 @@
      os.makedirs(station_csv_folder, exist_ok=True)
 --- original/preprocessing/time_align_unified.py
 +++ StormSurge/preprocessing/time_align_unified.py
-@@ -838,7 +838,7 @@
+@@ -29,23 +29,13 @@
+ #       Aligned_peryear_hist48/<model_tag>/...
+ #
+ # -----------------------------------------------------------------------------
+-# NEW: Global-mean pressure feature (optional)
++# FORCING INPUT
+ # -----------------------------------------------------------------------------
+-# We now assume forcing files are saved as NPZ:
++# Forcing files are saved as NPZ:
+ #   forcing_local_YYYY.npz
+ #
+ # Required key:
+ #   - forcing: (T, H, W, 5)  where channel order is unchanged from before
+-#
+-# Optional key:
+-#   - p_mean_t: (T,)  spatial mean (over x,y) of ABSOLUTE pressure at each timestep
+-#
+-# IMPORTANT:
+-#   - We DO NOT change x/x_hist format (still 5 channels). train.py stays unchanged.
+-#   - If p_mean_t exists, we store it per-graph aligned with history window:
+-#       data.p_mean_hist: (WINDOW_LENGTH,)  (e.g. 9,)
+-#       data.p_mean_curr: scalar (the last element)
+-#   - If p_mean_t does not exist, the script behaves exactly like before.
+ #
+ # -----------------------------------------------------------------------------
+ # OUTPUTS
+@@ -219,10 +209,6 @@
+     """
+     Map {year -> forcing_file_path}.
+ 
+-    We ONLY use .npz forcing files now, because they can carry extra metadata
+-    (e.g., p_mean_t). This prevents accidental mismatch between forcing arrays
+-    and auxiliary per-timestep stats.
+-
+     Expected filename pattern:
+       forcing_local_YYYY.npz
+     """
+@@ -237,29 +223,12 @@
+     return dict(sorted(year_to_path.items(), key=lambda kv: kv[0]))
+ 
+ 
+-def load_forcing_npz(path: Path) -> Tuple[np.ndarray, Optional[np.ndarray]]:
+-    """
+-    Load forcing from a .npz.
+-
+-    Required keys:
+-      - forcing: (T, H, W, 5)
+-
+-    Optional keys:
+-      - p_mean_t: (T,)
+-        Meaning: spatial mean of ABSOLUTE pressure at each forcing timestep
+-        (computed during preprocessing over the SAME local region / grid).
+-
+-    Returns:
+-      forcing: float32 array (T,H,W,5)
+-      p_mean_t: float32 array (T,) or None if missing
+-    """
+-    z = np.load(path, allow_pickle=False)
+-    if "forcing" not in z:
+-        raise KeyError(f"{path} missing key 'forcing'. Keys={list(z.keys())}")
+-
+-    forcing = z["forcing"].astype(np.float32)
+-    p_mean_t = z["p_mean_t"].astype(np.float32) if "p_mean_t" in z else None
+-    return forcing, p_mean_t
++def load_forcing_npz(path: Path) -> np.ndarray:
++    """Load the required (T, H, W, 5) forcing array as float32."""
++    with np.load(path, allow_pickle=False) as z:
++        if "forcing" not in z:
++            raise KeyError(f"{path} missing key 'forcing'. Keys={list(z.keys())}")
++        return z["forcing"].astype(np.float32)
+ 
+ 
+ def infer_grid_from_forcing(arr: np.ndarray) -> Tuple[int, int, int, int]:
+@@ -450,7 +419,6 @@
+     year: int,
+     station: str,
+     forcing: np.ndarray,             # (T, H, W, 5)
+-    p_mean_t: Optional[np.ndarray],  # (T,) or None
+     t_forcing: np.ndarray,           # (T,)
+     edge_index: torch.Tensor,
+     H: int,
+@@ -477,18 +445,6 @@
+       context_start = t_start_center - 48h
+       forcing_ctx = forcing[(t_forcing >= context_start) & (t_forcing <= t_end_center)]
+ 
+-    -------------------------------------------------------------------------
+-    NEW: p_mean_t handling
+-    -------------------------------------------------------------------------
+-    If p_mean_t is present (length T), we crop it using the SAME mask as forcing,
+-    producing p_mean_ctx aligned 1-to-1 with forcing_ctx timesteps.
+-
+-    Then for each graph i:
+-      - forcing window = forcing_ctx[start_idx:end_idx] has shape (WINDOW_LENGTH, H, W, 5)
+-      - p_mean window  = p_mean_ctx[start_idx:end_idx] has shape (WINDOW_LENGTH,)
+-    We attach:
+-      data.p_mean_hist (WINDOW_LENGTH,)
+-      data.p_mean_curr (scalar)
+     """
+     num_nodes = H * W
+ 
+@@ -519,7 +475,7 @@
+         raise ValueError(f"Unknown version={version}")
+ 
+     # -------------------------
+-    # 3) Crop forcing (and p_mean_t if present) to [context_start, t_end_center]
++    # 3) Crop forcing to [context_start, t_end_center]
+     # -------------------------
+     mask_force = (t_forcing >= context_start) & (t_forcing <= t_end_center)
+     forcing_ctx = forcing[mask_force]
+@@ -529,17 +485,6 @@
+         raise ValueError(
+             f"No forcing in range [{context_start}, {t_end_center}] for year={year}, station={station}, version={version}"
+         )
+-
+-    # Keep p_mean aligned to forcing_ctx using the SAME mask
+-    p_mean_ctx: Optional[np.ndarray] = None
+-    if p_mean_t is not None:
+-        if p_mean_t.shape[0] != forcing.shape[0]:
+-            raise ValueError(
+-                f"p_mean_t length mismatch for year={year}: len(p_mean_t)={p_mean_t.shape[0]} vs forcing T={forcing.shape[0]}"
+-            )
+-        p_mean_ctx = p_mean_t[mask_force]
+-        if p_mean_ctx.shape[0] != forcing_ctx.shape[0]:
+-            raise RuntimeError("Internal error: p_mean_ctx and forcing_ctx time lengths differ.")
+ 
+     # Center indices (within forcing_ctx) from Nov 1 00:00 to t_end_center
+     center_mask = (t_forcing_ctx >= t_start_center) & (t_forcing_ctx <= t_end_center)
+@@ -604,12 +549,11 @@
+     nc_used = nc[: N * GT_PER_FORCING]
+     nc_tide_used = nc_tide[: N * GT_PER_FORCING]
+ 
+-    p_mean_status = "present" if p_mean_ctx is not None else "missing"
+     print(
+         f"{version.upper():7s} {year} {station:8s} | "
+         f"N={N:4d} | forcing_centers={tuple(forcing_centers.shape)} | "
+         f"nodes={num_nodes:5d} | edges={edge_index.shape[1]:,} | station_hours={len(nc_used)} | "
+-        f"p_mean_t={p_mean_status} | end_center={t_end_center}"
++        f"end_center={t_end_center}"
+     )
+ 
+     # -------------------------
+@@ -696,20 +640,6 @@
+             center_time=str(center_time),
+         )
+ 
+-        # -------------------------
+-        # NEW: store p_mean history aligned to the SAME forcing window
+-        # (does not affect train.py unless you explicitly use it)
+-        # -------------------------
+-        if p_mean_ctx is not None:
+-            p_hist = p_mean_ctx[start_idx:end_idx]  # (WINDOW_LENGTH,)
+-            if p_hist.shape[0] != WINDOW_LENGTH:
+-                raise RuntimeError(
+-                    f"p_mean history length mismatch at i={i}: got {p_hist.shape[0]}, expected {WINDOW_LENGTH}"
+-                )
+-            p_mean_hist_t = torch.from_numpy(p_hist.astype(np.float32))  # (9,)
+-            data.p_mean_hist = p_mean_hist_t
+-            data.p_mean_curr = p_mean_hist_t[-1]  # scalar tensor
+-
+         graphs.append(data)
+ 
+     graph_name = f"{year}_{year+1}_{station}_{suffix}_graphs.pt"
+@@ -838,7 +768,7 @@
      ap.add_argument("--csv_dir", type=str, default=None, help="Override station CSV directory (relative to data_root or absolute)")
  
      ap.add_argument("--out_root_fixed", type=str, default=None, help="Override base output dir for fixed (model_tag will be appended)")
@@ -6286,9 +6916,46 @@
  
      ap.add_argument("--stations", type=str, nargs="+", default=["Lewes", "Boston", "CBBT", "Battery"])
  
+@@ -933,7 +863,7 @@
+             continue
+ 
+         forcing_path = year_to_path[year]
+-        forcing, p_mean_t = load_forcing_npz(forcing_path)
++        forcing = load_forcing_npz(forcing_path)
+         T_full, H, W, C = infer_grid_from_forcing(forcing)
+         t_forcing = build_forcing_time_index(year, T_full)
+ 
+@@ -951,7 +881,6 @@
+             #     year=year,
+             #     station=station,
+             #     forcing=forcing,
+-            #     p_mean_t=p_mean_t,
+             #     t_forcing=t_forcing,
+             #     edge_index=edge_index,
+             #     H=H,
+@@ -967,7 +896,6 @@
+                 year=year,
+                 station=station,
+                 forcing=forcing,
+-                p_mean_t=p_mean_t,  # NEW (optional)
+                 t_forcing=t_forcing,
+                 edge_index=edge_index,
+                 H=H,
+@@ -995,11 +923,6 @@
+             print("edge_index   :", tuple(g0.edge_index.shape))
+             print("grid_H,grid_W:", getattr(g0, "grid_H", None), getattr(g0, "grid_W", None))
+             print("center_time  :", getattr(g0, "center_time", None))
+-            if hasattr(g0, "p_mean_hist"):
+-                print("p_mean_hist  :", tuple(g0.p_mean_hist.shape), "(should be (9,))")
+-                print("p_mean_curr  :", g0.p_mean_curr.item() if torch.is_tensor(g0.p_mean_curr) else g0.p_mean_curr)
+-            else:
+-                print("p_mean_hist  : <not present> (your forcing npz did not include p_mean_t)")
+         else:
+             print("Example graph not found yet (maybe you processed different year/station first).")
+ 
 --- original/tests/test_config_interfaces.py
 +++ StormSurge/tests/test_config_interfaces.py
-@@ -0,0 +1,207 @@
+@@ -0,0 +1,161 @@
 +"""Exercise the original shell sweep and compare the loss-mode definitions."""
 +
 +import contextlib
@@ -6407,66 +7074,20 @@
 +                expected.backward()
 +                torch.testing.assert_close(pred.grad, reference_pred.grad, rtol=1e-12, atol=1e-12)
 +
-+    def test_pressure_options_and_embedding_capacity_affect_the_model(self):
++    def test_lag_embedding_capacity_covers_the_history_window(self):
 +        torch.set_num_threads(1)
-+        for model, history, mode, head in itertools.product(('baseline', 'pact'), (0, 8), ('tokens', 'global', 'both'), ('single', 'dual')):
-+            if model == 'baseline' and (mode != 'tokens' or head != 'single'):
-+                continue
-+            c = ModelConfig(3, 4, model=model, head_type=head, hidden_channels=16, history_steps=history,
-+                            node_read_heads=2, time_read_heads=2, use_pmean=True, pmean_dim=5,
-+                            perceiver_pmean_mode=mode, max_time_steps=20, peak_threshold_norm=[1.] * 4)
++        for history, head in itertools.product((0, 8), ('single', 'dual')):
++            c = ModelConfig(3, 4, head_type=head, hidden_channels=16, history_steps=history,
++                            node_read_heads=2, time_read_heads=2, max_time_steps=20,
++                            peak_threshold_norm=[1.] * 4)
 +            network = build_model(c).eval()
-+            batch = graph_batch(history + 1)
-+            batch.p_mean_hist = torch.randn(2, history + 1)
-+            output = network(batch)
++            output = network(graph_batch(history + 1))
 +            output.prediction.square().mean().backward()
 +            self.assertTrue(all(p.grad is not None and torch.isfinite(p.grad).all() for p in network.parameters()))
-+            before = output.prediction.detach()
-+            batch.p_mean_hist += torch.randn_like(batch.p_mean_hist) * 10
-+            self.assertFalse(torch.allclose(before, network(batch).prediction))
-+            if model == 'pact':
-+                self.assertEqual(network.lag_embed.num_embeddings, 20)
-+                if mode in ('global', 'both'):
-+                    seen = []
-+                    handle = network.pressure.global_encoder[0].register_forward_pre_hook(lambda m, x: seen.append(x[0]))
-+                    network(batch)
-+                    handle.remove()
-+                    torch.testing.assert_close(seen[0][:, -(history + 1):], batch.p_mean_hist)
-+                    self.assertEqual(int(torch.count_nonzero(seen[0][:, :-(history + 1)])), 0)
-+
-+    def test_pressure_training_statistics_use_only_selected_history_and_years(self):
-+        from emulator.data import ForcingGraphStore, ForcingGraphView, fit_statistics, normalize_inputs
-+        from torch_geometric.data import Batch
-+        from test_pipeline import make_fixture
-+        with tempfile.TemporaryDirectory() as temporary:
-+            graphs, _ = make_fixture(Path(temporary))
-+            store = ForcingGraphStore(graphs, 'Battery')
-+            split = store.split()
-+            for i, graph in enumerate(store.graphs):
-+                # Enormous old history and held-out values must not enter TRAIN fitting.
-+                graph.p_mean_hist = torch.tensor([100000.] * 6 + [float(i), i + 1., i + 2.])
-+                if i not in split['train']:
-+                    graph.p_mean_hist += 1000000
-+            for mode in ('zscore', 'robust', 'mag'):
-+                stats = fit_statistics(store, split['train'], x_norm=mode, use_pmean=True, history_steps=2)
-+                values = torch.cat([store.graphs[i].p_mean_hist[-3:] for i in split['train']]).double()
-+                if mode == 'zscore':
-+                    center, scale = values.mean(), values.std(correction=0)
-+                elif mode == 'robust':
-+                    low, high = torch.quantile(values, torch.tensor([.01, .99], dtype=torch.float64))
-+                    center, scale = (low + high) / 2, (high - low) / 2
-+                else:
-+                    center, scale = values.new_tensor(0), torch.quantile(values.abs(), .99)
-+                torch.testing.assert_close(stats['pmean_center'], center.float())
-+                torch.testing.assert_close(stats['pmean_scale'], scale.float())
-+                view = ForcingGraphView(store, split['train'], 2, use_pmean=True)
-+                batch = Batch.from_data_list([view[0], view[1]])
-+                before = batch.p_mean_hist.clone()
-+                normalize_inputs(batch, stats)
-+                torch.testing.assert_close(batch.p_mean_hist, (before - center.float()) / scale.float())
-+            del store.graphs[split['val'][0]].p_mean_hist
-+            with self.assertRaisesRegex(ValueError, 'p_mean history'):
-+                ForcingGraphView(store, split['val'], 2, use_pmean=True)
++            self.assertEqual(network.lag_embed.num_embeddings, 20)
++            c.max_time_steps = history
++            with self.assertRaisesRegex(ValueError, 'max_time_steps'):
++                build_model(c)
 +
 +    def test_rop_configuration_reaches_the_scheduler_and_snapshot(self):
 +        from unittest.mock import patch
@@ -6770,6 +7391,255 @@
 -
 -if __name__ == "__main__":
 -    unittest.main()
+--- original/tests/test_dual_experiments.py
++++ StormSurge/tests/test_dual_experiments.py
+@@ -0,0 +1,246 @@
++"""TRAIN event fitting, explicit supervision ablations and diagnostic exports."""
++
++import contextlib
++from dataclasses import asdict
++import io
++import json
++import os
++from pathlib import Path
++import shlex
++import subprocess
++import sys
++import tempfile
++from types import SimpleNamespace
++import unittest
++
++import numpy as np
++import torch
++from torch_geometric.data import Data
++
++import infer
++import train
++from emulator.common.dual import DUAL_ABLATIONS
++from emulator.data import ForcingGraphStore, fit_loss_thresholds
++from emulator.inference.dual_diagnostics import summarize_dual
++from emulator.models import ForecastOutput, ModelConfig, build_model
++from emulator.models.heads import ExceedanceHead
++from emulator.training import ForecastLoss, LossConfig, dual_loss_terms
++from test_config_interfaces import dry_commands
++from test_models import graph_batch
++from test_pipeline import make_fixture
++
++
++class DualExperimentTests(unittest.TestCase):
++    @classmethod
++    def setUpClass(cls):
++        torch.set_num_threads(1)
++
++    def test_train_prevalence_uses_strict_events_ties_and_independent_thresholds(self):
++        store = SimpleNamespace(graphs=[Data(y=torch.tensor([float(peak), -1.]))
++                                        for peak in (0, 1, 2, 2, 2, 5, 10000)])
++        indices = list(range(6))
++        fitted = fit_loss_thresholds(store, indices, tail_frac=.5, exceedance_percentile=75)
++        self.assertEqual(fitted['tau_phys'], 2.)
++        self.assertEqual(fitted['event_count'], 1)
++        self.assertEqual(fitted['event_prior'], 1 / 6)
++        other_tail = fit_loss_thresholds(store, indices, tail_frac=.05, exceedance_percentile=75)
++        self.assertNotEqual(fitted['tail_threshold'], other_tail['tail_threshold'])
++        self.assertEqual(fitted['tau_phys'], other_tail['tau_phys'])
++        self.assertEqual(fitted['event_prior'], other_tail['event_prior'])
++        other_event = fit_loss_thresholds(store, indices, tail_frac=.5, exceedance_percentile=20)
++        self.assertEqual(fitted['tail_threshold'], other_event['tail_threshold'])
++        self.assertEqual(other_event['tau_phys'], 1.)
++        self.assertEqual(other_event['event_prior'], 4 / 6)
++        store.graphs[-1].y.fill_(-1e6)
++        self.assertEqual(fitted, fit_loss_thresholds(store, indices, tail_frac=.5, exceedance_percentile=75))
++
++    def test_zero_prevalence_is_saved_exactly_and_learned_logits_stay_finite(self):
++        store = SimpleNamespace(graphs=[Data(y=torch.ones(2)) for _ in range(4)])
++        fitted = fit_loss_thresholds(store, list(range(4)))
++        self.assertEqual((fitted['tau_phys'], fitted['event_prior'], fitted['event_count']), (1., 0., 0))
++        for prior in (0., 1 / 6, 1.):
++            learned = ExceedanceHead(8, 0, [1., 1.], prior)
++            result = learned(torch.randn(3, 2, 8))
++            self.assertTrue(torch.isfinite(result.gate_logits).all())
++            torch.testing.assert_close(result.gate_probability,
++                                       torch.full((3, 1), min(max(prior, 1e-6), 1 - 1e-6)))
++            fixed = ExceedanceHead(8, 0, [1., 1.], prior, fixed_gate=True)
++            first, second = fixed(torch.randn(3, 2, 8)), fixed(torch.randn(3, 2, 8) * 100)
++            self.assertIsNone(first.gate_logits)
++            self.assertFalse(any('gate' in name for name, _ in fixed.named_parameters()))
++            torch.testing.assert_close(first.gate_probability, torch.full((3, 1), prior), rtol=0, atol=0)
++            torch.testing.assert_close(first.gate_probability, second.gate_probability, rtol=0, atol=0)
++
++    def test_named_ablations_remove_only_the_requested_supervision(self):
++        stats = dict(y_mean=torch.tensor([.3, -.2]), y_std=torch.tensor([2., 3.]))
++        norm_target = torch.tensor([[2., 0.], [0., 0.]])
++        target = norm_target * stats['y_std'] + stats['y_mean']
++        for mode, disabled in DUAL_ABLATIONS.items():
++            with self.subTest(mode=mode):
++                output = ForecastOutput(torch.zeros(2, 2, requires_grad=True),
++                                        torch.zeros(2, 2, requires_grad=True),
++                                        torch.ones(2, 2, requires_grad=True),
++                                        None if mode == 'fixed_gate' else torch.zeros(2, 1, requires_grad=True),
++                                        torch.ones(1, 2))
++                config = LossConfig(dual_ablation=mode)
++                prediction = output.prediction * stats['y_std'] + stats['y_mean']
++                loss = ForecastLoss(config, stats, 3., 2.)(output, prediction, target)
++                terms = dual_loss_terms(output, norm_target, stats['y_std'])
++                expected = (prediction - target).square().mean()
++                for name, term in zip(('body_loss_weight', 'excess_loss_weight', 'gate_loss_weight'), terms):
++                    self.assertEqual(getattr(config, name), 0 if name in disabled else 1)
++                    if name not in disabled:
++                        expected = expected + term
++                torch.testing.assert_close(loss, expected)
++                loss.backward()
++                for name, tensor in zip(('body_loss_weight', 'excess_loss_weight', 'gate_loss_weight'),
++                                        (output.body, output.excess, output.gate_logits)):
++                    if tensor is None:
++                        continue
++                    norm = float(tensor.grad.abs().sum()) if tensor.grad is not None else 0.
++                    self.assertEqual(norm == 0, name in disabled)
++                self.assertGreater(float(output.prediction.grad.abs().sum()), 0)
++
++    def test_fixed_gate_model_and_loss_settings_must_agree(self):
++        model = build_model(ModelConfig(3, 4, hidden_channels=16, node_read_heads=2, time_read_heads=2,
++                                        peak_threshold_norm=[1.] * 4, peak_prior=.2, dual_ablation='fixed_gate'))
++        batch = graph_batch()
++        model.eval()
++        output = model(batch)
++        del batch.y
++        torch.testing.assert_close(output.prediction, model(batch).prediction)
++        stats = dict(y_mean=torch.zeros(4), y_std=torch.ones(4))
++        with self.assertRaisesRegex(ValueError, 'same fixed_gate'):
++            ForecastLoss(LossConfig(), stats, 1., 1.)(output, output.prediction, torch.zeros(2, 4))
++        restored = build_model(ModelConfig(**asdict(ModelConfig(3, 4, hidden_channels=16,
++            node_read_heads=2, time_read_heads=2, peak_threshold_norm=[1.] * 4,
++            peak_prior=.2, dual_ablation='fixed_gate')))).eval()
++        restored.load_state_dict(model.state_dict(), strict=True)
++        torch.testing.assert_close(output.prediction, restored(batch).prediction, rtol=0, atol=0)
++
++    def test_single_and_baseline_reject_ablation_and_invalid_percentiles(self):
++        for args in (['--model', 'baseline', '--dual_ablation', 'fixed_gate'],
++                     ['--model', 'perceiver3', '--head_type', 'single', '--dual_ablation', 'no_gate_bce'],
++                     *(['--exceedance_percentile', value] for value in ('0', '100', 'nan', 'inf'))):
++            with self.subTest(args=args), contextlib.redirect_stderr(io.StringIO()), self.assertRaises(SystemExit):
++                train.parse_args(args)
++
++    def test_ablation_profiles_reach_cli_and_keep_the_matched_protocol(self):
++        root = Path(__file__).resolve().parents[1]
++        modes = set()
++        full = train.parse_args(dry_commands(root / 'configs/train_config_NCEP_Battery_Stable_Dual.sh')[0])
++        for path in sorted((root / 'configs/dual_ablations').glob('*.sh')):
++            args = train.parse_args(dry_commands(path)[0])
++            modes.add(args.dual_ablation)
++            for key in ('history_hours', 'lr', 'batch_size', 'grad_accum_steps', 'epochs',
++                        'encoder_type', 'temporal_block', 'exceedance_percentile', 'tail_frac', 'seed'):
++                self.assertEqual(getattr(full, key), getattr(args, key), key)
++            for key in DUAL_ABLATIONS[args.dual_ablation]:
++                self.assertEqual(getattr(args, key), 0)
++        self.assertEqual(modes, set(DUAL_ABLATIONS) - {'none'})
++
++    def test_every_mode_trains_reloads_and_exports_aligned_physical_diagnostics(self):
++        with tempfile.TemporaryDirectory() as temporary:
++            root = Path(temporary)
++            torch.manual_seed(83)
++            graphs, stations = make_fixture(root)
++            store = ForcingGraphStore(graphs, 'Battery')
++            reference = fit_loss_thresholds(store, store.split()['train'], tail_frac=.4, exceedance_percentile=75)
++            for mode in DUAL_ABLATIONS:
++                with self.subTest(mode=mode):
++                    output = root / mode
++                    with contextlib.redirect_stdout(io.StringIO()):
++                        train.main(['--root_dir', str(graphs), '--station', 'Battery',
++                                    '--station_json_dir', str(stations), '--output_dir', str(output),
++                                    '--model', 'perceiver3', '--head_type', 'dual', '--dual_ablation', mode,
++                                    '--exceedance_percentile', '75', '--tail_frac', '.4', '--loss_mode', 'mse_tail',
++                                    '--epochs', '1', '--warmup_epochs', '0', '--device', 'cpu', '--num_workers', '0',
++                                    '--batch_size', '4', '--hidden_channels', '16', '--history_hours', '12'])
++                    checkpoint_path = next(output.glob('best_*.pth'))
++                    checkpoint = torch.load(checkpoint_path, weights_only=False)
++                    meta = checkpoint['dual_metadata']
++                    self.assertEqual(meta['tau_phys'], reference['tau_phys'])
++                    self.assertEqual(meta['event_prior'], reference['event_prior'])
++                    self.assertEqual(checkpoint['model_config']['peak_prior'], reference['event_prior'])
++                    self.assertEqual(checkpoint['loss_thresholds'], reference)
++                    self.assertEqual(checkpoint['model_config']['dual_ablation'], mode)
++                    logs = [json.loads(line) for line in next(output.glob('metrics_*.jsonl')).read_text().splitlines()]
++                    self.assertEqual(set(logs[0]), {'epoch', 'train', 'val'})
++                    for diagnostics in (False, True):
++                        destination = output / ('diagnostics' if diagnostics else 'plain')
++                        with contextlib.redirect_stdout(io.StringIO()):
++                            infer.main(['--ckpt', str(checkpoint_path), '--root_dir', str(graphs),
++                                        '--out_dir', str(destination), '--device', 'cpu', '--num_workers', '0',
++                                        '--batch_size', '2', '--save_npz',
++                                        *(['--dual_diagnostics'] if diagnostics else [])])
++                        if not diagnostics:
++                            self.assertFalse((destination / 'dual_diagnostics.npz').exists())
++                    with np.load(output / 'diagnostics/dual_diagnostics.npz') as arrays:
++                        np.testing.assert_allclose(arrays['y_pred'], arrays['body_phys'] + arrays['contribution_phys'],
++                                                   rtol=1e-5, atol=1e-6)
++                        np.testing.assert_array_equal(arrays['event'], (arrays['y_true'].astype(float) > meta['tau_phys']).any(axis=1))
++                        np.testing.assert_array_equal(arrays['tags'], checkpoint['split_tags']['test'])
++                        if mode == 'fixed_gate':
++                            np.testing.assert_allclose(arrays['gate_probability'], meta['event_prior'])
++                        with np.load(output / 'plain/predictions.npz') as plain:
++                            np.testing.assert_array_equal(arrays['y_pred'], plain['y_pred'])
++                        report = json.loads((output / 'diagnostics/dual_diagnostics.json').read_text())
++                        self.assertAlmostEqual(report['overall']['brier'],
++                                               float(np.mean((arrays['gate_probability'].astype(float) - arrays['event']) ** 2)))
++                    if mode == 'fixed_gate':
++                        repo = Path(__file__).resolve().parents[1]
++                        for launcher in ('infer.sh', 'infer_multi.sh'):
++                            destination = output / launcher
++                            settings = dict(ROOT_DIR=graphs, STATION_JSON_DIR=stations, STATION='Battery',
++                                            CKPT_PATH=checkpoint_path, PYTHON_BIN=sys.executable,
++                                            INFERENCE_RESULTS_ROOT=destination, MODEL='perceiver3', HEAD_TYPE='dual',
++                                            ENCODER_TYPE='GraphSAGE', TEMPORAL_BLOCK='Transformer', HISTORY_HOURS=12,
++                                            USE_TMUX=0, DO_CONDA=0, TORCH_GPU_PROBE=0, NUM_WORKERS=0,
++                                            BATCH_SIZE=2, DUAL_DIAGNOSTICS=1)
++                            config_path = output / (launcher + '.config')
++                            config_path.write_text(''.join(f'{key}={shlex.quote(str(value))}\n' for key, value in settings.items())
++                                                   + 'RUNS=(' + shlex.quote('Fixture|' + str(graphs)) + ')\n')
++                            result = subprocess.run(['bash', launcher, str(config_path)], cwd=repo,
++                                env=dict(os.environ, CUDA_VISIBLE_DEVICES=''), capture_output=True, text=True)
++                            self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
++                            self.assertEqual(len(list(destination.rglob('dual_diagnostics.npz'))), 1)
++                            snapshot = next(destination.rglob('infer_config_used.sh')).read_text()
++                            self.assertIn('DUAL_DIAGNOSTICS=1', snapshot)
++
++
++class DualDiagnosticMetricsTests(unittest.TestCase):
++    def arrays(self, labels, probabilities):
++        truth = np.asarray(labels, dtype=float)[:, None]
++        body = np.minimum(truth, .5)
++        excess = np.maximum(truth - .5, 0)
++        return dict(y_true=truth, y_pred=truth, gate_probability=np.asarray(probabilities),
++                    body_phys=body, excess_phys=excess)
++
++    def test_known_brier_pr_ties_and_reliability(self):
++        arrays = self.arrays([1, 0, 1, 0], [.9, .8, .8, .1])
++        result = summarize_dual(arrays, .5, bins=2)
++        self.assertAlmostEqual(result['brier'], (.01 + .64 + .04 + .01) / 4)
++        self.assertAlmostEqual(result['average_precision'], 5 / 6)
++        self.assertAlmostEqual(result['pr_auc_trapezoid'], 11 / 12)
++        self.assertEqual([item['count'] for item in result['reliability']], [1, 3])
++        self.assertEqual(result['reliability'][1]['event_rate'], 2 / 3)
++        self.assertEqual(result['excess_event_rmse'], 0.)
++        order = [2, 3, 0, 1]
++        shuffled = summarize_dual({key: value[order] for key, value in arrays.items()}, .5, bins=2)
++        self.assertAlmostEqual(result['brier'], shuffled['brier'])
++        for key in ('average_precision', 'pr_auc_trapezoid', 'precision', 'recall'):
++            self.assertEqual(result[key], shuffled[key])
++
++    def test_no_events_all_events_empty_sets_and_probability_endpoints(self):
++        for labels, probabilities in (([0, 0], [0., 1.]), ([1, 1], [0., 1.]), ([], [])):
++            result = summarize_dual(self.arrays(labels, probabilities), .5)
++            json.dumps(result, allow_nan=False)
++            self.assertEqual(sum(item['count'] for item in result['reliability']), len(labels))
++            if not any(labels):
++                self.assertIsNone(result['average_precision'])
++                self.assertIsNone(result['event_window_rmse'])
++            else:
++                self.assertEqual(result['average_precision'], 1.)
++        for probability in (-.1, 1.1, float('nan')):
++            with self.assertRaises(ValueError):
++                summarize_dual(self.arrays([1], [probability]), .5)
 --- original/tests/test_dual_loss.py
 +++ StormSurge/tests/test_dual_loss.py
 @@ -0,0 +1,158 @@
@@ -6933,7 +7803,7 @@
 +                self.assertEqual(settings["loss_mode"], "mse")
 --- original/tests/test_forcing.py
 +++ StormSurge/tests/test_forcing.py
-@@ -0,0 +1,23 @@
+@@ -0,0 +1,24 @@
 +"""CMIP6 consolidation preserves spatial order and pressure anomaly math."""
 +
 +import unittest
@@ -6947,12 +7817,13 @@
 +        lon = np.array([-120., -100., -80., -40., -20.])
 +        raw = np.arange(4 * 5 * 5 * 3, dtype=float).reshape(4, 5, 5, 3)
 +        original = raw.copy()
-+        actual, mean, local_lat, local_lon = prepare_forcing(raw.reshape(-1, 3), lat, lon)
++        actual, local_lat, local_lon = prepare_forcing(raw.reshape(-1, 3), lat, lon)
 +        expected = raw[:, 1:4, 1:4].copy()
 +        pressure = expected[..., 2].mean(axis=(1, 2))
 +        expected[..., 2] -= pressure[:, None, None]
 +        np.testing.assert_array_equal(actual[..., :3], expected)
-+        np.testing.assert_array_equal(mean, pressure)
++        np.testing.assert_array_equal(local_lat, lat[1:4])
++        np.testing.assert_array_equal(local_lon, lon[1:4])
 +        np.testing.assert_array_equal(actual[0, ..., 3], np.broadcast_to(lon[1:4], (3, 3)))
 +        np.testing.assert_array_equal(actual[0, ..., 4], np.broadcast_to(lat[1:4, None], (3, 3)))
 +        np.testing.assert_array_equal(raw, original)
@@ -7876,7 +8747,7 @@
 +                        reference.step()
 --- original/tests/test_preprocessing_pipeline.py
 +++ StormSurge/tests/test_preprocessing_pipeline.py
-@@ -0,0 +1,111 @@
+@@ -0,0 +1,114 @@
 +"""Small real NetCDF/CSV inputs exercise the maintained preprocessing entrypoints."""
 +
 +from pathlib import Path
@@ -7906,14 +8777,16 @@
 +                data.createVariable('lon', 'f8', ('lon',))[:] = [-100, -80, -40]
 +            raw = np.arange(4 * 2 * 3 * 3).reshape(-1, 3)
 +            np.savetxt(root / 'fort_2000.22', raw)
-+            expected, pressure, _, _ = forcing_cmip6.prepare_forcing(raw, np.array([50, 10]), np.array([-100, -80, -40]))
++            expected, _, _ = forcing_cmip6.prepare_forcing(raw, np.array([50, 10]), np.array([-100, -80, -40]))
 +            for tag in ('AWI', 'CNRM', 'EC_EARTH', 'MPI', 'MRI'):
 +                out = root / tag
 +                forcing_cmip6.main(['--model', tag, '--forcing_dir', str(root), '--grid_netcdf', str(grid),
 +                                   '--out_dir', str(out), '--first_year', '2000', '--last_year', '2000'])
 +                with np.load(out / 'forcing_local_2000.npz') as arrays:
 +                    np.testing.assert_array_equal(arrays['forcing'], expected[::2])
-+                    np.testing.assert_array_equal(arrays['p_mean_t'], pressure[::2])
++                    self.assertEqual(set(arrays.files), {'forcing', 'year', 'dt_hours', 'LAT_MIN', 'LAT_MAX',
++                                                        'LON_MIN', 'LON_MAX', 'lat_local', 'lon_local',
++                                                        'lat_forcing', 'lon_forcing'})
 +                    self.assertEqual(int(arrays['dt_hours']), 6)
 +                np.testing.assert_array_equal(np.load(out / 'forcing_local_2000.npy'), expected[::2])
 +                np.testing.assert_array_equal(np.load(out / 'forcing_local_3h_2000.npy'), expected)
@@ -7984,25 +8857,34 @@
 +            expected[..., 2] -= pressure[:, None, None]
 +            with np.load(root / 'out/forcing_local_2000.npz') as arrays:
 +                np.testing.assert_array_equal(arrays['forcing'][..., :3], expected)
-+                np.testing.assert_array_equal(arrays['p_mean_t'], pressure)
++                self.assertEqual(set(arrays.files), {'forcing', 'year', 'dt_hours', 'LAT_MIN', 'LAT_MAX',
++                                                    'LON_MIN', 'LON_MAX', 'lat_local', 'lon_local'})
 +                self.assertEqual(int(arrays['dt_hours']), 6)
 +            with np.load(root / 'out/forcing_local_2000.npz') as arrays:
 +                np.testing.assert_array_equal(np.load(root / 'out/forcing_local_2000.npy'), arrays['forcing'])
 --- original/tests/test_time_alignment.py
 +++ StormSurge/tests/test_time_alignment.py
-@@ -96,6 +96,27 @@
+@@ -38,7 +38,6 @@
+             year=2000,
+             station="Battery",
+             forcing=np.zeros((32, 2, 2, 5), dtype=np.float32),
+-            p_mean_t=None,
+             t_forcing=build_forcing_time_index(2000, 32),
+             edge_index=torch.empty((2, 0), dtype=torch.long),
+             H=2,
+@@ -96,6 +95,30 @@
          self.assertIn("legacy assumption", output.getvalue())
          self.assertEqual(len(list((self.root / "graphs").glob("*.pt"))), 1)
  
-+    def test_fixed_march15_path_preserves_history_pressure_and_output_names(self):
++    def test_fixed_march15_path_preserves_history_and_output_names(self):
 +        times = pd.date_range('2000-10-25 01:00', '2001-03-16 23:00', freq='h')
 +        frame = pd.DataFrame(dict(time=times, nc=np.arange(len(times)), nc_tide=np.zeros(len(times))))
 +        frame.to_csv(self.csv_path, index=False)
 +        forcing_times = pd.date_range('2000-10-25', '2001-03-16 18:00', freq='6h')
-+        pressure = np.arange(len(forcing_times), dtype=np.float32)
++        forcing = np.arange(len(forcing_times) * 2 * 2 * 5, dtype=np.float32).reshape(-1, 2, 2, 5)
 +        with redirect_stdout(StringIO()):
-+            process_one_pair(year=2000, station='Battery', forcing=np.zeros((len(forcing_times), 2, 2, 5), np.float32),
-+                             p_mean_t=pressure, t_forcing=build_forcing_time_index(2000, len(forcing_times)),
++            process_one_pair(year=2000, station='Battery', forcing=forcing,
++                             t_forcing=build_forcing_time_index(2000, len(forcing_times)),
 +                             edge_index=torch.empty((2, 0), dtype=torch.long), H=2, W=2, version='fixed',
 +                             out_root_fixed=self.root, out_root_peryear=self.root / 'unused', csv_dir=self.root)
 +        stem = '2000_2001_Battery_fixed315_hist48'
@@ -8011,7 +8893,10 @@
 +        self.assertEqual(graphs[0].center_time, '2000-11-01 00:00:00')
 +        self.assertEqual(graphs[-1].center_time, '2001-03-15 18:00:00')
 +        self.assertEqual(tuple(graphs[0].x_hist.shape), (9, 4, 5))
-+        np.testing.assert_array_equal(graphs[0].p_mean_hist, pressure[20:29])
++        np.testing.assert_array_equal(graphs[0].x_hist, forcing[20:29].reshape(9, 4, 5))
++        self.assertEqual(set(graphs[0].keys()), {'x', 'x_hist', 'edge_index', 'y', 'nc', 'nc_tide',
++                                                'time_index', 'hour_start', 'max_history_hours',
++                                                'grid_H', 'grid_W', 'center_time'})
 +        expected = frame.loc[frame.time.between('2001-03-15 18:00', '2001-03-15 23:00'), 'nc'].to_numpy(np.float32)
 +        np.testing.assert_array_equal(graphs[-1].y, expected)
 +
@@ -8119,7 +9004,7 @@
 +            self.assertEqual(accumulated.calls, math.ceil(length / 2))
 --- original/train.py
 +++ StormSurge/train.py
-@@ -1,1522 +1,204 @@
+@@ -1,1522 +1,213 @@
  #!/usr/bin/env python3
 -"""Storm Surge Emulator training endpoint.
 -
@@ -8549,6 +9434,7 @@
 -        world_size = int(os.environ.get("WORLD_SIZE", os.environ.get("SLURM_NTASKS", "1")))
 +from emulator.common import configure_runtime
 +from emulator.common.runtime import log_message
++from emulator.common.dual import initial_gate_prior
 +from emulator.data import (ForcingGraphStore, ForcingGraphView, build_loader,
 +                           fit_loss_thresholds, fit_statistics, station_features_from_json)
 +from emulator.models import ModelConfig, build_model
@@ -8610,19 +9496,25 @@
 +    if not splits["train"] or not splits["val"]:
 +        raise ValueError("Training needs nonempty train and validation year groups.")
 +    history_steps = args.history_hours // 6
-+    train_data = ForcingGraphView(store, splits["train"], history_steps, args.use_pmean)
-+    val_data = ForcingGraphView(store, splits["val"], history_steps, args.use_pmean)
++    train_data = ForcingGraphView(store, splits["train"], history_steps)
++    val_data = ForcingGraphView(store, splits["val"], history_steps)
 +    # Z-score moments are reduced across ranks on the training device, as before.
 +    stats_cpu = fit_statistics(store, splits["train"], args.x_norm, args.x_p_lo, args.x_p_hi,
-+                               args.x_nodes_per_graph, args.seed, args.use_pmean, history_steps,
-+                               device=device)
++                               args.x_nodes_per_graph, args.seed, device=device)
 +    thresholds = [None]
 +    if rank == 0:
 +        thresholds[0] = fit_loss_thresholds(store, splits["train"], args.tail_frac,
-+                                            args.wmse_q, bool(args.wmse_use_abs))
++                                            args.wmse_q, bool(args.wmse_use_abs), args.exceedance_percentile)
 +    if distributed:
 +        dist.broadcast_object_list(thresholds, src=0)
-+    peak_threshold, wmse_threshold = thresholds[0]
++    fitted = thresholds[0]
++    dual_metadata = (dict(tau_phys=fitted["tau_phys"], event_prior=fitted["event_prior"],
++                          gate_init_prior=initial_gate_prior(fitted["event_prior"])
++                          if args.dual_ablation != "fixed_gate" else fitted["event_prior"],
++                          event_count=fitted["event_count"], train_windows=fitted["train_windows"],
++                          exceedance_percentile=args.exceedance_percentile, dual_ablation=args.dual_ablation,
++                          event_definition="max_h(Y_h) > tau_phys", fitted_on="train")
++                     if args.head_type == "dual" else None)
 +    stats = {key: value.to(device) for key, value in stats_cpu.items()}
 +    station_feat = None
 +    if args.model == "perceiver3" and args.use_station_meta and args.station:
@@ -8635,14 +9527,14 @@
 +                        temporal_layers=args.transformer_layers, temporal_ff_mult=args.transformer_ff_mult,
 +                        temporal_dropout=args.transformer_dropout, history_steps=history_steps,
 +                        station_feat_dim=station_feat.numel() if station_feat is not None else 0,
-+                        peak_threshold_norm=((peak_threshold - stats_cpu["y_mean"]) / stats_cpu["y_std"]).tolist()
-+                        if args.head_type == "dual" else None, peak_prior=args.tail_frac)
++                        peak_threshold_norm=((fitted["tau_phys"] - stats_cpu["y_mean"]) / stats_cpu["y_std"]).tolist()
++                        if args.head_type == "dual" else None, peak_prior=fitted["event_prior"])
 +    model_config = ModelConfig(**model_values)
 +    model = build_model(model_config).to(device)
 +    if distributed:
 +        model = DistributedDataParallel(model, device_ids=[device.index] if device.type == "cuda" else None)
 +    loss_config = LossConfig(**{field.name: getattr(args, field.name) for field in fields(LossConfig)})
-+    criterion = ForecastLoss(loss_config, stats, peak_threshold, wmse_threshold).to(device)
++    criterion = ForecastLoss(loss_config, stats, fitted["tail_threshold"], fitted["wmse_threshold"]).to(device)
 +    optimizer = torch.optim.Adam(model.parameters(), lr=args.lr, weight_decay=1e-5)
 +    def lr_multiplier(epoch):
 +        if epoch < args.warmup_epochs:
@@ -9684,7 +10576,8 @@
 +                              "normalization": stats_cpu, "station_feat": station_feat.cpu() if station_feat is not None else None,
 +                              "station": args.station, "split_config": split_config,
 +                              "split_tags": {key: [store.graph_tags[i] for i in indices] for key, indices in splits.items()},
-+                              "training_config": vars(args), "epoch": epoch, "val": validation.metrics}
++                              "training_config": vars(args), "loss_thresholds": fitted, "dual_metadata": dual_metadata,
++                              "epoch": epoch, "val": validation.metrics}
 +                torch.save(checkpoint, checkpoint_path)
 +    if distributed:
          dist.barrier()
@@ -9742,12 +10635,13 @@
 +            test_indices = list(range(len(test_store.graphs)))
 +        else:
 +            test_store, test_indices = store, splits["test"]
-+        test_data = ForcingGraphView(test_store, test_indices, history_steps, args.use_pmean)
++        test_data = ForcingGraphView(test_store, test_indices, history_steps)
 +        result = run_epoch(network, build_loader(test_data, None, **loader_options), device, stats,
 +                           station_feat=station_feat, use_amp=use_amp, amp_dtype=amp_dtype,
 +                           x_clip=args.x_clip, save_predictions=True)
 +        np.savez_compressed(output_dir / f"test_preds_{stem}.npz", **result.predictions)
 +        summary = {"best_epoch": best_epoch, "best_val_rmse": best_rmse, "training_seconds": elapsed,
++                   "loss_thresholds": fitted, "dual_metadata": dual_metadata,
 +                   "test": result.metrics, "test_scope": "external_all_years" if args.test_root_dir else "held_out_years"}
 +        if device.type == "cuda":
 +            torch.cuda.synchronize(device)
@@ -9825,7 +10719,7 @@
 +    main()
 --- original/train.sh
 +++ StormSurge/train.sh
-@@ -126,7 +126,29 @@
+@@ -126,7 +126,31 @@
  
  # Scheduler knobs
  : "${SCHEDULER:=cosine}"           # cosine | rop
@@ -9842,6 +10736,8 @@
 +: "${DETERMINISTIC:=0}"
 +: "${DUAL_MODE:=exceedance}"
 +: "${DUAL_LOSS:=1}"
++: "${EXCEEDANCE_PERCENTILE:=95}"
++: "${DUAL_ABLATION:=none}"
 +: "${BODY_LOSS_WEIGHT:=1}"
 +: "${EXCESS_LOSS_WEIGHT:=1}"
 +: "${GATE_LOSS_WEIGHT:=1}"
@@ -9855,8 +10751,15 @@
  
  # OOD knobs
  : "${X_NORM:=robust}"              # zscore | robust | mag
-@@ -170,9 +192,6 @@
+@@ -163,16 +187,8 @@
+ : "${CONDA_SH:=/software/u22/anaconda/python3.9/etc/profile.d/conda.sh}"
+ : "${CONDA_ENV:=torchpyg-cu124}"
  
+-# p_mean ablation knobs (optional)
+-: "${USE_PMEAN:=0}"
+-: "${PMEAN_DIM:=32}"
+-: "${PERCEIVER_PMEAN_MODE:=tokens}"
+-
  # Perceiver3 dual-head knobs (ignored when HEAD_TYPE=single)
  : "${GATE_MODE:=window}"
 -: "${GATE_BIAS_INIT:=-2.0}"
@@ -9865,7 +10768,7 @@
  
  : "${NODE_READ_HEADS:=8}"
  : "${TIME_READ_HEADS:=8}"
-@@ -183,6 +202,12 @@
+@@ -183,6 +199,12 @@
  
  # Unified training-artifact root. Relative paths are resolved from WORKDIR.
  : "${ALL_RESULTS_ROOT:=}"
@@ -9878,7 +10781,7 @@
  
  # =========================
  # (Optional) Conda activation
-@@ -205,7 +230,9 @@
+@@ -205,7 +227,9 @@
    fi
  fi
  
@@ -9889,7 +10792,7 @@
    PYTHON_BIN="${CONDA_PREFIX}/bin/python"
  else
    PYTHON_BIN="$(command -v python)"
-@@ -322,7 +349,7 @@
+@@ -322,7 +346,7 @@
    local output_path="$1"
    local name
    local config_vars=(
@@ -9898,7 +10801,7 @@
      CNN_INTERMEDIATE_CHANNEL
      TEMPORAL_BLOCK HEAD_TYPE STATION_JSON_DIR USE_SITE_ELEVATION USE_BATHYMETRY
      BATCH_SIZE GRAD_ACCUM_STEPS
-@@ -330,13 +357,15 @@
+@@ -330,13 +354,16 @@
      VAL_RATIO SHUFFLE_YEARS FUTURE_ONLY FUTURE_YEAR_THRESHOLD LR_LIST
      HISTORY_HOURS_LIST LOSS_MODE_LIST TAIL_FRAC TAIL_LAMBDA_LIST WMSE_Q_LIST
      WMSE_ALPHA WMSE_S WMSE_USE_ABS SLOPE_LAMBDA_LIST SLOPE_MASK_S_LIST
@@ -9906,18 +10809,20 @@
 +    SLOPE_ROBUST SLOPE_CHARB_EPS SLOPE_HUBER_DELTA SCHEDULER ROP_METRIC ROP_FACTOR ROP_PATIENCE
 +    ROP_THRESHOLD ROP_COOLDOWN ROP_MIN_LR
 +    WARMUP_EPOCHS WARMUP_START_FACTOR MIN_LR STABLE_ARCH MAX_GRAD_NORM
-+    DETERMINISTIC DUAL_MODE DUAL_LOSS BODY_LOSS_WEIGHT EXCESS_LOSS_WEIGHT GATE_LOSS_WEIGHT
++    DETERMINISTIC DUAL_MODE DUAL_LOSS EXCEEDANCE_PERCENTILE DUAL_ABLATION
++    BODY_LOSS_WEIGHT EXCESS_LOSS_WEIGHT GATE_LOSS_WEIGHT
      X_NORM X_P_LO X_P_HI X_NODES_PER_GRAPH X_CLIP X_AUG X_AUG_PROB
      X_AUG_SCALE X_AUG_BIAS DISABLE_OOD USE_AMP AMP_DTYPE USE_TF32
      TORCH_THREADS NUM_WORKERS PIN_MEMORY PERSISTENT_WORKERS PREFETCH_FACTOR
-     MP_CONTEXT USE_TMUX DO_CONDA CONDA_MODULE CONDA_SH CONDA_ENV USE_PMEAN
+-    MP_CONTEXT USE_TMUX DO_CONDA CONDA_MODULE CONDA_SH CONDA_ENV USE_PMEAN
 -    PMEAN_DIM PERCEIVER_PMEAN_MODE GATE_MODE GATE_BIAS_INIT TAIL_TANH_CLIP
 -    ALPHA_INIT_LOGIT NODE_READ_HEADS TIME_READ_HEADS TRANSFORMER_LAYERS
-+    PMEAN_DIM PERCEIVER_PMEAN_MODE GATE_MODE NODE_READ_HEADS TIME_READ_HEADS TRANSFORMER_LAYERS
++    MP_CONTEXT USE_TMUX DO_CONDA CONDA_MODULE CONDA_SH CONDA_ENV
++    GATE_MODE NODE_READ_HEADS TIME_READ_HEADS TRANSFORMER_LAYERS
      TRANSFORMER_FF_MULT TRANSFORMER_DROPOUT MAX_TIME_STEPS ALL_RESULTS_ROOT
    )
  
-@@ -356,7 +385,7 @@
+@@ -356,7 +383,7 @@
  # When tmux wrapping is enabled, defer creation to the inner process so one
  # submitted job produces exactly one launcher directory.  Direct/no-tmux runs
  # and tmux-inner runs create it here as usual.
@@ -9926,15 +10831,41 @@
    mkdir -p "${RUN_DIR}"
    write_resolved_config "${RUN_DIR}/config_used.sh"
  fi
-@@ -430,6 +459,7 @@
+@@ -392,7 +419,6 @@
+ echo "num_gpus:      ${num_gpus}"
+ echo "Scheduler:     ${SCHEDULER} (ROP_METRIC=${ROP_METRIC})"
+ echo "DISABLE_OOD:   ${DISABLE_OOD} (x_norm=${X_NORM}, x_clip=${X_CLIP}, x_aug=${X_AUG})"
+-echo "p_mean:        USE_PMEAN=${USE_PMEAN} (PMEAN_DIM=${PMEAN_DIM}, PERCEIVER_PMEAN_MODE=${PERCEIVER_PMEAN_MODE})"
+ echo "DL:            workers=${NUM_WORKERS} pin=${PIN_MEMORY} pers=${PERSISTENT_WORKERS} prefetch=${PREFETCH_FACTOR} mp=${MP_CONTEXT}"
+ echo "========================================="
+ 
+@@ -430,8 +456,9 @@
    baseline) EXTRA_TAG="" ;;
    perceiver3)
      EXTRA_TAG="_nrh${NODE_READ_HEADS}_trh${TIME_READ_HEADS}_L${TRANSFORMER_LAYERS}_ff${TRANSFORMER_FF_MULT}_td${TRANSFORMER_DROPOUT}"
 +    EXTRA_TAG+="_stable${STABLE_ARCH}v3_${DUAL_MODE}"
      if [[ "${HEAD_TYPE}" == "dual" ]]; then
-       EXTRA_TAG+="_gm${GATE_MODE}"
+-      EXTRA_TAG+="_gm${GATE_MODE}"
++      EXTRA_TAG+="_gm${GATE_MODE}_eq${EXCEEDANCE_PERCENTILE}_da${DUAL_ABLATION}"
      else
-@@ -476,6 +506,7 @@
+       EXTRA_TAG+="_hsingle"
+     fi
+@@ -439,14 +466,6 @@
+   *) echo "[FATAL] Unknown MODEL='${MODEL}'. Use baseline|perceiver3"; exit 1 ;;
+ esac
+ 
+-PMEAN_TAG=""
+-if [[ "${USE_PMEAN}" == "1" ]]; then
+-  PMEAN_TAG="_pmean${PMEAN_DIM}"
+-  if [[ "${MODEL}" == "perceiver3" ]]; then
+-    PMEAN_TAG+="_${PERCEIVER_PMEAN_MODE}"
+-  fi
+-fi
+-
+ SPLIT_TAG=""
+ if [[ "${SHUFFLE_YEARS}" == "1" ]]; then
+   SPLIT_TAG="_yshuffle"
+@@ -476,6 +495,7 @@
  # =========================
  # Sweep loops
  # =========================
@@ -9942,7 +10873,7 @@
  for LOSS_MODE in "${LOSS_MODE_LIST[@]}"; do
    for LR_CUR in "${LR_LIST[@]}"; do
      for H in "${HISTORY_HOURS_LIST[@]}"; do
-@@ -528,14 +559,25 @@
+@@ -528,19 +548,32 @@
                  LOSS_TAG2+="_sl${SLOPE_LAMBDA}_sms${SLOPE_MASK_S}_${SLOPE_ROBUST}"
                fi
  
@@ -9958,9 +10889,10 @@
                  SCHED_ARGS+=(--rop_metric "${ROP_METRIC}")
                fi
  
-               RUN_TAG="${STATION:-ALL}_${TRAIN_DATA_TAG}to${TEST_DATA_TAG}_${MODEL}${ENCODER_TAG}${TEMPORAL_TAG}${ACCUM_TAG}${EXTRA_TAG}${PMEAN_TAG}${SPLIT_TAG}${LOSS_TAG2}_hist${H}h_hid${HIDDEN_CHANNELS}_L${NUM_LAYERS}_bs${BATCH_SIZE}_lr${LR_CUR}_ep${EPOCHS}_sch${SCHEDULER}_xn${X_NORM}"
+-              RUN_TAG="${STATION:-ALL}_${TRAIN_DATA_TAG}to${TEST_DATA_TAG}_${MODEL}${ENCODER_TAG}${TEMPORAL_TAG}${ACCUM_TAG}${EXTRA_TAG}${PMEAN_TAG}${SPLIT_TAG}${LOSS_TAG2}_hist${H}h_hid${HIDDEN_CHANNELS}_L${NUM_LAYERS}_bs${BATCH_SIZE}_lr${LR_CUR}_ep${EPOCHS}_sch${SCHEDULER}_xn${X_NORM}"
 -              LOG_FILE="${RUN_DIR}/train_${RUN_TAG}.log"
 -              : > "${LOG_FILE}"
++              RUN_TAG="${STATION:-ALL}_${TRAIN_DATA_TAG}to${TEST_DATA_TAG}_${MODEL}${ENCODER_TAG}${TEMPORAL_TAG}${ACCUM_TAG}${EXTRA_TAG}${SPLIT_TAG}${LOSS_TAG2}_hist${H}h_hid${HIDDEN_CHANNELS}_L${NUM_LAYERS}_bs${BATCH_SIZE}_lr${LR_CUR}_ep${EPOCHS}_sch${SCHEDULER}_xn${X_NORM}"
 +              LOG_TAG="${RUN_TAG}"
 +              if (( ${#LOG_TAG} > 240 )); then
 +                LOG_HASH="$(printf '%s' "${RUN_TAG}" | sha256sum)"
@@ -9971,7 +10903,14 @@
  
                BASE_CMD=(
                  "${TRAIN_PY}"
-@@ -550,6 +592,9 @@
+                 --root_dir "${ROOT_DIR}"
+                 --model "${MODEL}"
++                --exceedance_percentile "${EXCEEDANCE_PERCENTILE}"
++                --dual_ablation "${DUAL_ABLATION}"
+                 --encoder_type "${ENCODER_TYPE}"
+                 --cnn_intermediate_channel "${CNN_INTERMEDIATE_CHANNEL}"
+                 --batch_size "${BATCH_SIZE}"
+@@ -550,6 +583,9 @@
                  --num_layers "${NUM_LAYERS}"
                  --dropout "${DROPOUT}"
                  --head_dropout "${HEAD_DROPOUT}"
@@ -9981,7 +10920,22 @@
                  --history_hours "${H}"
                  --seed "${SEED}"
                  --train_ratio "${TRAIN_RATIO}"
-@@ -608,21 +653,33 @@
+@@ -583,14 +619,6 @@
+                 BASE_CMD+=(--grad_accum_steps "${GRAD_ACCUM_STEPS}")
+               fi
+ 
+-              # p_mean injection (ablation)
+-              if [[ "${USE_PMEAN}" == "1" ]]; then
+-                BASE_CMD+=(--use_pmean --pmean_dim "${PMEAN_DIM}")
+-                if [[ "${MODEL}" == "perceiver3" ]]; then
+-                  BASE_CMD+=(--perceiver_pmean_mode "${PERCEIVER_PMEAN_MODE}")
+-                fi
+-              fi
+-
+               # Speed flags
+               if [[ "${USE_AMP}" -eq 1 ]]; then
+                 BASE_CMD+=(--amp --amp_dtype "${AMP_DTYPE}")
+@@ -608,21 +636,33 @@
                # Model-specific knobs
                if [[ "${MODEL}" == "perceiver3" ]]; then
                  BASE_CMD+=(--head_type "${HEAD_TYPE}"
@@ -10020,7 +10974,7 @@
  
                {
                  echo "-----------------------------------------"
-@@ -646,4 +703,6 @@
+@@ -646,4 +686,6 @@
    done
  done
  

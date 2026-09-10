@@ -21,12 +21,6 @@ SHUFFLE_YEARS=0
 FUTURE_ONLY=0
 FUTURE_YEAR_THRESHOLD=2030
 
-# NOTE: token-mode p_mean becomes [forcing T][p_mean T]; recurrent temporal
-# blocks therefore see length 2T. It stays disabled in all shipped configs.
-USE_PMEAN=0
-PMEAN_DIM=32
-PERCEIVER_PMEAN_MODE="tokens"
-
 LOSS_MODE_LIST=("mse")
 TAIL_FRAC="0.05"
 TAIL_LAMBDA_LIST=("0.1")
@@ -49,6 +43,8 @@ ROP_METRIC="val_rmse_phys"
 GATE_MODE="window"
 DUAL_MODE="exceedance"
 DUAL_LOSS=1
+EXCEEDANCE_PERCENTILE=95
+DUAL_ABLATION="none"
 STABLE_ARCH=1
 BODY_LOSS_WEIGHT=1
 EXCESS_LOSS_WEIGHT=1

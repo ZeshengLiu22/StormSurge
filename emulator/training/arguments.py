@@ -5,6 +5,7 @@ import math
 from pathlib import Path
 
 from emulator.common.cli import parse_bool_int, temporal_block_name
+from emulator.common.dual import DUAL_ABLATIONS
 from .losses import enforce_dual_loss
 
 
@@ -105,6 +106,8 @@ def parse_args(argv=None):
                         help="1: use |y| in weight; 0: use y directly.")
     parser.add_argument("--tail_frac", type=float, default=0.05,
                         help="Top fraction by GT peak (max over horizons) for tail auxiliary loss.")
+    parser.add_argument("--exceedance_percentile", type=float, default=95.0,
+                        help="TRAIN window-maximum percentile defining the dual event; independent of tail_frac.")
     parser.add_argument("--tail_lambda", type=float, default=0.10,
                         help="Weight for tail auxiliary loss. Start small: 0.05~0.2.")
     parser.add_argument("--slope_lambda", type=float, default=0.01,
@@ -155,28 +158,6 @@ def parse_args(argv=None):
         "--cnn_intermediate_channel", type=int, default=29,
         help="CNN channels before the final spatial layer; output remains hidden_channels.",
     )
-    parser.add_argument("--use_pmean", action="store_true", help="Enable the pressure-feature ablation.")
-    parser.add_argument(
-        "--pmean_dim",
-        type=int,
-        default=32,
-        help=(
-            "Embedding dimension used by the baseline's p_mean encoder when --use_pmean is enabled. "
-            "(For perceiver3, p_mean tokens are projected directly to hidden_channels.)"
-        ),
-    )
-    parser.add_argument(
-        "--perceiver_pmean_mode",
-        type=str,
-        default="tokens",
-        choices=["tokens", "global", "both"],
-        help=(
-            "When --model perceiver3 and --use_pmean is set: choose how p_mean_hist is injected. "
-            "tokens=append time-aligned p_mean tokens (Option 3); "
-            "global=encode p_mean_hist into a global vector and concatenate to the forecasting head (Option 1-style); "
-            "both=enable both tokens and global."
-        ),
-    )
     parser.add_argument(
         "--head_type",
         type=str.lower,
@@ -188,7 +169,9 @@ def parse_args(argv=None):
     parser.add_argument("--gate_mode", choices=["window"], default="window", help="Supervised event probability for the whole forecast window.")
     parser.add_argument("--dual_mode", choices=["exceedance"], default="exceedance", help="Current supervised dual head; single-head runs ignore this setting.")
     parser.add_argument("--dual_loss", type=parse_bool_int, choices=[0, 1], default=1,
-                        help="Body + excess + gate supervision. Mandatory for dual heads; 0 is corrected to 1 with a warning.")
+                        help="Branch supervision; required unless --dual_ablation explicitly removes it.")
+    parser.add_argument("--dual_ablation", choices=tuple(DUAL_ABLATIONS), default="none",
+                        help="Explicit mechanism experiment; none enforces full branch supervision.")
     parser.add_argument("--body_loss_weight", type=float, default=1.0)
     parser.add_argument("--excess_loss_weight", type=float, default=1.0)
     parser.add_argument("--gate_loss_weight", type=float, default=1.0)
@@ -244,7 +227,7 @@ def parse_args(argv=None):
         parser.error("Invalid learning-rate or warmup settings.")
     if args.warmup_epochs < 0:
         parser.error("--warmup_epochs must be nonnegative.")
-    if not 0 < args.tail_frac < 1 or not 0 <= args.wmse_q <= 100:
+    if not 0 < args.tail_frac < 1 or not 0 <= args.wmse_q <= 100 or not 0 < args.exceedance_percentile < 100:
         parser.error("Invalid TRAIN loss percentile settings.")
     for name in ("max_grad_norm", "body_loss_weight", "excess_loss_weight", "gate_loss_weight", "tail_lambda", "slope_lambda"):
         if not math.isfinite(getattr(args, name)) or getattr(args, name) < 0:
@@ -255,5 +238,7 @@ def parse_args(argv=None):
     if args.head_type == "dual":
         enforce_dual_loss(args)
     else:
+        if args.dual_ablation != "none":
+            parser.error("--dual_ablation requires --model perceiver3 --head_type dual.")
         args.dual_loss = 0
     return args

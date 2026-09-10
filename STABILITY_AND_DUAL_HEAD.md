@@ -21,11 +21,13 @@ v2 只实现当前结构。版本号分支、旧 bypass 原型、旧 residual du
 
 `--head_type dual` 只表示当前的 body/exceedance head，完整公式见 [DUAL_HEAD_EXPLAINED.md](DUAL_HEAD_EXPLAINED.md)。三个辅助损失对应 body、事件窗口的 conditional excess 和 window-event gate。
 
-三项统一称为 **dual loss**，在 dual head 下强制启用，独立于 `loss_mode`。`--dual_loss 0` 或任一辅助权重为0时，恢复对应默认值1，并输出带时间戳的 warning 到训练日志；已有正权重保留。有效设置写入运行配置和 checkpoint。Single／baseline 不使用 dual loss。
+三项统一称为 **dual loss**。正式模型使用默认 `--dual_ablation none`，强制启用完整监督，独立于 `loss_mode`。`--dual_loss 0` 或任一辅助权重为0时恢复对应默认值1，并输出带时间戳的 warning；已有正权重保留。显式消融可选 `no_gate_bce`、`no_excess_loss`、`no_branch_supervision`、`fixed_gate`，只关闭该模式指定的项。有效设置写入运行配置和 checkpoint。Single／baseline 不接受这些消融。
+
+`--exceedance_percentile 95` 从 TRAIN 窗口峰值拟合 dual 阈值，独立于 tail-loss 的 `--tail_frac`。Gate 初始化使用严格超阈的实际 TRAIN 比例 q_E，物理 τ、q_E、事件数和有效初始化概率都保存。可学习 logit 的初始化将 q_E 夹到[1e-6,1−1e-6]；固定 gate 使用原始 q_E，作为无可学习参数的 buffer。
 
 Excess 辅助项先 mask 非事件窗口，再按整个 `B × K` 平均；不能恢复成除以事件数。后者会在稀有事件时放大辅助项相对于主任务的权重。这里的 mask 是监督定义，不是运行时 guard。
 
-模型统一返回 `ForecastOutput`。Single 只填 prediction；dual 同时填损失必须使用的 body、excess、gate_logits 和 threshold。预测不读取真值。
+模型统一返回 `ForecastOutput`。Single 只填 prediction；dual 填 body、excess、threshold 和 gate_probability。可学习 gate 还返回 gate_logits；fixed_gate 的 logits 为 None，BCE 不参与训练。预测不读取真值。
 
 ## 运行设置
 
@@ -35,6 +37,6 @@ Excess 辅助项先 mask 非事件窗口，再按整个 `B × K` 平均；不能
 
 ## 日志与验证解释
 
-每轮只记录 Train/Val × All/Top5% × RMSE/MAE，全部为物理单位。每行保留 `[YYYY-MM-DD|HH:MM:SS]`；运行摘要保存训练循环时间、总 wall time 和最终 Test 指标，终端最后也输出 wall time。旧 guard 模块、诊断 checkpoint、gate/attention/variance 统计和专门诊断脚本均已删除。
+每轮只记录 Train/Val × All/Top5% × RMSE/MAE，全部为物理单位。每行保留 `[YYYY-MM-DD|HH:MM:SS]`；运行摘要保存训练循环时间、总 wall time 和最终 Test 指标，终端最后也输出 wall time。旧 guard、额外诊断 forward 和 attention/variance 统计仍已删除。仅显式 `infer.py --dual_diagnostics` 导出 gate/body/excess/事件数组和独立校准报告，不加入常规 epoch 日志。
 
 清理后的验证区分两件事：相同权重下的计算等价，以及新代码能正确完成训练和推理。短程检查不能证明所有站点、H、seed 的长期训练都不会失稳；最终精度仍需从头训练后比较。精简初始化/模块结构后，同 seed 的整个随机数消耗顺序也不承诺与历史程序一致。

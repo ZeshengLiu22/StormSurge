@@ -9,12 +9,19 @@
 令 X 表示 forcing history、空间结构和站点信息，K=6 表示输出时刻数。
 这里的 K 不等于 history 长度 H。令 Y_h 为第 h 个输出时刻的目标 surge，单位为 m。
 
-阈值 τ 仅从 TRAIN 计算：先对每个训练窗口取 max_h Y_h，再取这些最大值的第 95 百分位。
+阈值 τ 仅从 TRAIN 计算：先对每个训练窗口取 max_h Y_h，再取这些最大值的第 `exceedance_percentile` 百分位（默认95）。
+该参数与最终预测 tail loss 的 `tail_frac` 独立；改变 tail-loss 子集不会改变 decoder 的事件定义。
 事件 E 是“这个预测窗口中至少有一个输出超过 τ”：
 
 \[
 E=\mathbf 1\{\max_hY_h>\tau\}.
 \]
+
+真实 TRAIN 事件比例为 `q_E = mean(max_h Y_h > τ)`，可能因为分位点 ties 而不同于 .05。
+可学习 gate 的 bias 初始化为 `logit(clip(q_E, 1e-6, 1-1e-6))`；截断只保证初始化有限。
+checkpoint 的 `dual_metadata` 保存物理 `tau_phys`、原始 `event_prior=q_E`、实际 `gate_init_prior`、
+事件数、TRAIN 窗口数、百分位和消融模式。归一化后的 τ′ 仍随 model_config/state_dict 保存。
+全相同标签等无事件 TRAIN 可以得到 q_E=0；不把它伪装成5%。
 
 逐时刻把真值精确拆成两部分：
 
@@ -107,10 +114,26 @@ L_{\mathrm{dual}}=\lambda_bL_b+\lambda_rL_r+\lambda_gs_y^2L_g,
 \qquad L=L_{\mathrm{pred}}+L_{\mathrm{dual}}.
 \]
 
-三项辅助监督统一命名为 **dual loss**。当前所有 `head_type=dual` 训练都必须包含完整的 dual loss，独立于所选 `loss_mode`。
+三项辅助监督统一命名为 **dual loss**。正式模型使用 `dual_ablation=none`，必须包含完整的 dual loss，独立于所选 `loss_mode`。
 `DUAL_LOSS=1`（Python：`--dual_loss 1`）为默认；若设为0，自动恢复为1并在训练日志输出带时间戳的 warning。
 三个辅助项的权重若为0，也分别恢复为默认1并写入同一条 warning；正权重保持配置值。
 修正后的有效值写入运行配置 JSON 和 checkpoint。Baseline／single head 不使用 dual loss；原来的 tail/slope 配置仍独立控制最终预测项。
+Tail loss 保持 `max(y) >= tail_threshold`；dual 的事件定义保持严格 `max(y) > tau_phys`，两者各自拟合阈值。
+
+机制消融必须显式选择 `--dual_ablation`（shell：`DUAL_ABLATION`）：
+
+| 模式 | 直接分支监督 | 事件 gate |
+|---|---|---|
+| `none` | L_b、L_r、L_g | 学习 |
+| `no_gate_bce` | L_b、L_r | 仍通过 L_pred 学习 |
+| `no_excess_loss` | L_b、L_g | 学习 |
+| `no_branch_supervision` | 无，仅 L_pred | 学习 |
+| `fixed_gate` | L_b、L_r | `p(X) ≡ q_E` |
+
+消融只将指定项的有效权重置0；仍启用的项不能通过权重0意外关闭。`no_branch_supervision` 将 `dual_loss` 置0。
+固定 gate 不建立可学习 gate MLP，原始 q_E 作为 buffer 保存，允许精确取0或1；没有 BCE 项。
+其参数预算少一个 gate MLP，应在结果中注明。其他消融保留相同 decoder 参数量和最终预测 loss。
+固定 gate 输出 `gate_logits=None`、`gate_probability=q_E`，其余模式返回有限 logits 和 sigmoid 概率。
 
 没有事件的 batch 令 L_r=0。L_r 与其他项统一按整个 batch 平均；非事件窗口被 mask 掉，其 excess 梯度仍为零。
 早期原型除以事件样本数，会将这项相对整体样本风险放大约 1/事件频率，稀有事件时还随 batch 的事件数量波动。
@@ -164,7 +187,7 @@ TRAIN 阈值随 checkpoint 保存；推理只需要 X，完全不需要未来真
 条件均值会对不确定峰值作概率折中。
 
 需要固定 backbone/H/预算，以 single+MSE、single+tail/slope、新 dual+MSE、
-新 dual+tail/slope 为主要对照。当前版本所有 dual 实验保留完整的 dual loss，不提供关闭 gate BCE 或分支监督的训练组合。
+新 dual+tail/slope 为主要对照。再使用上述显式机制消融检查 gate BCE、excess监督、整体分支监督和输入相关 gate 的贡献。
 同时报告总体/peak RMSE、事件 PR-AUC、Brier/可靠性图，以及固定 gate 对照。
 单独移除共同训练模型的一个 head 是诊断，不能替代独立训练 single 的性能比较。
 
@@ -180,4 +203,15 @@ TRAIN 阈值随 checkpoint 保存；推理只需要 X，完全不需要未来真
 因此，新 backbone 的 gamma 与本说明取消的旧 dual-head 整体系数 alpha 是不同位置的参数。
 单头和新双头共用同一套 backbone，比较时必须采用相同的稳定结构、确定性设置和训练预算。
 
-实现位置：[`heads.py`](emulator/models/heads.py) 负责前向，[`losses.py`](emulator/training/losses.py) 负责监督。训练日志只保留物理 RMSE/MAE；论文中需要的 gate 校准等专项分析应另行离线开展。
+实现位置：[`heads.py`](emulator/models/heads.py) 负责前向，[`losses.py`](emulator/training/losses.py) 负责监督，
+[`stats.py`](emulator/data/stats.py) 拟合 TRAIN 阈值和事件比例。
+
+推理增加 `--dual_diagnostics`（两个 shell launcher 使用 `DUAL_DIAGNOSTICS=1`）时，输出：
+
+- `dual_diagnostics.npz`：p_i、物理 body/excess、p×excess、严格事件标签 E_i、真值/预测/tags、TRAIN τ/q_E 和模式。
+- `dual_diagnostics.json`：总体和逐年 Brier、stepwise average precision、trapezoid PR-AUC、10个等宽可靠性分箱、事件/非事件 gate 直方图、事件窗口RMSE和分支误差。
+
+PR 面积的两种定义分别命名；没有正事件时 PR 指标为 null，空可靠性分箱也为 null。
+事件阈值始终读取 TRAIN metadata，不在 test 或 external 数据上重新拟合。
+原始概率和分支轨迹支持后续可靠性图、贡献分析和误差检查；当前不自动生成图片。
+诊断直接复用推理的那次 forward。训练/验证 epoch 不收集上述数组，日志继续只记录原来的四项物理误差。

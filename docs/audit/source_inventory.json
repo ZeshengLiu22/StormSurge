@@ -11,9 +11,9 @@
     "path": "DUAL_HEAD_EXPLAINED.md",
     "status": "added",
     "original_sha256": null,
-    "current_sha256": "5ac6ccb6f56f38f04ab14190f495b67d537674832b0270f16fe34a0a0fa8e13e",
+    "current_sha256": "d71b7fbd6b9cda0d6175682a483a26823271685a716d8dbab555b45a78b2d201",
     "original_lines": 0,
-    "current_lines": 183
+    "current_lines": 217
   },
   {
     "path": "LICENSE",
@@ -27,17 +27,17 @@
     "path": "README.md",
     "status": "modified",
     "original_sha256": "636d97a02975bde02bc9c3986e4f9247a81ecf6dc721906b94473e3f7a8239e1",
-    "current_sha256": "88a50a556a9adce4f3481ef30f4f98002dc19b35d5ef17583fc0dfd84be481c4",
+    "current_sha256": "cc2d3e3125c486097f9297ad2cf3ff82b987dd0771922ea373b94ca7b97b3ad4",
     "original_lines": 483,
-    "current_lines": 132
+    "current_lines": 148
   },
   {
     "path": "STABILITY_AND_DUAL_HEAD.md",
     "status": "added",
     "original_sha256": null,
-    "current_sha256": "3f220907bd44104e7f054cca53ba51aec7f1b83ae7a641820f78e7f5615a3630",
+    "current_sha256": "630daf718aadd69558730d38b3dc92a5b323fc01b2f5453477040777a2a9a2aa",
     "original_lines": 0,
-    "current_lines": 40
+    "current_lines": 42
   },
   {
     "path": "changelog.md",
@@ -97,11 +97,11 @@
   },
   {
     "path": "configs/configs_infer/infer_config_common.sh",
-    "status": "unchanged",
+    "status": "modified",
     "original_sha256": "9f359d8c53fff7c7b3c64be4f34aff7dc9c690922abdf223b70576dc838f97aa",
-    "current_sha256": "9f359d8c53fff7c7b3c64be4f34aff7dc9c690922abdf223b70576dc838f97aa",
+    "current_sha256": "cde6e6d4c79668b9e26dd106cca0ea7008f5d0f354f1225140a1bf350fc57fd3",
     "original_lines": 40,
-    "current_lines": 40
+    "current_lines": 41
   },
   {
     "path": "configs/configs_infer/infer_multi_config_AWI.sh",
@@ -603,9 +603,9 @@
     "path": "configs/configs_train/train_config_common.sh",
     "status": "modified",
     "original_sha256": "1458066565a8bd6596a1a329f213a68ce43db4d2048317be9144da87fbf1abd1",
-    "current_sha256": "68e2adc5831f3c231b0d15d2d4157248c0e2be1207337bfdc4e0c44e11184560",
+    "current_sha256": "dcde0f8536837f5dbe79996e10089a6545c7409d9dc041c91dcdb698f8cab2ab",
     "original_lines": 94,
-    "current_lines": 97
+    "current_lines": 93
   },
   {
     "path": "configs/configs_train_single/AWI/train_config_AWI_Battery_Baseline_0h.sh",
@@ -1059,9 +1059,41 @@
     "path": "configs/configs_train_single/train_config_common.sh",
     "status": "modified",
     "original_sha256": "23049a320832e0c56f5728bc83d74820489e17c5dff78eb2c5df87bdfc50dcba",
-    "current_sha256": "caba8c1a333ce99e4d466467af43f9c94897075240f5a402af43a2aba234776f",
+    "current_sha256": "dd2925a60c129f90798d6726f42303eb9af9e1bdde54affc74ebcc6db97351d0",
     "original_lines": 95,
-    "current_lines": 98
+    "current_lines": 94
+  },
+  {
+    "path": "configs/dual_ablations/train_config_NCEP_Battery_Fixed_Gate.sh",
+    "status": "added",
+    "original_sha256": null,
+    "current_sha256": "1ab7f4016ab500db84532b7abb1512c0a884e2297ec4c48029653573d071d1a5",
+    "original_lines": 0,
+    "current_lines": 5
+  },
+  {
+    "path": "configs/dual_ablations/train_config_NCEP_Battery_No_Branch_Supervision.sh",
+    "status": "added",
+    "original_sha256": null,
+    "current_sha256": "4540c3e65158163016e523c6028b188342cb4ac9dd89a6f82debda1a024f36ef",
+    "original_lines": 0,
+    "current_lines": 5
+  },
+  {
+    "path": "configs/dual_ablations/train_config_NCEP_Battery_No_Excess_Loss.sh",
+    "status": "added",
+    "original_sha256": null,
+    "current_sha256": "c35ec91c84e4f7cfc68df2aa6e509256014a695854cd33f06a5b915b9e1f3546",
+    "original_lines": 0,
+    "current_lines": 5
+  },
+  {
+    "path": "configs/dual_ablations/train_config_NCEP_Battery_No_Gate_BCE.sh",
+    "status": "added",
+    "original_sha256": null,
+    "current_sha256": "1809c67e69fc15d85bf258b19338c62332c7035b2ab954508da42e7374bb5d2b",
+    "original_lines": 0,
+    "current_lines": 5
   },
   {
     "path": "configs/train_config_NCEP_Battery_Stable_Dual.sh",
@@ -1112,10 +1144,18 @@
     "current_lines": 0
   },
   {
+    "path": "emulator/common/dual.py",
+    "status": "added",
+    "original_sha256": null,
+    "current_sha256": "611afc7b74401049b35e714e28c4d35e0360a4ca000e8e656497d861d46b86f6",
+    "original_lines": 0,
+    "current_lines": 19
+  },
+  {
     "path": "emulator/common/inference_artifacts.sh",
     "status": "modified",
     "original_sha256": "e84acd48715969350dd919e85a6792c2f25b6f5cc1fc88d887e941148e8a062c",
-    "current_sha256": "24a623dea8f1ebb006c909b62af600dad7cbcdf24086f89589fcd4128d2d3b57",
+    "current_sha256": "20203bac2af9713915fadc9ae89385ec379abd2c3a992bbe690f2d073e8ee3eb",
     "original_lines": 72,
     "current_lines": 72
   },
@@ -1147,9 +1187,9 @@
     "path": "emulator/data/graph_store.py",
     "status": "modified",
     "original_sha256": "29274664e7b7f3f34dd3c5c92f3b8830fd645d3f2dbb9d74ca82036ca385bc9d",
-    "current_sha256": "331a6eb67989f7c88664d0bdad974e950f98dfd75d100a10ad5ef21e70ff7ec0",
+    "current_sha256": "cd20f734b602af78ec649e26ef466ffb98cf342c67420d16e7b8c7ae79baae38",
     "original_lines": 351,
-    "current_lines": 92
+    "current_lines": 82
   },
   {
     "path": "emulator/data/loaders.py",
@@ -1163,9 +1203,9 @@
     "path": "emulator/data/normalization.py",
     "status": "modified",
     "original_sha256": "b7a9a88221ff9a73f94779601699b6aa8b637844f37daab254f0261810b7124e",
-    "current_sha256": "c58550fe4597e7c3ae26403a1adf3fd902f4c7a4d6310aa75520f44cdeff708c",
+    "current_sha256": "54a0a78ed9568dec92713f726d9c6ed9c14fb47903879e51efc629ee0d3c4251",
     "original_lines": 118,
-    "current_lines": 26
+    "current_lines": 22
   },
   {
     "path": "emulator/data/station_metadata.py",
@@ -1179,9 +1219,9 @@
     "path": "emulator/data/stats.py",
     "status": "modified",
     "original_sha256": "a3c960348c8627808387cfa0eda1007dfdba76efed699f25a6f0f97b7e224d39",
-    "current_sha256": "343ae07322b61c3d3c58b15b72bad7a15fbbbb082e340fafd1af2a3a772abb0a",
+    "current_sha256": "b31b74b17a791f00529245187d2c897e456f2f85e876c9928c746d40b6efd9eb",
     "original_lines": 310,
-    "current_lines": 110
+    "current_lines": 102
   },
   {
     "path": "emulator/inference/__init__.py",
@@ -1190,6 +1230,14 @@
     "current_sha256": "a4a17f727e269fea79f9974d8f06c75e7959f12ea85fb72c938d63d0982345fa",
     "original_lines": 10,
     "current_lines": 5
+  },
+  {
+    "path": "emulator/inference/dual_diagnostics.py",
+    "status": "added",
+    "original_sha256": null,
+    "current_sha256": "3756f39e0f6093609d6fff189db0f5b740896b75cbd4818d64af2a0be88e41bf",
+    "original_lines": 0,
+    "current_lines": 63
   },
   {
     "path": "emulator/inference/engine.py",
@@ -1219,25 +1267,17 @@
     "path": "emulator/models/architectures.py",
     "status": "modified",
     "original_sha256": "b2f07583db67ce6e33efaad88d933ef6efc24053ed2ab35633c009927ceb9104",
-    "current_sha256": "c00ea660e341c4774df8161e7cd15ed98e6efe88e150207542c1c6596626bf51",
+    "current_sha256": "6723b0c4a88e3e7ac8def3142f6f67cb273649a3c68dda5a6fb5412335bebf6f",
     "original_lines": 891,
-    "current_lines": 157
+    "current_lines": 147
   },
   {
     "path": "emulator/models/heads.py",
     "status": "added",
     "original_sha256": null,
-    "current_sha256": "94ab70fffeb49e18855baf111c9517a0b20dc86a0b7f68140dbca0af118f0e2a",
+    "current_sha256": "1e96b480e640fbf164e3d77783b35ffa508ec488bf8f6056a21912f190a3dca9",
     "original_lines": 0,
-    "current_lines": 60
-  },
-  {
-    "path": "emulator/models/pressure.py",
-    "status": "added",
-    "original_sha256": null,
-    "current_sha256": "23157b7bbc1a5a4cde3dc48c2a9f0aad7327fcdd7e2ce84c0fcfe519331b4f0b",
-    "original_lines": 0,
-    "current_lines": 30
+    "current_lines": 69
   },
   {
     "path": "emulator/models/spatial.py",
@@ -1267,25 +1307,25 @@
     "path": "emulator/training/arguments.py",
     "status": "added",
     "original_sha256": null,
-    "current_sha256": "f4fbe33e43b040dd308012ad746b062a5aace425a1149ff4fd43dc7d0fee4564",
+    "current_sha256": "a70917f82a65a6b599ced4474692293875082b0a49f98e91299e9b472702bfdd",
     "original_lines": 0,
-    "current_lines": 259
+    "current_lines": 244
   },
   {
     "path": "emulator/training/engine.py",
     "status": "modified",
     "original_sha256": "759056bb39a838158cbfcc6c959fc42fcae211202e9940ba32c16396f0c48892",
-    "current_sha256": "1b8b683d481f36ffb489fd18a027e514879beb1d604030d1ba9b9da18a945f89",
+    "current_sha256": "6b23053d56baded262b7474a59aa4d6fa3ec7c83de8c0a4722e80c7ce103972f",
     "original_lines": 586,
-    "current_lines": 99
+    "current_lines": 112
   },
   {
     "path": "emulator/training/losses.py",
     "status": "modified",
     "original_sha256": "a365c788251991f54a1694259163d6df663ead2914338c0303bbffa84e067a9e",
-    "current_sha256": "fed873bec21e52749a1b814cd9575f168edd7bb36464955035a0cff4c5ef3e27",
+    "current_sha256": "25e3702a64a3a5cb2068bf9e8468237a77b44274afd9d9eba95b6db3ce2ec238",
     "original_lines": 86,
-    "current_lines": 97
+    "current_lines": 112
   },
   {
     "path": "emulator/training/metrics.py",
@@ -1315,81 +1355,81 @@
     "path": "infer.py",
     "status": "modified",
     "original_sha256": "2595195829680ffe1ff83f34f3e91e21664fa8577d6bdd8a2515f591c9de8763",
-    "current_sha256": "dbdf889e50e0f44b83b4779f6f102b8c93e66bc37011dc5fb2506f6aea5ad28a",
+    "current_sha256": "1bed809358aa2161b7ba4bc89da946a9a3dd82b10f1376d2b8569610c02188c1",
     "original_lines": 708,
-    "current_lines": 294
+    "current_lines": 316
   },
   {
     "path": "infer.sh",
     "status": "modified",
     "original_sha256": "fd22a14d59b5f3cc4d49ed3b9b4998cf20cf678aaa62e275d2cf6f990297d542",
-    "current_sha256": "75ca5c97ba069e9ba8a85cdf8842dd82697280b0d302976d44274aa3516e7b4a",
+    "current_sha256": "6059ada60a4ce9d5957d61d8fce371ebe5f8fe3df55626e960ba0af56ef6de64",
     "original_lines": 330,
-    "current_lines": 336
+    "current_lines": 340
   },
   {
     "path": "infer_multi.sh",
     "status": "modified",
     "original_sha256": "62df0a60a275feee38e9a277c1398b2fdc4161af69d95e69f6eb3430a9ca0fc8",
-    "current_sha256": "48bf4d73c5501c122ccf10eedc3a5f69652d9cf19695ed57675fdc7f0b58abba",
+    "current_sha256": "b11dda5dd6067c2d5db6aed6aeed8946988f9b119752aeaab3bb5403b994b6fb",
     "original_lines": 289,
-    "current_lines": 291
+    "current_lines": 295
   },
   {
     "path": "preprocessing/forcing_cmip6.py",
     "status": "added",
     "original_sha256": null,
-    "current_sha256": "86704b4c63a26b6af4f429b15073997ea55ab8df423f5925801b1a614f294fec",
+    "current_sha256": "49a7839c506f998373d65070c40b820b7f05f40b4b87d671a2ea3df7f31f95af",
     "original_lines": 0,
-    "current_lines": 75
+    "current_lines": 74
   },
   {
     "path": "preprocessing/preprocessing_forcing_CMIP6_AWI_Mean_Removal.py",
-    "status": "unchanged",
+    "status": "modified",
     "original_sha256": "4e0c3dd6fcbabfb8a3aec75d03ce74c2fb79d1487ba383ff90d9aa8fa02f29dd",
-    "current_sha256": "4e0c3dd6fcbabfb8a3aec75d03ce74c2fb79d1487ba383ff90d9aa8fa02f29dd",
+    "current_sha256": "dae18e939fe2db75430ec5507ad0c0f4c519673ab4537f7e4d9e4f157aa29032",
     "original_lines": 214,
-    "current_lines": 214
+    "current_lines": 209
   },
   {
     "path": "preprocessing/preprocessing_forcing_CMIP6_CNRM_Mean_Removal.py",
-    "status": "unchanged",
+    "status": "modified",
     "original_sha256": "ed48270bff6f1a915656b441b404982efbe9d4ffea7283a0eb0dd75f4bd48473",
-    "current_sha256": "ed48270bff6f1a915656b441b404982efbe9d4ffea7283a0eb0dd75f4bd48473",
+    "current_sha256": "3aa8816d218ffa3197a7a953b2233117ea0e10b59e83899b153d12e3ba2de115",
     "original_lines": 214,
-    "current_lines": 214
+    "current_lines": 209
   },
   {
     "path": "preprocessing/preprocessing_forcing_CMIP6_EC_EARTH_Mean_Removal.py",
-    "status": "unchanged",
+    "status": "modified",
     "original_sha256": "fec4b6965676802871b4a2671fc6e4c9d971aaf32abf0291c264ef790cf82d05",
-    "current_sha256": "fec4b6965676802871b4a2671fc6e4c9d971aaf32abf0291c264ef790cf82d05",
+    "current_sha256": "dcf396e15ef6f15959c1baea76a551d5c44d547e1cd8845c675fb34b90378e7c",
     "original_lines": 214,
-    "current_lines": 214
+    "current_lines": 209
   },
   {
     "path": "preprocessing/preprocessing_forcing_CMIP6_MPI_Mean_Removal.py",
-    "status": "unchanged",
+    "status": "modified",
     "original_sha256": "d6399517e7883260fa24a52bbdc5f018574a9b82d89c591bb7779fba5e2f8da3",
-    "current_sha256": "d6399517e7883260fa24a52bbdc5f018574a9b82d89c591bb7779fba5e2f8da3",
+    "current_sha256": "5ddc1514f28cc8f45ee72c036291eceecd6db7e4ca94f71a9184502a122bc1b2",
     "original_lines": 214,
-    "current_lines": 214
+    "current_lines": 209
   },
   {
     "path": "preprocessing/preprocessing_forcing_CMIP6_MRI_Mean_Removal.py",
-    "status": "unchanged",
+    "status": "modified",
     "original_sha256": "5bbf4666cdb762413fa97a7233b9c6532a3e9fee8888c76426bdacce62fd8be4",
-    "current_sha256": "5bbf4666cdb762413fa97a7233b9c6532a3e9fee8888c76426bdacce62fd8be4",
+    "current_sha256": "6cd89571e374ac737b402dcfebfaf51b07ed998fa6ef3dddce9ea65d8babded1",
     "original_lines": 214,
-    "current_lines": 214
+    "current_lines": 209
   },
   {
     "path": "preprocessing/preprocessing_forcing_NCEP_Mean_Removal.py",
     "status": "modified",
     "original_sha256": "a5c0cf0fb4c31fefdc24b20de14a12622fdf2a89f8113b13050d186fbf190559",
-    "current_sha256": "1d70219e40ea25c0c883eea676c8ffe53063185e1b5abc60bfd582253e036b6c",
+    "current_sha256": "b644d884c1bf1097e8f2ac18c938a09bb5feff345666960b630cd3e379ade3a0",
     "original_lines": 172,
-    "current_lines": 163
+    "current_lines": 159
   },
   {
     "path": "preprocessing/preprocessing_simulation.py",
@@ -1403,9 +1443,9 @@
     "path": "preprocessing/time_align_unified.py",
     "status": "modified",
     "original_sha256": "2924d3827ec03b692bed17b3d74cbca5067bb97cb02897f511bfcad095f1d340",
-    "current_sha256": "1c9d274dd9e3baf8116af199e66ded2e0ba5f22bb7b6f39af852e85acb258f80",
+    "current_sha256": "333f5af8ab41b946f99d9375e58bed64ac5f286c98913ffaf26eafb8cab0fca6",
     "original_lines": 1008,
-    "current_lines": 1008
+    "current_lines": 931
   },
   {
     "path": "station_json/Battery.json",
@@ -1443,9 +1483,9 @@
     "path": "tests/test_config_interfaces.py",
     "status": "added",
     "original_sha256": null,
-    "current_sha256": "b0fafb7deb16d8ac665e4fd7fde38362826ea30a27d85c240221ee439f522306",
+    "current_sha256": "2c27b86d8a09c167defdfb0799f486a5ce0f1d3ae2b6ac2c61aab963695c342f",
     "original_lines": 0,
-    "current_lines": 207
+    "current_lines": 161
   },
   {
     "path": "tests/test_core_architecture.py",
@@ -1454,6 +1494,14 @@
     "current_sha256": null,
     "original_lines": 271,
     "current_lines": 0
+  },
+  {
+    "path": "tests/test_dual_experiments.py",
+    "status": "added",
+    "original_sha256": null,
+    "current_sha256": "e82aa1ecb31ac96e613fd7a40bd68579ed869d4bdf40a781b2ee28801797b822",
+    "original_lines": 0,
+    "current_lines": 246
   },
   {
     "path": "tests/test_dual_loss.py",
@@ -1467,9 +1515,9 @@
     "path": "tests/test_forcing.py",
     "status": "added",
     "original_sha256": null,
-    "current_sha256": "f7e74d8423d87bc6dae8aacca4802926ae92f8f7b53217ea198c3d69f19d5a4a",
+    "current_sha256": "2b8acbfc0ce03e24957220ce1ee622ed59283989e2ac98ba7a1b3e76db7380c5",
     "original_lines": 0,
-    "current_lines": 23
+    "current_lines": 24
   },
   {
     "path": "tests/test_inference_artifacts.py",
@@ -1531,9 +1579,9 @@
     "path": "tests/test_preprocessing_pipeline.py",
     "status": "added",
     "original_sha256": null,
-    "current_sha256": "c41a39ed9700ca0ade938cb30630478850bd6b0b88b24019c5791b3a72681413",
+    "current_sha256": "59918c26c3db8cef501974303e7d5ce8eb28934cbf216011b110759cd72f5bd3",
     "original_lines": 0,
-    "current_lines": 111
+    "current_lines": 114
   },
   {
     "path": "tests/test_station_metadata.py",
@@ -1547,9 +1595,9 @@
     "path": "tests/test_time_alignment.py",
     "status": "modified",
     "original_sha256": "bc5f4014e46d43b65c6d0dd4434ac457b1bd016788859eab19a82ab0aafb4c4a",
-    "current_sha256": "7e88d14b4b0a5bb74d3b8f5c5742bbd59aae27cf5d11fa3656a358704e8199b9",
+    "current_sha256": "48a6d623951953874d1af57a925a7f88828ffc7fd72543372d332005c518b0e2",
     "original_lines": 101,
-    "current_lines": 122
+    "current_lines": 124
   },
   {
     "path": "tests/test_training.py",
@@ -1563,16 +1611,16 @@
     "path": "train.py",
     "status": "modified",
     "original_sha256": "50af7cdfb84773711a5879d822774113053b1b8dd27c658e576f316724d9f026",
-    "current_sha256": "674b0301ce12a568daa8b2e0894935c3134ea56163b73f00b18f868f7ecc2a4e",
+    "current_sha256": "1ce10b068795f7db066dc5f150beb3da9bce3b99cbc507ae299d3cb2bf518b5e",
     "original_lines": 1522,
-    "current_lines": 204
+    "current_lines": 213
   },
   {
     "path": "train.sh",
     "status": "modified",
     "original_sha256": "b6b33402c2eaae001e6138f2cc999936d10eaf573de03a6121b8dda142d55aad",
-    "current_sha256": "b23967ddf2f80f8d2bc41c8d0d52f9fe2eaed93ee0dea7bc7d7e415992657cf1",
+    "current_sha256": "3f69ec7bf066842d7a72d380496ac12be6bdc9e570f40956f4f252a70e2f7716",
     "original_lines": 649,
-    "current_lines": 708
+    "current_lines": 691
   }
 ]

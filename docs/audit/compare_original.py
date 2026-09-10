@@ -5,6 +5,7 @@ Generated audit files and the comparison report are excluded to avoid self-refer
 """
 
 import argparse
+import ast
 from collections import Counter
 import csv
 from datetime import datetime, timezone
@@ -21,6 +22,39 @@ def source_files(root):
     ).decode().split('\0')
     return {path for path in paths if path and (root / path).is_file()
             and not path.startswith('docs/audit/') and path != 'docs/ORIGINAL_COMPARISON.md'}
+
+
+def declared_arguments(root):
+    """Read parser declarations without importing or running either trainer."""
+    path = root / 'emulator/training/arguments.py'
+    if not path.exists():
+        path = root / 'train.py'
+    constants = {}
+    shared = root / 'emulator/common/dual.py'
+    if shared.exists():
+        for node in ast.parse(shared.read_text()).body:
+            if isinstance(node, ast.Assign) and any(isinstance(t, ast.Name) and t.id == 'DUAL_ABLATIONS' for t in node.targets):
+                constants['DUAL_ABLATIONS'] = ast.literal_eval(node.value)
+    arguments = {}
+    for node in ast.walk(ast.parse(path.read_text())):
+        if not (isinstance(node, ast.Call) and isinstance(node.func, ast.Attribute)
+                and isinstance(node.func.value, ast.Name) and node.func.value.id == 'parser'
+                and node.func.attr == 'add_argument'):
+            continue
+        flags = [ast.literal_eval(value) for value in node.args]
+        kwargs = {item.arg: item.value for item in node.keywords}
+        action = ast.literal_eval(kwargs['action']) if 'action' in kwargs else 'store'
+        default = ast.literal_eval(kwargs['default']) if 'default' in kwargs else False if action == 'store_true' else None
+        choices = kwargs.get('choices')
+        if isinstance(choices, ast.Call) and ast.unparse(choices) == 'tuple(DUAL_ABLATIONS)':
+            choices = list(constants['DUAL_ABLATIONS'])
+        else:
+            choices = ast.literal_eval(choices) if choices is not None else None
+        dest = ast.literal_eval(kwargs['dest']) if 'dest' in kwargs else flags[0].lstrip('-').replace('-', '_')
+        arguments[dest] = dict(flags=flags, default=default, choices=choices,
+                               action={'store': '_StoreAction', 'store_true': '_StoreTrueAction'}[action],
+                               type=ast.unparse(kwargs['type']) if 'type' in kwargs else None)
+    return arguments
 
 
 def main():
@@ -52,6 +86,16 @@ def main():
         writer.writeheader()
         writer.writerows(rows)
     (out / 'original_to_current.diff').write_text(''.join(patches))
+    before_args, after_args = declared_arguments(original), declared_arguments(current)
+    argument_comparison = dict(
+        removed={key: before_args[key] for key in sorted(before_args.keys() - after_args.keys())},
+        added={key: after_args[key] for key in sorted(after_args.keys() - before_args.keys())},
+        changed={key: dict(original=before_args[key], current=after_args[key])
+                 for key in sorted(before_args.keys() & after_args.keys()) if before_args[key] != after_args[key]},
+        unchanged_count=sum(before_args[key] == after_args[key] for key in before_args.keys() & after_args.keys()),
+        scope='Training parser declarations only; post-parse validation and ablation resolution are described in ORIGINAL_COMPARISON.md.',
+    )
+    (out / 'argparse_comparison.json').write_text(json.dumps(argument_comparison, indent=2) + '\n')
     summary = dict(generated_utc=datetime.now(timezone.utc).isoformat(),
                    original_repository='https://github.com/BinaLab/PACT_Storm_Surge_Emulator',
                    original_head=subprocess.check_output(['git', 'rev-parse', 'HEAD'], cwd=original).decode().strip(),

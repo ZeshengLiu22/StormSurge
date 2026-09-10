@@ -21,9 +21,8 @@ def prepare_forcing(forcing, latitude, longitude):
     lon, lat = np.meshgrid(longitude[lon_mask], latitude[lat_mask])
     coordinates = np.broadcast_to(np.stack((lon, lat), axis=-1), (*values.shape[:-1], 2))
     result = np.concatenate((values, coordinates), axis=-1)
-    pressure_mean = result[..., 2].mean(axis=(1, 2))
-    result[..., 2] -= pressure_mean[:, None, None]
-    return result, pressure_mean, latitude[lat_mask], longitude[lon_mask]
+    result[..., 2] -= result[..., 2].mean(axis=(1, 2), keepdims=True)
+    return result, latitude[lat_mask], longitude[lon_mask]
 
 
 def main(argv=None):
@@ -63,12 +62,12 @@ def main(argv=None):
         if forcing.ndim != 2 or forcing.shape[1] != 3 or len(forcing) % (latitude.size * longitude.size):
             print(f"WARNING: incomplete or invalid forcing shape {forcing.shape} in {path}, skipping.")
             continue
-        values, pressure, _, _ = prepare_forcing(forcing, latitude, longitude)
+        values, _, _ = prepare_forcing(forcing, latitude, longitude)
         # 3h forcing is retained for analysis; graph construction consumes 6h NPZ.
         for step, stride, suffix in ((3, 1, "_3h"), (6, 2, "")):
             np.save(args.out_dir / f"forcing_local{suffix}_{year}.npy", values[::stride])
             np.savez(args.out_dir / f"forcing_local{suffix}_{year}.npz", forcing=values[::stride],
-                     p_mean_t=pressure[::stride], year=year, dt_hours=step, **metadata)
+                     year=year, dt_hours=step, **metadata)
 
 
 if __name__ == "__main__":

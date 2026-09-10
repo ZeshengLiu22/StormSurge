@@ -116,66 +116,20 @@ ALL_RESULTS_ROOT="'''+str(Path(temporary) / 'results')+'"\n')
                 expected.backward()
                 torch.testing.assert_close(pred.grad, reference_pred.grad, rtol=1e-12, atol=1e-12)
 
-    def test_pressure_options_and_embedding_capacity_affect_the_model(self):
+    def test_lag_embedding_capacity_covers_the_history_window(self):
         torch.set_num_threads(1)
-        for model, history, mode, head in itertools.product(('baseline', 'pact'), (0, 8), ('tokens', 'global', 'both'), ('single', 'dual')):
-            if model == 'baseline' and (mode != 'tokens' or head != 'single'):
-                continue
-            c = ModelConfig(3, 4, model=model, head_type=head, hidden_channels=16, history_steps=history,
-                            node_read_heads=2, time_read_heads=2, use_pmean=True, pmean_dim=5,
-                            perceiver_pmean_mode=mode, max_time_steps=20, peak_threshold_norm=[1.] * 4)
+        for history, head in itertools.product((0, 8), ('single', 'dual')):
+            c = ModelConfig(3, 4, head_type=head, hidden_channels=16, history_steps=history,
+                            node_read_heads=2, time_read_heads=2, max_time_steps=20,
+                            peak_threshold_norm=[1.] * 4)
             network = build_model(c).eval()
-            batch = graph_batch(history + 1)
-            batch.p_mean_hist = torch.randn(2, history + 1)
-            output = network(batch)
+            output = network(graph_batch(history + 1))
             output.prediction.square().mean().backward()
             self.assertTrue(all(p.grad is not None and torch.isfinite(p.grad).all() for p in network.parameters()))
-            before = output.prediction.detach()
-            batch.p_mean_hist += torch.randn_like(batch.p_mean_hist) * 10
-            self.assertFalse(torch.allclose(before, network(batch).prediction))
-            if model == 'pact':
-                self.assertEqual(network.lag_embed.num_embeddings, 20)
-                if mode in ('global', 'both'):
-                    seen = []
-                    handle = network.pressure.global_encoder[0].register_forward_pre_hook(lambda m, x: seen.append(x[0]))
-                    network(batch)
-                    handle.remove()
-                    torch.testing.assert_close(seen[0][:, -(history + 1):], batch.p_mean_hist)
-                    self.assertEqual(int(torch.count_nonzero(seen[0][:, :-(history + 1)])), 0)
-
-    def test_pressure_training_statistics_use_only_selected_history_and_years(self):
-        from emulator.data import ForcingGraphStore, ForcingGraphView, fit_statistics, normalize_inputs
-        from torch_geometric.data import Batch
-        from test_pipeline import make_fixture
-        with tempfile.TemporaryDirectory() as temporary:
-            graphs, _ = make_fixture(Path(temporary))
-            store = ForcingGraphStore(graphs, 'Battery')
-            split = store.split()
-            for i, graph in enumerate(store.graphs):
-                # Enormous old history and held-out values must not enter TRAIN fitting.
-                graph.p_mean_hist = torch.tensor([100000.] * 6 + [float(i), i + 1., i + 2.])
-                if i not in split['train']:
-                    graph.p_mean_hist += 1000000
-            for mode in ('zscore', 'robust', 'mag'):
-                stats = fit_statistics(store, split['train'], x_norm=mode, use_pmean=True, history_steps=2)
-                values = torch.cat([store.graphs[i].p_mean_hist[-3:] for i in split['train']]).double()
-                if mode == 'zscore':
-                    center, scale = values.mean(), values.std(correction=0)
-                elif mode == 'robust':
-                    low, high = torch.quantile(values, torch.tensor([.01, .99], dtype=torch.float64))
-                    center, scale = (low + high) / 2, (high - low) / 2
-                else:
-                    center, scale = values.new_tensor(0), torch.quantile(values.abs(), .99)
-                torch.testing.assert_close(stats['pmean_center'], center.float())
-                torch.testing.assert_close(stats['pmean_scale'], scale.float())
-                view = ForcingGraphView(store, split['train'], 2, use_pmean=True)
-                batch = Batch.from_data_list([view[0], view[1]])
-                before = batch.p_mean_hist.clone()
-                normalize_inputs(batch, stats)
-                torch.testing.assert_close(batch.p_mean_hist, (before - center.float()) / scale.float())
-            del store.graphs[split['val'][0]].p_mean_hist
-            with self.assertRaisesRegex(ValueError, 'p_mean history'):
-                ForcingGraphView(store, split['val'], 2, use_pmean=True)
+            self.assertEqual(network.lag_embed.num_embeddings, 20)
+            c.max_time_steps = history
+            with self.assertRaisesRegex(ValueError, 'max_time_steps'):
+                build_model(c)
 
     def test_rop_configuration_reaches_the_scheduler_and_snapshot(self):
         from unittest.mock import patch

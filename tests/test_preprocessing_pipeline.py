@@ -27,14 +27,16 @@ class PreprocessingPipelineTests(unittest.TestCase):
                 data.createVariable('lon', 'f8', ('lon',))[:] = [-100, -80, -40]
             raw = np.arange(4 * 2 * 3 * 3).reshape(-1, 3)
             np.savetxt(root / 'fort_2000.22', raw)
-            expected, pressure, _, _ = forcing_cmip6.prepare_forcing(raw, np.array([50, 10]), np.array([-100, -80, -40]))
+            expected, _, _ = forcing_cmip6.prepare_forcing(raw, np.array([50, 10]), np.array([-100, -80, -40]))
             for tag in ('AWI', 'CNRM', 'EC_EARTH', 'MPI', 'MRI'):
                 out = root / tag
                 forcing_cmip6.main(['--model', tag, '--forcing_dir', str(root), '--grid_netcdf', str(grid),
                                    '--out_dir', str(out), '--first_year', '2000', '--last_year', '2000'])
                 with np.load(out / 'forcing_local_2000.npz') as arrays:
                     np.testing.assert_array_equal(arrays['forcing'], expected[::2])
-                    np.testing.assert_array_equal(arrays['p_mean_t'], pressure[::2])
+                    self.assertEqual(set(arrays.files), {'forcing', 'year', 'dt_hours', 'LAT_MIN', 'LAT_MAX',
+                                                        'LON_MIN', 'LON_MAX', 'lat_local', 'lon_local',
+                                                        'lat_forcing', 'lon_forcing'})
                     self.assertEqual(int(arrays['dt_hours']), 6)
                 np.testing.assert_array_equal(np.load(out / 'forcing_local_2000.npy'), expected[::2])
                 np.testing.assert_array_equal(np.load(out / 'forcing_local_3h_2000.npy'), expected)
@@ -105,7 +107,8 @@ class PreprocessingPipelineTests(unittest.TestCase):
             expected[..., 2] -= pressure[:, None, None]
             with np.load(root / 'out/forcing_local_2000.npz') as arrays:
                 np.testing.assert_array_equal(arrays['forcing'][..., :3], expected)
-                np.testing.assert_array_equal(arrays['p_mean_t'], pressure)
+                self.assertEqual(set(arrays.files), {'forcing', 'year', 'dt_hours', 'LAT_MIN', 'LAT_MAX',
+                                                    'LON_MIN', 'LON_MAX', 'lat_local', 'lon_local'})
                 self.assertEqual(int(arrays['dt_hours']), 6)
             with np.load(root / 'out/forcing_local_2000.npz') as arrays:
                 np.testing.assert_array_equal(np.load(root / 'out/forcing_local_2000.npy'), arrays['forcing'])

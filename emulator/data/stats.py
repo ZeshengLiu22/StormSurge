@@ -6,8 +6,7 @@ import torch.distributed as dist
 
 
 def fit_statistics(store, indices, x_norm="zscore", p_lo=1.0, p_hi=99.0,
-                   nodes_per_graph=256, seed=42, use_pmean=False, history_steps=0,
-                   device=None):
+                   nodes_per_graph=256, seed=42, device=None):
     """All ranks participate; return CPU statistics for checkpoint storage.
 
     X z-score uses FP32 squares, FP64 sums, then FP32 moments. Y uses FP64
@@ -80,31 +79,24 @@ def fit_statistics(store, indices, x_norm="zscore", p_lo=1.0, p_hi=99.0,
     variance = (square / count).float() - center ** 2
     stats.update(y_mean=center.cpu(), y_std=torch.sqrt(variance + 1e-6).cpu())
 
-    if use_pmean:
-        fitted = torch.zeros(2, dtype=torch.float32, device=device)
-        if rank == 0:
-            pressure = []
-            for i in indices:
-                graph = store.graphs[i]
-                value = graph.p_mean_hist if "p_mean_hist" in graph else graph.p_mean_curr
-                pressure.append(torch.as_tensor(value).detach().cpu().reshape(-1)[-(history_steps + 1):].float().numpy())
-            values = np.concatenate(pressure)
-            if x_norm == "zscore":
-                center, scale = values.mean(dtype=np.float64), values.std(dtype=np.float64)
-            elif x_norm == "robust":
-                low, high = np.percentile(values, [p_lo, p_hi])
-                center, scale = .5 * (float(low) + float(high)), .5 * (float(high) - float(low))
-            else:
-                center, scale = 0., np.percentile(np.abs(values), p_hi)
-            fitted.copy_(torch.tensor([center, max(scale, 1e-6)], dtype=torch.float32, device=device))
-        if distributed:
-            dist.broadcast(fitted, src=0)
-        stats.update(pmean_center=fitted[0].cpu(), pmean_scale=fitted[1].cpu())
     return stats
 
 
-def fit_loss_thresholds(store, indices, tail_frac=0.05, wmse_percentile=95.0, wmse_use_abs=True):
+def fit_loss_thresholds(store, indices, tail_frac=0.05, wmse_percentile=95.0, wmse_use_abs=True,
+                        exceedance_percentile=95.0):
+    """Fit independent tail/weighted-loss thresholds and a strict dual event on TRAIN."""
+    if not indices:
+        raise ValueError("Cannot fit loss thresholds on an empty training split.")
+    if not 0 < tail_frac < 1 or not 0 <= wmse_percentile <= 100 or not 0 < exceedance_percentile < 100:
+        raise ValueError("Invalid TRAIN loss percentile settings.")
     y = torch.stack([store.graphs[i].y.reshape(-1).float() for i in indices]).numpy()
-    peak_threshold = float(np.percentile(y.max(axis=1), 100 * (1 - tail_frac)))
+    if not np.isfinite(y).all():
+        raise ValueError("TRAIN labels must be finite to fit event thresholds.")
+    peaks = y.max(axis=1)
+    peak_threshold = float(np.percentile(peaks, 100 * (1 - tail_frac)))
     wmse_threshold = float(np.percentile(np.abs(y) if wmse_use_abs else y, wmse_percentile))
-    return peak_threshold, wmse_threshold
+    tau_phys = float(np.percentile(peaks, exceedance_percentile))
+    event_count = int(np.count_nonzero(peaks.astype(np.float64) > tau_phys))
+    return dict(tail_threshold=peak_threshold, wmse_threshold=wmse_threshold, tau_phys=tau_phys,
+                event_prior=event_count / len(indices), event_count=event_count,
+                train_windows=len(indices), exceedance_percentile=exceedance_percentile)

@@ -53,11 +53,10 @@ class ForcingGraphStore:
 
 
 class ForcingGraphView(Dataset):
-    def __init__(self, store, indices, history_steps, use_pmean=False):
+    def __init__(self, store, indices, history_steps):
         self.store = store
         self.indices = list(indices)
         self.window = history_steps + 1
-        self.use_pmean = use_pmean
         if self.window < 1:
             raise ValueError("History must be nonnegative.")
         for index in self.indices:
@@ -66,12 +65,6 @@ class ForcingGraphView(Dataset):
             available = history.size(0) if history is not None else 1
             if available < self.window:
                 raise ValueError(f"{store.graph_tags[index]} has {available} history steps; need {self.window}.")
-            if use_pmean:
-                pressure = getattr(graph, "p_mean_hist", None)
-                if pressure is None:
-                    pressure = getattr(graph, "p_mean_curr", None)
-                if pressure is None or torch.as_tensor(pressure).numel() < self.window:
-                    raise ValueError(f"{store.graph_tags[index]} lacks the {self.window}-step p_mean history requested by --use_pmean.")
 
     def __len__(self):
         return len(self.indices)
@@ -86,7 +79,4 @@ class ForcingGraphView(Dataset):
         for name in ("grid_H", "grid_W"):
             if name in graph:
                 data[name] = int(graph[name])
-        if self.use_pmean:
-            pressure = graph.p_mean_hist if "p_mean_hist" in graph else graph.p_mean_curr
-            data.p_mean_hist = torch.as_tensor(pressure).float().reshape(-1)[-self.window:].view(1, -1)
         return data

@@ -139,6 +139,8 @@ fi
 : "${DETERMINISTIC:=0}"
 : "${DUAL_MODE:=exceedance}"
 : "${DUAL_LOSS:=1}"
+: "${EXCEEDANCE_PERCENTILE:=95}"
+: "${DUAL_ABLATION:=none}"
 : "${BODY_LOSS_WEIGHT:=1}"
 : "${EXCESS_LOSS_WEIGHT:=1}"
 : "${GATE_LOSS_WEIGHT:=1}"
@@ -184,11 +186,6 @@ fi
 : "${CONDA_MODULE:=anaconda}"
 : "${CONDA_SH:=/software/u22/anaconda/python3.9/etc/profile.d/conda.sh}"
 : "${CONDA_ENV:=torchpyg-cu124}"
-
-# p_mean ablation knobs (optional)
-: "${USE_PMEAN:=0}"
-: "${PMEAN_DIM:=32}"
-: "${PERCEIVER_PMEAN_MODE:=tokens}"
 
 # Perceiver3 dual-head knobs (ignored when HEAD_TYPE=single)
 : "${GATE_MODE:=window}"
@@ -360,12 +357,13 @@ write_resolved_config() {
     SLOPE_ROBUST SLOPE_CHARB_EPS SLOPE_HUBER_DELTA SCHEDULER ROP_METRIC ROP_FACTOR ROP_PATIENCE
     ROP_THRESHOLD ROP_COOLDOWN ROP_MIN_LR
     WARMUP_EPOCHS WARMUP_START_FACTOR MIN_LR STABLE_ARCH MAX_GRAD_NORM
-    DETERMINISTIC DUAL_MODE DUAL_LOSS BODY_LOSS_WEIGHT EXCESS_LOSS_WEIGHT GATE_LOSS_WEIGHT
+    DETERMINISTIC DUAL_MODE DUAL_LOSS EXCEEDANCE_PERCENTILE DUAL_ABLATION
+    BODY_LOSS_WEIGHT EXCESS_LOSS_WEIGHT GATE_LOSS_WEIGHT
     X_NORM X_P_LO X_P_HI X_NODES_PER_GRAPH X_CLIP X_AUG X_AUG_PROB
     X_AUG_SCALE X_AUG_BIAS DISABLE_OOD USE_AMP AMP_DTYPE USE_TF32
     TORCH_THREADS NUM_WORKERS PIN_MEMORY PERSISTENT_WORKERS PREFETCH_FACTOR
-    MP_CONTEXT USE_TMUX DO_CONDA CONDA_MODULE CONDA_SH CONDA_ENV USE_PMEAN
-    PMEAN_DIM PERCEIVER_PMEAN_MODE GATE_MODE NODE_READ_HEADS TIME_READ_HEADS TRANSFORMER_LAYERS
+    MP_CONTEXT USE_TMUX DO_CONDA CONDA_MODULE CONDA_SH CONDA_ENV
+    GATE_MODE NODE_READ_HEADS TIME_READ_HEADS TRANSFORMER_LAYERS
     TRANSFORMER_FF_MULT TRANSFORMER_DROPOUT MAX_TIME_STEPS ALL_RESULTS_ROOT
   )
 
@@ -421,7 +419,6 @@ echo "CUDA_VISIBLE_DEVICES:  ${CUDA_VISIBLE_DEVICES:-<unset>}"
 echo "num_gpus:      ${num_gpus}"
 echo "Scheduler:     ${SCHEDULER} (ROP_METRIC=${ROP_METRIC})"
 echo "DISABLE_OOD:   ${DISABLE_OOD} (x_norm=${X_NORM}, x_clip=${X_CLIP}, x_aug=${X_AUG})"
-echo "p_mean:        USE_PMEAN=${USE_PMEAN} (PMEAN_DIM=${PMEAN_DIM}, PERCEIVER_PMEAN_MODE=${PERCEIVER_PMEAN_MODE})"
 echo "DL:            workers=${NUM_WORKERS} pin=${PIN_MEMORY} pers=${PERSISTENT_WORKERS} prefetch=${PREFETCH_FACTOR} mp=${MP_CONTEXT}"
 echo "========================================="
 
@@ -461,21 +458,13 @@ case "${MODEL}" in
     EXTRA_TAG="_nrh${NODE_READ_HEADS}_trh${TIME_READ_HEADS}_L${TRANSFORMER_LAYERS}_ff${TRANSFORMER_FF_MULT}_td${TRANSFORMER_DROPOUT}"
     EXTRA_TAG+="_stable${STABLE_ARCH}v3_${DUAL_MODE}"
     if [[ "${HEAD_TYPE}" == "dual" ]]; then
-      EXTRA_TAG+="_gm${GATE_MODE}"
+      EXTRA_TAG+="_gm${GATE_MODE}_eq${EXCEEDANCE_PERCENTILE}_da${DUAL_ABLATION}"
     else
       EXTRA_TAG+="_hsingle"
     fi
     ;;
   *) echo "[FATAL] Unknown MODEL='${MODEL}'. Use baseline|perceiver3"; exit 1 ;;
 esac
-
-PMEAN_TAG=""
-if [[ "${USE_PMEAN}" == "1" ]]; then
-  PMEAN_TAG="_pmean${PMEAN_DIM}"
-  if [[ "${MODEL}" == "perceiver3" ]]; then
-    PMEAN_TAG+="_${PERCEIVER_PMEAN_MODE}"
-  fi
-fi
 
 SPLIT_TAG=""
 if [[ "${SHUFFLE_YEARS}" == "1" ]]; then
@@ -570,7 +559,7 @@ for LOSS_MODE in "${LOSS_MODE_LIST[@]}"; do
                 SCHED_ARGS+=(--rop_metric "${ROP_METRIC}")
               fi
 
-              RUN_TAG="${STATION:-ALL}_${TRAIN_DATA_TAG}to${TEST_DATA_TAG}_${MODEL}${ENCODER_TAG}${TEMPORAL_TAG}${ACCUM_TAG}${EXTRA_TAG}${PMEAN_TAG}${SPLIT_TAG}${LOSS_TAG2}_hist${H}h_hid${HIDDEN_CHANNELS}_L${NUM_LAYERS}_bs${BATCH_SIZE}_lr${LR_CUR}_ep${EPOCHS}_sch${SCHEDULER}_xn${X_NORM}"
+              RUN_TAG="${STATION:-ALL}_${TRAIN_DATA_TAG}to${TEST_DATA_TAG}_${MODEL}${ENCODER_TAG}${TEMPORAL_TAG}${ACCUM_TAG}${EXTRA_TAG}${SPLIT_TAG}${LOSS_TAG2}_hist${H}h_hid${HIDDEN_CHANNELS}_L${NUM_LAYERS}_bs${BATCH_SIZE}_lr${LR_CUR}_ep${EPOCHS}_sch${SCHEDULER}_xn${X_NORM}"
               LOG_TAG="${RUN_TAG}"
               if (( ${#LOG_TAG} > 240 )); then
                 LOG_HASH="$(printf '%s' "${RUN_TAG}" | sha256sum)"
@@ -583,6 +572,8 @@ for LOSS_MODE in "${LOSS_MODE_LIST[@]}"; do
                 "${TRAIN_PY}"
                 --root_dir "${ROOT_DIR}"
                 --model "${MODEL}"
+                --exceedance_percentile "${EXCEEDANCE_PERCENTILE}"
+                --dual_ablation "${DUAL_ABLATION}"
                 --encoder_type "${ENCODER_TYPE}"
                 --cnn_intermediate_channel "${CNN_INTERMEDIATE_CHANNEL}"
                 --batch_size "${BATCH_SIZE}"
@@ -626,14 +617,6 @@ for LOSS_MODE in "${LOSS_MODE_LIST[@]}"; do
               [[ -n "${TEST_ROOT_DIR}" ]] && BASE_CMD+=(--test_root_dir "${TEST_ROOT_DIR}")
               if (( GRAD_ACCUM_STEPS > 1 )); then
                 BASE_CMD+=(--grad_accum_steps "${GRAD_ACCUM_STEPS}")
-              fi
-
-              # p_mean injection (ablation)
-              if [[ "${USE_PMEAN}" == "1" ]]; then
-                BASE_CMD+=(--use_pmean --pmean_dim "${PMEAN_DIM}")
-                if [[ "${MODEL}" == "perceiver3" ]]; then
-                  BASE_CMD+=(--perceiver_pmean_mode "${PERCEIVER_PMEAN_MODE}")
-                fi
               fi
 
               # Speed flags

@@ -21,14 +21,17 @@ class EpochResult:
 def run_epoch(model, loader, device, stats, *, station_feat=None, optimizer=None,
               criterion=None, scaler=None, grad_accum_steps=1, max_grad_norm=0.0, use_amp=False,
               amp_dtype=torch.bfloat16, x_clip=0.0, augmentation=None,
-              save_predictions=False, distributed=False):
+              save_predictions=False, distributed=False, save_dual_diagnostics=False):
     training = optimizer is not None
+    if save_dual_diagnostics and (training or distributed or not save_predictions):
+        raise ValueError("Dual diagnostics require a single-process prediction export in evaluation mode.")
     model.train(training)
     # Evaluation does not need gradient synchronization.
     network = model.module if not training and isinstance(model, DistributedDataParallel) else model
     if training:
         optimizer.zero_grad(set_to_none=True)
     windows, truth, predictions, tags = [], [], [], []
+    dual_arrays = {name: [] for name in ("gate_probability", "body_phys", "excess_phys")} if save_dual_diagnostics else None
     # Original evaluation: FP32 batch means, weighted/accumulated in FP64.
     evaluation_sums = torch.zeros(3, dtype=torch.float64, device=device) if not training else None
     with torch.set_grad_enabled(training):
@@ -74,6 +77,12 @@ def run_epoch(model, loader, device, stats, *, station_feat=None, optimizer=None
             if save_predictions:
                 truth.append(target.cpu())
                 predictions.append(prediction.detach().cpu())
+            if save_dual_diagnostics:
+                if output.body is None or output.excess is None or output.gate_probability is None:
+                    raise ValueError("Dual diagnostics require a dual-head model.")
+                dual_arrays["gate_probability"].append(output.gate_probability.float().reshape(-1).cpu())
+                dual_arrays["body_phys"].append((output.body.float() * stats["y_std"] + stats["y_mean"]).cpu())
+                dual_arrays["excess_phys"].append((output.excess.float() * stats["y_std"]).cpu())
     records = torch.cat(windows).cpu().numpy() if windows else np.empty((0, 4))
     if distributed:
         gathered = [None] * dist.get_world_size()
@@ -87,6 +96,10 @@ def run_epoch(model, loader, device, stats, *, station_feat=None, optimizer=None
         arrays = {"y_true": torch.cat(truth).numpy() if truth else np.empty((0, width), np.float32),
                   "y_pred": torch.cat(predictions).numpy() if predictions else np.empty((0, width), np.float32),
                   "tags": np.asarray(tags, dtype=str)}
+        if save_dual_diagnostics:
+            arrays.update({name: torch.cat(values).numpy() if values else
+                           np.empty((0,) if name == "gate_probability" else (0, width), np.float32)
+                           for name, values in dual_arrays.items()})
     # Val All includes sampler padding; Peak reuses the unique predictions.
     metrics = summarize_windows(records, validation=not training)
     if not training:

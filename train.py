@@ -20,6 +20,7 @@ from torch.utils.data.distributed import DistributedSampler
 
 from emulator.common import configure_runtime
 from emulator.common.runtime import log_message
+from emulator.common.dual import initial_gate_prior
 from emulator.data import (ForcingGraphStore, ForcingGraphView, build_loader,
                            fit_loss_thresholds, fit_statistics, station_features_from_json)
 from emulator.models import ModelConfig, build_model
@@ -81,19 +82,25 @@ def train(args, device, distributed, rank, wall_start):
     if not splits["train"] or not splits["val"]:
         raise ValueError("Training needs nonempty train and validation year groups.")
     history_steps = args.history_hours // 6
-    train_data = ForcingGraphView(store, splits["train"], history_steps, args.use_pmean)
-    val_data = ForcingGraphView(store, splits["val"], history_steps, args.use_pmean)
+    train_data = ForcingGraphView(store, splits["train"], history_steps)
+    val_data = ForcingGraphView(store, splits["val"], history_steps)
     # Z-score moments are reduced across ranks on the training device, as before.
     stats_cpu = fit_statistics(store, splits["train"], args.x_norm, args.x_p_lo, args.x_p_hi,
-                               args.x_nodes_per_graph, args.seed, args.use_pmean, history_steps,
-                               device=device)
+                               args.x_nodes_per_graph, args.seed, device=device)
     thresholds = [None]
     if rank == 0:
         thresholds[0] = fit_loss_thresholds(store, splits["train"], args.tail_frac,
-                                            args.wmse_q, bool(args.wmse_use_abs))
+                                            args.wmse_q, bool(args.wmse_use_abs), args.exceedance_percentile)
     if distributed:
         dist.broadcast_object_list(thresholds, src=0)
-    peak_threshold, wmse_threshold = thresholds[0]
+    fitted = thresholds[0]
+    dual_metadata = (dict(tau_phys=fitted["tau_phys"], event_prior=fitted["event_prior"],
+                          gate_init_prior=initial_gate_prior(fitted["event_prior"])
+                          if args.dual_ablation != "fixed_gate" else fitted["event_prior"],
+                          event_count=fitted["event_count"], train_windows=fitted["train_windows"],
+                          exceedance_percentile=args.exceedance_percentile, dual_ablation=args.dual_ablation,
+                          event_definition="max_h(Y_h) > tau_phys", fitted_on="train")
+                     if args.head_type == "dual" else None)
     stats = {key: value.to(device) for key, value in stats_cpu.items()}
     station_feat = None
     if args.model == "perceiver3" and args.use_station_meta and args.station:
@@ -106,14 +113,14 @@ def train(args, device, distributed, rank, wall_start):
                         temporal_layers=args.transformer_layers, temporal_ff_mult=args.transformer_ff_mult,
                         temporal_dropout=args.transformer_dropout, history_steps=history_steps,
                         station_feat_dim=station_feat.numel() if station_feat is not None else 0,
-                        peak_threshold_norm=((peak_threshold - stats_cpu["y_mean"]) / stats_cpu["y_std"]).tolist()
-                        if args.head_type == "dual" else None, peak_prior=args.tail_frac)
+                        peak_threshold_norm=((fitted["tau_phys"] - stats_cpu["y_mean"]) / stats_cpu["y_std"]).tolist()
+                        if args.head_type == "dual" else None, peak_prior=fitted["event_prior"])
     model_config = ModelConfig(**model_values)
     model = build_model(model_config).to(device)
     if distributed:
         model = DistributedDataParallel(model, device_ids=[device.index] if device.type == "cuda" else None)
     loss_config = LossConfig(**{field.name: getattr(args, field.name) for field in fields(LossConfig)})
-    criterion = ForecastLoss(loss_config, stats, peak_threshold, wmse_threshold).to(device)
+    criterion = ForecastLoss(loss_config, stats, fitted["tail_threshold"], fitted["wmse_threshold"]).to(device)
     optimizer = torch.optim.Adam(model.parameters(), lr=args.lr, weight_decay=1e-5)
     def lr_multiplier(epoch):
         if epoch < args.warmup_epochs:
@@ -166,7 +173,8 @@ def train(args, device, distributed, rank, wall_start):
                               "normalization": stats_cpu, "station_feat": station_feat.cpu() if station_feat is not None else None,
                               "station": args.station, "split_config": split_config,
                               "split_tags": {key: [store.graph_tags[i] for i in indices] for key, indices in splits.items()},
-                              "training_config": vars(args), "epoch": epoch, "val": validation.metrics}
+                              "training_config": vars(args), "loss_thresholds": fitted, "dual_metadata": dual_metadata,
+                              "epoch": epoch, "val": validation.metrics}
                 torch.save(checkpoint, checkpoint_path)
     if distributed:
         dist.barrier()
@@ -180,12 +188,13 @@ def train(args, device, distributed, rank, wall_start):
             test_indices = list(range(len(test_store.graphs)))
         else:
             test_store, test_indices = store, splits["test"]
-        test_data = ForcingGraphView(test_store, test_indices, history_steps, args.use_pmean)
+        test_data = ForcingGraphView(test_store, test_indices, history_steps)
         result = run_epoch(network, build_loader(test_data, None, **loader_options), device, stats,
                            station_feat=station_feat, use_amp=use_amp, amp_dtype=amp_dtype,
                            x_clip=args.x_clip, save_predictions=True)
         np.savez_compressed(output_dir / f"test_preds_{stem}.npz", **result.predictions)
         summary = {"best_epoch": best_epoch, "best_val_rmse": best_rmse, "training_seconds": elapsed,
+                   "loss_thresholds": fitted, "dual_metadata": dual_metadata,
                    "test": result.metrics, "test_scope": "external_all_years" if args.test_root_dir else "held_out_years"}
         if device.type == "cuda":
             torch.cuda.synchronize(device)

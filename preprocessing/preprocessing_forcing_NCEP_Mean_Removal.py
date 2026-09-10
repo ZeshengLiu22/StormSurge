@@ -137,19 +137,15 @@ def main(argv=None):
         # ----------------------------------------------------------
         # Per-time-step spatial-mean removal for pressure
         #   p_anom(t,x,y) = p(t,x,y) - mean_{x,y}(p(t,x,y))
-        # Also SAVE the mean pressure per timestep as an extra array:
-        #   p_mean_t: (TIME,)
         # ----------------------------------------------------------
         p = forcing_5d_local[..., P_IDX]                        # (TIME, nlat, nlon)
-        p_mean_t = p.mean(axis=(1, 2))                          # (TIME,)
-        forcing_5d_local[..., P_IDX] = p - p_mean_t[:, None, None]
+        forcing_5d_local[..., P_IDX] = p - p.mean(axis=(1, 2), keepdims=True)
 
         np.save(os.path.join(out_dir, f"forcing_local_{year}.npy"), forcing_5d_local)
         out_path_npz = os.path.join(out_dir, f"forcing_local_{year}.npz")
         np.savez(
             out_path_npz,
             forcing=forcing_5d_local,     # (TIME,nlat,nlon,5) with pressure anomaly
-            p_mean_t=p_mean_t,            # (TIME,) spatial mean of absolute pressure per timestep
             # Grid and time provenance
             year=year,
             dt_hours=6,

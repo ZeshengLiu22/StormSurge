@@ -8,9 +8,10 @@ import torch.nn.functional as F
 from torch_geometric.nn import global_mean_pool
 from torch_geometric.utils import to_dense_batch
 
+from emulator.common.dual import DUAL_ABLATIONS
+
 from .heads import ExceedanceHead, ForecastOutput, SingleHead
 from .spatial import SpatialEncoder
-from .pressure import PressureFeatures
 from .temporal import TemporalMLP, TemporalRNN, TemporalTransformer
 
 
@@ -28,9 +29,6 @@ class ModelConfig:
     cnn_intermediate_channel: int = 29
     history_steps: int = 2
     max_time_steps: int = 32
-    use_pmean: bool = False
-    pmean_dim: int = 32
-    perceiver_pmean_mode: str = "tokens"
     node_read_heads: int = 8
     time_read_heads: int = 8
     temporal_layers: int = 2
@@ -40,6 +38,7 @@ class ModelConfig:
     station_feat_dim: int = 0
     peak_threshold_norm: list[float] | None = None
     peak_prior: float = 0.05
+    dual_ablation: str = "none"
 
 
 class PACT(nn.Module):
@@ -74,14 +73,13 @@ class PACT(nn.Module):
             raise ValueError(f"Unknown temporal block: {c.temporal_block}")
         self.horizon_embed = nn.Embedding(c.out_channels, hidden)
         self.forecast_readout = nn.MultiheadAttention(hidden, c.time_read_heads, batch_first=True)
-        self.pressure = PressureFeatures(c) if c.use_pmean else None
-        head_dim = hidden + (self.pressure.global_dim if self.pressure is not None else 0)
         if c.head_type == "single":
-            self.head = SingleHead(hidden, c.head_dropout, input_dim=head_dim)
+            self.head = SingleHead(hidden, c.head_dropout)
         elif c.head_type == "dual":
             if c.peak_threshold_norm is None or len(c.peak_threshold_norm) != c.out_channels:
                 raise ValueError("Dual head requires one TRAIN-derived threshold per horizon.")
-            self.head = ExceedanceHead(hidden, c.head_dropout, c.peak_threshold_norm, c.peak_prior, input_dim=head_dim)
+            self.head = ExceedanceHead(hidden, c.head_dropout, c.peak_threshold_norm, c.peak_prior,
+                                       fixed_gate=c.dual_ablation == "fixed_gate")
         else:
             raise ValueError(f"Unknown head: {c.head_type}")
 
@@ -106,19 +104,11 @@ class PACT(nn.Module):
         memory = torch.stack(station_history, dim=1)
         # Lag zero always means current forcing, independently of H.
         lag_ids = torch.arange(steps - 1, -1, -1, device=memory.device)
-        pressure_vector = None
-        if self.pressure is not None:
-            pressure_tokens, pressure_vector = self.pressure(batch.p_mean_hist)
-            if pressure_tokens is not None:
-                memory = torch.cat((memory, pressure_tokens), dim=1)
-                lag_ids = lag_ids.repeat(2)
         memory = self.temporal(memory + self.lag_embed(lag_ids))
         horizons = self.horizon_embed.weight.unsqueeze(0).expand(batch.num_graphs, -1, -1)
         context, _ = self.forecast_readout(horizons, memory, memory, need_weights=False)
         if steps == 1:
             context = context + horizons  # Retain horizon identity in the H=0 control.
-        if pressure_vector is not None:
-            context = torch.cat((context, pressure_vector[:, None].expand(-1, context.size(1), -1)), dim=-1)
         context = F.layer_norm(context.float(), (context.size(-1),))
         return self.head(context)
 
@@ -134,8 +124,7 @@ class Baseline(nn.Module):
                                       c.dropout, c.encoder_type, c.cnn_intermediate_channel)
         self.rnn = nn.LSTM(c.hidden_channels, c.hidden_channels, batch_first=True) if c.history_steps else None
         self.dropout = nn.Dropout(c.dropout)
-        self.pressure = PressureFeatures(c, baseline=True) if c.use_pmean else None
-        self.head = nn.Linear(c.hidden_channels + (c.pmean_dim if c.use_pmean else 0), c.out_channels)
+        self.head = nn.Linear(c.hidden_channels, c.out_channels)
 
     def forward(self, batch, station_feat=None):
         grid_shape = self.spatial.grid_shape(batch)
@@ -147,11 +136,12 @@ class Baseline(nn.Module):
             context, _ = self.rnn(torch.stack(sequence, dim=1))
             context = context[:, -1]
         context = self.dropout(context)
-        if self.pressure is not None:
-            _, vector = self.pressure(batch.p_mean_hist)
-            context = torch.cat((context, vector), dim=-1)
         return ForecastOutput(self.head(context))
 
 
 def build_model(config: ModelConfig):
+    if config.dual_ablation not in DUAL_ABLATIONS:
+        raise ValueError(f"Unknown dual ablation: {config.dual_ablation}")
+    if config.dual_ablation != "none" and (config.model != "pact" or config.head_type != "dual"):
+        raise ValueError("Dual ablations require a PACT dual head.")
     return {"pact": PACT, "baseline": Baseline}[config.model](config)

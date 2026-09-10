@@ -18,6 +18,7 @@ from emulator.common.runtime import log_message
 from emulator.data import ForcingGraphStore, ForcingGraphView, build_loader, station_features_from_json
 from emulator.models import ModelConfig, build_model
 from emulator.inference import classify_past_future, infer_dataset_tag, parse_year_tag
+from emulator.inference.dual_diagnostics import summarize_dual
 from emulator.training import format_metrics, run_epoch
 from emulator.training.metrics import summarize_windows
 
@@ -91,6 +92,8 @@ def parse_args(argv=None):
     parser.add_argument("--amp_dtype", type=str, default="bf16", choices=["bf16", "fp16"])
     parser.add_argument("--gpu_sync_timing", action="store_true", help="Synchronize CUDA for accurate timing")
     parser.add_argument("--save_npz", action="store_true")
+    parser.add_argument("--dual_diagnostics", action="store_true",
+                        help="Export gate/body/excess/event arrays and calibration metrics for a dual checkpoint.")
     parser.add_argument(
         "--model_label",
         type=str,
@@ -137,6 +140,9 @@ def main(argv=None):
     args = parse_args(argv)
     checkpoint = torch.load(args.ckpt, map_location="cpu", weights_only=False)
     config = ModelConfig(**checkpoint["model_config"])
+    dual_metadata = checkpoint.get("dual_metadata")
+    if args.dual_diagnostics and (config.head_type != "dual" or dual_metadata is None):
+        raise ValueError("--dual_diagnostics requires a dual checkpoint with TRAIN event metadata.")
     training = checkpoint["training_config"]
     expected = {"model": "perceiver3" if config.model == "pact" else "baseline",
                 "encoder_type": config.encoder_type}
@@ -204,7 +210,7 @@ def main(argv=None):
         year_to_indices["_".join(store.graph_tags[index].split("_")[:2])].append(index)
     results, yearly_predictions, timing_year_seconds = {}, [], []
     for year, year_indices in sorted(year_to_indices.items()):
-        dataset = ForcingGraphView(store, year_indices, config.history_steps, config.use_pmean)
+        dataset = ForcingGraphView(store, year_indices, config.history_steps)
         loader = build_loader(dataset, None, args.batch_size, args.num_workers, args.pin_memory,
                               args.persistent_workers, args.prefetch_factor, args.mp_context)
         if cuda and args.gpu_sync_timing:
@@ -213,7 +219,7 @@ def main(argv=None):
         result = run_epoch(model, loader, device, stats, station_feat=station_feat, x_clip=training["x_clip"],
                            use_amp=args.amp and cuda,
                            amp_dtype={"bf16": torch.bfloat16, "fp16": torch.float16}[args.amp_dtype],
-                           save_predictions=True)
+                           save_predictions=True, save_dual_diagnostics=args.dual_diagnostics)
         if cuda and args.gpu_sync_timing:
             torch.cuda.synchronize()
         seconds = time.perf_counter() - start
@@ -226,7 +232,7 @@ def main(argv=None):
         # Reports always use the evaluated predictions; save_npz controls disk I/O only.
         yearly_predictions.append(result.predictions)
     arrays = {name: np.concatenate([item[name] for item in yearly_predictions])
-              for name in ("y_true", "y_pred", "tags")}
+              for name in yearly_predictions[0]}
     elapsed = sum(results[year]["seconds"] for year in year_to_indices)
     error = arrays["y_pred"].astype(np.float64) - arrays["y_true"].astype(np.float64)
     records = np.column_stack((np.arange(len(indices)), arrays["y_true"].max(axis=1),
@@ -259,13 +265,29 @@ def main(argv=None):
             model_file_tag += f"_{config.head_type}"
     report_stem = f"{test_tag}_{station_tag}_{model_name}{model_file_tag}"
     if args.save_npz:
-        np.savez_compressed(out_dir / "predictions.npz", **arrays)
+        np.savez_compressed(out_dir / "predictions.npz", **{name: arrays[name] for name in ("y_true", "y_pred", "tags")})
         np.savez(out_dir / f"preds_{report_stem}_ALLYEARS.npz", y_true=arrays["y_true"],
                  y_pred=arrays["y_pred"], tags=arrays["tags"].astype(object))
+    if args.dual_diagnostics:
+        tau_phys = dual_metadata["tau_phys"]
+        event = np.any(arrays["y_true"].astype(np.float64) > tau_phys, axis=1)
+        np.savez_compressed(out_dir / "dual_diagnostics.npz", **arrays, event=event,
+                            contribution_phys=arrays["gate_probability"][:, None] * arrays["excess_phys"],
+                            tau_phys=tau_phys, event_prior=dual_metadata["event_prior"],
+                            dual_ablation=config.dual_ablation)
+        diagnostic_report = dict(train=dual_metadata,
+                                 scope="external_all_years" if external else "held_out_years",
+                                 years=sorted(year_to_indices), overall=summarize_dual(arrays, tau_phys),
+                                 by_year={year: summarize_dual(item, tau_phys)
+                                          for year, item in zip(sorted(year_to_indices), yearly_predictions)},
+                                 metric_note="PR average_precision is stepwise; pr_auc_trapezoid is linearly interpolated. "
+                                             "Undefined metrics and empty bins are null. Threshold is fixed from TRAIN.")
+        (out_dir / "dual_diagnostics.json").write_text(json.dumps(diagnostic_report, indent=2, allow_nan=False))
+        log_message(f"Dual diagnostics: {out_dir / 'dual_diagnostics.json'}")
     wall_seconds = time.perf_counter() - wall_start
     metadata = {"metrics": metrics, "runtime_seconds": elapsed, "wall_seconds": wall_seconds,
                 "samples": len(indices), "scope": "external_all_years" if external else "held_out_years",
-                "years": sorted(year_to_indices), "results": results}
+                "years": sorted(year_to_indices), "results": results, "dual_metadata": dual_metadata}
     (out_dir / "metrics.json").write_text(json.dumps(metadata, indent=2))
     report = dict(timestamp=datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S UTC"),
                   test_tag=test_tag, source_tag=source, target_tag=target, station=station_tag,
@@ -284,7 +306,7 @@ def main(argv=None):
                   if not external else None,
                   years_evaluated=metadata["years"], inference_args=vars(args).copy(), checkpoint_args=training,
                   results=results, metric_space="physical", metric_note="RMSE/MAE on denormalized predictions in original y units.",
-                  use_pmean=config.use_pmean, perceiver_pmean_mode=config.perceiver_pmean_mode, x_clip=training["x_clip"])
+                  x_clip=training["x_clip"], dual_metadata=dual_metadata, dual_ablation=config.dual_ablation)
     (out_dir / f"metrics_per_year_{report_stem}.json").write_text(json.dumps(report, indent=2, default=str))
     log_message(format_metrics("External" if external else "Test", metrics))
     log_message(f"Wall time: {wall_seconds:.3f} s | Outputs: {out_dir}")

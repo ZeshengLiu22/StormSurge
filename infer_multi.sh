@@ -65,6 +65,7 @@ set -u
 : "${PERSISTENT_WORKERS:=0}"
 : "${PREFETCH_FACTOR:=0}"
 : "${MP_CONTEXT:=fork}"
+: "${DUAL_DIAGNOSTICS:=0}"
 
 : "${CKPT_PATH:=}"
 
@@ -151,6 +152,8 @@ TF32_ARGS=()
 if [[ "${USE_TF32}" -eq 1 ]]; then TF32_ARGS=(--tf32); fi
 
 AMP_ARGS=()
+DIAGNOSTIC_ARGS=()
+if [[ "${DUAL_DIAGNOSTICS}" == "1" ]]; then DIAGNOSTIC_ARGS+=(--dual_diagnostics); fi
 if [[ "${USE_AMP}" -eq 1 ]]; then AMP_ARGS=(--amp --amp_dtype "${AMP_DTYPE}"); fi
 
 STATION_ARGS=()
@@ -276,6 +279,7 @@ for spec in "${RUNS[@]}"; do
     --ckpt "${CKPT_RESOLVED}"
     --out_dir "${OUT_DIR}"
     --save_npz
+    "${DIAGNOSTIC_ARGS[@]}"
     "${YEARS_ARGS[@]}"
     "${AMP_ARGS[@]}"
     "${TF32_ARGS[@]}"

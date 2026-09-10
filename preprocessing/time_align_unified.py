@@ -29,23 +29,13 @@
 #       Aligned_peryear_hist48/<model_tag>/...
 #
 # -----------------------------------------------------------------------------
-# NEW: Global-mean pressure feature (optional)
+# FORCING INPUT
 # -----------------------------------------------------------------------------
-# We now assume forcing files are saved as NPZ:
+# Forcing files are saved as NPZ:
 #   forcing_local_YYYY.npz
 #
 # Required key:
 #   - forcing: (T, H, W, 5)  where channel order is unchanged from before
-#
-# Optional key:
-#   - p_mean_t: (T,)  spatial mean (over x,y) of ABSOLUTE pressure at each timestep
-#
-# IMPORTANT:
-#   - We DO NOT change x/x_hist format (still 5 channels). train.py stays unchanged.
-#   - If p_mean_t exists, we store it per-graph aligned with history window:
-#       data.p_mean_hist: (WINDOW_LENGTH,)  (e.g. 9,)
-#       data.p_mean_curr: scalar (the last element)
-#   - If p_mean_t does not exist, the script behaves exactly like before.
 #
 # -----------------------------------------------------------------------------
 # OUTPUTS
@@ -219,10 +209,6 @@ def discover_forcing_files(forcing_dir: Path) -> Dict[int, Path]:
     """
     Map {year -> forcing_file_path}.
 
-    We ONLY use .npz forcing files now, because they can carry extra metadata
-    (e.g., p_mean_t). This prevents accidental mismatch between forcing arrays
-    and auxiliary per-timestep stats.
-
     Expected filename pattern:
       forcing_local_YYYY.npz
     """
@@ -237,29 +223,12 @@ def discover_forcing_files(forcing_dir: Path) -> Dict[int, Path]:
     return dict(sorted(year_to_path.items(), key=lambda kv: kv[0]))
 
 
-def load_forcing_npz(path: Path) -> Tuple[np.ndarray, Optional[np.ndarray]]:
-    """
-    Load forcing from a .npz.
-
-    Required keys:
-      - forcing: (T, H, W, 5)
-
-    Optional keys:
-      - p_mean_t: (T,)
-        Meaning: spatial mean of ABSOLUTE pressure at each forcing timestep
-        (computed during preprocessing over the SAME local region / grid).
-
-    Returns:
-      forcing: float32 array (T,H,W,5)
-      p_mean_t: float32 array (T,) or None if missing
-    """
-    z = np.load(path, allow_pickle=False)
-    if "forcing" not in z:
-        raise KeyError(f"{path} missing key 'forcing'. Keys={list(z.keys())}")
-
-    forcing = z["forcing"].astype(np.float32)
-    p_mean_t = z["p_mean_t"].astype(np.float32) if "p_mean_t" in z else None
-    return forcing, p_mean_t
+def load_forcing_npz(path: Path) -> np.ndarray:
+    """Load the required (T, H, W, 5) forcing array as float32."""
+    with np.load(path, allow_pickle=False) as z:
+        if "forcing" not in z:
+            raise KeyError(f"{path} missing key 'forcing'. Keys={list(z.keys())}")
+        return z["forcing"].astype(np.float32)
 
 
 def infer_grid_from_forcing(arr: np.ndarray) -> Tuple[int, int, int, int]:
@@ -450,7 +419,6 @@ def process_one_pair(
     year: int,
     station: str,
     forcing: np.ndarray,             # (T, H, W, 5)
-    p_mean_t: Optional[np.ndarray],  # (T,) or None
     t_forcing: np.ndarray,           # (T,)
     edge_index: torch.Tensor,
     H: int,
@@ -477,18 +445,6 @@ def process_one_pair(
       context_start = t_start_center - 48h
       forcing_ctx = forcing[(t_forcing >= context_start) & (t_forcing <= t_end_center)]
 
-    -------------------------------------------------------------------------
-    NEW: p_mean_t handling
-    -------------------------------------------------------------------------
-    If p_mean_t is present (length T), we crop it using the SAME mask as forcing,
-    producing p_mean_ctx aligned 1-to-1 with forcing_ctx timesteps.
-
-    Then for each graph i:
-      - forcing window = forcing_ctx[start_idx:end_idx] has shape (WINDOW_LENGTH, H, W, 5)
-      - p_mean window  = p_mean_ctx[start_idx:end_idx] has shape (WINDOW_LENGTH,)
-    We attach:
-      data.p_mean_hist (WINDOW_LENGTH,)
-      data.p_mean_curr (scalar)
     """
     num_nodes = H * W
 
@@ -519,7 +475,7 @@ def process_one_pair(
         raise ValueError(f"Unknown version={version}")
 
     # -------------------------
-    # 3) Crop forcing (and p_mean_t if present) to [context_start, t_end_center]
+    # 3) Crop forcing to [context_start, t_end_center]
     # -------------------------
     mask_force = (t_forcing >= context_start) & (t_forcing <= t_end_center)
     forcing_ctx = forcing[mask_force]
@@ -529,17 +485,6 @@ def process_one_pair(
         raise ValueError(
             f"No forcing in range [{context_start}, {t_end_center}] for year={year}, station={station}, version={version}"
         )
-
-    # Keep p_mean aligned to forcing_ctx using the SAME mask
-    p_mean_ctx: Optional[np.ndarray] = None
-    if p_mean_t is not None:
-        if p_mean_t.shape[0] != forcing.shape[0]:
-            raise ValueError(
-                f"p_mean_t length mismatch for year={year}: len(p_mean_t)={p_mean_t.shape[0]} vs forcing T={forcing.shape[0]}"
-            )
-        p_mean_ctx = p_mean_t[mask_force]
-        if p_mean_ctx.shape[0] != forcing_ctx.shape[0]:
-            raise RuntimeError("Internal error: p_mean_ctx and forcing_ctx time lengths differ.")
 
     # Center indices (within forcing_ctx) from Nov 1 00:00 to t_end_center
     center_mask = (t_forcing_ctx >= t_start_center) & (t_forcing_ctx <= t_end_center)
@@ -604,12 +549,11 @@ def process_one_pair(
     nc_used = nc[: N * GT_PER_FORCING]
     nc_tide_used = nc_tide[: N * GT_PER_FORCING]
 
-    p_mean_status = "present" if p_mean_ctx is not None else "missing"
     print(
         f"{version.upper():7s} {year} {station:8s} | "
         f"N={N:4d} | forcing_centers={tuple(forcing_centers.shape)} | "
         f"nodes={num_nodes:5d} | edges={edge_index.shape[1]:,} | station_hours={len(nc_used)} | "
-        f"p_mean_t={p_mean_status} | end_center={t_end_center}"
+        f"end_center={t_end_center}"
     )
 
     # -------------------------
@@ -695,20 +639,6 @@ def process_one_pair(
             grid_W=W,
             center_time=str(center_time),
         )
-
-        # -------------------------
-        # NEW: store p_mean history aligned to the SAME forcing window
-        # (does not affect train.py unless you explicitly use it)
-        # -------------------------
-        if p_mean_ctx is not None:
-            p_hist = p_mean_ctx[start_idx:end_idx]  # (WINDOW_LENGTH,)
-            if p_hist.shape[0] != WINDOW_LENGTH:
-                raise RuntimeError(
-                    f"p_mean history length mismatch at i={i}: got {p_hist.shape[0]}, expected {WINDOW_LENGTH}"
-                )
-            p_mean_hist_t = torch.from_numpy(p_hist.astype(np.float32))  # (9,)
-            data.p_mean_hist = p_mean_hist_t
-            data.p_mean_curr = p_mean_hist_t[-1]  # scalar tensor
 
         graphs.append(data)
 
@@ -933,7 +863,7 @@ def main() -> None:
             continue
 
         forcing_path = year_to_path[year]
-        forcing, p_mean_t = load_forcing_npz(forcing_path)
+        forcing = load_forcing_npz(forcing_path)
         T_full, H, W, C = infer_grid_from_forcing(forcing)
         t_forcing = build_forcing_time_index(year, T_full)
 
@@ -951,7 +881,6 @@ def main() -> None:
             #     year=year,
             #     station=station,
             #     forcing=forcing,
-            #     p_mean_t=p_mean_t,
             #     t_forcing=t_forcing,
             #     edge_index=edge_index,
             #     H=H,
@@ -967,7 +896,6 @@ def main() -> None:
                 year=year,
                 station=station,
                 forcing=forcing,
-                p_mean_t=p_mean_t,  # NEW (optional)
                 t_forcing=t_forcing,
                 edge_index=edge_index,
                 H=H,
@@ -995,11 +923,6 @@ def main() -> None:
             print("edge_index   :", tuple(g0.edge_index.shape))
             print("grid_H,grid_W:", getattr(g0, "grid_H", None), getattr(g0, "grid_W", None))
             print("center_time  :", getattr(g0, "center_time", None))
-            if hasattr(g0, "p_mean_hist"):
-                print("p_mean_hist  :", tuple(g0.p_mean_hist.shape), "(should be (9,))")
-                print("p_mean_curr  :", g0.p_mean_curr.item() if torch.is_tensor(g0.p_mean_curr) else g0.p_mean_curr)
-            else:
-                print("p_mean_hist  : <not present> (your forcing npz did not include p_mean_t)")
         else:
             print("Example graph not found yet (maybe you processed different year/station first).")
 

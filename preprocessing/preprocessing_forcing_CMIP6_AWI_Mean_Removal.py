@@ -145,19 +145,16 @@ for year in years:
     )
 
     # ----------------------------------------------------------
-    # NEW: per-time-step spatial mean removal for pressure (local box)
+    # Per-time-step spatial mean removal for pressure (local box)
     # p_anom(t,x,y) = p(t,x,y) - mean_{x,y}(p(t,x,y))
-    # Save p_mean_t as (TIME_3h,)
     # ----------------------------------------------------------
     p3 = forcing_5d_local_3h[..., P_IDX]                     # (TIME_3h, nlat, nlon)
-    p_mean_t_3h = p3.mean(axis=(1, 2))                       # (TIME_3h,)
-    forcing_5d_local_3h[..., P_IDX] = p3 - p_mean_t_3h[:, None, None]
+    forcing_5d_local_3h[..., P_IDX] = p3 - p3.mean(axis=(1, 2), keepdims=True)
 
     # -------------------------
     # Downsample 3h -> 6h
     # -------------------------
     forcing_5d_local_6h = forcing_5d_local_3h[::2]           # every other step
-    p_mean_t_6h = p_mean_t_3h[::2]
     TIME_6h = forcing_5d_local_6h.shape[0]
 
     # Timestamp printing (your assumed convention)
@@ -180,7 +177,6 @@ for year in years:
     np.savez(
         out_path_3h_npz,
         forcing=forcing_5d_local_3h,   # pressure is anomaly
-        p_mean_t=p_mean_t_3h,          # spatial mean of ABS pressure each timestep
         year=year,
         dt_hours=3,
         LAT_MIN=LAT_MIN, LAT_MAX=LAT_MAX, LON_MIN=LON_MIN, LON_MAX=LON_MAX,
@@ -192,7 +188,6 @@ for year in years:
     np.savez(
         out_path_6h_npz,
         forcing=forcing_5d_local_6h,   # pressure is anomaly
-        p_mean_t=p_mean_t_6h,
         year=year,
         dt_hours=6,
         LAT_MIN=LAT_MIN, LAT_MAX=LAT_MAX, LON_MIN=LON_MIN, LON_MAX=LON_MAX,
@@ -211,4 +206,4 @@ for year in years:
     )
 
 print("\nDone. Saved processed CMIP6_AWI local forcing under:", out_dir)
-print("Each year now has both .npy and .npz (npz includes p_mean_t).")
+print("Each year has both .npy and .npz forcing outputs.")

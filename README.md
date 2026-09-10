@@ -66,9 +66,23 @@ PACT is selected with `--model perceiver3`; `--model baseline` uses spatial mean
 
 All ten loss modes are retained: `mse`, `wmse`, `mse_tail`, `wmse_tail`, `mse_wtail`, and each with `_slope`. Weighted-tail modes retain weighted tail errors. The slope soft mask uses the TRAIN pointwise `wmse_q` threshold; the tail loss uses the TRAIN window-peak threshold. The old residual head's alpha, gate-bias and tanh-clip controls are removed.
 
-**Dual loss** is the body + excess + gate supervision, added to the selected prediction loss whenever `HEAD_TYPE=dual`. `DUAL_LOSS=1` / `--dual_loss 1` is the default. A dual run requesting `DUAL_LOSS=0` is forced back to 1; any zero `BODY_LOSS_WEIGHT`, `EXCESS_LOSS_WEIGHT` or `GATE_LOSS_WEIGHT` is also restored to 1. Corrections produce one timestamped `WARNING` in the training log, and the effective values are saved in the per-run JSON and checkpoint. Positive weights keep their configured values. Baseline/single runs have no dual loss. The prediction `loss_mode` and its tail/slope settings are independent and unchanged; in particular, dual + `mse` means MSE + mandatory dual loss. In Python, `dual_loss_terms` computes the three terms and `ForecastLoss` enforces and adds their weighted sum.
+**Dual loss** supervises body, excess and the window-event gate in addition to the selected prediction loss. With `DUAL_ABLATION=none` (default), `DUAL_LOSS=0` and zero branch weights are corrected to 1 with one timestamped warning. Positive weights are retained. Effective settings are saved before training. Baseline/single runs have no dual loss. Excess loss masks non-event windows and averages over the whole `B × K`, without dividing by event count or prevalence.
 
-Normalization (`zscore`, `robust`, `mag`), augmentation, year splits/shuffling/future filtering, external test roots, station feature switches and optional `--use_pmean` (`tokens`, `global`, `both`) are retained. Pressure normalization uses TRAIN only, and enabling pressure requires the corresponding metadata. All shipped profiles leave it disabled.
+`EXCEEDANCE_PERCENTILE=95` / `--exceedance_percentile 95` defines the dual threshold from TRAIN window maxima. `TAIL_FRAC=0.05` controls the final prediction's tail auxiliary loss independently: dual events use `max(Y) > tau`, while tail loss keeps `max(Y) >= tail_threshold`. The gate is initialized from the actual strict-event TRAIN prevalence, including ties. Checkpoints and summaries save `dual_metadata` with `tau_phys`, `event_prior`, `gate_init_prior`, event count, TRAIN window count, percentile and ablation. Only learned-logit initialization clips prevalence to `[1e-6, 1-1e-6]`; the empirical value is preserved.
+
+Use a named experiment to disable supervision deliberately:
+
+| `DUAL_ABLATION` / `--dual_ablation` | Active branch losses | Gate |
+|---|---|---|
+| `none` | body, excess, BCE | learned |
+| `no_gate_bce` | body, excess | learned through prediction loss |
+| `no_excess_loss` | body, BCE | learned |
+| `no_branch_supervision` | none; prediction loss only | learned |
+| `fixed_gate` | body, excess | constant empirical TRAIN prevalence |
+
+Inactive weights are set to 0; active zero weights are restored to 1. These modes require a PACT dual head. Matched ready-to-run profiles are in [`configs/dual_ablations`](configs/dual_ablations), each sourcing Stable Dual. For example: `bash train.sh configs/dual_ablations/train_config_NCEP_Battery_Fixed_Gate.sh`.
+
+Normalization (`zscore`, `robust`, `mag`), augmentation, year splits/shuffling/future filtering, external test roots and station feature switches are retained. Forcing inputs use the five-channel `[u,v,p',lon,lat]` layout, with spatial-mean pressure removal during preprocessing.
 
 The original training protocol is restored: DDP seeds each process with `seed + rank`; its samplers use the original default seed 0. Z-score statistics use the training device and distributed sums, preserving the original FP32/FP64 arithmetic order. Robust/mag statistics use TRAIN node samples; `x_nodes_per_graph <= 0` means at most 256 nodes per graph, without reducing the model's input graph. Augmentation at probability 1 skips the probability draw, preserving the original RNG sequence. The original lower bounds remain `1e-6` for `wmse_s`/`slope_mask_s` and `1e-12` for `slope_charb_eps`/`slope_huber_delta`; normal configured values are unaffected.
 
@@ -110,6 +124,8 @@ python infer.py --ckpt /path/to/best_<stem>.pth \
 Set `CKPT_PATH` in the inference config to a newly trained checkpoint or glob. Inference loads only the current checkpoint format. The original model/head/temporal/feature arguments validate the saved architecture; they do not silently change it. Omitted station features are read from the checkpoint.
 
 The default evaluates exact held-out test tags saved during training. `--test_root_dir` evaluates all years in an external directory. `--scope all` is an explicit alternative for evaluating the supplied root, and `--years` filters the selected scope. The scope is recorded in `metrics.json`. `--save_npz` controls prediction export. Loader, AMP and TF32 options use their inference CLI settings.
+
+For dual checkpoints with TRAIN event metadata, `--dual_diagnostics` (shell: `DUAL_DIAGNOSTICS=1`) additionally writes `dual_diagnostics.npz` and `dual_diagnostics.json`. Arrays contain aligned `y_true`, `y_pred`, `tags`, `gate_probability`, `body_phys`, `excess_phys`, `contribution_phys`, `event`, and the TRAIN threshold/prior. JSON reports overall/per-year Brier, stepwise average precision, trapezoidal PR-AUC, reliability bins, event/non-event gate histograms and conditional errors. Undefined metrics and empty bins are `null`; no threshold is fitted on evaluation data. This explicit export also works without `--save_npz`; regular prediction files retain their original three fields, and epoch training/validation logs do not collect these diagnostics.
 
 Inference reports each year's physical RMSE, MAE, sample count and runtime, then sample-weighted ALL/past/future errors. Past is 1979–2014 and future is 2070–2099, classified by the starting year. The average annual runtime excludes `2014_2015`, while accuracy still includes its samples. Other years contribute to ALL only. Reports are computed even without `--save_npz`.
 

@@ -38,7 +38,6 @@ class StationTimeAlignmentTests(unittest.TestCase):
             year=2000,
             station="Battery",
             forcing=np.zeros((32, 2, 2, 5), dtype=np.float32),
-            p_mean_t=None,
             t_forcing=build_forcing_time_index(2000, 32),
             edge_index=torch.empty((2, 0), dtype=torch.long),
             H=2,
@@ -96,15 +95,15 @@ class StationTimeAlignmentTests(unittest.TestCase):
         self.assertIn("legacy assumption", output.getvalue())
         self.assertEqual(len(list((self.root / "graphs").glob("*.pt"))), 1)
 
-    def test_fixed_march15_path_preserves_history_pressure_and_output_names(self):
+    def test_fixed_march15_path_preserves_history_and_output_names(self):
         times = pd.date_range('2000-10-25 01:00', '2001-03-16 23:00', freq='h')
         frame = pd.DataFrame(dict(time=times, nc=np.arange(len(times)), nc_tide=np.zeros(len(times))))
         frame.to_csv(self.csv_path, index=False)
         forcing_times = pd.date_range('2000-10-25', '2001-03-16 18:00', freq='6h')
-        pressure = np.arange(len(forcing_times), dtype=np.float32)
+        forcing = np.arange(len(forcing_times) * 2 * 2 * 5, dtype=np.float32).reshape(-1, 2, 2, 5)
         with redirect_stdout(StringIO()):
-            process_one_pair(year=2000, station='Battery', forcing=np.zeros((len(forcing_times), 2, 2, 5), np.float32),
-                             p_mean_t=pressure, t_forcing=build_forcing_time_index(2000, len(forcing_times)),
+            process_one_pair(year=2000, station='Battery', forcing=forcing,
+                             t_forcing=build_forcing_time_index(2000, len(forcing_times)),
                              edge_index=torch.empty((2, 0), dtype=torch.long), H=2, W=2, version='fixed',
                              out_root_fixed=self.root, out_root_peryear=self.root / 'unused', csv_dir=self.root)
         stem = '2000_2001_Battery_fixed315_hist48'
@@ -113,7 +112,10 @@ class StationTimeAlignmentTests(unittest.TestCase):
         self.assertEqual(graphs[0].center_time, '2000-11-01 00:00:00')
         self.assertEqual(graphs[-1].center_time, '2001-03-15 18:00:00')
         self.assertEqual(tuple(graphs[0].x_hist.shape), (9, 4, 5))
-        np.testing.assert_array_equal(graphs[0].p_mean_hist, pressure[20:29])
+        np.testing.assert_array_equal(graphs[0].x_hist, forcing[20:29].reshape(9, 4, 5))
+        self.assertEqual(set(graphs[0].keys()), {'x', 'x_hist', 'edge_index', 'y', 'nc', 'nc_tide',
+                                                'time_index', 'hour_start', 'max_history_hours',
+                                                'grid_H', 'grid_W', 'center_time'})
         expected = frame.loc[frame.time.between('2001-03-15 18:00', '2001-03-15 23:00'), 'nc'].to_numpy(np.float32)
         np.testing.assert_array_equal(graphs[-1].y, expected)
 
