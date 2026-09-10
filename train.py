@@ -177,6 +177,8 @@ def train(args, device, distributed, rank, wall_start):
                               "training_config": vars(args), "loss_thresholds": fitted, "dual_metadata": dual_metadata,
                               "epoch": epoch, "val": validation.metrics}
                 torch.save(checkpoint, checkpoint_path)
+                log_message(f'[Best] Epoch {epoch:03d}/{args.epochs} | '
+                            f'{format_metrics("Val", validation.metrics)}')
     if distributed:
         dist.barrier()
     elapsed = time.perf_counter() - start
