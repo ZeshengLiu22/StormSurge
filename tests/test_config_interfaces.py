@@ -8,11 +8,14 @@ from pathlib import Path
 import shlex
 import subprocess
 import tempfile
+from types import SimpleNamespace
 import unittest
 
 import torch
 
 import train
+import infer
+from emulator.data import fit_statistics
 from emulator.models import ForecastOutput, ModelConfig, build_model
 from emulator.training import ForecastLoss, LossConfig
 from test_models import graph_batch
@@ -31,6 +34,42 @@ def dry_commands(config):
 
 
 class ConfigInterfaceTests(unittest.TestCase):
+    def test_mag_ignores_unused_lower_percentile_and_keeps_used_range_checks(self):
+        graph = SimpleNamespace(x=torch.tensor([[-4., 0.], [-1., 0.], [2., 0.], [9., 0.]]),
+                                y=torch.tensor([.2, .7]))
+        store = SimpleNamespace(graphs=[graph])
+        reference = fit_statistics(store, [0], x_norm='mag', p_lo=1., p_hi=90.)
+        for lower in (90., 95., -1., 101., float('nan')):
+            with self.subTest(lower=lower):
+                actual = fit_statistics(store, [0], x_norm='mag', p_lo=lower, p_hi=90.)
+                for key in reference:
+                    torch.testing.assert_close(actual[key], reference[key], rtol=0, atol=0)
+                with self.assertRaisesRegex(ValueError, 'feature percentile'):
+                    fit_statistics(store, [0], x_norm='robust', p_lo=lower, p_hi=90.)
+        for mode, upper in itertools.product(('mag', 'robust'), (0., -1., 101., float('nan'), float('inf'))):
+            with self.subTest(mode=mode, upper=upper), self.assertRaisesRegex(ValueError, 'feature percentile'):
+                fit_statistics(store, [0], x_norm=mode, p_lo=1., p_hi=upper)
+        maximum = fit_statistics(store, [0], x_norm='mag', p_lo=100., p_hi=100.)
+        torch.testing.assert_close(maximum['x_center'], torch.zeros(2), rtol=0, atol=0)
+        torch.testing.assert_close(maximum['x_scale'], torch.tensor([9., 1e-6]), rtol=0, atol=0)
+
+    def test_train_and_infer_strip_head_and_temporal_names(self):
+        blocks = dict(mlp='MLP', lstm='LSTM', gru='GRU', transformer='Transformer', attn='Transformer')
+        for head, (alias, expected), whitespace in itertools.product(('single', 'dual'), blocks.items(), (' ', '\t\n')):
+            with self.subTest(head=head, temporal=alias, whitespace=repr(whitespace)):
+                options = ['--head_type', whitespace + head.upper() + whitespace,
+                           '--temporal_block', whitespace + alias.upper() + whitespace]
+                training = train.parse_args(['--model', 'perceiver3', *options])
+                inference = infer.parse_args(['--ckpt', 'unused.pth', '--root_dir', '.', *options])
+                self.assertEqual((training.head_type, training.temporal_block), (head, expected))
+                self.assertEqual((inference.head_type, inference.temporal_block), (head, expected))
+        for flag, invalid in (('--head_type', ' residual '), ('--head_type', '   '),
+                              ('--temporal_block', ' ml p '), ('--temporal_block', '\t')):
+            for parser, prefix in ((train.parse_args, ['--model', 'perceiver3']),
+                                   (infer.parse_args, ['--ckpt', 'unused.pth', '--root_dir', '.'])):
+                with self.subTest(flag=flag, invalid=invalid), self.assertRaises(SystemExit), contextlib.redirect_stderr(io.StringIO()):
+                    parser([*prefix, flag, invalid])
+
     def test_every_training_profile_generates_valid_commands(self):
         configs = sorted([*REPO.glob('configs/configs_train*/*/*.sh'),
                           *REPO.glob('configs/train_config_*_Stable_*.sh')])

@@ -1,0 +1,133 @@
+test_every_training_profile_generates_valid_commands (test_config_interfaces.ConfigInterfaceTests.test_every_training_profile_generates_valid_commands) ... ok
+test_lag_embedding_capacity_covers_the_history_window (test_config_interfaces.ConfigInterfaceTests.test_lag_embedding_capacity_covers_the_history_window) ... ok
+test_loss_modes_match_physical_unit_reference_and_gradients (test_config_interfaces.ConfigInterfaceTests.test_loss_modes_match_physical_unit_reference_and_gradients) ... ok
+test_mag_ignores_unused_lower_percentile_and_keeps_used_range_checks (test_config_interfaces.ConfigInterfaceTests.test_mag_ignores_unused_lower_percentile_and_keeps_used_range_checks) ... ok
+test_original_conditional_cartesian_sweep_has_all_390_combinations (test_config_interfaces.ConfigInterfaceTests.test_original_conditional_cartesian_sweep_has_all_390_combinations) ... ok
+test_removed_residual_head_flags_fail_instead_of_being_ignored (test_config_interfaces.ConfigInterfaceTests.test_removed_residual_head_flags_fail_instead_of_being_ignored) ... ok
+test_rop_configuration_reaches_the_scheduler_and_snapshot (test_config_interfaces.ConfigInterfaceTests.test_rop_configuration_reaches_the_scheduler_and_snapshot) ... ok
+test_train_and_infer_strip_head_and_temporal_names (test_config_interfaces.ConfigInterfaceTests.test_train_and_infer_strip_head_and_temporal_names) ... ok
+test_known_brier_pr_ties_and_reliability (test_dual_experiments.DualDiagnosticMetricsTests.test_known_brier_pr_ties_and_reliability) ... ok
+test_no_events_all_events_empty_sets_and_probability_endpoints (test_dual_experiments.DualDiagnosticMetricsTests.test_no_events_all_events_empty_sets_and_probability_endpoints) ... ok
+test_ablation_profiles_reach_cli_and_keep_the_matched_protocol (test_dual_experiments.DualExperimentTests.test_ablation_profiles_reach_cli_and_keep_the_matched_protocol) ... ok
+test_every_mode_trains_reloads_and_exports_aligned_physical_diagnostics (test_dual_experiments.DualExperimentTests.test_every_mode_trains_reloads_and_exports_aligned_physical_diagnostics) ... ok
+test_fixed_gate_model_and_loss_settings_must_agree (test_dual_experiments.DualExperimentTests.test_fixed_gate_model_and_loss_settings_must_agree) ... ok
+test_named_ablations_remove_only_the_requested_supervision (test_dual_experiments.DualExperimentTests.test_named_ablations_remove_only_the_requested_supervision) ... ok
+test_single_and_baseline_reject_ablation_and_invalid_percentiles (test_dual_experiments.DualExperimentTests.test_single_and_baseline_reject_ablation_and_invalid_percentiles) ... ok
+test_train_prevalence_uses_strict_events_ties_and_independent_thresholds (test_dual_experiments.DualExperimentTests.test_train_prevalence_uses_strict_events_ties_and_independent_thresholds) ... ok
+test_zero_prevalence_is_saved_exactly_and_learned_logits_stay_finite (test_dual_experiments.DualExperimentTests.test_zero_prevalence_is_saved_exactly_and_learned_logits_stay_finite) ... ok
+test_direct_loss_call_cannot_bypass_supervision_or_backpropagation (test_dual_loss.DualLossTests.test_direct_loss_call_cannot_bypass_supervision_or_backpropagation) ... ok
+test_dual_loss_cannot_be_disabled_in_any_prediction_mode (test_dual_loss.DualLossTests.test_dual_loss_cannot_be_disabled_in_any_prediction_mode) ... ok
+test_launcher_records_warning_and_effective_config (test_dual_loss.DualLossTests.test_launcher_records_warning_and_effective_config) ... ok
+test_nonzero_rank_resolves_settings_without_duplicate_warning (test_dual_loss.DualLossTests.test_nonzero_rank_resolves_settings_without_duplicate_warning) ... ok
+test_single_and_baseline_have_no_dual_loss_or_warning (test_dual_loss.DualLossTests.test_single_and_baseline_have_no_dual_loss_or_warning) ... ok
+test_zero_terms_are_restored_but_positive_weights_are_preserved (test_dual_loss.DualLossTests.test_zero_terms_are_restored_but_positive_weights_are_preserved) ... ok
+test_rectangular_grid_coordinates_and_pressure (test_forcing.ForcingTests.test_rectangular_grid_coordinates_and_pressure) ... ok
+test_all_years_past_future_sample_weighting_and_original_files (test_inference_reporting.InferenceReportingTests.test_all_years_past_future_sample_weighting_and_original_files) ... ok
+test_original_automatic_directory_and_dataset_labels (test_inference_reporting.InferenceReportingTests.test_original_automatic_directory_and_dataset_labels) ... ok
+test_saved_scope_year_filter_and_empty_group (test_inference_reporting.InferenceReportingTests.test_saved_scope_year_filter_and_empty_group) ... ok
+test_all_architectures_are_label_free_and_differentiable (test_models.ModelTests.test_all_architectures_are_label_free_and_differentiable) ... ok
+test_attention_never_requests_weights (test_models.ModelTests.test_attention_never_requests_weights) ... ok
+test_baseline_controls (test_models.ModelTests.test_baseline_controls) ... ok
+test_cnn_rectangular_layout_and_invalid_metadata (test_models.ModelTests.test_cnn_rectangular_layout_and_invalid_metadata) ... ok
+test_custom_head_widths_include_all_dual_branches (test_models.ModelTests.test_custom_head_widths_include_all_dual_branches) ... ok
+test_dual_constraints_and_whole_batch_excess_loss (test_models.ModelTests.test_dual_constraints_and_whole_batch_excess_loss) ... ok
+test_metadata_minimum_width_and_checkpoint_roundtrip (test_models.ModelTests.test_metadata_minimum_width_and_checkpoint_roundtrip) ... ok
+test_positive_gains_have_finite_gradients (test_models.ModelTests.test_positive_gains_have_finite_gradients) ... ok
+test_python_constructor_defaults_and_required_hidden_width (test_models.ModelTests.test_python_constructor_defaults_and_required_hidden_width) ... ok
+test_custom_graph_pattern_filters_before_loading (test_pipeline.PipelineTests.test_custom_graph_pattern_filters_before_loading) ... ok
+test_fresh_train_checkpoint_and_inference_roundtrip (test_pipeline.PipelineTests.test_fresh_train_checkpoint_and_inference_roundtrip) ... ok
+test_metadata_aliases_and_independent_switches_survive_train_and_infer (test_pipeline.PipelineTests.test_metadata_aliases_and_independent_switches_survive_train_and_infer) ... ok
+test_model_dimensions_follow_train_when_earliest_year_is_excluded (test_pipeline.PipelineTests.test_model_dimensions_follow_train_when_earliest_year_is_excluded) ... ok
+test_original_default_glob_and_custom_suffix_preserve_standard_tags (test_pipeline.PipelineTests.test_original_default_glob_and_custom_suffix_preserve_standard_tags) ... ok
+test_original_flags_and_defaults (test_pipeline.PipelineTests.test_original_flags_and_defaults) ... ok
+test_station_filter_precedes_loading_and_split_is_by_year (test_pipeline.PipelineTests.test_station_filter_precedes_loading_and_split_is_by_year) ... ok
+test_warmup_cosine_matches_previous_schedule_without_deprecated_calls (test_pipeline.PipelineTests.test_warmup_cosine_matches_previous_schedule_without_deprecated_calls) ... ok
+test_cmip6_all_five_profiles_share_outputs_and_downsampling (test_preprocessing_pipeline.PreprocessingPipelineTests.test_cmip6_all_five_profiles_share_outputs_and_downsampling) ... ok
+test_ncep_cli_keeps_local_grid_and_pressure_units (test_preprocessing_pipeline.PreprocessingPipelineTests.test_ncep_cli_keeps_local_grid_and_pressure_units) ... ok
+test_simulation_explicit_year_and_original_defaults (test_preprocessing_pipeline.PreprocessingPipelineTests.test_simulation_explicit_year_and_original_defaults) ... ok
+test_time_alignment_cli_writes_only_peryear_graphs (test_preprocessing_pipeline.PreprocessingPipelineTests.test_time_alignment_cli_writes_only_peryear_graphs) ... ok
+test_all_original_field_aliases_preserve_features (test_station_metadata.StationMetadataTests.test_all_original_field_aliases_preserve_features) ... ok
+test_disabled_features_and_node_coordinates_do_not_affect_inputs (test_station_metadata.StationMetadataTests.test_disabled_features_and_node_coordinates_do_not_affect_inputs) ... ok
+test_disabled_optional_fields_can_be_missing (test_station_metadata.StationMetadataTests.test_disabled_optional_fields_can_be_missing) ... ok
+test_field_alias_priority_does_not_hide_invalid_selected_values (test_station_metadata.StationMetadataTests.test_field_alias_priority_does_not_hide_invalid_selected_values) ... ok
+test_filename_lookup_prefers_exact_then_lower_then_upper (test_station_metadata.StationMetadataTests.test_filename_lookup_prefers_exact_then_lower_then_upper) ... ok
+test_independent_feature_switches_preserve_geography_and_units (test_station_metadata.StationMetadataTests.test_independent_feature_switches_preserve_geography_and_units) ... ok
+test_invalid_exact_json_is_not_hidden_by_a_filename_alias (test_station_metadata.StationMetadataTests.test_invalid_exact_json_is_not_hidden_by_a_filename_alias) ... ok
+test_json_must_be_an_object_and_features_must_fit_float32 (test_station_metadata.StationMetadataTests.test_json_must_be_an_object_and_features_must_fit_float32) ... ok
+test_required_fields_reject_missing_and_invalid_values (test_station_metadata.StationMetadataTests.test_required_fields_reject_missing_and_invalid_values) ... ok
+test_equal_rank_batches_and_accumulation_match_concatenation (test_tail_loss.TailDDPTests.test_equal_rank_batches_and_accumulation_match_concatenation) ... Reading mesh from /tmp/tmprvesjk8f/fort.14 ...
+Mesh loaded: 4 nodes, 1 elements
+
+Nearest mesh node for each station:
+  Lewes, DE → node 0 (lon=-75.1192, lat=38.7828), approx distance ~ 0.0000 deg
+  Boston, MA → node 1 (lon=-71.0503, lat=42.3539), approx distance ~ 0.0000 deg
+  CBBT, Chesapeake Channel, VA → node 2 (lon=-76.0833, lat=37.0329), approx distance ~ 0.0000 deg
+  The Battery, NY → node 3 (lon=-74.0140, lat=40.7010), approx distance ~ 0.0000 deg
+
+===== Processing simulation starting 2001 (approx 2001_2002) =====
+  Node coordinates match between fort.14 and fort.63.
+  nc time:   2001-10-25 01:00:00 → 2001-10-25 03:00:00  (nt=3)
+  tide time: 2001-10-25 02:00:00 → 2001-10-25 04:00:00  (nt=3)
+  Aligned time window: 2001-10-25 02:00:00 → 2001-10-25 03:00:00 (nt=2)
+  Saved full aligned data to /tmp/tmprvesjk8f/full/fort_2001_zeta_tide_full.npz
+  Lewes, DE – node 0: min nc=4.000, max nc=8.000, min nc_tide=100.000, max nc_tide=104.000
+    Saved station CSV: /tmp/tmprvesjk8f/csv/2001_2002_Lewes.csv
+  Boston, MA – node 1: min nc=5.000, max nc=9.000, min nc_tide=101.000, max nc_tide=105.000
+    Saved station CSV: /tmp/tmprvesjk8f/csv/2001_2002_Boston.csv
+  CBBT, Chesapeake Channel, VA – node 2: min nc=6.000, max nc=10.000, min nc_tide=102.000, max nc_tide=106.000
+    Saved station CSV: /tmp/tmprvesjk8f/csv/2001_2002_CBBT.csv
+  The Battery, NY – node 3: min nc=7.000, max nc=11.000, min nc_tide=103.000, max nc_tide=107.000
+    Saved station CSV: /tmp/tmprvesjk8f/csv/2001_2002_Battery.csv
+
+================= CONFIG =================
+data_root       : /tmp/tmpmfu78lbu
+model_tag       : NCEP
+forcing_dir     : /tmp/tmpmfu78lbu/forcing
+csv_dir         : /tmp/tmpmfu78lbu/csv
+out_root_fixed  : /tmp/tmpmfu78lbu/fixed/NCEP
+out_root_peryear: /tmp/tmpmfu78lbu/aligned/NCEP
+stations        : ['Battery']
+years           : [2000]
+exclude_years   : []
+edge_mode       : grid4
+max_edges       : 50,000,000
+MAX_HISTORY_HRS : 48 => window length 9
+=========================================
+
+[peryear cutoff] Year 2000, Battery: last in-cap time 2000-11-01 23:00:00 -> last full day 2000-11-01
+[peryear cutoff] Year 2000: common last full day (capped by Mar 31) = 2000-11-01
+
+=== Year 2000 | forcing=forcing_local_2000.npz | shape=(32, 2, 2, 5) | peryear_last_day=2000-11-01 ===
+edge_index shape: (2, 8)  (nodes=4, edges=8)
+PERYEAR 2000 Battery  | N=   4 | forcing_centers=(4, 2, 2, 5) | nodes=    4 | edges=8 | station_hours=24 | end_center=2000-11-01 18:00:00
+  Saved dict  : /tmp/tmpmfu78lbu/aligned/NCEP/dicts/2000_2001_Battery_peryear_hist48_dict.npz
+  Saved graphs: /tmp/tmpmfu78lbu/aligned/NCEP/graphs/2000_2001_Battery_peryear_hist48_graphs.pt (num_graphs=4)
+
+Sanity check file: /tmp/tmpmfu78lbu/aligned/NCEP/graphs/2000_2001_Battery_peryear_hist48_graphs.pt
+Loaded graphs: 4
+x shape      : (4, 5)
+x_hist shape : (9, 4, 5) (should be 9, 4, 5)
+y shape      : (6,)
+edge_index   : (2, 8)
+grid_H,grid_W: 2 2
+center_time  : 2000-11-01 00:00:00
+ok
+test_equal_microbatches_and_short_groups_match_concatenated_updates (test_tail_loss.TailLossTests.test_equal_microbatches_and_short_groups_match_concatenated_updates) ... ok
+test_equal_partitions_preserve_tail_loss_and_prediction_gradients (test_tail_loss.TailLossTests.test_equal_partitions_preserve_tail_loss_and_prediction_gradients) ... ok
+test_no_tail_events_produce_differentiable_zero_and_zero_gradient (test_tail_loss.TailLossTests.test_no_tail_events_produce_differentiable_zero_and_zero_gradient) ... ok
+test_tail_sample_gradient_is_independent_of_other_tail_samples (test_tail_loss.TailLossTests.test_tail_sample_gradient_is_independent_of_other_tail_samples) ... ok
+test_training_cli_fraction_reaches_loss_and_saved_threshold (test_tail_loss.TailLossTests.test_training_cli_fraction_reaches_loss_and_saved_threshold) ... ok
+test_weighted_semantics_scale_and_inclusive_threshold (test_tail_loss.TailLossTests.test_weighted_semantics_scale_and_inclusive_threshold) ... ok
+test_fixed_march15_path_preserves_history_and_output_names (test_time_alignment.StationTimeAlignmentTests.test_fixed_march15_path_preserves_history_and_output_names) ... ok
+test_legacy_csv_without_times_keeps_explicit_fallback (test_time_alignment.StationTimeAlignmentTests.test_legacy_csv_without_times_keeps_explicit_fallback) ... ok
+test_shifted_missing_and_duplicate_hours_fail_in_both_entrypoints (test_time_alignment.StationTimeAlignmentTests.test_shifted_missing_and_duplicate_hours_fail_in_both_entrypoints) ... ok
+test_valid_timestamps_preserve_label_alignment (test_time_alignment.StationTimeAlignmentTests.test_valid_timestamps_preserve_label_alignment) ... ok
+test_accumulation_preserves_equal_microbatch_weight_with_short_groups (test_training.TrainingTests.test_accumulation_preserves_equal_microbatch_weight_with_short_groups) ... ok
+test_normalization_does_not_mutate_aliased_source_features (test_training.TrainingTests.test_normalization_does_not_mutate_aliased_source_features) ... ok
+test_one_forward_physical_units_and_global_top_five_percent (test_training.TrainingTests.test_one_forward_physical_units_and_global_top_five_percent) ... ok
+test_padding_dedup_and_ties_are_independent_of_batching (test_training.TrainingTests.test_padding_dedup_and_ties_are_independent_of_batching) ... ok
+
+----------------------------------------------------------------------
+Ran 72 tests in 25.578s
+
+OK

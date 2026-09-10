@@ -178,8 +178,8 @@ class PipelineTests(unittest.TestCase):
             for index, (model, head, encoder, temporal, history) in enumerate(variants):
                 output = root / f"train_{index}"
                 args = ["--root_dir", str(graphs), "--station", "Battery", "--station_json_dir", str(stations),
-                        "--output_dir", str(output), "--device", "cpu", "--model", model, "--head_type", head,
-                        "--encoder_type", encoder, "--temporal_block", temporal, "--history_hours", str(history),
+                        "--output_dir", str(output), "--device", "cpu", "--model", model, "--head_type", f" {head.upper()} ",
+                        "--encoder_type", encoder, "--temporal_block", f" {temporal.lower()} ", "--history_hours", str(history),
                         "--hidden_channels", "16", "--node_read_heads", "2", "--time_read_heads", "2",
                         "--dropout", ".13", "--head_dropout", ".27", "--transformer_dropout", ".19",
                         "--transformer_layers", "1", "--batch_size", "2", "--grad_accum_steps", "2",
@@ -222,6 +222,7 @@ class PipelineTests(unittest.TestCase):
                 inferred = root / f"infer_{index}"
                 with contextlib.redirect_stdout(io.StringIO()):
                     infer.main(["--ckpt", str(next(output.glob("best_*.pth"))), "--root_dir", str(graphs),
+                                "--head_type", f"\t{head}\t", "--temporal_block", f"\t{temporal}\t",
                                 "--out_dir", str(inferred), "--device", "cpu", "--batch_size", "2", "--save_npz", "--num_workers", "0"])
                 with np.load(next(output.glob("test_preds_*.npz"))) as trained, np.load(inferred / "predictions.npz") as restored:
                     np.testing.assert_array_equal(trained["tags"], restored["tags"])

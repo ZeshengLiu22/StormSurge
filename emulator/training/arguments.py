@@ -4,7 +4,7 @@ import argparse
 import math
 from pathlib import Path
 
-from emulator.common.cli import parse_bool_int, temporal_block_name
+from emulator.common.cli import head_type_name, parse_bool_int, temporal_block_name
 from emulator.common.dual import DUAL_ABLATIONS
 from .losses import enforce_dual_loss
 
@@ -160,7 +160,7 @@ def parse_args(argv=None):
     )
     parser.add_argument(
         "--head_type",
-        type=str.lower,
+        type=head_type_name,
         default="dual",
         choices=["single", "dual"],
         help="PACT prediction head: single MLP or supervised exceedance dual head.",

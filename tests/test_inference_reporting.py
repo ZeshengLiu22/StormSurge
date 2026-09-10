@@ -22,7 +22,7 @@ from emulator.models import ModelConfig, build_model
 
 class InferenceReportingTests(unittest.TestCase):
     def setUp(self):
-        temporary = tempfile.TemporaryDirectory()
+        temporary = tempfile.TemporaryDirectory(suffix='_dataset')
         self.addCleanup(temporary.cleanup)
         self.root = Path(temporary.name)
         self.graphs = self.root / 'graphs'

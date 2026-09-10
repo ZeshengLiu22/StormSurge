@@ -36,7 +36,8 @@ def fit_statistics(store, indices, x_norm="zscore", p_lo=1.0, p_hi=99.0,
         variance = (square / count).float() - center ** 2
         scale = torch.sqrt(variance + 1e-6)
     else:
-        if x_norm not in ("robust", "mag") or not 0 <= p_lo < p_hi <= 100:
+        if (x_norm not in ("robust", "mag") or not 0 < p_hi <= 100
+                or (x_norm == "robust" and not 0 <= p_lo < p_hi)):
             raise ValueError("Invalid feature percentile configuration.")
         # Zero and negative values select the original automatic sample size.
         nodes_per_graph = int(nodes_per_graph) if nodes_per_graph > 0 else 256

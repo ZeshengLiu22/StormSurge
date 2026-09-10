@@ -230,7 +230,7 @@
           "dual"
         ],
         "action": "_StoreAction",
-        "type": "str.lower"
+        "type": "head_type_name"
       }
     },
     "temporal_block": {

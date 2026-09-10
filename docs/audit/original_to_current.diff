@@ -424,7 +424,7 @@
 -CONDA_ENV="torchpyg-cu124"
 -CONDA_SH="/software/u22/anaconda/python3.9/etc/profile.d/conda.sh"
 -```
-+Normalization (`zscore`, `robust`, `mag`), augmentation, year splits/shuffling/future filtering, external test roots and station feature switches are retained. Forcing inputs use the five-channel `[u,v,p',lon,lat]` layout, with spatial-mean pressure removal during preprocessing.
++Normalization (`zscore`, `robust`, `mag`), augmentation, year splits/shuffling/future filtering, external test roots and station feature switches are retained. `mag` only checks its used upper percentile (`0 < x_p_hi <= 100`) and ignores `x_p_lo`; `robust` still requires `0 <= x_p_lo < x_p_hi <= 100`. The statistics formulas are unchanged. Training and inference strip surrounding whitespace from head and temporal names before recognizing their existing values and the `attn` alias. Forcing inputs use the five-channel `[u,v,p',lon,lat]` layout, with spatial-mean pressure removal during preprocessing.
  
 -Set `CONDA_ENV` to the environment you created (for example, `pact-cu128`) and `CONDA_SH` to your conda installation, or activate your environment and set `DO_CONDA=0` in the selected config **after** it sources the common config. The common configs assign these values directly, so prefixing a launch command with `DO_CONDA=0` alone does not override them.
 +The Python data interface is `ForcingGraphStore(root_dir, station_filter=None, *, pattern="*graphs.pt")`. The original default filename glob is restored; use a keyword pattern such as `pattern="*_fixed315_hist48_graphs.pt"` to select a subset before loading. Filenames retain the year/year/station convention; standard `_graphs.pt` suffixes and custom matched extensions are parsed as before. Data loads onto CPU with strict station filtering. Training derives input/output dimensions from the first graph in the actual TRAIN split, including after year filtering or shuffling.
@@ -1176,16 +1176,20 @@
 +__all__ = ['configure_runtime']
 --- original/emulator/common/cli.py
 +++ StormSurge/emulator/common/cli.py
-@@ -10,3 +10,11 @@
+@@ -10,3 +10,15 @@
      if value in ("0", "false", "no", "n", "off"):
          return 0
      raise argparse.ArgumentTypeError("expected one of: 0/1, true/false, yes/no, on/off")
 +
 +
++def head_type_name(value):
++    return value.strip().lower()
++
++
 +def temporal_block_name(value):
 +    names = {"mlp": "MLP", "lstm": "LSTM", "gru": "GRU", "transformer": "Transformer", "attn": "Transformer"}
 +    try:
-+        return names[value.lower()]
++        return names[value.strip().lower()]
 +    except KeyError:
 +        raise argparse.ArgumentTypeError("expected MLP, LSTM, GRU or Transformer") from None
 --- original/emulator/common/distributed.py
@@ -2174,7 +2178,7 @@
 +    return features
 --- original/emulator/data/stats.py
 +++ StormSurge/emulator/data/stats.py
-@@ -1,310 +1,102 @@
+@@ -1,310 +1,103 @@
 -"""Training-data statistics for normalization and loss shaping.
 -
 -All statistics are computed on the training split only, and distributed-safe
@@ -2229,7 +2233,8 @@
 +        variance = (square / count).float() - center ** 2
 +        scale = torch.sqrt(variance + 1e-6)
 +    else:
-+        if x_norm not in ("robust", "mag") or not 0 <= p_lo < p_hi <= 100:
++        if (x_norm not in ("robust", "mag") or not 0 < p_hi <= 100
++                or (x_norm == "robust" and not 0 <= p_lo < p_hi)):
 +            raise ValueError("Invalid feature percentile configuration.")
 +        # Zero and negative values select the original automatic sample size.
 +        nodes_per_graph = int(nodes_per_graph) if nodes_per_graph > 0 else 256
@@ -4067,7 +4072,7 @@
 +import math
 +from pathlib import Path
 +
-+from emulator.common.cli import parse_bool_int, temporal_block_name
++from emulator.common.cli import head_type_name, parse_bool_int, temporal_block_name
 +from emulator.common.dual import DUAL_ABLATIONS
 +from .losses import enforce_dual_loss
 +
@@ -4223,7 +4228,7 @@
 +    )
 +    parser.add_argument(
 +        "--head_type",
-+        type=str.lower,
++        type=head_type_name,
 +        default="dual",
 +        choices=["single", "dual"],
 +        help="PACT prediction head: single MLP or supervised exceedance dual head.",
@@ -5283,7 +5288,7 @@
 -
 -    # required
 +from emulator.common import configure_runtime
-+from emulator.common.cli import parse_bool_int, temporal_block_name
++from emulator.common.cli import head_type_name, parse_bool_int, temporal_block_name
 +from emulator.common.runtime import log_message
 +from emulator.data import ForcingGraphStore, ForcingGraphView, build_loader, load_station_json, station_features_from_json
 +from emulator.models import ModelConfig, build_model
@@ -5346,7 +5351,7 @@
      parser.add_argument(
          "--head_type",
 -        type=canonical_head_type,
-+        type=str.lower,
++        type=head_type_name,
          default=None,
          choices=["single", "dual"],
          help=(
@@ -7008,7 +7013,7 @@
  
 --- original/tests/test_config_interfaces.py
 +++ StormSurge/tests/test_config_interfaces.py
-@@ -0,0 +1,163 @@
+@@ -0,0 +1,202 @@
 +"""Exercise the original shell sweep and compare the loss-mode definitions."""
 +
 +import contextlib
@@ -7019,11 +7024,14 @@
 +import shlex
 +import subprocess
 +import tempfile
++from types import SimpleNamespace
 +import unittest
 +
 +import torch
 +
 +import train
++import infer
++from emulator.data import fit_statistics
 +from emulator.models import ForecastOutput, ModelConfig, build_model
 +from emulator.training import ForecastLoss, LossConfig
 +from test_models import graph_batch
@@ -7042,6 +7050,42 @@
 +
 +
 +class ConfigInterfaceTests(unittest.TestCase):
++    def test_mag_ignores_unused_lower_percentile_and_keeps_used_range_checks(self):
++        graph = SimpleNamespace(x=torch.tensor([[-4., 0.], [-1., 0.], [2., 0.], [9., 0.]]),
++                                y=torch.tensor([.2, .7]))
++        store = SimpleNamespace(graphs=[graph])
++        reference = fit_statistics(store, [0], x_norm='mag', p_lo=1., p_hi=90.)
++        for lower in (90., 95., -1., 101., float('nan')):
++            with self.subTest(lower=lower):
++                actual = fit_statistics(store, [0], x_norm='mag', p_lo=lower, p_hi=90.)
++                for key in reference:
++                    torch.testing.assert_close(actual[key], reference[key], rtol=0, atol=0)
++                with self.assertRaisesRegex(ValueError, 'feature percentile'):
++                    fit_statistics(store, [0], x_norm='robust', p_lo=lower, p_hi=90.)
++        for mode, upper in itertools.product(('mag', 'robust'), (0., -1., 101., float('nan'), float('inf'))):
++            with self.subTest(mode=mode, upper=upper), self.assertRaisesRegex(ValueError, 'feature percentile'):
++                fit_statistics(store, [0], x_norm=mode, p_lo=1., p_hi=upper)
++        maximum = fit_statistics(store, [0], x_norm='mag', p_lo=100., p_hi=100.)
++        torch.testing.assert_close(maximum['x_center'], torch.zeros(2), rtol=0, atol=0)
++        torch.testing.assert_close(maximum['x_scale'], torch.tensor([9., 1e-6]), rtol=0, atol=0)
++
++    def test_train_and_infer_strip_head_and_temporal_names(self):
++        blocks = dict(mlp='MLP', lstm='LSTM', gru='GRU', transformer='Transformer', attn='Transformer')
++        for head, (alias, expected), whitespace in itertools.product(('single', 'dual'), blocks.items(), (' ', '\t\n')):
++            with self.subTest(head=head, temporal=alias, whitespace=repr(whitespace)):
++                options = ['--head_type', whitespace + head.upper() + whitespace,
++                           '--temporal_block', whitespace + alias.upper() + whitespace]
++                training = train.parse_args(['--model', 'perceiver3', *options])
++                inference = infer.parse_args(['--ckpt', 'unused.pth', '--root_dir', '.', *options])
++                self.assertEqual((training.head_type, training.temporal_block), (head, expected))
++                self.assertEqual((inference.head_type, inference.temporal_block), (head, expected))
++        for flag, invalid in (('--head_type', ' residual '), ('--head_type', '   '),
++                              ('--temporal_block', ' ml p '), ('--temporal_block', '\t')):
++            for parser, prefix in ((train.parse_args, ['--model', 'perceiver3']),
++                                   (infer.parse_args, ['--ckpt', 'unused.pth', '--root_dir', '.'])):
++                with self.subTest(flag=flag, invalid=invalid), self.assertRaises(SystemExit), contextlib.redirect_stderr(io.StringIO()):
++                    parser([*prefix, flag, invalid])
++
 +    def test_every_training_profile_generates_valid_commands(self):
 +        configs = sorted([*REPO.glob('configs/configs_train*/*/*.sh'),
 +                          *REPO.glob('configs/train_config_*_Stable_*.sh')])
@@ -8211,7 +8255,7 @@
 +
 +class InferenceReportingTests(unittest.TestCase):
 +    def setUp(self):
-+        temporary = tempfile.TemporaryDirectory()
++        temporary = tempfile.TemporaryDirectory(suffix='_dataset')
 +        self.addCleanup(temporary.cleanup)
 +        self.root = Path(temporary.name)
 +        self.graphs = self.root / 'graphs'
@@ -8742,7 +8786,7 @@
 +                self.assert_checkpoint_roundtrip(config, model, batch)
 --- original/tests/test_pipeline.py
 +++ StormSurge/tests/test_pipeline.py
-@@ -0,0 +1,292 @@
+@@ -0,0 +1,293 @@
 +"""Fresh checkpoint train/infer round trips and exact split populations."""
 +
 +import contextlib
@@ -8923,8 +8967,8 @@
 +            for index, (model, head, encoder, temporal, history) in enumerate(variants):
 +                output = root / f"train_{index}"
 +                args = ["--root_dir", str(graphs), "--station", "Battery", "--station_json_dir", str(stations),
-+                        "--output_dir", str(output), "--device", "cpu", "--model", model, "--head_type", head,
-+                        "--encoder_type", encoder, "--temporal_block", temporal, "--history_hours", str(history),
++                        "--output_dir", str(output), "--device", "cpu", "--model", model, "--head_type", f" {head.upper()} ",
++                        "--encoder_type", encoder, "--temporal_block", f" {temporal.lower()} ", "--history_hours", str(history),
 +                        "--hidden_channels", "16", "--node_read_heads", "2", "--time_read_heads", "2",
 +                        "--dropout", ".13", "--head_dropout", ".27", "--transformer_dropout", ".19",
 +                        "--transformer_layers", "1", "--batch_size", "2", "--grad_accum_steps", "2",
@@ -8967,6 +9011,7 @@
 +                inferred = root / f"infer_{index}"
 +                with contextlib.redirect_stdout(io.StringIO()):
 +                    infer.main(["--ckpt", str(next(output.glob("best_*.pth"))), "--root_dir", str(graphs),
++                                "--head_type", f"\t{head}\t", "--temporal_block", f"\t{temporal}\t",
 +                                "--out_dir", str(inferred), "--device", "cpu", "--batch_size", "2", "--save_npz", "--num_workers", "0"])
 +                with np.load(next(output.glob("test_preds_*.npz"))) as trained, np.load(inferred / "predictions.npz") as restored:
 +                    np.testing.assert_array_equal(trained["tags"], restored["tags"])

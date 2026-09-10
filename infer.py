@@ -13,7 +13,7 @@ import numpy as np
 import torch
 
 from emulator.common import configure_runtime
-from emulator.common.cli import parse_bool_int, temporal_block_name
+from emulator.common.cli import head_type_name, parse_bool_int, temporal_block_name
 from emulator.common.runtime import log_message
 from emulator.data import ForcingGraphStore, ForcingGraphView, build_loader, load_station_json, station_features_from_json
 from emulator.models import ModelConfig, build_model
@@ -68,7 +68,7 @@ def parse_args(argv=None):
     )
     parser.add_argument(
         "--head_type",
-        type=str.lower,
+        type=head_type_name,
         default=None,
         choices=["single", "dual"],
         help=(
