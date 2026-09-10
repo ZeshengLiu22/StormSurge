@@ -43,7 +43,7 @@ class SpatialEncoder(nn.Module):
             x = x.reshape(size, height, width, -1).permute(0, 3, 1, 2).contiguous()
         for layer in self.layers:
             x = layer(x, edge_index) if self.kind == "GraphSAGE" else layer(x)
-            x = F.dropout(F.leaky_relu(x, 0.1), self.dropout, self.training)
+            x = F.dropout(F.leaky_relu(x, 0.1, inplace=self.kind == "CNN"), self.dropout, self.training)
         if self.kind == "CNN":
             x = x.permute(0, 2, 3, 1).contiguous().reshape(size * height * width, -1)
         return x

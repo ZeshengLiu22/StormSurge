@@ -1,0 +1,184 @@
+{
+  "generated_utc": "2026-09-10T02:54:11.339125+00:00",
+  "python": "3.11.16",
+  "torch": "2.6.0+cu124",
+  "torch_geometric": "2.7.0",
+  "device": "cpu",
+  "dtype": "float32",
+  "gpu_rerun": false,
+  "gpu_note": "Current host NVIDIA driver unavailable; historical GPU evidence is separate.",
+  "reference": "Unmodified AST definitions read from original emulator/models/architectures.py",
+  "original_source_sha256": "b2f07583db67ce6e33efaad88d933ef6efc24053ed2ab35633c009927ceb9104",
+  "current_source_sha256": {
+    "emulator/models/spatial.py": "0e357c954206bf574284d2f9b916a93e3171aaaa916e12e11a08926cb8b4eff9",
+    "emulator/models/architectures.py": "57b05af35ee0250b227f7b548e372897689e4c8e3e330b89c635d3597cde58c4",
+    "emulator/data/graph_store.py": "cd20f734b602af78ec649e26ef466ffb98cf342c67420d16e7b8c7ae79baae38"
+  },
+  "valid_metadata_formats": [
+    "pyg_batch_tensor",
+    "scalar_int",
+    "scalar_tensor",
+    "single_item_list",
+    "batch_tuple",
+    "column_tensor",
+    "integer_valued_float_tensor"
+  ],
+  "malformed_cases": {
+    "missing_dimension": "both reject",
+    "empty_dimension": "both reject",
+    "nonuniform_dimension": "both reject",
+    "nonpositive_dimension": "both reject",
+    "wrong_grid_product": "both reject",
+    "unequal_graph_sizes": "both reject"
+  },
+  "original_cnn_comparisons": {
+    "cases": 72,
+    "grid_shapes": [
+      [
+        1,
+        1
+      ],
+      [
+        1,
+        7
+      ],
+      [
+        7,
+        1
+      ],
+      [
+        2,
+        3
+      ],
+      [
+        3,
+        2
+      ],
+      [
+        11,
+        17
+      ]
+    ],
+    "batch_sizes": [
+      1,
+      3
+    ],
+    "depths": [
+      1,
+      2,
+      3
+    ],
+    "in_channels": 5,
+    "hidden_channels": 128,
+    "cnn_widths": [
+      11,
+      29
+    ],
+    "dropout": 0.05,
+    "modes": [
+      "train",
+      "eval"
+    ],
+    "layouts": [
+      "contiguous",
+      "noncontiguous history slice"
+    ],
+    "same_seed_initialization": "exactly equal"
+  },
+  "isolated_grid_check_comparisons": {
+    "cases": 72,
+    "models": [
+      [
+        "baseline",
+        "single",
+        "LSTM"
+      ],
+      [
+        "pact",
+        "single",
+        "MLP"
+      ],
+      [
+        "pact",
+        "single",
+        "LSTM"
+      ],
+      [
+        "pact",
+        "single",
+        "GRU"
+      ],
+      [
+        "pact",
+        "single",
+        "Transformer"
+      ],
+      [
+        "pact",
+        "dual",
+        "MLP"
+      ],
+      [
+        "pact",
+        "dual",
+        "LSTM"
+      ],
+      [
+        "pact",
+        "dual",
+        "GRU"
+      ],
+      [
+        "pact",
+        "dual",
+        "Transformer"
+      ]
+    ],
+    "history_hours": [
+      0,
+      48
+    ],
+    "grid_shapes": [
+      [
+        2,
+        3
+      ],
+      [
+        11,
+        17
+      ]
+    ],
+    "batch_size": 2,
+    "hidden_channels": 128,
+    "scope": "Current full model with only grid validation replaced by original; not whole original PACT equivalence."
+  },
+  "max_output_difference": 0.0,
+  "max_input_gradient_difference": 0.0,
+  "max_parameter_gradient_difference": 0.0,
+  "max_parameter_difference_after_one_adam_step": 0.0,
+  "rng_states": "exactly equal",
+  "initial_finding": {
+    "grid_shape": [
+      1,
+      1
+    ],
+    "batch_size": 1,
+    "depth": 2,
+    "mode": "eval",
+    "input_channels": 5,
+    "hidden_channels": 128,
+    "cnn_width": 29,
+    "max_output_difference": 0.0,
+    "max_input_gradient_difference": 1.4551915228366852e-11,
+    "max_parameter_gradient_difference": 2.0372681319713593e-10,
+    "cause": "Out-of-place versus original in-place LeakyReLU; repeating the case with in-place activation removes the differences."
+  },
+  "decision": "Retain current grid checks; restore original in-place LeakyReLU for CNN only. Configs and GraphSAGE computation unchanged.",
+  "limits": "Valid positive-integer rectangular grids in normally collated PyG batches. Does not establish equality for manually inconsistent batch/ptr metadata or long-run forecast skill of the changed PACT architecture.",
+  "base_commit": "0573cc78925d3eaae43b38eb717ece093e79f71b",
+  "regression_tests": {
+    "command": "python -m unittest -v test_models test_pipeline",
+    "tests_run": 14,
+    "tests_passed": 14
+  }
+}

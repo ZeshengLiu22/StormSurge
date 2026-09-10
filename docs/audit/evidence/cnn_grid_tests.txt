@@ -1,0 +1,4 @@
+Grid checks: 7 valid metadata representations agree; 6 malformed cases both fail.
+Original CNN versus current CNN: 72 exact output/gradient/Adam comparisons passed.
+Current models with original versus current grid checks: 72 exact comparisons passed.
+PASS: evidence saved to /tmp/stormsurge-cnn-grid-audit-hzslrf5r/staged/docs/audit/evidence/cnn_grid_equivalence.json

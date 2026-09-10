@@ -1,0 +1,19 @@
+test_all_architectures_are_label_free_and_differentiable (test_models.ModelTests.test_all_architectures_are_label_free_and_differentiable) ... ok
+test_attention_never_requests_weights (test_models.ModelTests.test_attention_never_requests_weights) ... ok
+test_baseline_controls (test_models.ModelTests.test_baseline_controls) ... ok
+test_cnn_rectangular_layout_and_invalid_metadata (test_models.ModelTests.test_cnn_rectangular_layout_and_invalid_metadata) ... ok
+test_custom_head_widths_include_all_dual_branches (test_models.ModelTests.test_custom_head_widths_include_all_dual_branches) ... ok
+test_dual_constraints_and_whole_batch_excess_loss (test_models.ModelTests.test_dual_constraints_and_whole_batch_excess_loss) ... ok
+test_metadata_minimum_width_and_checkpoint_roundtrip (test_models.ModelTests.test_metadata_minimum_width_and_checkpoint_roundtrip) ... ok
+test_positive_gains_have_finite_gradients (test_models.ModelTests.test_positive_gains_have_finite_gradients) ... ok
+test_python_constructor_defaults_and_required_hidden_width (test_models.ModelTests.test_python_constructor_defaults_and_required_hidden_width) ... ok
+test_fresh_train_checkpoint_and_inference_roundtrip (test_pipeline.PipelineTests.test_fresh_train_checkpoint_and_inference_roundtrip) ... ok
+test_metadata_aliases_and_independent_switches_survive_train_and_infer (test_pipeline.PipelineTests.test_metadata_aliases_and_independent_switches_survive_train_and_infer) ... ok
+test_original_flags_and_defaults (test_pipeline.PipelineTests.test_original_flags_and_defaults) ... ok
+test_station_filter_precedes_loading_and_split_is_by_year (test_pipeline.PipelineTests.test_station_filter_precedes_loading_and_split_is_by_year) ... ok
+test_warmup_cosine_matches_previous_schedule_without_deprecated_calls (test_pipeline.PipelineTests.test_warmup_cosine_matches_previous_schedule_without_deprecated_calls) ... ok
+
+----------------------------------------------------------------------
+Ran 14 tests in 1.746s
+
+OK
