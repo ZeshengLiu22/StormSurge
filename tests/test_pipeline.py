@@ -9,6 +9,7 @@ from pathlib import Path
 import shutil
 import tempfile
 import unittest
+from unittest.mock import patch
 
 import numpy as np
 import torch
@@ -185,9 +186,11 @@ class PipelineTests(unittest.TestCase):
                         "--epochs", "2", "--warmup_epochs", "0", "--use_bathymetry", "1",
                         "--num_workers", "0", "--run_tag", "roundtrip", "--x_aug", "0", "--x_norm", "zscore"]
                 console = io.StringIO()
-                with contextlib.redirect_stdout(console):
+                with contextlib.redirect_stdout(console), patch.object(train, "run_epoch", wraps=train.run_epoch) as observed:
                     train.main(args)
-                self.assertEqual(len(console.getvalue().splitlines()), 3)
+                # Two epochs of train/Val plus one final Test; reporting adds no evaluation pass.
+                self.assertEqual(observed.call_count, 5)
+                self.assertEqual(len(console.getvalue().splitlines()), 4)
                 for line in console.getvalue().splitlines():
                     self.assertRegex(line, r"^\[\d{4}-\d{2}-\d{2}\|\d{2}:\d{2}:\d{2}\]")
                 self.assertIn("Wall time:", console.getvalue().splitlines()[-1])
@@ -197,6 +200,18 @@ class PipelineTests(unittest.TestCase):
                     for part in ("train", "val"):
                         self.assertEqual(tuple(record[part]), METRIC_NAMES)
                 checkpoint = torch.load(next(output.glob("best_*.pth")), weights_only=False)
+                summary = json.loads(next(output.glob("summary_*.json")).read_text())
+                self.assertEqual(summary["val"], checkpoint["val"])
+                self.assertEqual(summary["val"], logs[checkpoint["epoch"] - 1]["val"])
+                self.assertEqual(summary["best_val_rmse"], summary["val"]["rmse_all"])
+                self.assertEqual(summary["best_epoch"], checkpoint["epoch"])
+                self.assertEqual(tuple(summary["test"]), METRIC_NAMES)
+                final_metrics = console.getvalue().splitlines()[-2]
+                self.assertIn(f'Best epoch {checkpoint["epoch"]:03d}', final_metrics)
+                self.assertIn(train.format_metrics("Val", summary["val"]), final_metrics)
+                self.assertIn(train.format_metrics("Test", summary["test"]), final_metrics)
+                self.assertNotIn("stable_arch", checkpoint["training_config"])
+                self.assertNotIn("STABLE_ARCH=", (output / "config_used.sh").read_text())
                 self.assertEqual(checkpoint["model_config"]["history_steps"], history // 6)
                 self.assertEqual(checkpoint["model_config"]["station_feat_dim"], 8 if model == "perceiver3" else 0)
                 self.assertEqual(checkpoint["model_config"]["hidden_channels"], 16)

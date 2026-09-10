@@ -196,6 +196,7 @@ def train(args, device, distributed, rank, wall_start):
         np.savez_compressed(output_dir / f"test_preds_{stem}.npz", **result.predictions)
         summary = {"best_epoch": best_epoch, "best_val_rmse": best_rmse, "training_seconds": elapsed,
                    "loss_thresholds": fitted, "dual_metadata": dual_metadata,
+                   "val": checkpoint["val"],
                    "test": result.metrics, "test_scope": "external_all_years" if args.test_root_dir else "held_out_years"}
         if device.type == "cuda":
             torch.cuda.synchronize(device)
@@ -203,6 +204,8 @@ def train(args, device, distributed, rank, wall_start):
         summary["wall_seconds"] = wall_seconds
         summary["run_tag"] = args.run_tag
         summary_path.write_text(json.dumps(summary, indent=2))
+        log_message(f'Best epoch {checkpoint["epoch"]:03d} | {format_metrics("Val", checkpoint["val"])} | '
+                    f'{format_metrics("Test", result.metrics)}')
         hours, remainder = divmod(wall_seconds, 3600)
         minutes, seconds = divmod(remainder, 60)
         log_message(f"Wall time: {int(hours):02d}:{int(minutes):02d}:{seconds:06.3f} ({wall_seconds:.3f} s)")

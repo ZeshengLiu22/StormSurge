@@ -175,7 +175,6 @@ def parse_args(argv=None):
     parser.add_argument("--body_loss_weight", type=float, default=1.0)
     parser.add_argument("--excess_loss_weight", type=float, default=1.0)
     parser.add_argument("--gate_loss_weight", type=float, default=1.0)
-    parser.add_argument("--stable_arch", type=parse_bool_int, choices=[1], default=1, help="Current v2 stability architecture. Historical versions are not selected here.")
     parser.add_argument("--max_grad_norm", type=float, default=0.0, help="0 disables optional gradient clipping.")
     parser.add_argument("--deterministic", type=parse_bool_int, choices=[0, 1], default=0,
                         help="Enforce deterministic kernels for reproducible runs; may reduce throughput.")

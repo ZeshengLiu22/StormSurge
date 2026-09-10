@@ -100,7 +100,7 @@ PACT station metadata keeps two independent switches: `--use_site_elevation` def
 
 The original training protocol is restored: DDP seeds each process with `seed + rank`; its samplers use the original default seed 0. Z-score statistics use the training device and distributed sums, preserving the original FP32/FP64 arithmetic order. Robust/mag statistics use TRAIN node samples; `x_nodes_per_graph <= 0` means at most 256 nodes per graph, without reducing the model's input graph. Augmentation at probability 1 skips the probability draw, preserving the original RNG sequence. The original lower bounds remain `1e-6` for `wmse_s`/`slope_mask_s` and `1e-12` for `slope_charb_eps`/`slope_huber_delta`; normal configured values are unaffected.
 
-Cosine with linear warmup remains the configured scheduler. The original `rop` option and its controls are also available. `--deterministic 0` and `--max_grad_norm 0` are defaults; positive `max_grad_norm` explicitly requests clipping. There is no retry or rollback guard. `--stable_arch` accepts only the current setting `1`, and `--dual_mode` only `exceedance`; neither selects an old implementation. Bare switches such as `--amp`, `--tf32`, `--pin_memory` and `--persistent_workers` retain their original argparse behavior. Shipped profiles enable BF16 and TF32.
+Cosine with linear warmup remains the configured scheduler. The original `rop` option and its controls are also available. `--deterministic 0` and `--max_grad_norm 0` are defaults; positive `max_grad_norm` explicitly requests clipping. There is no retry or rollback guard. The redundant `--stable_arch` / `STABLE_ARCH` setting is removed; the current stability architecture always applies. `--dual_mode` remains and accepts only `exceedance`. Bare switches such as `--amp`, `--tf32`, `--pin_memory` and `--persistent_workers` retain their original argparse behavior. Shipped profiles enable BF16 and TF32.
 
 ## Metrics and artifacts
 
@@ -115,14 +115,16 @@ Top 5% means the `ceil(0.05 × N)` windows with the largest true maximum over th
 
 Train metrics reuse online training predictions, including dropout/augmentation and changing weights; Val uses eval mode. There is no second diagnostic validation pass. DDP validation restores DistributedSampler padding: Val All includes duplicate padding samples, as in the original trainer; Val Peak counts each sample once. Val All also retains the original FP32 batch means and FP64 weighted accumulation. Training uses padding for synchronized updates, but its reported metrics count each sample once.
 
+After training, rank 0 prints the best epoch's complete **Val and Test** metrics together. Val is read from that checkpoint, using the same metrics and sampler-padding convention that selected it; it is not the last epoch's Val. Test evaluates the reloaded best weights once over each actual test sample and exports those predictions. Reporting Val adds no forward pass or diagnostics.
+
 A launcher run can contain many combinations. Each has a unique stem in its artifact filenames:
 
 - `metrics_<stem>.jsonl`: epoch plus eight errors; best model selection uses **Val All RMSE**.
 - `best_<stem>.pth`: model config/weights, normalization, station features, exact split tags and training config.
 - `config_<stem>.json`: resolved Python arguments; `config_used.sh` retains the resolved shell sweep.
-- `summary_<stem>.json`: best epoch, training/validation-loop seconds, total `wall_seconds`, final test errors and test scope.
+- `summary_<stem>.json`: best epoch, training/validation-loop seconds, total `wall_seconds`, complete best-checkpoint `val` and `test` errors, and test scope.
 - `test_preds_<stem>.npz`: physical `y_true`, `y_pred` and tags for the best checkpoint.
-- `train_<tag>.log`: launcher command, timestamped epoch metrics and final wall time. Long log names are shortened with a hash; the complete tag remains inside the log.
+- `train_<tag>.log`: launcher command, timestamped epoch metrics, best-checkpoint Val/Test metrics and final wall time. Long log names are shortened with a hash; the complete tag remains inside the log.
 
 `training_seconds` includes epoch metrics/checkpoint overhead. `wall_seconds` also includes data preparation and the final test. Each training process prints its final wall time; the launcher ends with wall time for the whole sweep.
 

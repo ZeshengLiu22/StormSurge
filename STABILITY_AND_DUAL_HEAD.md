@@ -1,6 +1,6 @@
 # 当前 v2 的稳定结构与清理边界
 
-v2 只实现当前结构。版本号分支、旧 bypass 原型、旧 residual dual head、重试/回滚 guard 和历史 checkpoint 兼容均已删除。原命令入口保留 `--stable_arch 1` 和 `--dual_mode exceedance`，它们只接受当前实现。
+v2 只实现当前结构。版本号分支、旧 bypass 原型、旧 residual dual head、重试/回滚 guard 和历史 checkpoint 兼容均已删除。冗余的 `--stable_arch` / `STABLE_ARCH` 已移除，当前稳定性结构始终启用；`--dual_mode exceedance` 继续保留。
 
 ## Backbone
 

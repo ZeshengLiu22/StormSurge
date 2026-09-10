@@ -168,17 +168,6 @@
       "action": "_StoreAction",
       "type": "float"
     },
-    "stable_arch": {
-      "flags": [
-        "--stable_arch"
-      ],
-      "default": 1,
-      "choices": [
-        1
-      ],
-      "action": "_StoreAction",
-      "type": "parse_bool_int"
-    },
     "use_station_meta": {
       "flags": [
         "--use_station_meta"

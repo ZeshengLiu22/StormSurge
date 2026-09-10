@@ -232,7 +232,7 @@
 +诊断直接复用推理的那次 forward。训练/验证 epoch 不收集上述数组，日志继续只记录原来的四项物理误差。
 --- original/README.md
 +++ StormSurge/README.md
-@@ -1,483 +1,162 @@
+@@ -1,483 +1,164 @@
 -# PACT Storm-Surge Emulator
 +# StormSurge
  
@@ -436,7 +436,7 @@
 +The original training protocol is restored: DDP seeds each process with `seed + rank`; its samplers use the original default seed 0. Z-score statistics use the training device and distributed sums, preserving the original FP32/FP64 arithmetic order. Robust/mag statistics use TRAIN node samples; `x_nodes_per_graph <= 0` means at most 256 nodes per graph, without reducing the model's input graph. Augmentation at probability 1 skips the probability draw, preserving the original RNG sequence. The original lower bounds remain `1e-6` for `wmse_s`/`slope_mask_s` and `1e-12` for `slope_charb_eps`/`slope_huber_delta`; normal configured values are unaffected.
  
 -Training and evaluation expect graph roots containing `*graphs.pt` files. Graph data and checkpoint binaries are excluded from Git. Populate `Data/` (or link it to your existing data directory), and supply a checkpoint at `CKPT_PATH` before inference. The standard configured graph roots are:
-+Cosine with linear warmup remains the configured scheduler. The original `rop` option and its controls are also available. `--deterministic 0` and `--max_grad_norm 0` are defaults; positive `max_grad_norm` explicitly requests clipping. There is no retry or rollback guard. `--stable_arch` accepts only the current setting `1`, and `--dual_mode` only `exceedance`; neither selects an old implementation. Bare switches such as `--amp`, `--tf32`, `--pin_memory` and `--persistent_workers` retain their original argparse behavior. Shipped profiles enable BF16 and TF32.
++Cosine with linear warmup remains the configured scheduler. The original `rop` option and its controls are also available. `--deterministic 0` and `--max_grad_norm 0` are defaults; positive `max_grad_norm` explicitly requests clipping. There is no retry or rollback guard. The redundant `--stable_arch` / `STABLE_ARCH` setting is removed; the current stability architecture always applies. `--dual_mode` remains and accepts only `exceedance`. Bare switches such as `--amp`, `--tf32`, `--pin_memory` and `--persistent_workers` retain their original argparse behavior. Shipped profiles enable BF16 and TF32.
  
 -```text
 -./Data/Grid4_New/NCEP/graphs
@@ -469,21 +469,22 @@
 -| Off | Off | 6 |
 -| Off | On | 7 |
 -| On | On | 8 |
-+A launcher run can contain many combinations. Each has a unique stem in its artifact filenames:
++After training, rank 0 prints the best epoch's complete **Val and Test** metrics together. Val is read from that checkpoint, using the same metrics and sampler-padding convention that selected it; it is not the last epoch's Val. Test evaluates the reloaded best weights once over each actual test sample and exports those predictions. Reporting Val adds no forward pass or diagnostics.
  
 -Each station JSON stores `bathymetry_m` and its node ID/coordinates under `bathymetry_node`. Node coordinates describe the depth measurement location; the existing station coordinates remain the model's geographic inputs. Enabling bathymetry requires a finite `bathymetry_m` value. The existing seven-feature vector is preserved exactly by the default settings.
++A launcher run can contain many combinations. Each has a unique stem in its artifact filenames:
+ 
+-Both switches are saved in checkpoint arguments and config snapshots. Direct inference reads checkpoint settings when the CLI flags are omitted; inference launchers pass the configured values and reject mismatches, including a swap between elevation-only and bathymetry-only features despite their equal dimensions. New checkpoints must record both flags. Training and inference metadata report the selected flags and actual station-feature dimension.
 +- `metrics_<stem>.jsonl`: epoch plus eight errors; best model selection uses **Val All RMSE**.
 +- `best_<stem>.pth`: model config/weights, normalization, station features, exact split tags and training config.
 +- `config_<stem>.json`: resolved Python arguments; `config_used.sh` retains the resolved shell sweep.
-+- `summary_<stem>.json`: best epoch, training/validation-loop seconds, total `wall_seconds`, final test errors and test scope.
++- `summary_<stem>.json`: best epoch, training/validation-loop seconds, total `wall_seconds`, complete best-checkpoint `val` and `test` errors, and test scope.
 +- `test_preds_<stem>.npz`: physical `y_true`, `y_pred` and tags for the best checkpoint.
-+- `train_<tag>.log`: launcher command, timestamped epoch metrics and final wall time. Long log names are shortened with a hash; the complete tag remains inside the log.
- 
--Both switches are saved in checkpoint arguments and config snapshots. Direct inference reads checkpoint settings when the CLI flags are omitted; inference launchers pass the configured values and reject mismatches, including a swap between elevation-only and bathymetry-only features despite their equal dimensions. New checkpoints must record both flags. Training and inference metadata report the selected flags and actual station-feature dimension.
-+`training_seconds` includes epoch metrics/checkpoint overhead. `wall_seconds` also includes data preparation and the final test. Each training process prints its final wall time; the launcher ends with wall time for the whole sweep.
++- `train_<tag>.log`: launcher command, timestamped epoch metrics, best-checkpoint Val/Test metrics and final wall time. Long log names are shortened with a hash; the complete tag remains inside the log.
  
 -### Time windows and preprocessing
--
++`training_seconds` includes epoch metrics/checkpoint overhead. `wall_seconds` also includes data preparation and the final test. Each training process prints its final wall time; the launcher ends with wall time for the whole sweep.
+ 
 -NCEP forcing is sampled every 6 hours. CMIP6 preprocessing selects every other 3-hour record to produce the same 6-hour cadence. For a forcing cutoff `t`, each graph targets six hourly surge values **`t, t+1h, ..., t+5h`**. The next graph covers `t+6h` through `t+11h`, so the outputs concatenate without overlap. For example, forcing through 00:00 produces surge for 00:00–05:00; forcing through 06:00 produces 06:00–11:00.
 -
 -The alignment script uses separate input origins: forcing starts at Oct 25 00:00, while hourly station records start at Oct 25 01:00. Graph centers begin at Nov 1 00:00 on both axes, with earlier forcing retained for history; the different recording origins do not shift the labels. CSV `time` values are validated against the hourly convention when present; legacy files without that column use the assumed axis with a warning.
@@ -841,7 +842,7 @@
 @@ -0,0 +1,42 @@
 +# 当前 v2 的稳定结构与清理边界
 +
-+v2 只实现当前结构。版本号分支、旧 bypass 原型、旧 residual dual head、重试/回滚 guard 和历史 checkpoint 兼容均已删除。原命令入口保留 `--stable_arch 1` 和 `--dual_mode exceedance`，它们只接受当前实现。
++v2 只实现当前结构。版本号分支、旧 bypass 原型、旧 residual dual head、重试/回滚 guard 和历史 checkpoint 兼容均已删除。冗余的 `--stable_arch` / `STABLE_ARCH` 已移除，当前稳定性结构始终启用；`--dual_mode exceedance` 继续保留。
 +
 +## Backbone
 +
@@ -1017,7 +1018,7 @@
  LOSS_MODE_LIST=("mse")
  TAIL_FRAC="0.05"
  TAIL_LAMBDA_LIST=("0.1")
-@@ -47,9 +41,14 @@
+@@ -47,9 +41,13 @@
  
  # Dual prediction head only; ignored when HEAD_TYPE="single".
  GATE_MODE="window"
@@ -1028,7 +1029,6 @@
 +DUAL_LOSS=1
 +EXCEEDANCE_PERCENTILE=95
 +DUAL_ABLATION="none"
-+STABLE_ARCH=1
 +BODY_LOSS_WEIGHT=1
 +EXCESS_LOSS_WEIGHT=1
 +GATE_LOSS_WEIGHT=1
@@ -1050,7 +1050,7 @@
  LOSS_MODE_LIST=("mse")
  TAIL_FRAC="0.05"
  TAIL_LAMBDA_LIST=("0.1")
-@@ -48,9 +42,14 @@
+@@ -48,9 +42,13 @@
  
  # Dual prediction head only; ignored when HEAD_TYPE="single".
  GATE_MODE="window"
@@ -1061,7 +1061,6 @@
 +DUAL_LOSS=1
 +EXCEEDANCE_PERCENTILE=95
 +DUAL_ABLATION="none"
-+STABLE_ARCH=1
 +BODY_LOSS_WEIGHT=1
 +EXCESS_LOSS_WEIGHT=1
 +GATE_LOSS_WEIGHT=1
@@ -1110,7 +1109,7 @@
 +DUAL_MODE="exceedance"
 --- original/configs/train_config_NCEP_Battery_Stable_Single.sh
 +++ StormSurge/configs/train_config_NCEP_Battery_Stable_Single.sh
-@@ -0,0 +1,32 @@
+@@ -0,0 +1,31 @@
 +#!/usr/bin/env bash
 +# Shared training protocol; single-head accuracy control. Stable checkpoint version is automatic.
 +source "$(dirname "${BASH_SOURCE[0]}")/configs_train/train_config_common.sh"
@@ -1123,7 +1122,6 @@
 +HISTORY_HOURS_LIST=(12)
 +HEAD_TYPE="single"
 +DUAL_MODE="exceedance"
-+STABLE_ARCH=1
 +USE_SITE_ELEVATION=0
 +USE_BATHYMETRY=0
 +TRAIN_RATIO="0.6"
@@ -4062,7 +4060,7 @@
 +__all__ = ['EpochResult', 'run_epoch', 'ForecastLoss', 'LossConfig', 'dual_loss_terms', 'format_metrics']
 --- original/emulator/training/arguments.py
 +++ StormSurge/emulator/training/arguments.py
-@@ -0,0 +1,245 @@
+@@ -0,0 +1,244 @@
 +"""The established train.py command-line interface used by the shell configs."""
 +
 +import argparse
@@ -4240,7 +4238,6 @@
 +    parser.add_argument("--body_loss_weight", type=float, default=1.0)
 +    parser.add_argument("--excess_loss_weight", type=float, default=1.0)
 +    parser.add_argument("--gate_loss_weight", type=float, default=1.0)
-+    parser.add_argument("--stable_arch", type=parse_bool_int, choices=[1], default=1, help="Current v2 stability architecture. Historical versions are not selected here.")
 +    parser.add_argument("--max_grad_norm", type=float, default=0.0, help="0 disables optional gradient clipping.")
 +    parser.add_argument("--deterministic", type=parse_bool_int, choices=[0, 1], default=0,
 +                        help="Enforce deterministic kernels for reproducible runs; may reduce throughput.")
@@ -7011,7 +7008,7 @@
  
 --- original/tests/test_config_interfaces.py
 +++ StormSurge/tests/test_config_interfaces.py
-@@ -0,0 +1,161 @@
+@@ -0,0 +1,163 @@
 +"""Exercise the original shell sweep and compare the loss-mode definitions."""
 +
 +import contextlib
@@ -7057,7 +7054,8 @@
 +                for command in commands:
 +                    args = train.parse_args(command)
 +                    self.assertEqual(args.dual_mode, 'exceedance')
-+                    self.assertEqual(args.stable_arch, 1)
++                    self.assertFalse(hasattr(args, 'stable_arch'))
++                    self.assertNotIn('--stable_arch', command)
 +                    if 'configs_train_single' in config.parts:
 +                        self.assertEqual(args.grad_accum_steps, 4)
 +                    if args.model == 'perceiver3':
@@ -7170,7 +7168,8 @@
 +            self.assertIn('ROP_THRESHOLD=0.02', snapshot)
 +
 +    def test_removed_residual_head_flags_fail_instead_of_being_ignored(self):
-+        for arguments in (['--dual_mode', 'residual'], ['--alpha_init_logit', '-2'], ['--stable_arch', '0']):
++        for arguments in (['--dual_mode', 'residual'], ['--alpha_init_logit', '-2'],
++                          ['--stable_arch', '0'], ['--stable_arch', '1']):
 +            with self.assertRaises(SystemExit), contextlib.redirect_stderr(io.StringIO()):
 +                train.parse_args(arguments)
 --- original/tests/test_core_architecture.py
@@ -8743,7 +8742,7 @@
 +                self.assert_checkpoint_roundtrip(config, model, batch)
 --- original/tests/test_pipeline.py
 +++ StormSurge/tests/test_pipeline.py
-@@ -0,0 +1,277 @@
+@@ -0,0 +1,292 @@
 +"""Fresh checkpoint train/infer round trips and exact split populations."""
 +
 +import contextlib
@@ -8755,6 +8754,7 @@
 +import shutil
 +import tempfile
 +import unittest
++from unittest.mock import patch
 +
 +import numpy as np
 +import torch
@@ -8931,9 +8931,11 @@
 +                        "--epochs", "2", "--warmup_epochs", "0", "--use_bathymetry", "1",
 +                        "--num_workers", "0", "--run_tag", "roundtrip", "--x_aug", "0", "--x_norm", "zscore"]
 +                console = io.StringIO()
-+                with contextlib.redirect_stdout(console):
++                with contextlib.redirect_stdout(console), patch.object(train, "run_epoch", wraps=train.run_epoch) as observed:
 +                    train.main(args)
-+                self.assertEqual(len(console.getvalue().splitlines()), 3)
++                # Two epochs of train/Val plus one final Test; reporting adds no evaluation pass.
++                self.assertEqual(observed.call_count, 5)
++                self.assertEqual(len(console.getvalue().splitlines()), 4)
 +                for line in console.getvalue().splitlines():
 +                    self.assertRegex(line, r"^\[\d{4}-\d{2}-\d{2}\|\d{2}:\d{2}:\d{2}\]")
 +                self.assertIn("Wall time:", console.getvalue().splitlines()[-1])
@@ -8943,6 +8945,18 @@
 +                    for part in ("train", "val"):
 +                        self.assertEqual(tuple(record[part]), METRIC_NAMES)
 +                checkpoint = torch.load(next(output.glob("best_*.pth")), weights_only=False)
++                summary = json.loads(next(output.glob("summary_*.json")).read_text())
++                self.assertEqual(summary["val"], checkpoint["val"])
++                self.assertEqual(summary["val"], logs[checkpoint["epoch"] - 1]["val"])
++                self.assertEqual(summary["best_val_rmse"], summary["val"]["rmse_all"])
++                self.assertEqual(summary["best_epoch"], checkpoint["epoch"])
++                self.assertEqual(tuple(summary["test"]), METRIC_NAMES)
++                final_metrics = console.getvalue().splitlines()[-2]
++                self.assertIn(f'Best epoch {checkpoint["epoch"]:03d}', final_metrics)
++                self.assertIn(train.format_metrics("Val", summary["val"]), final_metrics)
++                self.assertIn(train.format_metrics("Test", summary["test"]), final_metrics)
++                self.assertNotIn("stable_arch", checkpoint["training_config"])
++                self.assertNotIn("STABLE_ARCH=", (output / "config_used.sh").read_text())
 +                self.assertEqual(checkpoint["model_config"]["history_steps"], history // 6)
 +                self.assertEqual(checkpoint["model_config"]["station_feat_dim"], 8 if model == "perceiver3" else 0)
 +                self.assertEqual(checkpoint["model_config"]["hidden_channels"], 16)
@@ -9627,7 +9641,7 @@
 +            self.assertEqual(accumulated.calls, math.ceil(length / 2))
 --- original/train.py
 +++ StormSurge/train.py
-@@ -1,1522 +1,214 @@
+@@ -1,1522 +1,217 @@
  #!/usr/bin/env python3
 -"""Storm Surge Emulator training endpoint.
 -
@@ -11266,6 +11280,7 @@
 +        np.savez_compressed(output_dir / f"test_preds_{stem}.npz", **result.predictions)
 +        summary = {"best_epoch": best_epoch, "best_val_rmse": best_rmse, "training_seconds": elapsed,
 +                   "loss_thresholds": fitted, "dual_metadata": dual_metadata,
++                   "val": checkpoint["val"],
 +                   "test": result.metrics, "test_scope": "external_all_years" if args.test_root_dir else "held_out_years"}
 +        if device.type == "cuda":
 +            torch.cuda.synchronize(device)
@@ -11273,6 +11288,8 @@
 +        summary["wall_seconds"] = wall_seconds
 +        summary["run_tag"] = args.run_tag
 +        summary_path.write_text(json.dumps(summary, indent=2))
++        log_message(f'Best epoch {checkpoint["epoch"]:03d} | {format_metrics("Val", checkpoint["val"])} | '
++                    f'{format_metrics("Test", result.metrics)}')
 +        hours, remainder = divmod(wall_seconds, 3600)
 +        minutes, seconds = divmod(remainder, 60)
 +        log_message(f"Wall time: {int(hours):02d}:{int(minutes):02d}:{seconds:06.3f} ({wall_seconds:.3f} s)")
@@ -11343,14 +11360,13 @@
 +    main()
 --- original/train.sh
 +++ StormSurge/train.sh
-@@ -126,7 +126,31 @@
+@@ -126,7 +126,30 @@
  
  # Scheduler knobs
  : "${SCHEDULER:=cosine}"           # cosine | rop
 +: "${WARMUP_EPOCHS:=5}"
 +: "${WARMUP_START_FACTOR:=0.1}"
 +: "${MIN_LR:=1e-6}"
-+: "${STABLE_ARCH:=1}"
 +# Removed experiment knobs must not silently change a historical command.
 +if [[ "${STABILITY_GUARD:-0}" != "0" || -n "${STABLE_ARCH_VERSION:-}" ]]; then
 +  echo "Old guard/version settings were removed from v2; remove them from this config." >&2
@@ -11375,7 +11391,7 @@
  
  # OOD knobs
  : "${X_NORM:=robust}"              # zscore | robust | mag
-@@ -163,16 +187,8 @@
+@@ -163,16 +186,8 @@
  : "${CONDA_SH:=/software/u22/anaconda/python3.9/etc/profile.d/conda.sh}"
  : "${CONDA_ENV:=torchpyg-cu124}"
  
@@ -11392,7 +11408,7 @@
  
  : "${NODE_READ_HEADS:=8}"
  : "${TIME_READ_HEADS:=8}"
-@@ -183,6 +199,12 @@
+@@ -183,6 +198,12 @@
  
  # Unified training-artifact root. Relative paths are resolved from WORKDIR.
  : "${ALL_RESULTS_ROOT:=}"
@@ -11405,7 +11421,7 @@
  
  # =========================
  # (Optional) Conda activation
-@@ -205,7 +227,9 @@
+@@ -205,7 +226,9 @@
    fi
  fi
  
@@ -11416,7 +11432,7 @@
    PYTHON_BIN="${CONDA_PREFIX}/bin/python"
  else
    PYTHON_BIN="$(command -v python)"
-@@ -322,7 +346,7 @@
+@@ -322,7 +345,7 @@
    local output_path="$1"
    local name
    local config_vars=(
@@ -11425,14 +11441,14 @@
      CNN_INTERMEDIATE_CHANNEL
      TEMPORAL_BLOCK HEAD_TYPE STATION_JSON_DIR USE_SITE_ELEVATION USE_BATHYMETRY
      BATCH_SIZE GRAD_ACCUM_STEPS
-@@ -330,13 +354,16 @@
+@@ -330,13 +353,16 @@
      VAL_RATIO SHUFFLE_YEARS FUTURE_ONLY FUTURE_YEAR_THRESHOLD LR_LIST
      HISTORY_HOURS_LIST LOSS_MODE_LIST TAIL_FRAC TAIL_LAMBDA_LIST WMSE_Q_LIST
      WMSE_ALPHA WMSE_S WMSE_USE_ABS SLOPE_LAMBDA_LIST SLOPE_MASK_S_LIST
 -    SLOPE_ROBUST SLOPE_CHARB_EPS SLOPE_HUBER_DELTA SCHEDULER ROP_METRIC
 +    SLOPE_ROBUST SLOPE_CHARB_EPS SLOPE_HUBER_DELTA SCHEDULER ROP_METRIC ROP_FACTOR ROP_PATIENCE
 +    ROP_THRESHOLD ROP_COOLDOWN ROP_MIN_LR
-+    WARMUP_EPOCHS WARMUP_START_FACTOR MIN_LR STABLE_ARCH MAX_GRAD_NORM
++    WARMUP_EPOCHS WARMUP_START_FACTOR MIN_LR MAX_GRAD_NORM
 +    DETERMINISTIC DUAL_MODE DUAL_LOSS EXCEEDANCE_PERCENTILE DUAL_ABLATION
 +    BODY_LOSS_WEIGHT EXCESS_LOSS_WEIGHT GATE_LOSS_WEIGHT
      X_NORM X_P_LO X_P_HI X_NODES_PER_GRAPH X_CLIP X_AUG X_AUG_PROB
@@ -11446,7 +11462,7 @@
      TRANSFORMER_FF_MULT TRANSFORMER_DROPOUT MAX_TIME_STEPS ALL_RESULTS_ROOT
    )
  
-@@ -356,7 +383,7 @@
+@@ -356,7 +382,7 @@
  # When tmux wrapping is enabled, defer creation to the inner process so one
  # submitted job produces exactly one launcher directory.  Direct/no-tmux runs
  # and tmux-inner runs create it here as usual.
@@ -11455,7 +11471,7 @@
    mkdir -p "${RUN_DIR}"
    write_resolved_config "${RUN_DIR}/config_used.sh"
  fi
-@@ -392,7 +419,6 @@
+@@ -392,7 +418,6 @@
  echo "num_gpus:      ${num_gpus}"
  echo "Scheduler:     ${SCHEDULER} (ROP_METRIC=${ROP_METRIC})"
  echo "DISABLE_OOD:   ${DISABLE_OOD} (x_norm=${X_NORM}, x_clip=${X_CLIP}, x_aug=${X_AUG})"
@@ -11463,18 +11479,18 @@
  echo "DL:            workers=${NUM_WORKERS} pin=${PIN_MEMORY} pers=${PERSISTENT_WORKERS} prefetch=${PREFETCH_FACTOR} mp=${MP_CONTEXT}"
  echo "========================================="
  
-@@ -430,8 +456,9 @@
+@@ -430,8 +455,9 @@
    baseline) EXTRA_TAG="" ;;
    perceiver3)
      EXTRA_TAG="_nrh${NODE_READ_HEADS}_trh${TIME_READ_HEADS}_L${TRANSFORMER_LAYERS}_ff${TRANSFORMER_FF_MULT}_td${TRANSFORMER_DROPOUT}"
-+    EXTRA_TAG+="_stable${STABLE_ARCH}v3_${DUAL_MODE}"
++    EXTRA_TAG+="_stable1v3_${DUAL_MODE}"
      if [[ "${HEAD_TYPE}" == "dual" ]]; then
 -      EXTRA_TAG+="_gm${GATE_MODE}"
 +      EXTRA_TAG+="_gm${GATE_MODE}_eq${EXCEEDANCE_PERCENTILE}_da${DUAL_ABLATION}"
      else
        EXTRA_TAG+="_hsingle"
      fi
-@@ -439,14 +466,6 @@
+@@ -439,14 +465,6 @@
    *) echo "[FATAL] Unknown MODEL='${MODEL}'. Use baseline|perceiver3"; exit 1 ;;
  esac
  
@@ -11489,7 +11505,7 @@
  SPLIT_TAG=""
  if [[ "${SHUFFLE_YEARS}" == "1" ]]; then
    SPLIT_TAG="_yshuffle"
-@@ -476,6 +495,7 @@
+@@ -476,6 +494,7 @@
  # =========================
  # Sweep loops
  # =========================
@@ -11497,7 +11513,7 @@
  for LOSS_MODE in "${LOSS_MODE_LIST[@]}"; do
    for LR_CUR in "${LR_LIST[@]}"; do
      for H in "${HISTORY_HOURS_LIST[@]}"; do
-@@ -528,19 +548,32 @@
+@@ -528,19 +547,32 @@
                  LOSS_TAG2+="_sl${SLOPE_LAMBDA}_sms${SLOPE_MASK_S}_${SLOPE_ROBUST}"
                fi
  
@@ -11534,17 +11550,16 @@
                  --encoder_type "${ENCODER_TYPE}"
                  --cnn_intermediate_channel "${CNN_INTERMEDIATE_CHANNEL}"
                  --batch_size "${BATCH_SIZE}"
-@@ -550,6 +583,9 @@
+@@ -550,6 +582,8 @@
                  --num_layers "${NUM_LAYERS}"
                  --dropout "${DROPOUT}"
                  --head_dropout "${HEAD_DROPOUT}"
-+                --stable_arch "${STABLE_ARCH}"
 +                --max_grad_norm "${MAX_GRAD_NORM}"
 +                --deterministic "${DETERMINISTIC}"
                  --history_hours "${H}"
                  --seed "${SEED}"
                  --train_ratio "${TRAIN_RATIO}"
-@@ -583,14 +619,6 @@
+@@ -583,14 +617,6 @@
                  BASE_CMD+=(--grad_accum_steps "${GRAD_ACCUM_STEPS}")
                fi
  
@@ -11559,7 +11574,7 @@
                # Speed flags
                if [[ "${USE_AMP}" -eq 1 ]]; then
                  BASE_CMD+=(--amp --amp_dtype "${AMP_DTYPE}")
-@@ -608,21 +636,33 @@
+@@ -608,21 +634,33 @@
                # Model-specific knobs
                if [[ "${MODEL}" == "perceiver3" ]]; then
                  BASE_CMD+=(--head_type "${HEAD_TYPE}"
@@ -11598,7 +11613,7 @@
  
                {
                  echo "-----------------------------------------"
-@@ -646,4 +686,6 @@
+@@ -646,4 +684,6 @@
    done
  done
  

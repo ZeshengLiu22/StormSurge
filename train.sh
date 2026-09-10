@@ -129,7 +129,6 @@ if [[ -z "${SLOPE_MASK_S_LIST+x}" ]]; then SLOPE_MASK_S_LIST=("0.10"); fi
 : "${WARMUP_EPOCHS:=5}"
 : "${WARMUP_START_FACTOR:=0.1}"
 : "${MIN_LR:=1e-6}"
-: "${STABLE_ARCH:=1}"
 # Removed experiment knobs must not silently change a historical command.
 if [[ "${STABILITY_GUARD:-0}" != "0" || -n "${STABLE_ARCH_VERSION:-}" ]]; then
   echo "Old guard/version settings were removed from v2; remove them from this config." >&2
@@ -356,7 +355,7 @@ write_resolved_config() {
     WMSE_ALPHA WMSE_S WMSE_USE_ABS SLOPE_LAMBDA_LIST SLOPE_MASK_S_LIST
     SLOPE_ROBUST SLOPE_CHARB_EPS SLOPE_HUBER_DELTA SCHEDULER ROP_METRIC ROP_FACTOR ROP_PATIENCE
     ROP_THRESHOLD ROP_COOLDOWN ROP_MIN_LR
-    WARMUP_EPOCHS WARMUP_START_FACTOR MIN_LR STABLE_ARCH MAX_GRAD_NORM
+    WARMUP_EPOCHS WARMUP_START_FACTOR MIN_LR MAX_GRAD_NORM
     DETERMINISTIC DUAL_MODE DUAL_LOSS EXCEEDANCE_PERCENTILE DUAL_ABLATION
     BODY_LOSS_WEIGHT EXCESS_LOSS_WEIGHT GATE_LOSS_WEIGHT
     X_NORM X_P_LO X_P_HI X_NODES_PER_GRAPH X_CLIP X_AUG X_AUG_PROB
@@ -456,7 +455,7 @@ case "${MODEL}" in
   baseline) EXTRA_TAG="" ;;
   perceiver3)
     EXTRA_TAG="_nrh${NODE_READ_HEADS}_trh${TIME_READ_HEADS}_L${TRANSFORMER_LAYERS}_ff${TRANSFORMER_FF_MULT}_td${TRANSFORMER_DROPOUT}"
-    EXTRA_TAG+="_stable${STABLE_ARCH}v3_${DUAL_MODE}"
+    EXTRA_TAG+="_stable1v3_${DUAL_MODE}"
     if [[ "${HEAD_TYPE}" == "dual" ]]; then
       EXTRA_TAG+="_gm${GATE_MODE}_eq${EXCEEDANCE_PERCENTILE}_da${DUAL_ABLATION}"
     else
@@ -583,7 +582,6 @@ for LOSS_MODE in "${LOSS_MODE_LIST[@]}"; do
                 --num_layers "${NUM_LAYERS}"
                 --dropout "${DROPOUT}"
                 --head_dropout "${HEAD_DROPOUT}"
-                --stable_arch "${STABLE_ARCH}"
                 --max_grad_norm "${MAX_GRAD_NORM}"
                 --deterministic "${DETERMINISTIC}"
                 --history_hours "${H}"

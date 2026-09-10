@@ -27,15 +27,15 @@
     "path": "README.md",
     "status": "modified",
     "original_sha256": "636d97a02975bde02bc9c3986e4f9247a81ecf6dc721906b94473e3f7a8239e1",
-    "current_sha256": "f053ac78f82b677db6909247a3b628cba38bee6ef5c110c5704b313739f11082",
+    "current_sha256": "6c2d374a7d0b7f02e591d4c0d1a69e03b938c29681533ce41443b2d590ba8744",
     "original_lines": 483,
-    "current_lines": 162
+    "current_lines": 164
   },
   {
     "path": "STABILITY_AND_DUAL_HEAD.md",
     "status": "added",
     "original_sha256": null,
-    "current_sha256": "630daf718aadd69558730d38b3dc92a5b323fc01b2f5453477040777a2a9a2aa",
+    "current_sha256": "3704232ea3f9ee0747a3713230314f118caff39a3ffdf62252e8d85d22b4261e",
     "original_lines": 0,
     "current_lines": 42
   },
@@ -603,9 +603,9 @@
     "path": "configs/configs_train/train_config_common.sh",
     "status": "modified",
     "original_sha256": "1458066565a8bd6596a1a329f213a68ce43db4d2048317be9144da87fbf1abd1",
-    "current_sha256": "dcde0f8536837f5dbe79996e10089a6545c7409d9dc041c91dcdb698f8cab2ab",
+    "current_sha256": "d588d832b2c07a9de46bf849983b12eb104883e306364d4e20b2e36ee28d9a95",
     "original_lines": 94,
-    "current_lines": 93
+    "current_lines": 92
   },
   {
     "path": "configs/configs_train_single/AWI/train_config_AWI_Battery_Baseline_0h.sh",
@@ -1059,9 +1059,9 @@
     "path": "configs/configs_train_single/train_config_common.sh",
     "status": "modified",
     "original_sha256": "23049a320832e0c56f5728bc83d74820489e17c5dff78eb2c5df87bdfc50dcba",
-    "current_sha256": "dd2925a60c129f90798d6726f42303eb9af9e1bdde54affc74ebcc6db97351d0",
+    "current_sha256": "551e5008242679b94841b9daa670202dc62c0ba82e9efa72004e747098dd95bb",
     "original_lines": 95,
-    "current_lines": 94
+    "current_lines": 93
   },
   {
     "path": "configs/dual_ablations/train_config_NCEP_Battery_Fixed_Gate.sh",
@@ -1107,9 +1107,9 @@
     "path": "configs/train_config_NCEP_Battery_Stable_Single.sh",
     "status": "added",
     "original_sha256": null,
-    "current_sha256": "12a949fe05fcfa1880a1ad3254dd66460f5707f8298d983a150faa0a8b7f442d",
+    "current_sha256": "ffb85e1b0e939ec406685e061696205a3c98363e51846f96750608a86759e13b",
     "original_lines": 0,
-    "current_lines": 32
+    "current_lines": 31
   },
   {
     "path": "emulator/__init__.py",
@@ -1307,9 +1307,9 @@
     "path": "emulator/training/arguments.py",
     "status": "added",
     "original_sha256": null,
-    "current_sha256": "ef15d71cbc6c452664e2333b9f67890fb8cec888940ee8fbd4cf9c47b73c82ba",
+    "current_sha256": "0c01526fbe303775e61b6deb8075a997e39f1a6f56f0fb59fd0528d0d90e94f1",
     "original_lines": 0,
-    "current_lines": 245
+    "current_lines": 244
   },
   {
     "path": "emulator/training/engine.py",
@@ -1483,9 +1483,9 @@
     "path": "tests/test_config_interfaces.py",
     "status": "added",
     "original_sha256": null,
-    "current_sha256": "ea21bfa290f4348d4aaed167a39717c7c3876bdf0636af9838f8bed2fdd54067",
+    "current_sha256": "3943bbb88d6dcb999fe2e2311467b3aed067385d6bf5a8a720da5ec5a7929bd3",
     "original_lines": 0,
-    "current_lines": 161
+    "current_lines": 163
   },
   {
     "path": "tests/test_core_architecture.py",
@@ -1571,9 +1571,9 @@
     "path": "tests/test_pipeline.py",
     "status": "added",
     "original_sha256": null,
-    "current_sha256": "02df15c4a0d089d5e25e8f814c07cc59f9dcd638099d8822b833ca7f5aa056bb",
+    "current_sha256": "ae7237dc4f522ab4e541dfc04a67fd8c2e7e3c371c94fb1cda43020206f1e20f",
     "original_lines": 0,
-    "current_lines": 277
+    "current_lines": 292
   },
   {
     "path": "tests/test_preprocessing_pipeline.py",
@@ -1619,16 +1619,16 @@
     "path": "train.py",
     "status": "modified",
     "original_sha256": "50af7cdfb84773711a5879d822774113053b1b8dd27c658e576f316724d9f026",
-    "current_sha256": "1700709e5133163b7d3f06e573ef3d3b4b988bf3c327161ecb55212b1ce259d4",
+    "current_sha256": "00205b05168d7d752105f7115641c1ff1bb96e3a9d3bc4f79db56a4457cf7ad7",
     "original_lines": 1522,
-    "current_lines": 214
+    "current_lines": 217
   },
   {
     "path": "train.sh",
     "status": "modified",
     "original_sha256": "b6b33402c2eaae001e6138f2cc999936d10eaf573de03a6121b8dda142d55aad",
-    "current_sha256": "3f69ec7bf066842d7a72d380496ac12be6bdc9e570f40956f4f252a70e2f7716",
+    "current_sha256": "a064f2482141ff4a2f3188b6d7c027fe6bf134ddb70bca9bd168f9a0828d152b",
     "original_lines": 649,
-    "current_lines": 691
+    "current_lines": 689
   }
 ]

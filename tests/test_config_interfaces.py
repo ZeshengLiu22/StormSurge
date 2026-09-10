@@ -43,7 +43,8 @@ class ConfigInterfaceTests(unittest.TestCase):
                 for command in commands:
                     args = train.parse_args(command)
                     self.assertEqual(args.dual_mode, 'exceedance')
-                    self.assertEqual(args.stable_arch, 1)
+                    self.assertFalse(hasattr(args, 'stable_arch'))
+                    self.assertNotIn('--stable_arch', command)
                     if 'configs_train_single' in config.parts:
                         self.assertEqual(args.grad_accum_steps, 4)
                     if args.model == 'perceiver3':
@@ -156,6 +157,7 @@ ALL_RESULTS_ROOT="'''+str(Path(temporary) / 'results')+'"\n')
             self.assertIn('ROP_THRESHOLD=0.02', snapshot)
 
     def test_removed_residual_head_flags_fail_instead_of_being_ignored(self):
-        for arguments in (['--dual_mode', 'residual'], ['--alpha_init_logit', '-2'], ['--stable_arch', '0']):
+        for arguments in (['--dual_mode', 'residual'], ['--alpha_init_logit', '-2'],
+                          ['--stable_arch', '0'], ['--stable_arch', '1']):
             with self.assertRaises(SystemExit), contextlib.redirect_stderr(io.StringIO()):
                 train.parse_args(arguments)

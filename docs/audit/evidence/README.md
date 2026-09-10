@@ -1,6 +1,8 @@
 **验证证据的范围**
 
-最新sample-additive tail更新（2026-09-10）见 `sample_additive_tail.json` 和 `sample_additive_tail_tests.txt`：**全量70项测试通过**，包括新增7项tail测试。六种tail模式验证分批loss/梯度、固定样本梯度、空事件、加权语义、CLI/保存阈值、原有累积及两进程CPU/Gloo的平均梯度和DDP＋累积。唯一运行代码变化为LossConfig.tail_frac及tail归约分母；配置、模型、阈值计算、slope/dual项、engine及指标逐项核对未变。没有旧条件归约的运行选项。使用CPU、PyTorch2.6+cu124、PyG2.7；未验证新公式的GPU/BF16/NCCL执行或长程精度。
+最新第四部分复核（2026-09-10）见 `runtime_review.json` 和 `runtime_review_tests.txt`：**全量70项测试通过**。删除stable_arch参数、透传/快照及三处配置声明，dual_mode保留；训练结束从最佳checkpoint取完整Val，与一次Test结果共同打印并保存summary。四组训练/推理往返确认Val对应选模epoch且没有多一次forward；配置扫描及现有tail/CPU-Gloo回归继续通过。三份配置仅删STABLE_ARCH=1，其他130份配置逐字保持；模型、loss、阈值、runtime、engine、归一化与指标代码未改。TF32/线程/阈值/mag/strip提问只更新解释和建议；当前GPU驱动不可用，未测GPU速度。
+
+此前sample-additive tail更新见 `sample_additive_tail.json` 和 `sample_additive_tail_tests.txt`：**全量70项测试通过**，包括新增7项tail测试。六种tail模式验证分批loss/梯度、固定样本梯度、空事件、加权语义、CLI/保存阈值、原有累积及两进程CPU/Gloo的平均梯度和DDP＋累积。该轮唯一运行代码变化为LossConfig.tail_frac及tail归约分母；配置、模型、阈值计算、slope/dual项、engine及指标逐项核对未变。没有旧条件归约的运行选项。使用CPU、PyTorch2.6+cu124、PyG2.7；未验证新公式的GPU/BF16/NCCL执行或长程精度。
 
 此前dual接口复核结果在 `dual_review_tests.txt`：**50项测试通过**。`dual_review_validation.json` 保存当时覆盖范围、运行环境和 Python/shell 源码哈希。验证包括真实 TRAIN 事件比例、阈值解耦、五种 dual 模式的训练/保存/推理、两个 shell 推理入口和独立诊断输出。测试使用 CPU、PyTorch2.6+cu124、PyG2.7；当时 GPU 驱动不可用，未重跑 GPU/BF16/NCCL，也未做长程精度比较。
 
