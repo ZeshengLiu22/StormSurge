@@ -1,0 +1,23 @@
+test_custom_graph_pattern_filters_before_loading (test_pipeline.PipelineTests.test_custom_graph_pattern_filters_before_loading) ... ok
+test_fresh_train_checkpoint_and_inference_roundtrip (test_pipeline.PipelineTests.test_fresh_train_checkpoint_and_inference_roundtrip) ... ok
+test_metadata_aliases_and_independent_switches_survive_train_and_infer (test_pipeline.PipelineTests.test_metadata_aliases_and_independent_switches_survive_train_and_infer) ... ok
+test_model_dimensions_follow_train_when_earliest_year_is_excluded (test_pipeline.PipelineTests.test_model_dimensions_follow_train_when_earliest_year_is_excluded) ... ok
+test_original_default_glob_and_custom_suffix_preserve_standard_tags (test_pipeline.PipelineTests.test_original_default_glob_and_custom_suffix_preserve_standard_tags) ... ok
+test_original_flags_and_defaults (test_pipeline.PipelineTests.test_original_flags_and_defaults) ... ok
+test_station_filter_precedes_loading_and_split_is_by_year (test_pipeline.PipelineTests.test_station_filter_precedes_loading_and_split_is_by_year) ... ok
+test_warmup_cosine_matches_previous_schedule_without_deprecated_calls (test_pipeline.PipelineTests.test_warmup_cosine_matches_previous_schedule_without_deprecated_calls) ... ok
+test_every_training_profile_generates_valid_commands (test_config_interfaces.ConfigInterfaceTests.test_every_training_profile_generates_valid_commands) ... ok
+test_lag_embedding_capacity_covers_the_history_window (test_config_interfaces.ConfigInterfaceTests.test_lag_embedding_capacity_covers_the_history_window) ... ok
+test_loss_modes_match_physical_unit_reference_and_gradients (test_config_interfaces.ConfigInterfaceTests.test_loss_modes_match_physical_unit_reference_and_gradients) ... ok
+test_original_conditional_cartesian_sweep_has_all_390_combinations (test_config_interfaces.ConfigInterfaceTests.test_original_conditional_cartesian_sweep_has_all_390_combinations) ... ok
+test_removed_residual_head_flags_fail_instead_of_being_ignored (test_config_interfaces.ConfigInterfaceTests.test_removed_residual_head_flags_fail_instead_of_being_ignored) ... ok
+test_rop_configuration_reaches_the_scheduler_and_snapshot (test_config_interfaces.ConfigInterfaceTests.test_rop_configuration_reaches_the_scheduler_and_snapshot) ... ok
+test_accumulation_preserves_equal_microbatch_weight_with_short_groups (test_training.TrainingTests.test_accumulation_preserves_equal_microbatch_weight_with_short_groups) ... ok
+test_normalization_does_not_mutate_aliased_source_features (test_training.TrainingTests.test_normalization_does_not_mutate_aliased_source_features) ... ok
+test_one_forward_physical_units_and_global_top_five_percent (test_training.TrainingTests.test_one_forward_physical_units_and_global_top_five_percent) ... ok
+test_padding_dedup_and_ties_are_independent_of_batching (test_training.TrainingTests.test_padding_dedup_and_ties_are_independent_of_batching) ... ok
+
+----------------------------------------------------------------------
+Ran 18 tests in 9.369s
+
+OK

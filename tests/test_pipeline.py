@@ -37,6 +37,89 @@ def make_fixture(root, years=5):
 
 
 class PipelineTests(unittest.TestCase):
+    def test_custom_graph_pattern_filters_before_loading(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            graphs, _ = make_fixture(Path(temporary))
+            expected = ForcingGraphStore(graphs, "Battery")
+            (graphs / "2000_2001_Battery_other_graphs.pt").write_text("excluded by pattern")
+            (graphs / "2000_2001_Other_fixture_graphs.pt").write_text("excluded by station")
+            selected = ForcingGraphStore(graphs, "Battery", pattern="*_fixture_graphs.pt")
+            self.assertEqual(selected.graph_tags, expected.graph_tags)
+            self.assertEqual(selected.year_to_indices, expected.year_to_indices)
+            for actual, reference in zip(selected.graphs, expected.graphs):
+                for key in ("x", "x_hist", "y", "edge_index"):
+                    torch.testing.assert_close(actual[key], reference[key], rtol=0, atol=0)
+            with self.assertRaisesRegex(ValueError, "No graphs"):
+                ForcingGraphStore(graphs, "Battery", pattern="*_missing_graphs.pt")
+
+    def test_original_default_glob_and_custom_suffix_preserve_standard_tags(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            graphs, _ = make_fixture(Path(temporary))
+            standard = ForcingGraphStore(graphs, "Battery")
+            graph = standard.graphs[0]
+            torch.save([graph], graphs / "1999_2000_Battery_legacygraphs.pt")
+            torch.save([graph], graphs / "2005_2006_Battery_manual.pt")
+            broad = ForcingGraphStore(graphs, "Battery")
+            self.assertEqual(broad.graph_tags, ["1999_2000_Battery_legacygraphs_0", *standard.graph_tags])
+            narrow = ForcingGraphStore(graphs, "Battery", pattern="*_graphs.pt")
+            self.assertEqual(narrow.graph_tags, standard.graph_tags)
+            custom = ForcingGraphStore(graphs, "Battery", pattern="*_manual.pt")
+            self.assertEqual(custom.graph_tags, ["2005_2006_Battery_manual_0"])
+            torch.testing.assert_close(custom.graphs[0].x, graph.x, rtol=0, atol=0)
+            torch.save([graph], graphs / "2006_2007_Battery_graphs.pt")
+            no_version = ForcingGraphStore(graphs, "Battery", pattern="2006_*.pt")
+            self.assertEqual(no_version.graph_tags, ["2006_2007_Battery_0"])
+
+    def test_model_dimensions_follow_train_when_earliest_year_is_excluded(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            graphs, stations = make_fixture(root)
+            excluded_path = graphs / "1979_1980_Battery_excluded_graphs.pt"
+            history = torch.randn(9, 6, 2)
+            excluded = Data(x=history[-1], x_hist=history, y=torch.randn(2),
+                            edge_index=torch.empty(2, 0, dtype=torch.long), grid_H=2, grid_W=3)
+            variants = (("baseline", "single", "CNN", 12), ("perceiver3", "dual", "GraphSAGE", 48))
+            for model, head, encoder, hours in variants:
+                checkpoints, prediction_paths = [], []
+                for include_excluded in (False, True):
+                    if include_excluded:
+                        torch.save([excluded], excluded_path)
+                        store = ForcingGraphStore(graphs, "Battery")
+                        splits = store.split(future_only=True, future_year_threshold=1999)
+                        self.assertNotIn(0, splits["train"])
+                        self.assertEqual((store.graphs[0].x.size(-1), store.graphs[0].y.numel()), (2, 2))
+                    else:
+                        excluded_path.unlink(missing_ok=True)
+                    output = root / f"{model}_{include_excluded}"
+                    args = ["--root_dir", str(graphs), "--station", "Battery", "--station_json_dir", str(stations),
+                            "--output_dir", str(output), "--device", "cpu", "--model", model, "--head_type", head,
+                            "--encoder_type", encoder, "--temporal_block", "MLP", "--history_hours", str(hours),
+                            "--future_only", "1", "--future_year_threshold", "1999", "--hidden_channels", "16",
+                            "--node_read_heads", "2", "--time_read_heads", "2", "--epochs", "1", "--warmup_epochs", "0",
+                            "--batch_size", "2", "--num_workers", "0", "--x_aug", "0"]
+                    with contextlib.redirect_stdout(io.StringIO()):
+                        train.main(args)
+                    checkpoint_path = next(output.glob("best_*.pth"))
+                    checkpoint = torch.load(checkpoint_path, weights_only=False)
+                    self.assertEqual((checkpoint["model_config"]["in_channels"], checkpoint["model_config"]["out_channels"]), (3, 4))
+                    self.assertTrue(all(not tag.startswith("1979_") for tags in checkpoint["split_tags"].values() for tag in tags))
+                    checkpoints.append(checkpoint)
+                    prediction_paths.append(next(output.glob("test_preds_*.npz")))
+                    if include_excluded:
+                        inferred = root / f"infer_{model}"
+                        with contextlib.redirect_stdout(io.StringIO()):
+                            infer.main(["--ckpt", str(checkpoint_path), "--root_dir", str(graphs), "--out_dir", str(inferred),
+                                        "--device", "cpu", "--batch_size", "2", "--num_workers", "0", "--save_npz"])
+                        with np.load(prediction_paths[-1]) as expected, np.load(inferred / "predictions.npz") as actual:
+                            np.testing.assert_array_equal(actual["tags"], expected["tags"])
+                            np.testing.assert_array_equal(actual["y_pred"], expected["y_pred"])
+                for field in ("model_state", "normalization"):
+                    for key in checkpoints[0][field]:
+                        torch.testing.assert_close(checkpoints[0][field][key], checkpoints[1][field][key], rtol=0, atol=0)
+                with np.load(prediction_paths[0]) as before, np.load(prediction_paths[1]) as after:
+                    np.testing.assert_array_equal(before["tags"], after["tags"])
+                    np.testing.assert_array_equal(before["y_pred"], after["y_pred"])
+
     def test_metadata_aliases_and_independent_switches_survive_train_and_infer(self):
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary)

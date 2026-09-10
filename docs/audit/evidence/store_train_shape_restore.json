@@ -1,0 +1,119 @@
+{
+  "generated_utc": "2026-09-10T03:27:10.114556+00:00",
+  "base_commit": "31912c09f93e92c9e3dc78d4c6e8b4632b412d60",
+  "python": "3.11.16",
+  "torch": "2.6.0+cu124",
+  "torch_geometric": "2.7.0",
+  "device": "cpu",
+  "command": "python -m unittest -v test_pipeline test_config_interfaces test_training",
+  "tests_run": 18,
+  "tests_passed": 18,
+  "graph_store": {
+    "signature": "ForcingGraphStore(root_dir, station_filter=None, *, pattern=\"*graphs.pt\")",
+    "default_glob": "*graphs.pt",
+    "pattern_examples": [
+      "*_fixture_graphs.pt",
+      "*_graphs.pt",
+      "*_manual.pt"
+    ],
+    "standard_tags": "unchanged, including no-version current format",
+    "selection": "pattern then station filter before loading payloads",
+    "cpu_storage": true,
+    "strict_station_filter": true
+  },
+  "model_dimensions": {
+    "source": "store.graphs[splits[\"train\"][0]]",
+    "excluded_first_graph": {
+      "year": "1979_1980",
+      "input_features": 2,
+      "output_values": 2
+    },
+    "selected_train": {
+      "years": "2000_2001 through 2004_2005",
+      "input_features": 3,
+      "output_values": 4,
+      "future_year_threshold": 1999
+    },
+    "variants": [
+      {
+        "model": "baseline",
+        "encoder": "CNN",
+        "head": "single",
+        "history_hours": 12
+      },
+      {
+        "model": "pact",
+        "encoder": "GraphSAGE",
+        "head": "dual",
+        "history_hours": 48
+      }
+    ],
+    "training_runs": 4,
+    "inference_runs_with_excluded_first_graph": 2,
+    "excluded_graph_present_vs_absent": "model weights, normalization, and test predictions exactly equal",
+    "checkpoint_inference": "saved dimensions restored and predictions exactly equal"
+  },
+  "view_original_comparison": {
+    "original_source_sha256": "29274664e7b7f3f34dd3c5c92f3b8830fd645d3f2dbb9d74ca82036ca385bc9d",
+    "cases": [
+      {
+        "history_hours": 0,
+        "history_shape": [
+          6,
+          1,
+          5
+        ],
+        "common_fields_exactly_equal": true
+      },
+      {
+        "history_hours": 12,
+        "history_shape": [
+          6,
+          3,
+          5
+        ],
+        "common_fields_exactly_equal": true
+      },
+      {
+        "history_hours": 24,
+        "history_shape": [
+          6,
+          5,
+          5
+        ],
+        "common_fields_exactly_equal": true
+      },
+      {
+        "history_hours": 48,
+        "history_shape": [
+          6,
+          9,
+          5
+        ],
+        "common_fields_exactly_equal": true
+      }
+    ],
+    "h0_without_stored_history": "both create one current frame",
+    "added_field": "sample_id",
+    "removed_fields": [
+      "p_mean_hist",
+      "p_mean_curr"
+    ],
+    "center_time": "neither version forwards this raw graph attribute",
+    "insufficient_history": {
+      "requested_hours": 48,
+      "available_frames": 5,
+      "original_view_frames": 5,
+      "current_error": "2000_2001_Battery_fixed315_hist48_0 has 5 history steps; need 9."
+    },
+    "runtime_view_changed": false
+  },
+  "source_sha256": {
+    "emulator/data/graph_store.py": "ea032027cc1d8f533cbae47667565b42225f2b1234a576174d8cc7fb08a0b2ce",
+    "train.py": "1700709e5133163b7d3f06e573ef3d3b4b988bf3c327161ecb55212b1ce259d4",
+    "tests/test_pipeline.py": "02df15c4a0d089d5e25e8f814c07cc59f9dcd638099d8822b833ca7f5aa056bb",
+    "emulator/training/engine.py": "6b23053d56baded262b7474a59aa4d6fa3ec7c83de8c0a4722e80c7ce103972f",
+    "emulator/training/metrics.py": "a16bad5f040d1725cf97e47628b9d3ea19da39d10c3ad14f34a0a59c95ecd0e9"
+  },
+  "unchanged": "ForcingGraphView class, standard-file tag construction, sample_id, training CLI/configs, model API and checkpoints; original Emulator checkout."
+}

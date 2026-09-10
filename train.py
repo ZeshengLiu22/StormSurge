@@ -108,7 +108,8 @@ def train(args, device, distributed, rank, wall_start):
         station_feat = station_features_from_json(station_json, use_site_elevation=args.use_site_elevation,
                                                   use_bathymetry=args.use_bathymetry).to(device)
     model_values = {field.name: getattr(args, field.name) for field in fields(ModelConfig) if hasattr(args, field.name)}
-    model_values.update(in_channels=store.graphs[0].x.size(-1), out_channels=store.graphs[0].y.numel(),
+    train_graph = store.graphs[splits["train"][0]]
+    model_values.update(in_channels=train_graph.x.size(-1), out_channels=train_graph.y.numel(),
                         model="pact" if args.model == "perceiver3" else "baseline",
                         temporal_layers=args.transformer_layers, temporal_ff_mult=args.transformer_ff_mult,
                         temporal_dropout=args.transformer_dropout, history_steps=history_steps,

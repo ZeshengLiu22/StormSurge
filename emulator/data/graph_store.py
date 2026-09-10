@@ -10,14 +10,15 @@ from torch_geometric.data import Data
 
 
 class ForcingGraphStore:
-    def __init__(self, root_dir, station_filter=None):
+    def __init__(self, root_dir, station_filter=None, *, pattern="*graphs.pt"):
         self.graphs = []
         self.graph_tags = []
         self.year_to_indices = defaultdict(list)
         # Filter filenames before loading: other stations never occupy RAM.
-        files = sorted(Path(root_dir).glob("*_graphs.pt"))
+        files = sorted(Path(root_dir).glob(pattern))
         for path in files:
-            parts = path.name.removesuffix("_graphs.pt").split("_")
+            stem = path.name.removesuffix("_graphs.pt") if path.name.endswith("_graphs.pt") else path.stem
+            parts = stem.split("_")
             if len(parts) < 3:
                 raise ValueError(f"Invalid graph filename: {path.name}")
             if station_filter is not None and parts[2] != station_filter:
