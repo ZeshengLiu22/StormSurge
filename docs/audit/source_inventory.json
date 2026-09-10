@@ -27,9 +27,9 @@
     "path": "README.md",
     "status": "modified",
     "original_sha256": "636d97a02975bde02bc9c3986e4f9247a81ecf6dc721906b94473e3f7a8239e1",
-    "current_sha256": "cc2d3e3125c486097f9297ad2cf3ff82b987dd0771922ea373b94ca7b97b3ad4",
+    "current_sha256": "c48e58b1a95f410733bf17d2aad15f9059de005e54d3ff79d94ce26c9ea18a45",
     "original_lines": 483,
-    "current_lines": 148
+    "current_lines": 150
   },
   {
     "path": "STABILITY_AND_DUAL_HEAD.md",
@@ -1179,7 +1179,7 @@
     "path": "emulator/data/__init__.py",
     "status": "modified",
     "original_sha256": "91f7adc2177828a4b9a18c718b9438757756db92325d3824228939eb98d26305",
-    "current_sha256": "45382fc84fa4519495150401f5c2c4daa046e3992ea406a049be379d28d0f3e6",
+    "current_sha256": "cd3194da20868cc554ac207a96fd32a76c3e18a3cd4e0b3b7de1c67be8669ff0",
     "original_lines": 43,
     "current_lines": 7
   },
@@ -1211,9 +1211,9 @@
     "path": "emulator/data/station_metadata.py",
     "status": "modified",
     "original_sha256": "3b37df8ffa94b884d33b5b435216608a6ba5c4462a13a59b4cca0cbca3d6d555",
-    "current_sha256": "841262a04eed8b73f6c78f26fb384ea0e3af75dbd640e44334017533c0984c04",
+    "current_sha256": "54d874bd5c7952fa3bae62034869dc0de1ae42c6b8e87a434aa565269557eeb6",
     "original_lines": 103,
-    "current_lines": 25
+    "current_lines": 52
   },
   {
     "path": "emulator/data/stats.py",
@@ -1307,7 +1307,7 @@
     "path": "emulator/training/arguments.py",
     "status": "added",
     "original_sha256": null,
-    "current_sha256": "739d0f796a5075ec3dc6330bbad2ce55be8e3abf5839b2cfaa9a0ffe19f14fa8",
+    "current_sha256": "ef15d71cbc6c452664e2333b9f67890fb8cec888940ee8fbd4cf9c47b73c82ba",
     "original_lines": 0,
     "current_lines": 245
   },
@@ -1355,7 +1355,7 @@
     "path": "infer.py",
     "status": "modified",
     "original_sha256": "2595195829680ffe1ff83f34f3e91e21664fa8577d6bdd8a2515f591c9de8763",
-    "current_sha256": "1bed809358aa2161b7ba4bc89da946a9a3dd82b10f1376d2b8569610c02188c1",
+    "current_sha256": "ff589e312700e3430a17957e2f371c92140d8100c76a85615049c7e717bd484c",
     "original_lines": 708,
     "current_lines": 316
   },
@@ -1571,9 +1571,9 @@
     "path": "tests/test_pipeline.py",
     "status": "added",
     "original_sha256": null,
-    "current_sha256": "fbbac91a36418d50ab00a979e18e484508a839d3a8d3280b22bd40c9a5f4cbab",
+    "current_sha256": "341b99cba85d4d2fc1b0d76c2d337a848124bf09e6a49bc4874be455b53ced73",
     "original_lines": 0,
-    "current_lines": 142
+    "current_lines": 194
   },
   {
     "path": "tests/test_preprocessing_pipeline.py",
@@ -1585,11 +1585,11 @@
   },
   {
     "path": "tests/test_station_metadata.py",
-    "status": "unchanged",
+    "status": "modified",
     "original_sha256": "99d35b4761ea4e1969eda0181f938bcafb1f7df79df63c32d92f8d05cc017b74",
-    "current_sha256": "99d35b4761ea4e1969eda0181f938bcafb1f7df79df63c32d92f8d05cc017b74",
+    "current_sha256": "0ea22a5ddaad78403d3ca5911a0240fb0126a06e93d9efe962ecc85421160015",
     "original_lines": 45,
-    "current_lines": 45
+    "current_lines": 113
   },
   {
     "path": "tests/test_time_alignment.py",
@@ -1611,7 +1611,7 @@
     "path": "train.py",
     "status": "modified",
     "original_sha256": "50af7cdfb84773711a5879d822774113053b1b8dd27c658e576f316724d9f026",
-    "current_sha256": "1ce10b068795f7db066dc5f150beb3da9bce3b99cbc507ae299d3cb2bf518b5e",
+    "current_sha256": "b3b71b42068365b49906e4315181c782252bf58a5385c716c96cdece35cf08d0",
     "original_lines": 1522,
     "current_lines": 213
   },

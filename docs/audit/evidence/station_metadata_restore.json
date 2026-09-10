@@ -1,0 +1,185 @@
+{
+  "generated_utc": "2026-09-10T02:43:00.515628+00:00",
+  "base_commit": "f17f4a96d1f7bb9500910c13ebceff8bad9669d4",
+  "python": "3.11.16",
+  "torch": "2.6.0+cu124",
+  "torch_geometric": "2.7.0",
+  "device": "cpu",
+  "command": "python -m unittest -v test_station_metadata test_pipeline test_config_interfaces",
+  "tests_run": 20,
+  "tests_passed": 20,
+  "filename_lookup": [
+    "exact",
+    "lowercase",
+    "uppercase"
+  ],
+  "field_aliases": {
+    "lat": [
+      "lat",
+      "latitude",
+      "Latitude"
+    ],
+    "lon": [
+      "lon",
+      "longitude",
+      "Longitude"
+    ],
+    "elevation_m": [
+      "elevation_m",
+      "elevation",
+      "elev_m"
+    ],
+    "bathymetry_m": [
+      "bathymetry_m"
+    ]
+  },
+  "field_alias_combinations": 27,
+  "error_policy": "First present alias is selected; absent/non-numeric/nonfinite enabled fields fail. Invalid selected files/values do not fall through to a later alias. Coordinates always required; float32 features must remain finite.",
+  "optional_switches": {
+    "use_site_elevation_default": 1,
+    "use_bathymetry_default": 0,
+    "independent": true,
+    "disabled_fields_ignored": true,
+    "feature_dimensions": [
+      6,
+      7,
+      7,
+      8
+    ]
+  },
+  "checkpoint_roundtrips": {
+    "metadata_switch_combinations": 4,
+    "cross_station_alias_vs_canonical_predictions": "exactly equal",
+    "inference_overrides_of_saved_switches": "rejected",
+    "same_station_features": "restored from checkpoint"
+  },
+  "canonical_feature_equivalence": {
+    "cases": [
+      {
+        "station": "Battery",
+        "use_site_elevation": false,
+        "use_bathymetry": false,
+        "dimensions": 6,
+        "exact_equal": true
+      },
+      {
+        "station": "Battery",
+        "use_site_elevation": false,
+        "use_bathymetry": true,
+        "dimensions": 7,
+        "exact_equal": true
+      },
+      {
+        "station": "Battery",
+        "use_site_elevation": true,
+        "use_bathymetry": false,
+        "dimensions": 7,
+        "exact_equal": true
+      },
+      {
+        "station": "Battery",
+        "use_site_elevation": true,
+        "use_bathymetry": true,
+        "dimensions": 8,
+        "exact_equal": true
+      },
+      {
+        "station": "Boston",
+        "use_site_elevation": false,
+        "use_bathymetry": false,
+        "dimensions": 6,
+        "exact_equal": true
+      },
+      {
+        "station": "Boston",
+        "use_site_elevation": false,
+        "use_bathymetry": true,
+        "dimensions": 7,
+        "exact_equal": true
+      },
+      {
+        "station": "Boston",
+        "use_site_elevation": true,
+        "use_bathymetry": false,
+        "dimensions": 7,
+        "exact_equal": true
+      },
+      {
+        "station": "Boston",
+        "use_site_elevation": true,
+        "use_bathymetry": true,
+        "dimensions": 8,
+        "exact_equal": true
+      },
+      {
+        "station": "CBBT",
+        "use_site_elevation": false,
+        "use_bathymetry": false,
+        "dimensions": 6,
+        "exact_equal": true
+      },
+      {
+        "station": "CBBT",
+        "use_site_elevation": false,
+        "use_bathymetry": true,
+        "dimensions": 7,
+        "exact_equal": true
+      },
+      {
+        "station": "CBBT",
+        "use_site_elevation": true,
+        "use_bathymetry": false,
+        "dimensions": 7,
+        "exact_equal": true
+      },
+      {
+        "station": "CBBT",
+        "use_site_elevation": true,
+        "use_bathymetry": true,
+        "dimensions": 8,
+        "exact_equal": true
+      },
+      {
+        "station": "Lewes",
+        "use_site_elevation": false,
+        "use_bathymetry": false,
+        "dimensions": 6,
+        "exact_equal": true
+      },
+      {
+        "station": "Lewes",
+        "use_site_elevation": false,
+        "use_bathymetry": true,
+        "dimensions": 7,
+        "exact_equal": true
+      },
+      {
+        "station": "Lewes",
+        "use_site_elevation": true,
+        "use_bathymetry": false,
+        "dimensions": 7,
+        "exact_equal": true
+      },
+      {
+        "station": "Lewes",
+        "use_site_elevation": true,
+        "use_bathymetry": true,
+        "dimensions": 8,
+        "exact_equal": true
+      }
+    ],
+    "count": 16,
+    "before_sha256": "841262a04eed8b73f6c78f26fb384ea0e3af75dbd640e44334017533c0984c04",
+    "after_sha256": "54d874bd5c7952fa3bae62034869dc0de1ae42c6b8e87a434aa565269557eeb6"
+  },
+  "source_sha256": {
+    "emulator/data/station_metadata.py": "54d874bd5c7952fa3bae62034869dc0de1ae42c6b8e87a434aa565269557eeb6",
+    "emulator/data/__init__.py": "cd3194da20868cc554ac207a96fd32a76c3e18a3cd4e0b3b7de1c67be8669ff0",
+    "emulator/training/arguments.py": "ef15d71cbc6c452664e2333b9f67890fb8cec888940ee8fbd4cf9c47b73c82ba",
+    "train.py": "b3b71b42068365b49906e4315181c782252bf58a5385c716c96cdece35cf08d0",
+    "infer.py": "ff589e312700e3430a17957e2f371c92140d8100c76a85615049c7e717bd484c",
+    "tests/test_station_metadata.py": "0ea22a5ddaad78403d3ca5911a0240fb0126a06e93d9efe962ecc85421160015",
+    "tests/test_pipeline.py": "341b99cba85d4d2fc1b0d76c2d337a848124bf09e6a49bc4874be455b53ced73"
+  },
+  "unchanged": "ModelConfig/ForecastOutput API, H contract and lag capacity behavior, numeric defaults and config values, original Emulator checkout."
+}

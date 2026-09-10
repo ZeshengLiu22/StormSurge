@@ -2,8 +2,11 @@
 
 import contextlib
 import io
+import itertools
 import json
+import math
 from pathlib import Path
+import shutil
 import tempfile
 import unittest
 
@@ -34,6 +37,54 @@ def make_fixture(root, years=5):
 
 
 class PipelineTests(unittest.TestCase):
+    def test_metadata_aliases_and_independent_switches_survive_train_and_infer(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            graphs, stations = make_fixture(root)
+            canonical = json.loads((stations / "Battery.json").read_text())
+            (stations / "Battery.json").unlink()
+            external = root / "external"
+            external.mkdir()
+            for graph in graphs.glob("*.pt"):
+                shutil.copyfile(graph, external / graph.name.replace("Battery", "Lewes"))
+            for elevation, bathymetry in itertools.product((0, 1), repeat=2):
+                with self.subTest(elevation=elevation, bathymetry=bathymetry):
+                    aliases = dict(Latitude=40, Longitude=-74, elev_m=2 if elevation else "invalid",
+                                   bathymetry_m=8 if bathymetry else "invalid")
+                    (stations / "battery.json").write_text(json.dumps(aliases))
+                    output = root / f"train_{elevation}_{bathymetry}"
+                    with contextlib.redirect_stdout(io.StringIO()):
+                        train.main(["--root_dir", str(graphs), "--station", "Battery", "--station_json_dir", str(stations),
+                                    "--output_dir", str(output), "--device", "cpu", "--model", "perceiver3", "--head_type", "single",
+                                    "--temporal_block", "MLP", "--history_hours", "0", "--hidden_channels", "16",
+                                    "--epochs", "1", "--warmup_epochs", "0", "--batch_size", "2", "--num_workers", "0",
+                                    "--x_aug", "0", "--use_site_elevation", str(elevation), "--use_bathymetry", str(bathymetry)])
+                    checkpoint_path = next(output.glob("best_*.pth"))
+                    checkpoint = torch.load(checkpoint_path, weights_only=False)
+                    self.assertEqual(checkpoint["training_config"]["use_site_elevation"], elevation)
+                    self.assertEqual(checkpoint["training_config"]["use_bathymetry"], bathymetry)
+                    lat, lon = math.radians(40), math.radians(-74)
+                    expected = ([40 / 90, -74 / 180] + ([.2] if elevation else [])
+                                + [math.sin(lat), math.cos(lat), math.sin(lon), math.cos(lon)] + ([.8] if bathymetry else []))
+                    self.assertEqual(checkpoint["model_config"]["station_feat_dim"], 6 + elevation + bathymetry)
+                    torch.testing.assert_close(checkpoint["station_feat"], torch.tensor(expected), rtol=0, atol=0)
+                    (stations / "LEWES.json").write_text(json.dumps(aliases))
+                    infer_args = ["--ckpt", str(checkpoint_path), "--root_dir", str(graphs), "--test_root_dir", str(external), "--station", "Lewes",
+                                  "--station_json_dir", str(stations), "--device", "cpu", "--batch_size", "2", "--num_workers", "0", "--save_npz"]
+                    alias_output = root / f"alias_{elevation}_{bathymetry}"
+                    canonical_output = root / f"canonical_{elevation}_{bathymetry}"
+                    with contextlib.redirect_stdout(io.StringIO()):
+                        infer.main([*infer_args, "--out_dir", str(alias_output)])
+                        (stations / "Lewes.json").write_text(json.dumps(canonical))
+                        infer.main([*infer_args, "--out_dir", str(canonical_output)])
+                    (stations / "Lewes.json").unlink()
+                    with np.load(alias_output / "predictions.npz") as alias, np.load(canonical_output / "predictions.npz") as reference:
+                        np.testing.assert_array_equal(alias["tags"], reference["tags"])
+                        np.testing.assert_array_equal(alias["y_pred"], reference["y_pred"])
+                    for flag, saved in (("use_site_elevation", elevation), ("use_bathymetry", bathymetry)):
+                        with self.assertRaisesRegex(ValueError, f"--{flag}=.*does not match checkpoint"):
+                            infer.main([*infer_args, "--out_dir", str(root / "mismatch"), f"--{flag}", str(1 - saved)])
+
     def test_fresh_train_checkpoint_and_inference_roundtrip(self):
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary)
@@ -102,6 +153,7 @@ class PipelineTests(unittest.TestCase):
         self.assertEqual(args.lr, .003)
         self.assertEqual(args.hidden_channels, 64)
         self.assertEqual((args.dropout, args.head_dropout, args.transformer_dropout), (.05, 0., .05))
+        self.assertEqual((args.use_site_elevation, args.use_bathymetry), (1, 0))
         self.assertFalse(args.amp or args.tf32 or args.pin_memory or args.persistent_workers)
         args = train.parse_args(["--model", "perceiver3", "--filter", "Battery", "--temporal_block", "attn",
                                  "--amp", "--tf32", "--pin_memory", "--persistent_workers",

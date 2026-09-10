@@ -1,12 +1,12 @@
 **StormSurge 与原版 Emulator：当前差异、影响和还原建议**
 
-本报告对应独立仓库 [ZeshengLiu22/StormSurge](https://github.com/ZeshengLiu22/StormSurge) 的当前源码，本次更新以提交 `f4a91d1`（2026-09-10）为基准。此前已完成 `p_mean` 删除、dual阈值/先验/消融/推理诊断更新，以及metadata最小隐宽、自定义head/temporal宽度和Python构造默认值恢复。本次恢复baseline的lag容量校验适用范围，并确认保留清晰API、训练/推理同H、原默认值及config读取路径；H=48h的训练与推理已验证。原版基准是本地 `Emulator` 实际文件，对应 [PACT_Storm_Surge_Emulator 的提交 bb62a22](https://github.com/BinaLab/PACT_Storm_Surge_Emulator/tree/bb62a2297a0d37a35db5bff352ee815e05676c93)。它相对上次基准 `3d4be39` 仅提交了此前本地 `.gitignore` 的3行变化，模型与训练源码未变；原版工作树干净。比较生成时间见 [comparison_summary.json](audit/comparison_summary.json)。
+本报告对应独立仓库 [ZeshengLiu22/StormSurge](https://github.com/ZeshengLiu22/StormSurge) 的当前源码，本次更新以提交 `f17f4a9`（2026-09-10）为基准。此前已完成 `p_mean` 删除、dual阈值/先验/消融/推理诊断更新、metadata最小隐宽、自定义head/temporal宽度、Python构造默认值及baseline的lag容量校验范围恢复；清晰API、训练/推理同H、原默认值及config读取路径已确认保留，H=48h已验证。本次恢复station JSON文件名/字段别名，保留elevation与bathymetry两个独立开关，并按用户决定对缺失或无效的启用字段明确报错。原版基准是本地 `Emulator` 实际文件，对应 [PACT_Storm_Surge_Emulator 的提交 bb62a22](https://github.com/BinaLab/PACT_Storm_Surge_Emulator/tree/bb62a2297a0d37a35db5bff352ee815e05676c93)。它相对上次基准 `3d4be39` 仅提交了此前本地 `.gitignore` 的3行变化，模型与训练源码未变；原版工作树干净。比较生成时间见 [comparison_summary.json](audit/comparison_summary.json)。
 
 **结论：主扫描使用的基础空间拓扑和 H=0 baseline 保留；PACT 包含已确认的新 dual head 与稳定性数学改动。此外仍有自定义模型接口、输入检查、运行开关和输出组织等差异，不能概括为“仅改了 dual/stability”。** 当前已整体退役 `p_mean`，完善真实TRAIN事件先验、独立dual阈值、显式消融与可选推理诊断；此前恢复的DDP seed、归一化统计、验证补齐、loss下限、环境配方和推理/预处理汇报继续保留。
 
 本报告逐项列出当前实现与原版的差异、影响和还原建议。**表中的“建议还原”仍是未执行的建议**；已经完成的修改会明确标为已恢复、未变或已退役。`/home/exouser/media/volume/PACT-Data/StormSurge` 与 `/media/volume/PACT-Data/StormSurge` 指向同一独立仓库，原版目录保留。
 
-源码/config/既有文档比较共 **203 个路径：134 个相同、35 个修改、25 个新增、9 个删除，共69个差异文件**。不包含本报告、`docs/audit/`、数据、checkpoint、结果和缓存。逐文件hash及行数见 [CSV](audit/source_inventory.csv) / [JSON](audit/source_inventory.json)，完整行差异见 [original_to_current.diff](audit/original_to_current.diff)。文末列出全部69个文件。
+源码/config/既有文档比较共 **203 个路径：133 个相同、36 个修改、25 个新增、9 个删除，共70个差异文件**。不包含本报告、`docs/audit/`、数据、checkpoint、结果和缓存。逐文件hash及行数见 [CSV](audit/source_inventory.csv) / [JSON](audit/source_inventory.json)，完整行差异见 [original_to_current.diff](audit/original_to_current.diff)。文末列出全部70个文件。
 
 建议标签含义：**保留**＝不建议退回旧实现；**还原**＝建议恢复该具体能力或语义；**部分还原**＝恢复便利性或实验接口，但保留明确错误检查；**已恢复/未变**＝没有新的还原工作。建议是代码与实验设计判断，不是精度提升的实验证明。
 
@@ -72,9 +72,10 @@ DDP seed与augmentation局部随机顺序恢复，不代表整次训练逐位回
 | 输入H | PACT forward按实际帧数运行并检查lag容量；infer.py允许显式覆盖H | 必须等于构造时history_steps+1；推理H必须与checkpoint相同 | 每次训练可由config选择不同H；同一个checkpoint的训练/推理窗口保持一致 | **已确认保留一致性检查**；H不固定为48h，不考虑跨H推理 |
 | baseline的max_time_steps校验 | PACT lag容量参数；baseline不使用 | argparse恢复为仅对perceiver3/PACT检查容量，baseline忽略该参数 | 保留H=0纯空间与H>0空间＋LSTM；窗口由config选择，数据长度及推理checkpoint一致性检查继续保持 | **已恢复适用范围**；保留原默认与显式config，不增加baseline容量检查 |
 | H与lag容量的默认值/单位 | history_hours默认24小时；max_time_steps默认32个lag索引位置 | 保留原默认及config读取；32个位置对应有效索引0–31 | H=48h需要9帧，对应lag索引8–0，原容量已足够；max_time_steps表示容量，不是小时数或最大索引值 | **已确认保留默认**；不把容量改成48，不把所有实验固定为48h |
-| JSON文件名 | 精确/lower/upper依次查找 | 只读`<station>.json` | Battery请求无法读取仅有的battery.json | **还原别名查找** |
-| 字段别名 | latitude/Latitude、longitude/Longitude、elevation/elev_m等可用 | 仅lat/lon/elevation_m | 有效旧输入被拒绝或elevation别名被忽略而使用0 | **还原别名**，保留数值有效性检查 |
-| metadata缺失/非finite | 部分字段回退0；缺JSON可只用learned token | 经纬度必需且所有feature finite；启用metadata时缺JSON报错 | 改变异常/不完整数据接受范围。elevation_m缺省仍0；bathymetry启用时原来就必须finite | **部分还原**：可显式选择learned-token模式；不建议默默把坏经纬度当0 |
+| JSON文件名 | 精确/lower/upper依次查找 | 训练及换站点推理恢复同一查找顺序；同站点推理仍使用checkpoint保存特征 | Battery可读取battery.json或BATTERY.json；已找到但损坏的JSON直接报错，不继续换别名 | **已恢复别名查找** |
+| 字段别名 | latitude/Latitude、longitude/Longitude、elevation/elev_m等可用 | 按lat/latitude/Latitude、lon/longitude/Longitude、elevation_m/elevation/elev_m顺序选首个存在字段；bathymetry_m保持原名 | 有效旧字段可用；选中的字段无效时直接报错，不跳到后面的别名掩盖问题 | **已恢复别名**，保留数值有效性检查 |
+| metadata字段开关 | use_site_elevation默认1；use_bathymetry默认0；独立控制两个字段 | 保持两个arg、CLI/shell/config默认及读取路径，checkpoint保存开关，推理按保存值读取 | 四种组合均可用；关闭的可选字段不读取、不检查；特征顺序及/10米缩放不变 | **已确认保留两个独立开关** |
+| metadata缺失/非finite | 经纬度/elevation可回退0；缺JSON可只用learned token；bathymetry启用时必须finite | 经纬度及启用的elevation/bathymetry均必需且必须是finite数值，最终float32特征也必须finite；指定站点并启用metadata时缺JSON报错 | 缺失elevation不再补0；坏数据明确报错。use_station_meta=0仍可显式选择learned token | **已按确认调整**：保留开关，启用的数据有问题直接报错，不自动回退 |
 | pressure缺失 | 启用p_mean后，部分路径以零global编码或省略pressure token回退 | 不再读取、归一化或向图/View传递p_mean与其历史；也不再保留缺失回退策略 | 旧pressure模式不能继续使用；正常forcing仍保留压力空间去均值，五通道布局不变 | **已退役，不还原**；不要恢复缺失压力均值兼容层 |
 | CNN网格检查 | batch计数等验证 | ptr.diff＋统一grid元数据检查 | 合法矩形PyG batch计算保持，异常输入接受范围不同 | **保留**，不为接受错误形状回退 |
 | GraphStore构造 | 支持pattern/force_cpu/strict_station_filter/log_fn等；`*graphs.pt` | 简化接口、CPU存储；`*_graphs.pt` | 非标准文件名/外部直接调用可能失效；旧station索引helper移除 | **部分还原**：恢复实际使用的pattern能力；不必恢复纯包装函数 |
@@ -147,12 +148,12 @@ DDP seed与augmentation局部随机顺序恢复，不代表整次训练逐位回
 | .gitignore | 此前本地experiment_configs忽略项已随bb62a22提交 | 当前未继承该项；大数据/结果/checkpoint仍忽略 | 属于仓库管理差异，无模型影响；基准已改为干净的bb62a22，不能继续称未提交修改 | **不必自动还原该项** |
 | README/方法说明 | 原大README及changelog | 当前README、新dual/stability说明；旧changelog移除 | 新入口更清楚，但历史记录变少 | **保留新说明**；若需要历史追溯，建议将旧changelog作为历史文档归档 |
 | 测试 | 旧模型/诊断/推理接口测试 | 模型/梯度/dual loss/配置/预处理/往返测试；恢复前全量50项通过，本轮模型接口及相关流程34项通过 | CPU测试不覆盖所有旧接口；旧缺失p_mean测试已随功能退役；历史GPU/DDP证据不能替代当前消融验证 | **保留当前测试**；恢复仍需支持的接口时补相应案例 |
-| 独立仓库 | 原Emulator自己的Git历史/remote | StormSurge以ce697f9独立初始化，本次更新基准f4a91d1已同步origin/main | origin指向新repo，原版历史未迁入；当前194份文件纳入源码/config/既有文档比较 | **保留独立仓库** |
+| 独立仓库 | 原Emulator自己的Git历史/remote | StormSurge以ce697f9独立初始化，本次更新基准f17f4a9已同步origin/main | origin指向新repo，原版历史未迁入；当前194份文件纳入源码/config/既有文档比较 | **保留独立仓库** |
 | 数据与机器路径 | profile引用外部Data/graph/station目录 | 原profile路径保持，数据未打包进Git | Git独立不意味着自动复制大数据；换机器需要设置ROOT_DIR、STATION_JSON_DIR、Python环境等 | **保留实验配置值**，按部署机器显式覆盖路径 |
 
 **七、建议优先顺序与验证范围**
 
-metadata最小隐宽、自定义head/temporal宽度、直接构造默认值和baseline的lag容量校验适用范围已恢复；训练/推理使用相同配置H已确认保留，原32帧lag容量覆盖48小时所需的9帧。后续优先还原的是JSON文件名/字段别名、维度从TRAIN首图读取。tail_frac原极端夹紧、mag按mode校验、未显式配置TF32时的原行为与关键JSON原子写入也值得恢复。`p_mean` 已明确退役，不再建议恢复其建层顺序、缺失回退或数据字段。
+metadata最小隐宽、自定义head/temporal宽度、直接构造默认值、baseline的lag容量校验适用范围和JSON文件名/字段别名已恢复；训练/推理使用相同配置H已确认保留，原32帧lag容量覆盖48小时所需的9帧。metadata的elevation/bathymetry独立开关及原默认保持，启用的数据缺失或无效时直接报错。后续优先还原的是维度从TRAIN首图读取。tail_frac原极端夹紧、mag按mode校验、未显式配置TF32时的原行为与关键JSON原子写入也值得恢复。`p_mean` 已明确退役，不再建议恢复其建层顺序、缺失回退或数据字段。
 
 建议继续保留新dual、默认完整分支监督、真实TRAIN事件先验、独立阈值、显式机制消融和可选推理诊断；也保留已确认的PACT稳定性数学、输入存储隔离、单次forward指标、严格的默认评估人口/站点检查、新checkpoint格式和全部原扫描组合。消融配置已提供实验接口，效果仍需同代码、同环境、同预算的独立训练，不能把接口实现当作收益证据。
 
@@ -163,6 +164,8 @@ metadata最小隐宽、自定义head/temporal宽度、直接构造默认值和ba
 随后修正baseline容量校验范围，执行`test_config_interfaces`与`test_pipeline`：**10/10通过**；补充9组容量边界、4组非法H检查，以及PACT窗口一致性、历史数据不足和CLI/shell默认值核对。原版PACT同一对象另验证9/5/1帧可运行、33帧超容量报错。记录见 [history_validation_scope.json](audit/evidence/history_validation_scope.json)。
 
 确认训练/推理同H后，追加10组CPU单epoch训练→checkpoint→推理：baseline与PACT分别验证H=0/12/24/48h，H=48h另覆盖CNN且使用hidden128；推理省略H时复用checkpoint设置，显式传入不同H均报错。所有预测往返核对通过，`max_time_steps`始终使用原默认32。记录见 [history_window_contract.json](audit/evidence/history_window_contract.json)。该组验证未修改运行代码或训练config。
+
+station metadata恢复执行`test_station_metadata`、`test_pipeline`与`test_config_interfaces`：**20/20通过**。覆盖精确/lower/upper文件名顺序、27组字段别名、缺失/非数值/NaN/Inf与float32溢出报错、关闭字段隔离，以及四种开关组合的训练→checkpoint→换站点推理；别名与标准JSON的推理预测逐位一致，推理修改保存的开关会报错。同站点推理继续复用保存特征。现有4个站点×4种开关组合的16组修改前后特征逐位一致，CLI默认、114份训练profile及390组合检查继续通过。日志见 [station_metadata_restore_tests.txt](audit/evidence/station_metadata_restore_tests.txt)，范围及源码哈希见 [station_metadata_restore.json](audit/evidence/station_metadata_restore.json)。
 
 以下数值证据来自首次迁移前的历史验证；保留其当时的对照结论，但不把含已退役pressure路径或旧初始化的结果视为当前event-prior/ablation接口的验证。首次独立快照的42项日志在 [publication_tests.txt](audit/evidence/publication_tests.txt)，与上面的恢复前50项证据区分：
 
@@ -186,7 +189,7 @@ python docs/audit/compare_original.py --original /path/to/Emulator
 
 脚本重新生成hash清单、计数、完整diff和训练CLI声明比较；本报告的内容及建议随代码更新，章节和表格格式保持。首次发布的v2来源hash在 [v2_source_hashes.json](audit/v2_source_hashes.json)，迁移核对在 [migration_verification.json](audit/migration_verification.json)，两者继续作为历史快照，不代表当前工作树。
 
-**八、全部69个差异文件的索引**
+**八、全部70个差异文件的索引**
 
 下面的索引逐个覆盖生成清单中的修改/新增/删除文件。语义影响与还原建议在上表对应项目展开；行数变化本身不等于架构或训练数学变化。
 
@@ -196,7 +199,7 @@ python docs/audit/compare_original.py --original /path/to/Emulator
 |---|---|---|---|---|
 | 修改 52→49 | [.gitignore](../.gitignore) | 原版已提交的experiment_configs忽略项 → 未继承该项 | 版本管理范围不同，无训练影响；原版当前工作树干净 | 不自动还原该忽略项 |
 | 新增 0→217 | [DUAL_HEAD_EXPLAINED.md](../DUAL_HEAD_EXPLAINED.md) | 无独立说明 → 新dual公式、真实先验、独立阈值、消融与诊断 | 明确分支语义、物理单位和证据局限 | 保留 |
-| 修改 483→148 | [README.md](../README.md) | 原综合README → 当前使用说明、独立仓库来源与本报告入口 | 运行说明与当前实现对应，历史细节减少 | 保留；历史内容可归档 |
+| 修改 483→150 | [README.md](../README.md) | 原综合README → 当前使用说明、独立仓库来源与本报告入口 | 运行说明与当前实现对应，历史细节减少 | 保留；历史内容可归档 |
 | 新增 0→42 | [STABILITY_AND_DUAL_HEAD.md](../STABILITY_AND_DUAL_HEAD.md) | 无 → 当前stability/dual及显式推理诊断边界 | 区分默认完整监督、消融与常规训练日志 | 保留 |
 | 删除 108→0 | [changelog.md](https://github.com/BinaLab/PACT_Storm_Surge_Emulator/blob/bb62a2297a0d37a35db5bff352ee815e05676c93/changelog.md) | 旧变更历史 → 删除 | 失去本地历史说明 | 建议作为历史文档归档 |
 | 修改 40→41 | [configs/configs_infer/infer_config_common.sh](../configs/configs_infer/infer_config_common.sh) | 原推理common → 加默认关闭的DUAL_DIAGNOSTICS | 显式开关独立诊断，不改变默认推理导出 | 保留可选开关 |
@@ -218,7 +221,7 @@ python docs/audit/compare_original.py --original /path/to/Emulator
 | 修改 43→7 | [emulator/data/__init__.py](../emulator/data/__init__.py) | 旧store/split/stats导出 → 简化新接口 | 外部Python导入改变 | 不为旧checkpoint恢复全部包装 |
 | 修改 351→82 | [emulator/data/graph_store.py](../emulator/data/graph_store.py) | 宽泛加载/独立split/pressure属性 → store.split、严格forcing历史View，无p_mean | pattern/tag/旧公开接口不同；已退役的均值不再传递 | 按第三表部分还原；不恢复p_mean |
 | 修改 118→22 | [emulator/data/normalization.py](../emulator/data/normalization.py) | 原地修改输入及可选均值统计 → 新tensor赋值，无p_mean | 避免共享存储污染；保留原forcing归一化和augmentation RNG | 保留赋值方式与退役决定 |
-| 修改 103→25 | [emulator/data/station_metadata.py](../emulator/data/station_metadata.py) | 别名/缺省解析与encoder → 严格解析，encoder并入模型 | 丢失有效旧字段/文件名兼容；模型内metadata最小隐宽已恢复 | 恢复别名，保留finite检查 |
+| 修改 103→52 | [emulator/data/station_metadata.py](../emulator/data/station_metadata.py) | 别名/缺省解析与encoder → 恢复文件名/字段别名，启用字段严格解析，encoder并入模型 | 两个字段开关保持；缺失/坏值直接报错，不再补0；模型内metadata最小隐宽已恢复 | 已恢复别名，保留独立开关与finite检查 |
 | 修改 310→102 | [emulator/data/stats.py](../emulator/data/stats.py) | 多个stats/可选均值函数 → 统一X/Y统计，独立三个阈值与严格TRAIN q_E | 原主要统计语义保留；默认gate初始化现在依赖真实事件比例 | 保留τ/q_E；按第二/四表处理其他差异 |
 | 修改 10→5 | [emulator/inference/__init__.py](../emulator/inference/__init__.py) | 导出独立推理engine及grouping → grouping/标签函数 | 旧infer_one_loader公开入口不再存在 | 共享engine保留，按需薄适配 |
 | 新增 0→63 | [emulator/inference/dual_diagnostics.py](../emulator/inference/dual_diagnostics.py) | 无 → 固定TRAIN事件口径的分支与校准汇总 | 独立Brier/PR/可靠性分箱与误差；空条件返回null | 保留可选诊断，精度结论另做实验 |
@@ -257,8 +260,9 @@ python docs/audit/compare_original.py --original /path/to/Emulator
 | 删除 117→0 | [tests/test_missing_pmean.py](https://github.com/BinaLab/PACT_Storm_Surge_Emulator/blob/bb62a2297a0d37a35db5bff352ee815e05676c93/tests/test_missing_pmean.py) | 旧缺压力均值回退测试 → 随功能退役删除 | 对应旧模式已不受支持 | 不恢复已退役功能的测试 |
 | 删除 107→0 | [tests/test_model_audit.py](https://github.com/BinaLab/PACT_Storm_Surge_Emulator/blob/bb62a2297a0d37a35db5bff352ee815e05676c93/tests/test_model_audit.py) | 旧diagnostic/模型审计 → 删除 | attention等旧输出已删除 | 不恢复纯诊断测试；保留有效数学断言 |
 | 新增 0→191 | [tests/test_models.py](../tests/test_models.py) | 无 → 当前encoder/head/H组合及梯度检查 | 覆盖新模型API与标签独立性 | 保留 |
-| 新增 0→142 | [tests/test_pipeline.py](../tests/test_pipeline.py) | 无 → 从头训练/保存/推理及split回归 | 验证新checkpoint闭环 | 保留 |
+| 新增 0→194 | [tests/test_pipeline.py](../tests/test_pipeline.py) | 无 → 从头训练/保存/推理及split回归；别名和四种metadata开关组合 | 验证新checkpoint闭环、换站点别名输入和保存的开关一致性 | 保留 |
 | 新增 0→114 | [tests/test_preprocessing_pipeline.py](../tests/test_preprocessing_pipeline.py) | 无 → NetCDF/CSV/forcing/graph实际小样本管道 | 验证恢复后的默认与输出 | 保留 |
+| 修改 45→113 | [tests/test_station_metadata.py](../tests/test_station_metadata.py) | 原特征开关/缩放检查 → 增加文件名/字段别名顺序、缺失及无效值检查 | 27组字段别名与开关隔离受检，坏数据不回退 | 保留 |
 | 修改 101→124 | [tests/test_time_alignment.py](../tests/test_time_alignment.py) | 旧timestamp测试 → 保留并加fixed315、输出形状和fallback验证 | forcing历史与标签时间对齐受检；均值字段已删除 | 保留当前主流程测试 |
 | 新增 0→96 | [tests/test_training.py](../tests/test_training.py) | 无 → 物理指标/单次forward/累积/存储隔离测试 | 防止精简后数值与输入污染回归 | 保留 |
 | 修改 1522→213 | [train.py](../train.py) | 原大入口 → 模块化编排、TRAIN阈值/q_E拟合广播和元数据保存 | 旧协议大部保留；默认dual与消融分开记录，无p_mean | 按表逐项处理，不整体重写还原 |

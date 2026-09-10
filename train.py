@@ -22,7 +22,7 @@ from emulator.common import configure_runtime
 from emulator.common.runtime import log_message
 from emulator.common.dual import initial_gate_prior
 from emulator.data import (ForcingGraphStore, ForcingGraphView, build_loader,
-                           fit_loss_thresholds, fit_statistics, station_features_from_json)
+                           fit_loss_thresholds, fit_statistics, load_station_json, station_features_from_json)
 from emulator.models import ModelConfig, build_model
 from emulator.training import ForecastLoss, LossConfig, format_metrics, run_epoch
 from emulator.training.arguments import parse_args
@@ -104,7 +104,7 @@ def train(args, device, distributed, rank, wall_start):
     stats = {key: value.to(device) for key, value in stats_cpu.items()}
     station_feat = None
     if args.model == "perceiver3" and args.use_station_meta and args.station:
-        station_json = json.loads((args.station_json_dir / f"{args.station}.json").read_text())
+        station_json = load_station_json(args.station_json_dir, args.station)
         station_feat = station_features_from_json(station_json, use_site_elevation=args.use_site_elevation,
                                                   use_bathymetry=args.use_bathymetry).to(device)
     model_values = {field.name: getattr(args, field.name) for field in fields(ModelConfig) if hasattr(args, field.name)}

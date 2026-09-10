@@ -18,11 +18,11 @@ def parse_args(argv=None):
     parser.add_argument("--station_json_dir", type=str, default="./station_json")
     parser.add_argument(
         "--use_site_elevation", type=parse_bool_int, choices=[0, 1], default=1,
-        help="Include site elevation (elevation_m / 10) in PACT station features.",
+        help="Include finite site elevation (elevation_m/elevation/elev_m, scaled by 10) in PACT station features.",
     )
     parser.add_argument(
         "--use_bathymetry", type=parse_bool_int, choices=[0, 1], default=0,
-        help="Include bathymetry_m / 10 in PACT station features; requires that JSON field.",
+        help="Include bathymetry_m / 10 in PACT station features; requires that JSON field to be finite.",
     )
     parser.add_argument("--train_ratio", type=float, default=0.6)
     parser.add_argument("--val_ratio", type=float, default=0.2)

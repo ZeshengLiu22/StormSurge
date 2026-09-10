@@ -232,7 +232,7 @@
 +诊断直接复用推理的那次 forward。训练/验证 epoch 不收集上述数组，日志继续只记录原来的四项物理误差。
 --- original/README.md
 +++ StormSurge/README.md
-@@ -1,483 +1,148 @@
+@@ -1,483 +1,150 @@
 -# PACT Storm-Surge Emulator
 +# StormSurge
  
@@ -430,7 +430,7 @@
 +Normalization (`zscore`, `robust`, `mag`), augmentation, year splits/shuffling/future filtering, external test roots and station feature switches are retained. Forcing inputs use the five-channel `[u,v,p',lon,lat]` layout, with spatial-mean pressure removal during preprocessing.
  
 -Latitude/longitude and their four sin/cos features are always included. Site elevation uses `elevation_m / 10`, and optional bathymetry uses `bathymetry_m / 10`. The vector order is `[lat/90, lon/180, (elevation/10), sin(lat), cos(lat), sin(lon), cos(lon), (bathymetry/10)]`, with angles converted to radians for sin/cos and disabled fields omitted. The station encoder input dimension follows the selected fields:
-+The original training protocol is restored: DDP seeds each process with `seed + rank`; its samplers use the original default seed 0. Z-score statistics use the training device and distributed sums, preserving the original FP32/FP64 arithmetic order. Robust/mag statistics use TRAIN node samples; `x_nodes_per_graph <= 0` means at most 256 nodes per graph, without reducing the model's input graph. Augmentation at probability 1 skips the probability draw, preserving the original RNG sequence. The original lower bounds remain `1e-6` for `wmse_s`/`slope_mask_s` and `1e-12` for `slope_charb_eps`/`slope_huber_delta`; normal configured values are unaffected.
++PACT station metadata keeps two independent switches: `--use_site_elevation` defaults to `1`, and `--use_bathymetry` to `0` (shell: `USE_SITE_ELEVATION` and `USE_BATHYMETRY`). JSON filenames are tried in exact, lowercase, then uppercase station-name order. Coordinate aliases are `lat`/`latitude`/`Latitude` and `lon`/`longitude`/`Longitude`; elevation accepts `elevation_m`/`elevation`/`elev_m`. The first present alias is used. Coordinates and each enabled optional field must contain finite numeric values; missing or invalid selected fields raise an error. Disabled optional fields are ignored. Missing station JSON raises an error when metadata is requested for a station; `--use_station_meta 0` explicitly selects the learned station token. Inference for the training station uses saved checkpoint features; changing stations loads JSON with the saved feature switches.
  
 -| Site elevation | Bathymetry | Feature dimension |
 -| --- | --- | ---: |
@@ -438,30 +438,33 @@
 -| Off | Off | 6 |
 -| Off | On | 7 |
 -| On | On | 8 |
-+Cosine with linear warmup remains the configured scheduler. The original `rop` option and its controls are also available. `--deterministic 0` and `--max_grad_norm 0` are defaults; positive `max_grad_norm` explicitly requests clipping. There is no retry or rollback guard. `--stable_arch` accepts only the current setting `1`, and `--dual_mode` only `exceedance`; neither selects an old implementation. Bare switches such as `--amp`, `--tf32`, `--pin_memory` and `--persistent_workers` retain their original argparse behavior. Shipped profiles enable BF16 and TF32.
++The original training protocol is restored: DDP seeds each process with `seed + rank`; its samplers use the original default seed 0. Z-score statistics use the training device and distributed sums, preserving the original FP32/FP64 arithmetic order. Robust/mag statistics use TRAIN node samples; `x_nodes_per_graph <= 0` means at most 256 nodes per graph, without reducing the model's input graph. Augmentation at probability 1 skips the probability draw, preserving the original RNG sequence. The original lower bounds remain `1e-6` for `wmse_s`/`slope_mask_s` and `1e-12` for `slope_charb_eps`/`slope_huber_delta`; normal configured values are unaffected.
  
 -Each station JSON stores `bathymetry_m` and its node ID/coordinates under `bathymetry_node`. Node coordinates describe the depth measurement location; the existing station coordinates remain the model's geographic inputs. Enabling bathymetry requires a finite `bathymetry_m` value. The existing seven-feature vector is preserved exactly by the default settings.
-+## Metrics and artifacts
++Cosine with linear warmup remains the configured scheduler. The original `rop` option and its controls are also available. `--deterministic 0` and `--max_grad_norm 0` are defaults; positive `max_grad_norm` explicitly requests clipping. There is no retry or rollback guard. `--stable_arch` accepts only the current setting `1`, and `--dual_mode` only `exceedance`; neither selects an old implementation. Bare switches such as `--amp`, `--tf32`, `--pin_memory` and `--persistent_workers` retain their original argparse behavior. Shipped profiles enable BF16 and TF32.
  
 -Both switches are saved in checkpoint arguments and config snapshots. Direct inference reads checkpoint settings when the CLI flags are omitted; inference launchers pass the configured values and reject mismatches, including a swap between elevation-only and bathymetry-only features despite their equal dimensions. New checkpoints must record both flags. Training and inference metadata report the selected flags and actual station-feature dimension.
-+Each epoch prints `[YYYY-MM-DD|HH:MM:SS]`, followed by exactly eight errors in the target's physical units (surge **meters**):
++## Metrics and artifacts
  
 -### Time windows and preprocessing
++Each epoch prints `[YYYY-MM-DD|HH:MM:SS]`, followed by exactly eight errors in the target's physical units (surge **meters**):
+ 
+-NCEP forcing is sampled every 6 hours. CMIP6 preprocessing selects every other 3-hour record to produce the same 6-hour cadence. For a forcing cutoff `t`, each graph targets six hourly surge values **`t, t+1h, ..., t+5h`**. The next graph covers `t+6h` through `t+11h`, so the outputs concatenate without overlap. For example, forcing through 00:00 produces surge for 00:00–05:00; forcing through 06:00 produces 06:00–11:00.
 +| Split | All windows | Top 5% peak windows |
 +|---|---|---|
 +| Train | RMSE, MAE | RMSE, MAE |
 +| Val | RMSE, MAE | RMSE, MAE |
  
--NCEP forcing is sampled every 6 hours. CMIP6 preprocessing selects every other 3-hour record to produce the same 6-hour cadence. For a forcing cutoff `t`, each graph targets six hourly surge values **`t, t+1h, ..., t+5h`**. The next graph covers `t+6h` through `t+11h`, so the outputs concatenate without overlap. For example, forcing through 00:00 produces surge for 00:00–05:00; forcing through 06:00 produces 06:00–11:00.
+-The alignment script uses separate input origins: forcing starts at Oct 25 00:00, while hourly station records start at Oct 25 01:00. Graph centers begin at Nov 1 00:00 on both axes, with earlier forcing retained for history; the different recording origins do not shift the labels. CSV `time` values are validated against the hourly convention when present; legacy files without that column use the assumed axis with a warning.
 +Top 5% means the `ceil(0.05 × N)` windows with the largest true maximum over the forecast horizon, within the whole split. Errors include all forecast positions in those windows. Validation restores dataset order and the original NumPy argsort/FP32 peak calculation; online Train metrics use stable sample-ID ordering for ties. This reporting subset is independent of the TRAIN threshold used by the losses.
  
--The alignment script uses separate input origins: forcing starts at Oct 25 00:00, while hourly station records start at Oct 25 01:00. Graph centers begin at Nov 1 00:00 on both axes, with earlier forcing retained for history; the different recording origins do not shift the labels. CSV `time` values are validated against the hourly convention when present; legacy files without that column use the assumed axis with a warning.
+-Current `hist48` graphs store forcing through the center time and up to 48 hours of history. A 12-hour model uses three slices (`t-12h`, `t-6h`, `t`); a 0-hour baseline uses only `t`. Select one graph version per year/station in each root. When regenerating data, set the source paths in the forcing scripts and the manual `year_list` in `preprocessing/preprocessing_simulation.py` (currently `[2005]`), then use `preprocessing/time_align_unified.py` to build aligned graphs.
 +Train metrics reuse online training predictions, including dropout/augmentation and changing weights; Val uses eval mode. There is no second diagnostic validation pass. DDP validation restores DistributedSampler padding: Val All includes duplicate padding samples, as in the original trainer; Val Peak counts each sample once. Val All also retains the original FP32 batch means and FP64 weighted accumulation. Training uses padding for synchronized updates, but its reported metrics count each sample once.
  
--Current `hist48` graphs store forcing through the center time and up to 48 hours of history. A 12-hour model uses three slices (`t-12h`, `t-6h`, `t`); a 0-hour baseline uses only `t`. Select one graph version per year/station in each root. When regenerating data, set the source paths in the forcing scripts and the manual `year_list` in `preprocessing/preprocessing_simulation.py` (currently `[2005]`), then use `preprocessing/time_align_unified.py` to build aligned graphs.
+-## Model Options
 +A launcher run can contain many combinations. Each has a unique stem in its artifact filenames:
  
--## Model Options
+-The spatial encoder is selected with `ENCODER_TYPE="GraphSAGE"` or `ENCODER_TYPE="CNN"`. The CNN path reads `grid_H` and `grid_W` from each graph, reshapes flattened node features from `(H*W, F)` to `(F, H, W)`, applies same-resolution 3x3 convolutions, and returns one `hidden_channels` token per grid node. No grid dimensions are hardcoded in the model or launcher.
 +- `metrics_<stem>.jsonl`: epoch plus eight errors; best model selection uses **Val All RMSE**.
 +- `best_<stem>.pth`: model config/weights, normalization, station features, exact split tags and training config.
 +- `config_<stem>.json`: resolved Python arguments; `config_used.sh` retains the resolved shell sweep.
@@ -469,11 +472,9 @@
 +- `test_preds_<stem>.npz`: physical `y_true`, `y_pred` and tags for the best checkpoint.
 +- `train_<tag>.log`: launcher command, timestamped epoch metrics and final wall time. Long log names are shortened with a hash; the complete tag remains inside the log.
  
--The spatial encoder is selected with `ENCODER_TYPE="GraphSAGE"` or `ENCODER_TYPE="CNN"`. The CNN path reads `grid_H` and `grid_W` from each graph, reshapes flattened node features from `(H*W, F)` to `(F, H, W)`, applies same-resolution 3x3 convolutions, and returns one `hidden_channels` token per grid node. No grid dimensions are hardcoded in the model or launcher.
+-`NUM_LAYERS` defaults to 2. GraphSAGE requires at least 2 layers and rejects 0 or 1 explicitly; CNN continues to support 1 or more layers.
 +`training_seconds` includes epoch metrics/checkpoint overhead. `wall_seconds` also includes data preparation and the final test. Each training process prints its final wall time; the launcher ends with wall time for the whole sweep.
  
--`NUM_LAYERS` defaults to 2. GraphSAGE requires at least 2 layers and rejects 0 or 1 explicitly; CNN continues to support 1 or more layers.
--
 -`CNN_INTERMEDIATE_CHANNEL` defaults to 29 for new training. Intermediate CNN layers use this width, while the last layer outputs `HIDDEN_CHANNELS`. With five input features, two layers, and `HIDDEN_CHANNELS=128`, the CNN is `5 -> 29 -> 128` with 34,870 parameters, compared with 34,304 for GraphSAGE. Kernel size, grid resolution, and the downstream 128-dimensional interface are unchanged.
 -
 -For PACT, `TEMPORAL_BLOCK` selects the middle sequence processor: `Transformer`, `MLP`, `LSTM`, or `GRU` (`attn` is accepted as an alias for `Transformer`). Every option receives time embeddings and maps `(B,L,hidden_channels)` back to the same shape, where `L=T` normally; all use the same horizon-query cross-attention readout. `TRANSFORMER_LAYERS` controls the depth of every temporal option, while `TRANSFORMER_FF_MULT` only affects Transformer/MLP. The MLP option is token-wise, so the final horizon cross-attention performs its cross-time aggregation.
@@ -1412,7 +1413,7 @@
 +from .graph_store import ForcingGraphStore, ForcingGraphView
 +from .loaders import build_loader
 +from .normalization import normalize_inputs
-+from .station_metadata import station_features_from_json
++from .station_metadata import load_station_json, station_features_from_json
 +from .stats import fit_loss_thresholds, fit_statistics
  
 -from .graph_store import (
@@ -1456,7 +1457,7 @@
 -    "compute_x_stats_distributed_from_store",
 -    "compute_y_stats_distributed_from_store",
 -]
-+__all__ = ['ForcingGraphStore', 'ForcingGraphView', 'build_loader', 'normalize_inputs', 'station_features_from_json', 'fit_loss_thresholds', 'fit_statistics']
++__all__ = ['ForcingGraphStore', 'ForcingGraphView', 'build_loader', 'normalize_inputs', 'load_station_json', 'station_features_from_json', 'fit_loss_thresholds', 'fit_statistics']
 --- original/emulator/data/graph_store.py
 +++ StormSurge/emulator/data/graph_store.py
 @@ -1,351 +1,82 @@
@@ -2013,16 +2014,17 @@
 +                batch.x_hist = batch.x_hist.clamp(-x_clip, x_clip)
 --- original/emulator/data/station_metadata.py
 +++ StormSurge/emulator/data/station_metadata.py
-@@ -1,103 +1,25 @@
+@@ -1,103 +1,52 @@
 -"""Station metadata parsing and encoding helpers."""
-+"""Encode explicit station JSON fields; feature values are saved with the model."""
- 
--from __future__ import annotations
-+import math
- 
--import json
--import os
 -
+-from __future__ import annotations
++"""Load station JSON aliases and encode the selected finite feature values."""
+ 
+ import json
+-import os
++import math
++from pathlib import Path
+ 
 -import numpy as np
  import torch
 -import torch.nn as nn
@@ -2044,8 +2046,18 @@
 -            with open(path, "r") as f:
 -                return json.load(f)
 -    return None
--
--
++def load_station_json(station_json_dir, station_key):
++    """Look up exact, lowercase, then uppercase filenames, as in the original."""
++    directory = Path(station_json_dir)
++    names = dict.fromkeys((station_key, station_key.lower(), station_key.upper()))
++    for name in names:
++        path = directory / f"{name}.json"
++        if path.exists():
++            return json.loads(path.read_text())
++    tried = ", ".join(f"{name}.json" for name in names)
++    raise FileNotFoundError(f"Station JSON not found for {station_key!r} under {directory}; tried {tried}.")
+ 
+ 
 -def station_features_from_json(
 -    station: dict,
 -    *,
@@ -2053,7 +2065,11 @@
 -    use_bathymetry: bool = False,
 -) -> torch.Tensor:
 -    """Convert station JSON fields into a numeric feature vector.
--
++def station_features_from_json(station, *, use_site_elevation=True, use_bathymetry=False):
++    """Require valid coordinates and independently selected elevation/bathymetry."""
++    if not isinstance(station, dict):
++        raise ValueError("Station JSON must be an object containing station fields.")
+ 
 -    Coordinates and their sin/cos encodings are always included. Site elevation
 -    and node bathymetry are selected independently and scaled by 10 meters.
 -    Defaults preserve the original seven-feature vector and its ordering.
@@ -2062,14 +2078,23 @@
 -        return torch.zeros(0, dtype=torch.float32)
 -
 -    def _get_float(keys, default=None):
--        for key in keys:
--            if key in station:
--                try:
++    def required_float(keys, setting="Station metadata"):
++        message = f"{setting} requires finite {keys[0]} in the station JSON (accepted keys: {', '.join(keys)})."
+         for key in keys:
+             if key in station:
+                 try:
 -                    return float(station[key])
 -                except Exception:
 -                    pass
 -        return default
--
++                    value = float(station[key])
++                except (TypeError, ValueError, OverflowError) as error:
++                    raise ValueError(message) from error
++                if not math.isfinite(value):
++                    raise ValueError(message)
++                return value
++        raise ValueError(message)
+ 
 -    lat = _get_float(["lat", "latitude", "Latitude"], default=0.0)
 -    lon = _get_float(["lon", "longitude", "Longitude"], default=0.0)
 -
@@ -2077,8 +2102,8 @@
 -    lon_norm = lon / 180.0
 -
 -    features = [lat_norm, lon_norm]
-+def station_features_from_json(station, *, use_site_elevation=True, use_bathymetry=False):
-+    lat, lon = float(station["lat"]), float(station["lon"])
++    lat = required_float(("lat", "latitude", "Latitude"))
++    lon = required_float(("lon", "longitude", "Longitude"))
 +    features = [lat / 90, lon / 180]
      if use_site_elevation:
 -        elev = _get_float(["elevation_m", "elevation", "elev_m"], default=0.0)
@@ -2088,24 +2113,16 @@
 -    lon_rad = np.deg2rad(lon)
 -    features += [np.sin(lat_rad), np.cos(lat_rad), np.sin(lon_rad), np.cos(lon_rad)]
 -
-+        features.append(float(station.get("elevation_m", 0.0)) / 10)
++        features.append(required_float(("elevation_m", "elevation", "elev_m"), "use_site_elevation=True") / 10)
 +    lat, lon = math.radians(lat), math.radians(lon)
 +    features += [math.sin(lat), math.cos(lat), math.sin(lon), math.cos(lon)]
      if use_bathymetry:
 -        bathymetry = _get_float(["bathymetry_m"])
 -        if bathymetry is None or not np.isfinite(bathymetry):
-+        try:
-+            bathymetry = float(station["bathymetry_m"])
-+        except (KeyError, TypeError, ValueError):
-+            bathymetry = math.nan
-+        if not math.isfinite(bathymetry):
-             raise ValueError("use_bathymetry=True requires finite bathymetry_m in the station JSON.")
+-            raise ValueError("use_bathymetry=True requires finite bathymetry_m in the station JSON.")
 -        features.append(bathymetry / 10.0)
 -
-+        features.append(bathymetry / 10)
-+    if not all(math.isfinite(value) for value in features):
-+        raise ValueError("Station features must be finite.")
-     return torch.tensor(features, dtype=torch.float32)
+-    return torch.tensor(features, dtype=torch.float32)
 -
 -
 -class StationMetaEncoder(nn.Module):
@@ -2133,6 +2150,11 @@
 -    "station_features_from_json",
 -    "StationMetaEncoder",
 -]
++        features.append(required_float(("bathymetry_m",), "use_bathymetry=True") / 10)
++    features = torch.tensor(features, dtype=torch.float32)
++    if not torch.isfinite(features).all():
++        raise ValueError("Station features must be finite in float32.")
++    return features
 --- original/emulator/data/stats.py
 +++ StormSurge/emulator/data/stats.py
 @@ -1,310 +1,102 @@
@@ -4042,11 +4064,11 @@
 +    parser.add_argument("--station_json_dir", type=str, default="./station_json")
 +    parser.add_argument(
 +        "--use_site_elevation", type=parse_bool_int, choices=[0, 1], default=1,
-+        help="Include site elevation (elevation_m / 10) in PACT station features.",
++        help="Include finite site elevation (elevation_m/elevation/elev_m, scaled by 10) in PACT station features.",
 +    )
 +    parser.add_argument(
 +        "--use_bathymetry", type=parse_bool_int, choices=[0, 1], default=0,
-+        help="Include bathymetry_m / 10 in PACT station features; requires that JSON field.",
++        help="Include bathymetry_m / 10 in PACT station features; requires that JSON field to be finite.",
 +    )
 +    parser.add_argument("--train_ratio", type=float, default=0.6)
 +    parser.add_argument("--val_ratio", type=float, default=0.2)
@@ -5243,7 +5265,7 @@
 +from emulator.common import configure_runtime
 +from emulator.common.cli import parse_bool_int, temporal_block_name
 +from emulator.common.runtime import log_message
-+from emulator.data import ForcingGraphStore, ForcingGraphView, build_loader, station_features_from_json
++from emulator.data import ForcingGraphStore, ForcingGraphView, build_loader, load_station_json, station_features_from_json
 +from emulator.models import ModelConfig, build_model
 +from emulator.inference import classify_past_future, infer_dataset_tag, parse_year_tag
 +from emulator.inference.dual_diagnostics import summarize_dual
@@ -5519,7 +5541,7 @@
 +    station = args.station or checkpoint["station"]
 +    station_feat = checkpoint["station_feat"]
 +    if station != checkpoint["station"] and config.station_feat_dim:
-+        metadata = json.loads((Path(args.station_json_dir) / f"{station}.json").read_text())
++        metadata = load_station_json(args.station_json_dir, station)
 +        station_feat = station_features_from_json(metadata, use_site_elevation=training["use_site_elevation"],
 +                                                  use_bathymetry=training["use_bathymetry"])
 +    if station_feat is not None:
@@ -8698,13 +8720,16 @@
 +                self.assert_checkpoint_roundtrip(config, model, batch)
 --- original/tests/test_pipeline.py
 +++ StormSurge/tests/test_pipeline.py
-@@ -0,0 +1,142 @@
+@@ -0,0 +1,194 @@
 +"""Fresh checkpoint train/infer round trips and exact split populations."""
 +
 +import contextlib
 +import io
++import itertools
 +import json
++import math
 +from pathlib import Path
++import shutil
 +import tempfile
 +import unittest
 +
@@ -8735,6 +8760,54 @@
 +
 +
 +class PipelineTests(unittest.TestCase):
++    def test_metadata_aliases_and_independent_switches_survive_train_and_infer(self):
++        with tempfile.TemporaryDirectory() as temporary:
++            root = Path(temporary)
++            graphs, stations = make_fixture(root)
++            canonical = json.loads((stations / "Battery.json").read_text())
++            (stations / "Battery.json").unlink()
++            external = root / "external"
++            external.mkdir()
++            for graph in graphs.glob("*.pt"):
++                shutil.copyfile(graph, external / graph.name.replace("Battery", "Lewes"))
++            for elevation, bathymetry in itertools.product((0, 1), repeat=2):
++                with self.subTest(elevation=elevation, bathymetry=bathymetry):
++                    aliases = dict(Latitude=40, Longitude=-74, elev_m=2 if elevation else "invalid",
++                                   bathymetry_m=8 if bathymetry else "invalid")
++                    (stations / "battery.json").write_text(json.dumps(aliases))
++                    output = root / f"train_{elevation}_{bathymetry}"
++                    with contextlib.redirect_stdout(io.StringIO()):
++                        train.main(["--root_dir", str(graphs), "--station", "Battery", "--station_json_dir", str(stations),
++                                    "--output_dir", str(output), "--device", "cpu", "--model", "perceiver3", "--head_type", "single",
++                                    "--temporal_block", "MLP", "--history_hours", "0", "--hidden_channels", "16",
++                                    "--epochs", "1", "--warmup_epochs", "0", "--batch_size", "2", "--num_workers", "0",
++                                    "--x_aug", "0", "--use_site_elevation", str(elevation), "--use_bathymetry", str(bathymetry)])
++                    checkpoint_path = next(output.glob("best_*.pth"))
++                    checkpoint = torch.load(checkpoint_path, weights_only=False)
++                    self.assertEqual(checkpoint["training_config"]["use_site_elevation"], elevation)
++                    self.assertEqual(checkpoint["training_config"]["use_bathymetry"], bathymetry)
++                    lat, lon = math.radians(40), math.radians(-74)
++                    expected = ([40 / 90, -74 / 180] + ([.2] if elevation else [])
++                                + [math.sin(lat), math.cos(lat), math.sin(lon), math.cos(lon)] + ([.8] if bathymetry else []))
++                    self.assertEqual(checkpoint["model_config"]["station_feat_dim"], 6 + elevation + bathymetry)
++                    torch.testing.assert_close(checkpoint["station_feat"], torch.tensor(expected), rtol=0, atol=0)
++                    (stations / "LEWES.json").write_text(json.dumps(aliases))
++                    infer_args = ["--ckpt", str(checkpoint_path), "--root_dir", str(graphs), "--test_root_dir", str(external), "--station", "Lewes",
++                                  "--station_json_dir", str(stations), "--device", "cpu", "--batch_size", "2", "--num_workers", "0", "--save_npz"]
++                    alias_output = root / f"alias_{elevation}_{bathymetry}"
++                    canonical_output = root / f"canonical_{elevation}_{bathymetry}"
++                    with contextlib.redirect_stdout(io.StringIO()):
++                        infer.main([*infer_args, "--out_dir", str(alias_output)])
++                        (stations / "Lewes.json").write_text(json.dumps(canonical))
++                        infer.main([*infer_args, "--out_dir", str(canonical_output)])
++                    (stations / "Lewes.json").unlink()
++                    with np.load(alias_output / "predictions.npz") as alias, np.load(canonical_output / "predictions.npz") as reference:
++                        np.testing.assert_array_equal(alias["tags"], reference["tags"])
++                        np.testing.assert_array_equal(alias["y_pred"], reference["y_pred"])
++                    for flag, saved in (("use_site_elevation", elevation), ("use_bathymetry", bathymetry)):
++                        with self.assertRaisesRegex(ValueError, f"--{flag}=.*does not match checkpoint"):
++                            infer.main([*infer_args, "--out_dir", str(root / "mismatch"), f"--{flag}", str(1 - saved)])
++
 +    def test_fresh_train_checkpoint_and_inference_roundtrip(self):
 +        with tempfile.TemporaryDirectory() as temporary:
 +            root = Path(temporary)
@@ -8803,6 +8876,7 @@
 +        self.assertEqual(args.lr, .003)
 +        self.assertEqual(args.hidden_channels, 64)
 +        self.assertEqual((args.dropout, args.head_dropout, args.transformer_dropout), (.05, 0., .05))
++        self.assertEqual((args.use_site_elevation, args.use_bathymetry), (1, 0))
 +        self.assertFalse(args.amp or args.tf32 or args.pin_memory or args.persistent_workers)
 +        args = train.parse_args(["--model", "perceiver3", "--filter", "Battery", "--temporal_block", "attn",
 +                                 "--amp", "--tf32", "--pin_memory", "--persistent_workers",
@@ -8958,6 +9032,116 @@
 +                self.assertEqual(int(arrays['dt_hours']), 6)
 +            with np.load(root / 'out/forcing_local_2000.npz') as arrays:
 +                np.testing.assert_array_equal(np.load(root / 'out/forcing_local_2000.npy'), arrays['forcing'])
+--- original/tests/test_station_metadata.py
++++ StormSurge/tests/test_station_metadata.py
+@@ -1,15 +1,64 @@
+ """Station-feature selection, units, and optional-field isolation."""
+ 
+ import itertools
++import json
+ import math
++from pathlib import Path
++import tempfile
+ import unittest
+ 
+ import torch
+ 
+-from emulator.data import station_features_from_json
++from emulator.data import load_station_json, station_features_from_json
+ 
+ 
+ class StationMetadataTests(unittest.TestCase):
++    def test_filename_lookup_prefers_exact_then_lower_then_upper(self):
++        with tempfile.TemporaryDirectory() as temporary:
++            root = Path(temporary)
++            names = ("Battery", "battery", "BATTERY")
++            for name in names:
++                (root / f"{name}.json").write_text(json.dumps({"selected": name}))
++            for name in names:
++                self.assertEqual(load_station_json(root, "Battery"), {"selected": name})
++                (root / f"{name}.json").unlink()
++            with self.assertRaisesRegex(FileNotFoundError, "Battery.json, battery.json, BATTERY.json"):
++                load_station_json(root, "Battery")
++
++    def test_invalid_exact_json_is_not_hidden_by_a_filename_alias(self):
++        with tempfile.TemporaryDirectory() as temporary:
++            root = Path(temporary)
++            (root / "Battery.json").write_text("invalid JSON")
++            (root / "battery.json").write_text(json.dumps(dict(lat=30, lon=-90, elevation_m=20)))
++            with self.assertRaises(json.JSONDecodeError):
++                load_station_json(root, "Battery")
++
++    def test_all_original_field_aliases_preserve_features(self):
++        expected = station_features_from_json(dict(lat=30, lon=-90, elevation_m=20, bathymetry_m=50), use_bathymetry=True)
++        for lat, lon, elevation in itertools.product(
++            ("lat", "latitude", "Latitude"), ("lon", "longitude", "Longitude"), ("elevation_m", "elevation", "elev_m"),
++        ):
++            with self.subTest(lat=lat, lon=lon, elevation=elevation):
++                station = {lat: "30", lon: "-90", elevation: "20", "bathymetry_m": "50"}
++                torch.testing.assert_close(station_features_from_json(station, use_bathymetry=True), expected, rtol=0, atol=0)
++
++    def test_field_alias_priority_does_not_hide_invalid_selected_values(self):
++        canonical = dict(lat=30, lon=-90, elevation_m=20)
++        expected = station_features_from_json(canonical)
++        keys = (("lat", "latitude", "Latitude"), ("lon", "longitude", "Longitude"), ("elevation_m", "elevation", "elev_m"))
++        for aliases in keys:
++            for selected in range(len(aliases)):
++                with self.subTest(aliases=aliases, selected=selected):
++                    station = dict(canonical)
++                    value = station.pop(aliases[0])
++                    station.update({key: "invalid" for key in aliases[selected + 1:]})
++                    station[aliases[selected]] = value
++                    torch.testing.assert_close(station_features_from_json(station), expected, rtol=0, atol=0)
++                    station.update({key: value for key in aliases[selected + 1:]})
++                    station[aliases[selected]] = "invalid"
++                    with self.assertRaisesRegex(ValueError, f"requires finite {aliases[0]}"):
++                        station_features_from_json(station)
++
+     def test_independent_feature_switches_preserve_geography_and_units(self):
+         station = dict(lat=30, lon=-90, elevation_m=20, bathymetry_m=50)
+         trig = [0.5, math.sqrt(3) / 2, -1.0, 0.0]
+@@ -31,14 +80,33 @@
+         options = dict(use_site_elevation=False, use_bathymetry=True)
+         torch.testing.assert_close(station_features_from_json(station, **options), station_features_from_json(changed, **options), rtol=0, atol=0)
+ 
+-    def test_enabled_bathymetry_requires_a_finite_value(self):
+-        for value in (None, "invalid", float("nan"), float("inf")):
+-            station = dict(lat=30, lon=-90)
+-            if value is not None:
+-                station["bathymetry_m"] = value
+-            self.assertTrue(torch.isfinite(station_features_from_json(station)).all())
+-            with self.assertRaisesRegex(ValueError, "requires finite bathymetry_m"):
+-                station_features_from_json(station, use_bathymetry=True)
++    def test_required_fields_reject_missing_and_invalid_values(self):
++        missing = object()
++        for field, value in itertools.product(
++            ("lat", "lon", "elevation_m", "bathymetry_m"),
++            (missing, None, "invalid", float("nan"), float("inf"), -float("inf")),
++        ):
++            with self.subTest(field=field, value=value):
++                station = dict(lat=30, lon=-90, elevation_m=20, bathymetry_m=50)
++                if value is missing:
++                    station.pop(field)
++                else:
++                    station[field] = value
++                with self.assertRaisesRegex(ValueError, f"requires finite {field}"):
++                    station_features_from_json(station, use_bathymetry=True)
++
++    def test_disabled_optional_fields_can_be_missing(self):
++        station = dict(lat=30, lon=-90)
++        features = station_features_from_json(station, use_site_elevation=False, use_bathymetry=False)
++        self.assertEqual(features.numel(), 6)
++        self.assertTrue(torch.isfinite(features).all())
++
++    def test_json_must_be_an_object_and_features_must_fit_float32(self):
++        for station in (None, [], "invalid", 1):
++            with self.subTest(station=station), self.assertRaisesRegex(ValueError, "must be an object"):
++                station_features_from_json(station)
++        with self.assertRaisesRegex(ValueError, "finite in float32"):
++            station_features_from_json(dict(lat=30, lon=-90, elevation_m=1e100))
+ 
+ 
+ if __name__ == "__main__":
 --- original/tests/test_time_alignment.py
 +++ StormSurge/tests/test_time_alignment.py
 @@ -38,7 +38,6 @@
@@ -9532,7 +9716,7 @@
 +from emulator.common.runtime import log_message
 +from emulator.common.dual import initial_gate_prior
 +from emulator.data import (ForcingGraphStore, ForcingGraphView, build_loader,
-+                           fit_loss_thresholds, fit_statistics, station_features_from_json)
++                           fit_loss_thresholds, fit_statistics, load_station_json, station_features_from_json)
 +from emulator.models import ModelConfig, build_model
 +from emulator.training import ForecastLoss, LossConfig, format_metrics, run_epoch
 +from emulator.training.arguments import parse_args
@@ -9614,7 +9798,7 @@
 +    stats = {key: value.to(device) for key, value in stats_cpu.items()}
 +    station_feat = None
 +    if args.model == "perceiver3" and args.use_station_meta and args.station:
-+        station_json = json.loads((args.station_json_dir / f"{args.station}.json").read_text())
++        station_json = load_station_json(args.station_json_dir, args.station)
 +        station_feat = station_features_from_json(station_json, use_site_elevation=args.use_site_elevation,
 +                                                  use_bathymetry=args.use_bathymetry).to(device)
 +    model_values = {field.name: getattr(args, field.name) for field in fields(ModelConfig) if hasattr(args, field.name)}

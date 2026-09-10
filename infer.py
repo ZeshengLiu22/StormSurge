@@ -15,7 +15,7 @@ import torch
 from emulator.common import configure_runtime
 from emulator.common.cli import parse_bool_int, temporal_block_name
 from emulator.common.runtime import log_message
-from emulator.data import ForcingGraphStore, ForcingGraphView, build_loader, station_features_from_json
+from emulator.data import ForcingGraphStore, ForcingGraphView, build_loader, load_station_json, station_features_from_json
 from emulator.models import ModelConfig, build_model
 from emulator.inference import classify_past_future, infer_dataset_tag, parse_year_tag
 from emulator.inference.dual_diagnostics import summarize_dual
@@ -166,7 +166,7 @@ def main(argv=None):
     station = args.station or checkpoint["station"]
     station_feat = checkpoint["station_feat"]
     if station != checkpoint["station"] and config.station_feat_dim:
-        metadata = json.loads((Path(args.station_json_dir) / f"{station}.json").read_text())
+        metadata = load_station_json(args.station_json_dir, station)
         station_feat = station_features_from_json(metadata, use_site_elevation=training["use_site_elevation"],
                                                   use_bathymetry=training["use_bathymetry"])
     if station_feat is not None:
