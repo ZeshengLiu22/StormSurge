@@ -46,6 +46,7 @@ class PipelineTests(unittest.TestCase):
                         "--output_dir", str(output), "--device", "cpu", "--model", model, "--head_type", head,
                         "--encoder_type", encoder, "--temporal_block", temporal, "--history_hours", str(history),
                         "--hidden_channels", "16", "--node_read_heads", "2", "--time_read_heads", "2",
+                        "--dropout", ".13", "--head_dropout", ".27", "--transformer_dropout", ".19",
                         "--transformer_layers", "1", "--batch_size", "2", "--grad_accum_steps", "2",
                         "--epochs", "2", "--warmup_epochs", "0", "--use_bathymetry", "1",
                         "--num_workers", "0", "--run_tag", "roundtrip", "--x_aug", "0", "--x_norm", "zscore"]
@@ -64,6 +65,10 @@ class PipelineTests(unittest.TestCase):
                 checkpoint = torch.load(next(output.glob("best_*.pth")), weights_only=False)
                 self.assertEqual(checkpoint["model_config"]["history_steps"], history // 6)
                 self.assertEqual(checkpoint["model_config"]["station_feat_dim"], 8 if model == "perceiver3" else 0)
+                self.assertEqual(checkpoint["model_config"]["hidden_channels"], 16)
+                self.assertEqual(checkpoint["model_config"]["dropout"], .13)
+                self.assertEqual(checkpoint["model_config"]["head_dropout"], .27)
+                self.assertEqual(checkpoint["model_config"]["temporal_dropout"], .19)
                 # Inference uses saved features; station JSON is not an inference dependency.
                 inferred = root / f"infer_{index}"
                 with contextlib.redirect_stdout(io.StringIO()):
@@ -95,6 +100,8 @@ class PipelineTests(unittest.TestCase):
         self.assertEqual(args.model, "baseline")
         self.assertEqual(args.loss_mode, "mse")
         self.assertEqual(args.lr, .003)
+        self.assertEqual(args.hidden_channels, 64)
+        self.assertEqual((args.dropout, args.head_dropout, args.transformer_dropout), (.05, 0., .05))
         self.assertFalse(args.amp or args.tf32 or args.pin_memory or args.persistent_workers)
         args = train.parse_args(["--model", "perceiver3", "--filter", "Battery", "--temporal_block", "attn",
                                  "--amp", "--tf32", "--pin_memory", "--persistent_workers",

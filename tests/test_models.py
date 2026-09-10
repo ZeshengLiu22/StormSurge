@@ -1,6 +1,9 @@
 """Architecture contracts, gradient flow, head supervision and CNN layout."""
 
+from dataclasses import asdict
+import io
 import itertools
+import json
 import unittest
 
 import torch
@@ -22,6 +25,68 @@ class ModelTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         torch.set_num_threads(1)
+
+    def assert_checkpoint_roundtrip(self, config, model, batch, features=None):
+        checkpoint = io.BytesIO()
+        torch.save(dict(model_config=json.loads(json.dumps(asdict(config))),
+                        model_state=model.state_dict()), checkpoint)
+        checkpoint.seek(0)
+        saved = torch.load(checkpoint, weights_only=False)
+        restored = build_model(ModelConfig(**saved['model_config'])).eval()
+        restored.load_state_dict(saved['model_state'], strict=True)
+        with torch.no_grad():
+            expected = model.eval()(batch, features)
+            actual = restored(batch, features)
+        for before, after in zip(expected, actual):
+            if before is None:
+                self.assertIsNone(after)
+            else:
+                torch.testing.assert_close(before, after, rtol=0, atol=0)
+
+    def test_python_constructor_defaults_and_required_hidden_width(self):
+        with self.assertRaisesRegex(TypeError, 'hidden_channels'):
+            ModelConfig(3, 4)
+        config = ModelConfig(3, 4, hidden_channels=8)
+        self.assertEqual((config.dropout, config.head_dropout, config.temporal_dropout), (0., 0., .05))
+        self.assertIsNone(config.head_hidden)
+        self.assertIsNone(config.temporal_hidden)
+
+    def test_metadata_minimum_width_and_checkpoint_roundtrip(self):
+        for hidden, meta_hidden in ((8, 16), (128, 128)):
+            with self.subTest(hidden=hidden):
+                config = ModelConfig(3, 4, hidden_channels=hidden, station_feat_dim=6, head_type='single')
+                model = build_model(config)
+                self.assertEqual(tuple(model.station_meta[0].weight.shape), (meta_hidden, 6))
+                self.assertEqual(tuple(model.station_meta[2].weight.shape), (hidden, meta_hidden))
+                batch, features = graph_batch(), torch.randn(6, requires_grad=True)
+                output = model(batch, features)
+                self.assertEqual(output.prediction.shape, (2, 4))
+                output.prediction.square().mean().backward()
+                self.assertTrue(torch.isfinite(features.grad).all())
+                self.assert_checkpoint_roundtrip(config, model, batch, features)
+
+    def test_custom_head_widths_include_all_dual_branches(self):
+        for head, ablation, width in itertools.product(('single', 'dual'), ('none', 'fixed_gate'), (None, 23)):
+            if head == 'single' and ablation != 'none':
+                continue
+            with self.subTest(head=head, ablation=ablation, width=width):
+                config = ModelConfig(3, 4, hidden_channels=8, head_type=head, head_hidden=width,
+                                     dual_ablation=ablation, peak_threshold_norm=[1.] * 4)
+                model = build_model(config)
+                branches = ([model.head.regression] if head == 'single' else
+                            [model.head.body, model.head.excess] + ([] if ablation == 'fixed_gate' else [model.head.gate]))
+                for branch in branches:
+                    self.assertEqual(branch[0].out_features, 16 if width is None else width)
+                    self.assertEqual(branch[-1].in_features, branch[0].out_features)
+                batch = graph_batch()
+                output = model(batch)
+                self.assertEqual(output.prediction.shape, (2, 4))
+                loss = output.prediction.square().mean()
+                if head == 'dual':
+                    loss += sum(dual_loss_terms(output, batch.y, torch.ones(4)))
+                loss.backward()
+                self.assertTrue(all(p.grad is not None and torch.isfinite(p.grad).all() for p in model.parameters()))
+                self.assert_checkpoint_roundtrip(config, model, batch)
 
     def test_all_architectures_are_label_free_and_differentiable(self):
         for encoder, temporal, head, history in itertools.product(
@@ -105,9 +170,22 @@ class ModelTests(unittest.TestCase):
             encoder.grid_shape(batch)
 
     def test_baseline_controls(self):
-        for encoder, history in itertools.product(("GraphSAGE", "CNN"), (0, 2)):
-            model = build_model(ModelConfig(3, 4, model="baseline", head_type="single",
-                                           encoder_type=encoder, history_steps=history, hidden_channels=16))
-            prediction = model(graph_batch(history + 1)).prediction
-            prediction.square().mean().backward()
-            self.assertTrue(all(p.grad is not None for p in model.parameters()))
+        for encoder, history, width in itertools.product(("GraphSAGE", "CNN"), (0, 2), (None, 23)):
+            with self.subTest(encoder=encoder, history=history, temporal_hidden=width):
+                config = ModelConfig(3, 4, model="baseline", head_type="single", encoder_type=encoder,
+                                     history_steps=history, hidden_channels=16, temporal_hidden=width)
+                model = build_model(config)
+                expected_width = width if history and width is not None else 16
+                self.assertEqual(model.head.in_features, expected_width)
+                if history:
+                    self.assertEqual(model.rnn.input_size, 16)
+                    self.assertEqual(model.rnn.hidden_size, expected_width)
+                    self.assertEqual(model.rnn.num_layers, 1)
+                else:
+                    self.assertIsNone(model.rnn)
+                batch = graph_batch(history + 1)
+                prediction = model(batch).prediction
+                self.assertEqual(prediction.shape, (2, 4))
+                prediction.square().mean().backward()
+                self.assertTrue(all(p.grad is not None and torch.isfinite(p.grad).all() for p in model.parameters()))
+                self.assert_checkpoint_roundtrip(config, model, batch)

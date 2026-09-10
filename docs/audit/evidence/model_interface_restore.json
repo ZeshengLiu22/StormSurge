@@ -1,0 +1,107 @@
+{
+  "generated_utc": "2026-09-10T01:35:38.726007+00:00",
+  "before_head": "3fda97d",
+  "before_model_source_head": "663e7a2",
+  "environment": {
+    "device": "cpu",
+    "torch": "2.6.0+cu124",
+    "torch_geometric": "2.7.0",
+    "python": "/media/volume/PACT-Data/conda_envs/torchpyg-cu124/bin/python"
+  },
+  "tests": {
+    "command": "python -m unittest -v test_models test_pipeline test_config_interfaces test_dual_experiments test_dual_loss",
+    "pythonpath": [
+      "/tmp/pact-validation-deps",
+      "/tmp/stormsurge-model-restore-d87ske_g/staged/tests"
+    ],
+    "passed": 34,
+    "failed": 0,
+    "elapsed_seconds": 20.63,
+    "full_suite_rerun": false,
+    "coverage": [
+      "metadata widths at hidden=8 and 128",
+      "required hidden and Python dropout defaults",
+      "head_hidden on single/dual/fixed_gate branches",
+      "temporal_hidden for both baseline encoders at H=0 and H>0",
+      "custom-width checkpoint save/load and exact predictions",
+      "explicit CLI dropout in fresh training checkpoints and inference",
+      "original CLI defaults, 114 training profiles, 390 conditional sweep combinations",
+      "dual supervision, ablations, TRAIN thresholds and inference diagnostics"
+    ]
+  },
+  "main_scan_equivalence": {
+    "cases": 36,
+    "exact": true,
+    "seed": 42,
+    "hidden_channels": 128,
+    "dropout": 0.05,
+    "head_dropout": 0.05,
+    "temporal_dropout": 0.0,
+    "compared": [
+      "initialized state_dict",
+      "training outputs",
+      "evaluation outputs",
+      "parameter gradients"
+    ],
+    "cases_checked": [
+      "('baseline', 'GraphSAGE', 'LSTM', 'single', 0)",
+      "('baseline', 'GraphSAGE', 'LSTM', 'single', 8)",
+      "('baseline', 'CNN', 'LSTM', 'single', 0)",
+      "('baseline', 'CNN', 'LSTM', 'single', 8)",
+      "('pact', 'GraphSAGE', 'MLP', 'single', 0)",
+      "('pact', 'GraphSAGE', 'MLP', 'single', 8)",
+      "('pact', 'GraphSAGE', 'MLP', 'dual', 0)",
+      "('pact', 'GraphSAGE', 'MLP', 'dual', 8)",
+      "('pact', 'GraphSAGE', 'LSTM', 'single', 0)",
+      "('pact', 'GraphSAGE', 'LSTM', 'single', 8)",
+      "('pact', 'GraphSAGE', 'LSTM', 'dual', 0)",
+      "('pact', 'GraphSAGE', 'LSTM', 'dual', 8)",
+      "('pact', 'GraphSAGE', 'GRU', 'single', 0)",
+      "('pact', 'GraphSAGE', 'GRU', 'single', 8)",
+      "('pact', 'GraphSAGE', 'GRU', 'dual', 0)",
+      "('pact', 'GraphSAGE', 'GRU', 'dual', 8)",
+      "('pact', 'GraphSAGE', 'Transformer', 'single', 0)",
+      "('pact', 'GraphSAGE', 'Transformer', 'single', 8)",
+      "('pact', 'GraphSAGE', 'Transformer', 'dual', 0)",
+      "('pact', 'GraphSAGE', 'Transformer', 'dual', 8)",
+      "('pact', 'CNN', 'MLP', 'single', 0)",
+      "('pact', 'CNN', 'MLP', 'single', 8)",
+      "('pact', 'CNN', 'MLP', 'dual', 0)",
+      "('pact', 'CNN', 'MLP', 'dual', 8)",
+      "('pact', 'CNN', 'LSTM', 'single', 0)",
+      "('pact', 'CNN', 'LSTM', 'single', 8)",
+      "('pact', 'CNN', 'LSTM', 'dual', 0)",
+      "('pact', 'CNN', 'LSTM', 'dual', 8)",
+      "('pact', 'CNN', 'GRU', 'single', 0)",
+      "('pact', 'CNN', 'GRU', 'single', 8)",
+      "('pact', 'CNN', 'GRU', 'dual', 0)",
+      "('pact', 'CNN', 'GRU', 'dual', 8)",
+      "('pact', 'CNN', 'Transformer', 'single', 0)",
+      "('pact', 'CNN', 'Transformer', 'single', 8)",
+      "('pact', 'CNN', 'Transformer', 'dual', 0)",
+      "('pact', 'CNN', 'Transformer', 'dual', 8)"
+    ],
+    "fingerprint_sha256": "90ae1bb09976c5336ce0f2ad551e990fc212bf1b42aacf70a2874fb7389f12a5"
+  },
+  "preserved_config_and_entrypoint_count": 139,
+  "preserved_config_and_entrypoint_hashes_sha256": "445152c1b209bf8196d32857342e9b7a8c5629db3f61ff92df2c8e0f015396bf",
+  "source_sha256": {
+    "emulator/models/architectures.py": {
+      "before": "6723b0c4a88e3e7ac8def3142f6f67cb273649a3c68dda5a6fb5412335bebf6f",
+      "after": "57b05af35ee0250b227f7b548e372897689e4c8e3e330b89c635d3597cde58c4"
+    },
+    "emulator/models/heads.py": {
+      "before": "1e96b480e640fbf164e3d77783b35ffa508ec488bf8f6056a21912f190a3dca9",
+      "after": "e80539982ae3d46a59f509c0625a7321cce69180dc6b6d5d6f60bd8f86aaf7ad"
+    },
+    "tests/test_models.py": {
+      "before": "386e077102244d6059af9c9cc4130b1137cab342310318ad372625a114e2d33d",
+      "after": "2e6de61ef5b08be327de6a23eb85928713652c1769dc43b08ff6d72a1b7905db"
+    },
+    "tests/test_pipeline.py": {
+      "before": "77c57de386e71af984efb7ae7c44920fb071110380bc681b9fe876008e8bc61b",
+      "after": "fbbac91a36418d50ab00a979e18e484508a839d3a8d3280b22bd40c9a5f4cbab"
+    }
+  },
+  "scope": "Four model-interface restorations only; current dual/stability formulas and CLI/config reading are retained. CPU checks use synthetic fixtures; no long training or GPU run."
+}

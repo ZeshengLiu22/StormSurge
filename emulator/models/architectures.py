@@ -17,15 +17,22 @@ from .temporal import TemporalMLP, TemporalRNN, TemporalTransformer
 
 @dataclass
 class ModelConfig:
+    """Python construction defaults; train.py supplies the CLI/config values.
+
+    head_hidden overrides the PACT head MLP width (default: 2 * hidden_channels).
+    temporal_hidden overrides the positive-history baseline LSTM width
+    (default: hidden_channels); H=0 baselines keep the spatial output width.
+    """
+
     in_channels: int
     out_channels: int
+    hidden_channels: int
     model: str = "pact"
     encoder_type: str = "GraphSAGE"
     temporal_block: str = "Transformer"
     head_type: str = "dual"
-    hidden_channels: int = 128
     num_layers: int = 2
-    dropout: float = 0.05
+    dropout: float = 0.0
     cnn_intermediate_channel: int = 29
     history_steps: int = 2
     max_time_steps: int = 32
@@ -33,12 +40,14 @@ class ModelConfig:
     time_read_heads: int = 8
     temporal_layers: int = 2
     temporal_ff_mult: float = 4.0
-    temporal_dropout: float = 0.0
-    head_dropout: float = 0.05
+    temporal_dropout: float = 0.05
+    head_dropout: float = 0.0
     station_feat_dim: int = 0
     peak_threshold_norm: list[float] | None = None
     peak_prior: float = 0.05
     dual_ablation: str = "none"
+    head_hidden: int | None = None
+    temporal_hidden: int | None = None
 
 
 class PACT(nn.Module):
@@ -51,9 +60,10 @@ class PACT(nn.Module):
         self.spatial = SpatialEncoder(c.in_channels, hidden, c.num_layers, c.dropout,
                                       c.encoder_type, c.cnn_intermediate_channel)
         self.station_token = nn.Parameter(torch.zeros(1, hidden))
+        meta_hidden = max(16, hidden)
         self.station_meta = nn.Sequential(
-            nn.Linear(c.station_feat_dim, hidden), nn.LeakyReLU(0.1),
-            nn.Linear(hidden, hidden), nn.LayerNorm(hidden),
+            nn.Linear(c.station_feat_dim, meta_hidden), nn.LeakyReLU(0.1),
+            nn.Linear(meta_hidden, hidden), nn.LayerNorm(hidden),
         ) if c.station_feat_dim else None
         self.node_readout = nn.MultiheadAttention(hidden, c.node_read_heads, batch_first=True)
         self.history_steps = c.history_steps
@@ -74,12 +84,12 @@ class PACT(nn.Module):
         self.horizon_embed = nn.Embedding(c.out_channels, hidden)
         self.forecast_readout = nn.MultiheadAttention(hidden, c.time_read_heads, batch_first=True)
         if c.head_type == "single":
-            self.head = SingleHead(hidden, c.head_dropout)
+            self.head = SingleHead(hidden, c.head_dropout, head_hidden=c.head_hidden)
         elif c.head_type == "dual":
             if c.peak_threshold_norm is None or len(c.peak_threshold_norm) != c.out_channels:
                 raise ValueError("Dual head requires one TRAIN-derived threshold per horizon.")
             self.head = ExceedanceHead(hidden, c.head_dropout, c.peak_threshold_norm, c.peak_prior,
-                                       fixed_gate=c.dual_ablation == "fixed_gate")
+                                       fixed_gate=c.dual_ablation == "fixed_gate", head_hidden=c.head_hidden)
         else:
             raise ValueError(f"Unknown head: {c.head_type}")
 
@@ -122,9 +132,10 @@ class Baseline(nn.Module):
             raise ValueError("Baseline uses a single linear forecast head.")
         self.spatial = SpatialEncoder(c.in_channels, c.hidden_channels, c.num_layers,
                                       c.dropout, c.encoder_type, c.cnn_intermediate_channel)
-        self.rnn = nn.LSTM(c.hidden_channels, c.hidden_channels, batch_first=True) if c.history_steps else None
+        temporal_hidden = c.hidden_channels if c.temporal_hidden is None else c.temporal_hidden
+        self.rnn = nn.LSTM(c.hidden_channels, temporal_hidden, batch_first=True) if c.history_steps else None
         self.dropout = nn.Dropout(c.dropout)
-        self.head = nn.Linear(c.hidden_channels, c.out_channels)
+        self.head = nn.Linear(temporal_hidden if self.rnn is not None else c.hidden_channels, c.out_channels)
 
     def forward(self, batch, station_feat=None):
         grid_shape = self.spatial.grid_shape(batch)

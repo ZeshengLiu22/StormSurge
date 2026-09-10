@@ -1,6 +1,6 @@
 **StormSurge 与原版 Emulator：当前差异、影响和还原建议**
 
-本报告对应独立仓库 [ZeshengLiu22/StormSurge](https://github.com/ZeshengLiu22/StormSurge) 的当前源码，代码基准为 `663e7a2`（2026-09-10），包含 `p_mean` 删除及dual阈值、先验、消融和推理诊断更新。原版基准是本地 `Emulator` 实际文件，对应 [PACT_Storm_Surge_Emulator 的提交 bb62a22](https://github.com/BinaLab/PACT_Storm_Surge_Emulator/tree/bb62a2297a0d37a35db5bff352ee815e05676c93)。它相对上次基准 `3d4be39` 仅提交了此前本地 `.gitignore` 的3行变化，模型与训练源码未变；原版工作树干净。比较生成时间见 [comparison_summary.json](audit/comparison_summary.json)。
+本报告对应独立仓库 [ZeshengLiu22/StormSurge](https://github.com/ZeshengLiu22/StormSurge) 的当前源码，已提交代码基准为 `663e7a2`（2026-09-10），包含 `p_mean` 删除及dual阈值、先验、消融和推理诊断更新。本轮在该基准上恢复metadata最小隐宽、自定义head/temporal宽度及Python构造默认值；训练CLI默认和原config读取路径保持。原版基准是本地 `Emulator` 实际文件，对应 [PACT_Storm_Surge_Emulator 的提交 bb62a22](https://github.com/BinaLab/PACT_Storm_Surge_Emulator/tree/bb62a2297a0d37a35db5bff352ee815e05676c93)。它相对上次基准 `3d4be39` 仅提交了此前本地 `.gitignore` 的3行变化，模型与训练源码未变；原版工作树干净。比较生成时间见 [comparison_summary.json](audit/comparison_summary.json)。
 
 **结论：主扫描使用的基础空间拓扑和 H=0 baseline 保留；PACT 包含已确认的新 dual head 与稳定性数学改动。此外仍有自定义模型接口、输入检查、运行开关和输出组织等差异，不能概括为“仅改了 dual/stability”。** 当前已整体退役 `p_mean`，完善真实TRAIN事件先验、独立dual阈值、显式消融与可选推理诊断；此前恢复的DDP seed、归一化统计、验证补齐、loss下限、环境配方和推理/预处理汇报继续保留。
 
@@ -15,7 +15,7 @@
 | 项目 | 原来做什么 | 现在做什么 | 差异的影响 | 是否建议还原 |
 |---|---|---|---|---|
 | H=0 baseline | GraphSAGE/CNN → spatial mean pooling → dropout → Linear(K)，另可选p_mean输入 | 保留原关闭p_mean时的计算路径；额外均值接口已删除 | 不包含PACT attention、temporal或dual head；历史默认路径数值对照一致，已退役的压力分支另列 | **保留默认路径**；不恢复已退役功能 |
-| H>0 baseline | 各时刻空间编码/mean pool → 单层LSTM → 最后时刻 → Linear，另可选p_mean输入 | 原关闭p_mean时的计算路径保持；不再拼接均值特征 | LSTM原来就存在；自定义temporal_hidden问题另列 | **保留默认路径** |
+| H>0 baseline | 各时刻空间编码/mean pool → 单层LSTM → 最后时刻 → Linear，另可选p_mean输入 | 原关闭p_mean时的计算路径保持；不再拼接均值特征 | LSTM原来就存在；自定义temporal_hidden已恢复 | **保留默认路径** |
 | GraphSAGE | 相同层数SAGEConv、LeakyReLU(.1)、dropout | 抽到SpatialEncoder，层和计算保留 | 没有换GNN种类、邻接或pooling | **保留模块拆分** |
 | CNN | 3×3/padding1卷积，中间宽度29，最后输出hidden | 同样的卷积与默认通道 | 未改变原扫描的CNN参数预算；输入校验另列 | **未变** |
 | PACT总连接 | spatial → station-query attention → lag/temporal → horizon attention → head | 总连接保持 | 新的归一化、残差公式和head会改变实际函数 | **保留总连接** |
@@ -63,10 +63,10 @@ DDP seed与augmentation局部随机顺序恢复，不代表整次训练逐位回
 
 | 项目 | 原来做什么 | 现在做什么 | 差异的影响 | 是否建议还原 |
 |---|---|---|---|---|
-| metadata MLP隐宽 | `max(16,hidden)` | `hidden` | hidden8时16→8，是真架构变化；hidden128主扫描不受此项影响 | **还原，优先** |
-| 自定义head宽度 | PACT构造支持head_hidden | 固定2×hidden | 默认一致，自定义实验能力丢失 | **还原参数能力**，保留当前默认实际宽度 |
-| baseline temporal宽度 | 构造支持temporal_hidden | 固定hidden | 自定义LSTM宽度不可再复现 | **还原参数能力** |
-| Python构造默认值 | spatial/head dropout=0、temporal dropout=.05；hidden必填 | .05/.05/0；hidden默认128 | 直接构造会不同；train.py显式传CLI/config，不依赖这些新默认 | **还原，优先**；不要反过来修改原训练CLI默认 |
+| metadata MLP隐宽 | `max(16,hidden)` | 恢复`max(16,hidden)`，输出仍为hidden | hidden8时隐宽恢复16；hidden128主扫描不变 | **已恢复** |
+| 自定义head宽度 | PACT构造支持head_hidden | ModelConfig.head_hidden控制single及dual各MLP；None时仍为2×hidden | 恢复自定义能力，保持默认实际宽度；配置随checkpoint保存/重建 | **已恢复参数能力** |
+| baseline temporal宽度 | 构造支持temporal_hidden | ModelConfig.temporal_hidden控制H>0的LSTM及Linear输入宽度；None时仍为hidden | 恢复自定义LSTM宽度；H=0仍用空间hidden，配置随checkpoint保存/重建 | **已恢复参数能力** |
+| Python构造默认值 | spatial/head dropout=0、temporal dropout=.05；hidden必填 | ModelConfig恢复0/0/.05；hidden_channels必填 | train.py仍显式传CLI/config；CLI保持hidden64、dropout .05/0/.05，主扫描config保持hidden128、.05/.05/0 | **已恢复**；训练CLI默认及config读取保持 |
 | PACT pressure初始化顺序 | token/global两条可选p_mean编码路径，建层顺序影响同seed初始化 | p_mean编码器、token/global模式、扩展head维度及相关配置整体删除 | 这些压力均值消融不再受支持；原主扫描默认关闭，不需要保留其初始化顺序 | **已退役，不还原**，按用户要求删除 |
 | 模型API/权重键 | 多参数constructor，tensor或return_aux；旧类和state_dict命名 | ModelConfig、ForecastOutput和拆分模块；dual输出增加gate_probability，固定gate没有logits；checkpoint保存消融模式 | 旧Python调用与原checkpoint需适配；当前模型由保存的配置重建，模型/loss的fixed_gate设置不一致会报错 | **保留清晰API与模式检查**；用户不要求历史checkpoint兼容 |
 | 输入H | PACT主要限制max_time_steps | 必须等于构造时history_steps+1 | 不能直接以不同H喂同一模型，推理同样检查H | **保留默认一致性检查**；确需跨H推理时另恢复显式能力 |
@@ -141,17 +141,19 @@ DDP seed与augmentation局部随机顺序恢复，不代表整次训练逐位回
 | LICENSE与静态资源 | 原许可证、station JSON等 | 对应文件逐字保留 | 仓库独立不删除原授权/归属信息 | **保留** |
 | .gitignore | 此前本地experiment_configs忽略项已随bb62a22提交 | 当前未继承该项；大数据/结果/checkpoint仍忽略 | 属于仓库管理差异，无模型影响；基准已改为干净的bb62a22，不能继续称未提交修改 | **不必自动还原该项** |
 | README/方法说明 | 原大README及changelog | 当前README、新dual/stability说明；旧changelog移除 | 新入口更清楚，但历史记录变少 | **保留新说明**；若需要历史追溯，建议将旧changelog作为历史文档归档 |
-| 测试 | 旧模型/诊断/推理接口测试 | 当前模型/梯度/dual loss/配置/预处理/往返测试，加上真实先验、5种dual模式及诊断验证，共50项通过 | CPU测试不覆盖所有旧接口；旧缺失p_mean测试已随功能退役；历史GPU/DDP证据不能替代当前消融验证 | **保留当前测试**；恢复仍需支持的接口时补相应案例 |
+| 测试 | 旧模型/诊断/推理接口测试 | 模型/梯度/dual loss/配置/预处理/往返测试；恢复前全量50项通过，本轮模型接口及相关流程34项通过 | CPU测试不覆盖所有旧接口；旧缺失p_mean测试已随功能退役；历史GPU/DDP证据不能替代当前消融验证 | **保留当前测试**；恢复仍需支持的接口时补相应案例 |
 | 独立仓库 | 原Emulator自己的Git历史/remote | StormSurge以ce697f9独立初始化，当前代码663e7a2已同步origin/main | origin指向新repo，原版历史未迁入；当前194份文件纳入源码/config/既有文档比较 | **保留独立仓库** |
 | 数据与机器路径 | profile引用外部Data/graph/station目录 | 原profile路径保持，数据未打包进Git | Git独立不意味着自动复制大数据；换机器需要设置ROOT_DIR、STATION_JSON_DIR、Python环境等 | **保留实验配置值**，按部署机器显式覆盖路径 |
 
 **七、建议优先顺序与验证范围**
 
-后续优先还原的是非方法创新引起的接口收缩：metadata最小隐宽、自定义head/temporal宽度、直接构造默认值、JSON文件名/字段别名、维度从TRAIN首图读取，以及baseline不该受PACT lag容量限制的问题。tail_frac原极端夹紧、mag按mode校验、未显式配置TF32时的原行为与关键JSON原子写入也值得恢复。`p_mean` 已明确退役，不再建议恢复其建层顺序、缺失回退或数据字段。
+metadata最小隐宽、自定义head/temporal宽度和直接构造默认值已恢复。后续优先还原的是JSON文件名/字段别名、维度从TRAIN首图读取，以及baseline不该受PACT lag容量限制的问题。tail_frac原极端夹紧、mag按mode校验、未显式配置TF32时的原行为与关键JSON原子写入也值得恢复。`p_mean` 已明确退役，不再建议恢复其建层顺序、缺失回退或数据字段。
 
 建议继续保留新dual、默认完整分支监督、真实TRAIN事件先验、独立阈值、显式机制消融和可选推理诊断；也保留已确认的PACT稳定性数学、输入存储隔离、单次forward指标、严格的默认评估人口/站点检查、新checkpoint格式和全部原扫描组合。消融配置已提供实验接口，效果仍需同代码、同环境、同预算的独立训练，不能把接口实现当作收益证据。
 
-当前源码已执行 `python -m unittest discover -s tests`：**50/50通过**，包括112份原训练profile＋2份Stable、4份新消融、390条件组合、真实TRAIN事件比例/ties、独立阈值、分支梯度、5种dual模式训练/保存/推理、两个shell推理入口、标签独立性和诊断顺序/指标。日志：[dual_review_tests.txt](audit/evidence/dual_review_tests.txt)；环境、范围与源码哈希：[dual_review_validation.json](audit/evidence/dual_review_validation.json)。诊断开关前后预测相同。此次只调整报告，没有重复执行模型训练；对更新后的表格结构、链接和清单另做文档检查。
+四项恢复前的源码曾执行 `python -m unittest discover -s tests`：**50/50通过**，包括112份原训练profile＋2份Stable、4份新消融、390条件组合、真实TRAIN事件比例/ties、独立阈值、分支梯度、5种dual模式训练/保存/推理、两个shell推理入口、标签独立性和诊断顺序/指标。历史日志：[dual_review_tests.txt](audit/evidence/dual_review_tests.txt)；环境、范围与源码哈希：[dual_review_validation.json](audit/evidence/dual_review_validation.json)。诊断开关前后预测相同。
+
+本轮四项恢复执行 `python -m unittest -v test_models test_pipeline test_config_interfaces test_dual_experiments test_dual_loss`（tests加入PYTHONPATH）：**34/34通过**。新增hidden8/128 metadata、自定义head各分支、H0/H>0 baseline temporal宽度及严格checkpoint往返检查；训练/推理测试确认显式dropout覆盖Python默认，CLI默认和114份profile、390条件组合继续通过。hidden128主扫描设置另做36组修改前后同seed对照，初始化参数、train/eval输出及参数梯度逐位一致。范围与源码哈希见 [model_interface_restore.json](audit/evidence/model_interface_restore.json)。
 
 以下数值证据来自首次迁移前的历史验证；保留其当时的对照结论，但不把含已退役pressure路径或旧初始化的结果视为当前event-prior/ablation接口的验证。首次独立快照的42项日志在 [publication_tests.txt](audit/evidence/publication_tests.txt)，与上面的当前50项证据区分：
 
@@ -165,7 +167,7 @@ DDP seed与augmentation局部随机顺序恢复，不代表整次训练逐位回
 | 恢复后统计/RNG/loss/Val | CPU、H100、两rank CPU/Gloo：统计与augmentation局部RNG所测差0；每种环境100组小scale loss差0，梯度差≤1.87e-9；Val补齐/Peak对照一致 | [CPU](audit/evidence/protocol_cpu_1ranks.json)、[GPU](audit/evidence/protocol_cuda_1ranks.json)、[DDP](audit/evidence/protocol_cpu_2ranks.json) |
 | 实际入口短训练 | 两轮H48 dual：CPU DDP使用seed42/43、sampler0；H100 BF16/TF32完成反传、保存、最终推理 | [DDP](audit/evidence/smoke_ddp.txt)、[GPU](audit/evidence/smoke_gpu.txt) |
 
-当前50项测试使用 **CPU、PyTorch2.6+cu124、PyG2.7**；原2.8+cu128 YAML没有重新安装验证。当前GPU驱动不可用，未重跑GPU/BF16/NCCL。上表H100/GPU与CPU/Gloo两rank均为历史记录，历史也未验证两GPU/NCCL；本轮没有长程训练、跨seed稳定性或正式精度比较。短训练、同权重对照、函数级一致性证明不同层面的性质；它们**不能证明长期stability已彻底根治、gate已经校准，也不能证明新dual比single或GNN比CNN更好**。证据边界见 [evidence/README.md](audit/evidence/README.md)。
+上述恢复前50项及本轮34项测试使用 **CPU、PyTorch2.6+cu124、PyG2.7**；原2.8+cu128 YAML没有重新安装验证。本轮未重跑GPU/BF16/NCCL。上表H100/GPU与CPU/Gloo两rank均为历史记录，历史也未验证两GPU/NCCL；本轮没有长程训练、跨seed稳定性或正式精度比较。短训练、同权重对照、函数级一致性证明不同层面的性质；它们**不能证明长期stability已彻底根治、gate已经校准，也不能证明新dual比single或GNN比CNN更好**。证据边界见 [evidence/README.md](audit/evidence/README.md)。
 
 更新逐文件比较可运行：
 
@@ -207,15 +209,15 @@ python docs/audit/compare_original.py --original /path/to/Emulator
 | 修改 43→7 | [emulator/data/__init__.py](../emulator/data/__init__.py) | 旧store/split/stats导出 → 简化新接口 | 外部Python导入改变 | 不为旧checkpoint恢复全部包装 |
 | 修改 351→82 | [emulator/data/graph_store.py](../emulator/data/graph_store.py) | 宽泛加载/独立split/pressure属性 → store.split、严格forcing历史View，无p_mean | pattern/tag/旧公开接口不同；已退役的均值不再传递 | 按第三表部分还原；不恢复p_mean |
 | 修改 118→22 | [emulator/data/normalization.py](../emulator/data/normalization.py) | 原地修改输入及可选均值统计 → 新tensor赋值，无p_mean | 避免共享存储污染；保留原forcing归一化和augmentation RNG | 保留赋值方式与退役决定 |
-| 修改 103→25 | [emulator/data/station_metadata.py](../emulator/data/station_metadata.py) | 别名/缺省解析与encoder → 严格解析，encoder并入模型 | 丢失有效旧字段/文件名兼容，hidden最小宽度另变 | 恢复别名/原隐宽，保留finite检查 |
+| 修改 103→25 | [emulator/data/station_metadata.py](../emulator/data/station_metadata.py) | 别名/缺省解析与encoder → 严格解析，encoder并入模型 | 丢失有效旧字段/文件名兼容；模型内metadata最小隐宽已恢复 | 恢复别名，保留finite检查 |
 | 修改 310→102 | [emulator/data/stats.py](../emulator/data/stats.py) | 多个stats/可选均值函数 → 统一X/Y统计，独立三个阈值与严格TRAIN q_E | 原主要统计语义保留；默认gate初始化现在依赖真实事件比例 | 保留τ/q_E；按第二/四表处理其他差异 |
 | 修改 10→5 | [emulator/inference/__init__.py](../emulator/inference/__init__.py) | 导出独立推理engine及grouping → grouping/标签函数 | 旧infer_one_loader公开入口不再存在 | 共享engine保留，按需薄适配 |
 | 新增 0→63 | [emulator/inference/dual_diagnostics.py](../emulator/inference/dual_diagnostics.py) | 无 → 固定TRAIN事件口径的分支与校准汇总 | 独立Brier/PR/可靠性分箱与误差；空条件返回null | 保留可选诊断，精度结论另做实验 |
 | 删除 103→0 | [emulator/inference/engine.py](https://github.com/BinaLab/PACT_Storm_Surge_Emulator/blob/bb62a2297a0d37a35db5bff352ee815e05676c93/emulator/inference/engine.py) | 独立forward/计时 → 删除，复用run_epoch | 逐年汇报已接回infer.py，归约末位可能不同 | 不恢复重复forward实现 |
 | 修改 30→46 | [emulator/inference/grouping.py](../emulator/inference/grouping.py) | 年份/分组helper → 保留并接回dataset标签函数 | 原source/target和past/future规则恢复 | 保留 |
 | 修改 25→4 | [emulator/models/__init__.py](../emulator/models/__init__.py) | 旧模型类导出 → ModelConfig/build_model/PACT/Baseline/ForecastOutput | 公开API变化 | 保留当前API |
-| 修改 891→147 | [emulator/models/architectures.py](../emulator/models/architectures.py) | 单个大模型文件和可选p_mean → 组合模块，删除均值分支，按模式建head | 保留已确认稳定性数学；自定义接口差异仍在 | 保留方法；按第三表还原非方法接口 |
-| 新增 0→69 | [emulator/models/heads.py](../emulator/models/heads.py) | 模型内旧residual dual → 受约束body/excess、真实先验学习gate或固定gate | 新输出契约与参数语义；固定gate没有MLP | 保留新head/消融，恢复自定义宽度能力 |
+| 修改 891→158 | [emulator/models/architectures.py](../emulator/models/architectures.py) | 单个大模型文件和可选p_mean → 组合模块，删除均值分支，按模式建head | 保留稳定性数学；metadata最小隐宽、自定义head/temporal宽度及Python默认已恢复 | 保留方法与已恢复接口；其余按第三表 |
+| 新增 0→71 | [emulator/models/heads.py](../emulator/models/heads.py) | 模型内旧residual dual → 受约束body/excess、真实先验学习gate或固定gate | 新输出契约与参数语义；恢复head_hidden，默认仍2×hidden；固定gate没有MLP | 保留新head/消融及自定义宽度能力 |
 | 新增 0→49 | [emulator/models/spatial.py](../emulator/models/spatial.py) | 模型内空间encoder → 独立SpatialEncoder | 同层计算保持，CNN检查改变 | 保留 |
 | 新增 0→48 | [emulator/models/temporal.py](../emulator/models/temporal.py) | 模型内temporal → 独立4种block | MLP/Transformer PreLN+gain，RNN residual保持 | 保留已确认稳定性数学 |
 | 修改 13→5 | [emulator/training/__init__.py](../emulator/training/__init__.py) | 多个epoch函数 → ForecastLoss/run_epoch/metric接口 | 训练循环复用，公开导入变化 | 保留 |
@@ -245,8 +247,8 @@ python docs/audit/compare_original.py --original /path/to/Emulator
 | 新增 0→129 | [tests/test_inference_reporting.py](../tests/test_inference_reporting.py) | 无 → 当前逐年/分组/时间/格式测试 | 覆盖恢复后的科学汇报与样本权重 | 保留 |
 | 删除 117→0 | [tests/test_missing_pmean.py](https://github.com/BinaLab/PACT_Storm_Surge_Emulator/blob/bb62a2297a0d37a35db5bff352ee815e05676c93/tests/test_missing_pmean.py) | 旧缺压力均值回退测试 → 随功能退役删除 | 对应旧模式已不受支持 | 不恢复已退役功能的测试 |
 | 删除 107→0 | [tests/test_model_audit.py](https://github.com/BinaLab/PACT_Storm_Surge_Emulator/blob/bb62a2297a0d37a35db5bff352ee815e05676c93/tests/test_model_audit.py) | 旧diagnostic/模型审计 → 删除 | attention等旧输出已删除 | 不恢复纯诊断测试；保留有效数学断言 |
-| 新增 0→113 | [tests/test_models.py](../tests/test_models.py) | 无 → 当前encoder/head/H组合及梯度检查 | 覆盖新模型API与标签独立性 | 保留 |
-| 新增 0→135 | [tests/test_pipeline.py](../tests/test_pipeline.py) | 无 → 从头训练/保存/推理及split回归 | 验证新checkpoint闭环 | 保留 |
+| 新增 0→191 | [tests/test_models.py](../tests/test_models.py) | 无 → 当前encoder/head/H组合及梯度检查 | 覆盖新模型API与标签独立性 | 保留 |
+| 新增 0→142 | [tests/test_pipeline.py](../tests/test_pipeline.py) | 无 → 从头训练/保存/推理及split回归 | 验证新checkpoint闭环 | 保留 |
 | 新增 0→114 | [tests/test_preprocessing_pipeline.py](../tests/test_preprocessing_pipeline.py) | 无 → NetCDF/CSV/forcing/graph实际小样本管道 | 验证恢复后的默认与输出 | 保留 |
 | 修改 101→124 | [tests/test_time_alignment.py](../tests/test_time_alignment.py) | 旧timestamp测试 → 保留并加fixed315、输出形状和fallback验证 | forcing历史与标签时间对齐受检；均值字段已删除 | 保留当前主流程测试 |
 | 新增 0→96 | [tests/test_training.py](../tests/test_training.py) | 无 → 物理指标/单次forward/累积/存储隔离测试 | 防止精简后数值与输入污染回归 | 保留 |
