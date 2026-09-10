@@ -27,9 +27,9 @@
     "path": "README.md",
     "status": "modified",
     "original_sha256": "636d97a02975bde02bc9c3986e4f9247a81ecf6dc721906b94473e3f7a8239e1",
-    "current_sha256": "a5aa4e4682f5bdb7c7a4d1d2ce6441aed44c0fff501177137528b8bcff030da3",
+    "current_sha256": "f053ac78f82b677db6909247a3b628cba38bee6ef5c110c5704b313739f11082",
     "original_lines": 483,
-    "current_lines": 152
+    "current_lines": 162
   },
   {
     "path": "STABILITY_AND_DUAL_HEAD.md",
@@ -1323,9 +1323,9 @@
     "path": "emulator/training/losses.py",
     "status": "modified",
     "original_sha256": "a365c788251991f54a1694259163d6df663ead2914338c0303bbffa84e067a9e",
-    "current_sha256": "25e3702a64a3a5cb2068bf9e8468237a77b44274afd9d9eba95b6db3ce2ec238",
+    "current_sha256": "dab6c67fbaf5dd16dab13a65862e03442edd49f5d071783e14f94fe2b5a7037b",
     "original_lines": 86,
-    "current_lines": 112
+    "current_lines": 116
   },
   {
     "path": "emulator/training/metrics.py",
@@ -1483,7 +1483,7 @@
     "path": "tests/test_config_interfaces.py",
     "status": "added",
     "original_sha256": null,
-    "current_sha256": "2c27b86d8a09c167defdfb0799f486a5ce0f1d3ae2b6ac2c61aab963695c342f",
+    "current_sha256": "ea21bfa290f4348d4aaed167a39717c7c3876bdf0636af9838f8bed2fdd54067",
     "original_lines": 0,
     "current_lines": 161
   },
@@ -1590,6 +1590,14 @@
     "current_sha256": "0ea22a5ddaad78403d3ca5911a0240fb0126a06e93d9efe962ecc85421160015",
     "original_lines": 45,
     "current_lines": 113
+  },
+  {
+    "path": "tests/test_tail_loss.py",
+    "status": "added",
+    "original_sha256": null,
+    "current_sha256": "584bb759062fc1c99b5920366bf1fb6a04908efb8afbd9736ded95c28bd93e45",
+    "original_lines": 0,
+    "current_lines": 234
   },
   {
     "path": "tests/test_time_alignment.py",

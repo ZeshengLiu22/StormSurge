@@ -66,6 +66,16 @@ PACT is selected with `--model perceiver3`; `--model baseline` uses spatial mean
 
 All ten loss modes are retained: `mse`, `wmse`, `mse_tail`, `wmse_tail`, `mse_wtail`, and each with `_slope`. Weighted-tail modes retain weighted tail errors. The slope soft mask uses the TRAIN pointwise `wmse_q` threshold; the tail loss uses the TRAIN window-peak threshold. The old residual head's alpha, gate-bias and tanh-clip controls are removed.
 
+Tail loss is sample-additive. With `q = tail_frac`, the threshold is still fitted once as the TRAIN `(1-q)` quantile of each window's signed maximum over forecast horizons:
+
+```text
+event[b] = 1[max_h target[b,h] >= peak_threshold]
+tail_loss = sum_b(event[b] * mean_h(tail_error[b,h])) / (q * B)
+prediction_loss = base_loss + tail_lambda * tail_loss  # plus the existing slope term when selected
+```
+
+`mse_tail` uses ordinary MSE for both base and tail; `wmse_tail` uses the existing weighted MSE for both; `mse_wtail` uses ordinary base MSE and weighted tail MSE. Their `_slope` variants use the same tail formula and unchanged slope term. Each event has a fixed weight for a given batch size; an empty-tail batch contributes differentiable zero. Averaging equal-sized batch partitions gives the concatenated loss, including equal-sized microbatches and DDP local batches with normal gradient averaging. Existing accumulation normalization is unchanged. `LossConfig.tail_frac` defaults to `0.05` and receives the existing `--tail_frac`; all existing config values remain unchanged. There is no conditional-reduction compatibility option.
+
 **Dual loss** supervises body, excess and the window-event gate in addition to the selected prediction loss. With `DUAL_ABLATION=none` (default), `DUAL_LOSS=0` and zero branch weights are corrected to 1 with one timestamped warning. Positive weights are retained. Effective settings are saved before training. Baseline/single runs have no dual loss. Excess loss masks non-event windows and averages over the whole `B × K`, without dividing by event count or prevalence.
 
 `EXCEEDANCE_PERCENTILE=95` / `--exceedance_percentile 95` defines the dual threshold from TRAIN window maxima. `TAIL_FRAC=0.05` controls the final prediction's tail auxiliary loss independently: dual events use `max(Y) > tau`, while tail loss keeps `max(Y) >= tail_threshold`. The gate is initialized from the actual strict-event TRAIN prevalence, including ties. Checkpoints and summaries save `dual_metadata` with `tau_phys`, `event_prior`, `gate_init_prior`, event count, TRAIN window count, percentile and ablation. Only learned-logit initialization clips prevalence to `[1e-6, 1-1e-6]`; the empirical value is preserved.

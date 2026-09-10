@@ -92,7 +92,7 @@ ALL_RESULTS_ROOT="'''+str(Path(temporary) / 'results')+'"\n')
             with self.subTest(mode=mode, robust=robust, use_abs=use_abs, threshold=threshold):
                 pred = initial.clone().requires_grad_()
                 c = LossConfig(loss_mode=mode, slope_robust=robust, wmse_use_abs=use_abs,
-                               tail_lambda=.2, slope_lambda=.3, wmse_s=.13, slope_mask_s=.21)
+                               tail_lambda=.2, tail_frac=.2, slope_lambda=.3, wmse_s=.13, slope_mask_s=.21)
                 actual = ForecastLoss(c, stats, threshold, .4)(ForecastOutput(pred), pred, target)
                 reference_pred = initial.clone().requires_grad_()
                 squared = (reference_pred - target).square()
@@ -100,9 +100,9 @@ ALL_RESULTS_ROOT="'''+str(Path(temporary) / 'results')+'"\n')
                 core = mode.removesuffix('_slope')
                 expected = (squared * weight).mean() if core in base_weighted else squared.mean()
                 selected = target.max(dim=1).values >= threshold
-                if 'tail' in core and selected.any():
+                if 'tail' in core:
                     tail_error = (squared * weight) if core in tail_weighted else squared
-                    expected += .2 * tail_error[selected].mean()
+                    expected += .2 * tail_error[selected].sum() / (c.tail_frac * target.numel())
                 if mode.endswith('_slope'):
                     difference = (reference_pred[:, 1:] - reference_pred[:, :-1]) - (target[:, 1:] - target[:, :-1])
                     if robust == 'charb':

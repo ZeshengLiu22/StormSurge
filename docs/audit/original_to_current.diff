@@ -232,7 +232,7 @@
 +诊断直接复用推理的那次 forward。训练/验证 epoch 不收集上述数组，日志继续只记录原来的四项物理误差。
 --- original/README.md
 +++ StormSurge/README.md
-@@ -1,483 +1,152 @@
+@@ -1,483 +1,162 @@
 -# PACT Storm-Surge Emulator
 +# StormSurge
  
@@ -269,8 +269,55 @@
  
 -## Repository Layout
 +See [the dual-head derivation](DUAL_HEAD_EXPLAINED.md) and [the stability changes](STABILITY_AND_DUAL_HEAD.md).
++
++## Train
++
++The original shell configuration tree and conditional sweeps are retained. All dual-head experiments now use the supervised exceedance head; single-head and baseline controls remain available.
++
++```bash
++bash train.sh configs/configs_train/NCEP/train_config_NCEP_Battery_P3_Best.sh
++bash train.sh configs/train_config_NCEP_Battery_Stable_Single.sh
++DRY_RUN=1 bash train.sh configs/configs_train/NCEP/train_config_NCEP_Battery_P3_Best.sh
++```
++
++`configs/configs_train/` holds the original training profiles, `configs/configs_train_single/` holds the **single-GPU / gradient-accumulation** profiles, and `configs/configs_infer/` holds inference profiles. The word `single` in the directory name refers to the GPU count. Select the prediction head with `HEAD_TYPE=single` or `HEAD_TYPE=dual`.
++
++Keep experiment overrides in a shell config, after sourcing the desired profile. For example:
++
++```bash
++source /path/to/PACT-stability-v2/configs/configs_train/NCEP/train_config_NCEP_Battery_P3_Best.sh
++ENCODER_TYPE=CNN
++TEMPORAL_BLOCK=MLP
++HEAD_TYPE=dual
++HISTORY_HOURS_LIST=(0 6 12 18 24 30 36 42 48)
++LR_LIST=(5e-3)
++LOSS_MODE_LIST=(mse mse_tail_slope)
++num_gpus=1
++GRAD_ACCUM_STEPS=4
++USE_TMUX=0
++DO_CONDA=0
++```
++
++The launcher preserves tmux, optional conda activation, torchrun, per-combination logs, and resolved shell snapshots. Set `PYTHON_BIN` to an explicit interpreter if needed. `num_gpus` is the original shell setting; `batch_size` is per process. As before, the launcher permits gradient accumulation with one process. Microbatch losses have equal weight, including a short final microbatch; a short accumulation group uses its actual microbatch count.
++
++The sweep axes are `LOSS_MODE_LIST`, `LR_LIST`, `HISTORY_HOURS_LIST`, `WMSE_Q_LIST`, `TAIL_LAMBDA_LIST`, `SLOPE_LAMBDA_LIST` and `SLOPE_MASK_S_LIST`. Irrelevant axes are reduced exactly as in the original launcher. In particular, `WMSE_Q_LIST` varies for `wmse*`/`*wtail*`; other modes use its first entry, including plain-MSE slope modes. Spatial encoder, temporal block and head type are selected per profile. `DRY_RUN=1` prints all generated commands without training or creating result folders.
++
++The established Python CLI remains available:
++
++```bash
++python train.py --root_dir /path/to/graphs --station Battery \
++  --model perceiver3 --encoder_type CNN --temporal_block MLP \
++  --head_type dual --history_hours 48 --loss_mode mse_tail_slope \
++  --amp --amp_dtype bf16 --tf32 --output_dir All_Results/example
++```
++
++PACT is selected with `--model perceiver3`; `--model baseline` uses spatial mean pooling at H=0 and adds one LSTM at H>0. H is in hours and must be a multiple of six. H=48 consumes nine forcing slices including the present. `--max_time_steps` controls lag-embedding capacity. Temporal settings keep their original names: `--transformer_layers`, `--transformer_ff_mult` and `--transformer_dropout`, including for MLP/LSTM/GRU.
++
++All ten loss modes are retained: `mse`, `wmse`, `mse_tail`, `wmse_tail`, `mse_wtail`, and each with `_slope`. Weighted-tail modes retain weighted tail errors. The slope soft mask uses the TRAIN pointwise `wmse_q` threshold; the tail loss uses the TRAIN window-peak threshold. The old residual head's alpha, gate-bias and tanh-clip controls are removed.
++
++Tail loss is sample-additive. With `q = tail_frac`, the threshold is still fitted once as the TRAIN `(1-q)` quantile of each window's signed maximum over forecast horizons:
  
--```text
+ ```text
 -Emulator/
 -|-- README.md
 -|-- changelog.md
@@ -338,71 +385,58 @@
 -    |   |-- CMIP6_MPI/
 -    |   `-- CMIP6_MRI/
 -    `-- Grid4_New_PastOnly/
-+## Train
-+
-+The original shell configuration tree and conditional sweeps are retained. All dual-head experiments now use the supervised exceedance head; single-head and baseline controls remain available.
-+
-+```bash
-+bash train.sh configs/configs_train/NCEP/train_config_NCEP_Battery_P3_Best.sh
-+bash train.sh configs/train_config_NCEP_Battery_Stable_Single.sh
-+DRY_RUN=1 bash train.sh configs/configs_train/NCEP/train_config_NCEP_Battery_P3_Best.sh
++event[b] = 1[max_h target[b,h] >= peak_threshold]
++tail_loss = sum_b(event[b] * mean_h(tail_error[b,h])) / (q * B)
++prediction_loss = base_loss + tail_lambda * tail_loss  # plus the existing slope term when selected
  ```
  
 -## Environment
-+`configs/configs_train/` holds the original training profiles, `configs/configs_train_single/` holds the **single-GPU / gradient-accumulation** profiles, and `configs/configs_infer/` holds inference profiles. The word `single` in the directory name refers to the GPU count. Select the prediction head with `HEAD_TYPE=single` or `HEAD_TYPE=dual`.
++`mse_tail` uses ordinary MSE for both base and tail; `wmse_tail` uses the existing weighted MSE for both; `mse_wtail` uses ordinary base MSE and weighted tail MSE. Their `_slope` variants use the same tail formula and unchanged slope term. Each event has a fixed weight for a given batch size; an empty-tail batch contributes differentiable zero. Averaging equal-sized batch partitions gives the concatenated loss, including equal-sized microbatches and DDP local batches with normal gradient averaging. Existing accumulation normalization is unchanged. `LossConfig.tail_frac` defaults to `0.05` and receives the existing `--tail_frac`; all existing config values remain unchanged. There is no conditional-reduction compatibility option.
  
 -Run commands from your checkout root. The YAML files are environment exports with cluster-specific names. In particular, `environment_training.yml` pins Python 3.11, PyTorch 2.8.0 with CUDA 12.8, and PyG 2.7.0; it does not describe the `torchpyg-cu124` environment named in the launcher configs.
--
--To recreate the exported training environment on Linux, choose an explicit environment name and provide the wheel sources for its pinned CUDA packages:
-+Keep experiment overrides in a shell config, after sourcing the desired profile. For example:
++**Dual loss** supervises body, excess and the window-event gate in addition to the selected prediction loss. With `DUAL_ABLATION=none` (default), `DUAL_LOSS=0` and zero branch weights are corrected to 1 with one timestamped warning. Positive weights are retained. Effective settings are saved before training. Baseline/single runs have no dual loss. Excess loss masks non-event windows and averages over the whole `B × K`, without dividing by event count or prevalence.
  
- ```bash
+-To recreate the exported training environment on Linux, choose an explicit environment name and provide the wheel sources for its pinned CUDA packages:
++`EXCEEDANCE_PERCENTILE=95` / `--exceedance_percentile 95` defines the dual threshold from TRAIN window maxima. `TAIL_FRAC=0.05` controls the final prediction's tail auxiliary loss independently: dual events use `max(Y) > tau`, while tail loss keeps `max(Y) >= tail_threshold`. The gate is initialized from the actual strict-event TRAIN prevalence, including ties. Checkpoints and summaries save `dual_metadata` with `tau_phys`, `event_prior`, `gate_init_prior`, event count, TRAIN window count, percentile and ablation. Only learned-logit initialization clips prevalence to `[1e-6, 1-1e-6]`; the empirical value is preserved.
+ 
+-```bash
 -cd /path/to/PACT_Storm_Surge_Emulator
 -PIP_EXTRA_INDEX_URL=https://download.pytorch.org/whl/cu128 \
 -PIP_FIND_LINKS=https://data.pyg.org/whl/torch-2.8.0+cu128.html \
 -  conda env create -n pact-cu128 -f environment_training.yml
 -conda activate pact-cu128
-+source /path/to/PACT-stability-v2/configs/configs_train/NCEP/train_config_NCEP_Battery_P3_Best.sh
-+ENCODER_TYPE=CNN
-+TEMPORAL_BLOCK=MLP
-+HEAD_TYPE=dual
-+HISTORY_HOURS_LIST=(0 6 12 18 24 30 36 42 48)
-+LR_LIST=(5e-3)
-+LOSS_MODE_LIST=(mse mse_tail_slope)
-+num_gpus=1
-+GRAD_ACCUM_STEPS=4
-+USE_TMUX=0
-+DO_CONDA=0
- ```
+-```
++Use a named experiment to disable supervision deliberately:
  
 -The wheel sources correspond to the [PyTorch 2.8 installation instructions](https://pytorch.org/get-started/previous-versions/#v280) and [PyG installation instructions](https://pytorch-geometric.readthedocs.io/en/2.7.0/install/installation.html). The export targets its original Linux/CUDA setup; adapt the package versions together if using another platform or CUDA build. `environment_dataprep.yml` records the separate preprocessing environment, including pandas, xarray, and netCDF4.
-+The launcher preserves tmux, optional conda activation, torchrun, per-combination logs, and resolved shell snapshots. Set `PYTHON_BIN` to an explicit interpreter if needed. `num_gpus` is the original shell setting; `batch_size` is per process. As before, the launcher permits gradient accumulation with one process. Microbatch losses have equal weight, including a short final microbatch; a short accumulation group uses its actual microbatch count.
++| `DUAL_ABLATION` / `--dual_ablation` | Active branch losses | Gate |
++|---|---|---|
++| `none` | body, excess, BCE | learned |
++| `no_gate_bce` | body, excess | learned through prediction loss |
++| `no_excess_loss` | body, BCE | learned |
++| `no_branch_supervision` | none; prediction loss only | learned |
++| `fixed_gate` | body, excess | constant empirical TRAIN prevalence |
  
 -The launchers can activate conda when `DO_CONDA=1`. Their shared configs currently use these machine-specific values:
-+The sweep axes are `LOSS_MODE_LIST`, `LR_LIST`, `HISTORY_HOURS_LIST`, `WMSE_Q_LIST`, `TAIL_LAMBDA_LIST`, `SLOPE_LAMBDA_LIST` and `SLOPE_MASK_S_LIST`. Irrelevant axes are reduced exactly as in the original launcher. In particular, `WMSE_Q_LIST` varies for `wmse*`/`*wtail*`; other modes use its first entry, including plain-MSE slope modes. Spatial encoder, temporal block and head type are selected per profile. `DRY_RUN=1` prints all generated commands without training or creating result folders.
-+
-+The established Python CLI remains available:
++Inactive weights are set to 0; active zero weights are restored to 1. These modes require a PACT dual head. Matched ready-to-run profiles are in [`configs/dual_ablations`](configs/dual_ablations), each sourcing Stable Dual. For example: `bash train.sh configs/dual_ablations/train_config_NCEP_Battery_Fixed_Gate.sh`.
  
- ```bash
+-```bash
 -CONDA_ENV="torchpyg-cu124"
 -CONDA_SH="/software/u22/anaconda/python3.9/etc/profile.d/conda.sh"
-+python train.py --root_dir /path/to/graphs --station Battery \
-+  --model perceiver3 --encoder_type CNN --temporal_block MLP \
-+  --head_type dual --history_hours 48 --loss_mode mse_tail_slope \
-+  --amp --amp_dtype bf16 --tf32 --output_dir All_Results/example
- ```
+-```
++Normalization (`zscore`, `robust`, `mag`), augmentation, year splits/shuffling/future filtering, external test roots and station feature switches are retained. Forcing inputs use the five-channel `[u,v,p',lon,lat]` layout, with spatial-mean pressure removal during preprocessing.
  
 -Set `CONDA_ENV` to the environment you created (for example, `pact-cu128`) and `CONDA_SH` to your conda installation, or activate your environment and set `DO_CONDA=0` in the selected config **after** it sources the common config. The common configs assign these values directly, so prefixing a launch command with `DO_CONDA=0` alone does not override them.
-+PACT is selected with `--model perceiver3`; `--model baseline` uses spatial mean pooling at H=0 and adds one LSTM at H>0. H is in hours and must be a multiple of six. H=48 consumes nine forcing slices including the present. `--max_time_steps` controls lag-embedding capacity. Temporal settings keep their original names: `--transformer_layers`, `--transformer_ff_mult` and `--transformer_dropout`, including for MLP/LSTM/GRU.
++The Python data interface is `ForcingGraphStore(root_dir, station_filter=None, *, pattern="*graphs.pt")`. The original default filename glob is restored; use a keyword pattern such as `pattern="*_fixed315_hist48_graphs.pt"` to select a subset before loading. Filenames retain the year/year/station convention; standard `_graphs.pt` suffixes and custom matched extensions are parsed as before. Data loads onto CPU with strict station filtering. Training derives input/output dimensions from the first graph in the actual TRAIN split, including after year filtering or shuffling.
  
 -The shell launchers use Bash and Linux utilities. `infer.sh` requires tmux; training uses tmux by default when it is available.
-+All ten loss modes are retained: `mse`, `wmse`, `mse_tail`, `wmse_tail`, `mse_wtail`, and each with `_slope`. Weighted-tail modes retain weighted tail errors. The slope soft mask uses the TRAIN pointwise `wmse_q` threshold; the tail loss uses the TRAIN window-peak threshold. The old residual head's alpha, gate-bias and tanh-clip controls are removed.
++PACT station metadata keeps two independent switches: `--use_site_elevation` defaults to `1`, and `--use_bathymetry` to `0` (shell: `USE_SITE_ELEVATION` and `USE_BATHYMETRY`). JSON filenames are tried in exact, lowercase, then uppercase station-name order. Coordinate aliases are `lat`/`latitude`/`Latitude` and `lon`/`longitude`/`Longitude`; elevation accepts `elevation_m`/`elevation`/`elev_m`. The first present alias is used. Coordinates and each enabled optional field must contain finite numeric values; missing or invalid selected fields raise an error. Disabled optional fields are ignored. Missing station JSON raises an error when metadata is requested for a station; `--use_station_meta 0` explicitly selects the learned station token. Inference for the training station uses saved checkpoint features; changing stations loads JSON with the saved feature switches.
  
 -## Data
-+**Dual loss** supervises body, excess and the window-event gate in addition to the selected prediction loss. With `DUAL_ABLATION=none` (default), `DUAL_LOSS=0` and zero branch weights are corrected to 1 with one timestamped warning. Positive weights are retained. Effective settings are saved before training. Baseline/single runs have no dual loss. Excess loss masks non-event windows and averages over the whole `B × K`, without dividing by event count or prevalence.
++The original training protocol is restored: DDP seeds each process with `seed + rank`; its samplers use the original default seed 0. Z-score statistics use the training device and distributed sums, preserving the original FP32/FP64 arithmetic order. Robust/mag statistics use TRAIN node samples; `x_nodes_per_graph <= 0` means at most 256 nodes per graph, without reducing the model's input graph. Augmentation at probability 1 skips the probability draw, preserving the original RNG sequence. The original lower bounds remain `1e-6` for `wmse_s`/`slope_mask_s` and `1e-12` for `slope_charb_eps`/`slope_huber_delta`; normal configured values are unaffected.
  
 -Training and evaluation expect graph roots containing `*graphs.pt` files. Graph data and checkpoint binaries are excluded from Git. Populate `Data/` (or link it to your existing data directory), and supply a checkpoint at `CKPT_PATH` before inference. The standard configured graph roots are:
-+`EXCEEDANCE_PERCENTILE=95` / `--exceedance_percentile 95` defines the dual threshold from TRAIN window maxima. `TAIL_FRAC=0.05` controls the final prediction's tail auxiliary loss independently: dual events use `max(Y) > tau`, while tail loss keeps `max(Y) >= tail_threshold`. The gate is initialized from the actual strict-event TRAIN prevalence, including ties. Checkpoints and summaries save `dual_metadata` with `tau_phys`, `event_prior`, `gate_init_prior`, event count, TRAIN window count, percentile and ablation. Only learned-logit initialization clips prevalence to `[1e-6, 1-1e-6]`; the empirical value is preserved.
++Cosine with linear warmup remains the configured scheduler. The original `rop` option and its controls are also available. `--deterministic 0` and `--max_grad_norm 0` are defaults; positive `max_grad_norm` explicitly requests clipping. There is no retry or rollback guard. `--stable_arch` accepts only the current setting `1`, and `--dual_mode` only `exceedance`; neither selects an old implementation. Bare switches such as `--amp`, `--tf32`, `--pin_memory` and `--persistent_workers` retain their original argparse behavior. Shipped profiles enable BF16 and TF32.
  
 -```text
 -./Data/Grid4_New/NCEP/graphs
@@ -412,25 +446,22 @@
 -./Data/Grid4_New/CMIP6_MPI/graphs
 -./Data/Grid4_New/CMIP6_MRI/graphs
 -```
-+Use a named experiment to disable supervision deliberately:
++## Metrics and artifacts
  
 -Each graph file contains a list of PyG `Data` objects and is named `<year0>_<year1>_<station>_<version>_graphs.pt`. Station filtering matches the filename's station field, including case. Inference warns and falls back to all stations if the requested station is absent; direct external evaluation can use `--strict_station_test` to reject that case. PACT also reads optional station metadata from `station_json/<station>.json`.
-+| `DUAL_ABLATION` / `--dual_ablation` | Active branch losses | Gate |
-+|---|---|---|
-+| `none` | body, excess, BCE | learned |
-+| `no_gate_bce` | body, excess | learned through prediction loss |
-+| `no_excess_loss` | body, BCE | learned |
-+| `no_branch_supervision` | none; prediction loss only | learned |
-+| `fixed_gate` | body, excess | constant empirical TRAIN prevalence |
++Each epoch prints `[YYYY-MM-DD|HH:MM:SS]`, followed by exactly eight errors in the target's physical units (surge **meters**):
  
 -### Station metadata
-+Inactive weights are set to 0; active zero weights are restored to 1. These modes require a PACT dual head. Matched ready-to-run profiles are in [`configs/dual_ablations`](configs/dual_ablations), each sourcing Stable Dual. For example: `bash train.sh configs/dual_ablations/train_config_NCEP_Battery_Fixed_Gate.sh`.
++| Split | All windows | Top 5% peak windows |
++|---|---|---|
++| Train | RMSE, MAE | RMSE, MAE |
++| Val | RMSE, MAE | RMSE, MAE |
  
 -All shipped training and inference configs use `USE_SITE_ELEVATION=1` (true) and `USE_BATHYMETRY=0` (false). These independent switches select PACT station features; the separate baseline family does not consume station metadata. Python CLI equivalents are `--use_site_elevation` and `--use_bathymetry`, accepting `0`/`1` or `False`/`True`.
-+Normalization (`zscore`, `robust`, `mag`), augmentation, year splits/shuffling/future filtering, external test roots and station feature switches are retained. Forcing inputs use the five-channel `[u,v,p',lon,lat]` layout, with spatial-mean pressure removal during preprocessing.
++Top 5% means the `ceil(0.05 × N)` windows with the largest true maximum over the forecast horizon, within the whole split. Errors include all forecast positions in those windows. Validation restores dataset order and the original NumPy argsort/FP32 peak calculation; online Train metrics use stable sample-ID ordering for ties. This reporting subset is independent of the TRAIN threshold used by the losses.
  
 -Latitude/longitude and their four sin/cos features are always included. Site elevation uses `elevation_m / 10`, and optional bathymetry uses `bathymetry_m / 10`. The vector order is `[lat/90, lon/180, (elevation/10), sin(lat), cos(lat), sin(lon), cos(lon), (bathymetry/10)]`, with angles converted to radians for sin/cos and disabled fields omitted. The station encoder input dimension follows the selected fields:
-+The Python data interface is `ForcingGraphStore(root_dir, station_filter=None, *, pattern="*graphs.pt")`. The original default filename glob is restored; use a keyword pattern such as `pattern="*_fixed315_hist48_graphs.pt"` to select a subset before loading. Filenames retain the year/year/station convention; standard `_graphs.pt` suffixes and custom matched extensions are parsed as before. Data loads onto CPU with strict station filtering. Training derives input/output dimensions from the first graph in the actual TRAIN split, including after year filtering or shuffling.
++Train metrics reuse online training predictions, including dropout/augmentation and changing weights; Val uses eval mode. There is no second diagnostic validation pass. DDP validation restores DistributedSampler padding: Val All includes duplicate padding samples, as in the original trainer; Val Peak counts each sample once. Val All also retains the original FP32 batch means and FP64 weighted accumulation. Training uses padding for synchronized updates, but its reported metrics count each sample once.
  
 -| Site elevation | Bathymetry | Feature dimension |
 -| --- | --- | ---: |
@@ -438,36 +469,9 @@
 -| Off | Off | 6 |
 -| Off | On | 7 |
 -| On | On | 8 |
-+PACT station metadata keeps two independent switches: `--use_site_elevation` defaults to `1`, and `--use_bathymetry` to `0` (shell: `USE_SITE_ELEVATION` and `USE_BATHYMETRY`). JSON filenames are tried in exact, lowercase, then uppercase station-name order. Coordinate aliases are `lat`/`latitude`/`Latitude` and `lon`/`longitude`/`Longitude`; elevation accepts `elevation_m`/`elevation`/`elev_m`. The first present alias is used. Coordinates and each enabled optional field must contain finite numeric values; missing or invalid selected fields raise an error. Disabled optional fields are ignored. Missing station JSON raises an error when metadata is requested for a station; `--use_station_meta 0` explicitly selects the learned station token. Inference for the training station uses saved checkpoint features; changing stations loads JSON with the saved feature switches.
- 
--Each station JSON stores `bathymetry_m` and its node ID/coordinates under `bathymetry_node`. Node coordinates describe the depth measurement location; the existing station coordinates remain the model's geographic inputs. Enabling bathymetry requires a finite `bathymetry_m` value. The existing seven-feature vector is preserved exactly by the default settings.
-+The original training protocol is restored: DDP seeds each process with `seed + rank`; its samplers use the original default seed 0. Z-score statistics use the training device and distributed sums, preserving the original FP32/FP64 arithmetic order. Robust/mag statistics use TRAIN node samples; `x_nodes_per_graph <= 0` means at most 256 nodes per graph, without reducing the model's input graph. Augmentation at probability 1 skips the probability draw, preserving the original RNG sequence. The original lower bounds remain `1e-6` for `wmse_s`/`slope_mask_s` and `1e-12` for `slope_charb_eps`/`slope_huber_delta`; normal configured values are unaffected.
- 
--Both switches are saved in checkpoint arguments and config snapshots. Direct inference reads checkpoint settings when the CLI flags are omitted; inference launchers pass the configured values and reject mismatches, including a swap between elevation-only and bathymetry-only features despite their equal dimensions. New checkpoints must record both flags. Training and inference metadata report the selected flags and actual station-feature dimension.
-+Cosine with linear warmup remains the configured scheduler. The original `rop` option and its controls are also available. `--deterministic 0` and `--max_grad_norm 0` are defaults; positive `max_grad_norm` explicitly requests clipping. There is no retry or rollback guard. `--stable_arch` accepts only the current setting `1`, and `--dual_mode` only `exceedance`; neither selects an old implementation. Bare switches such as `--amp`, `--tf32`, `--pin_memory` and `--persistent_workers` retain their original argparse behavior. Shipped profiles enable BF16 and TF32.
- 
--### Time windows and preprocessing
-+## Metrics and artifacts
- 
--NCEP forcing is sampled every 6 hours. CMIP6 preprocessing selects every other 3-hour record to produce the same 6-hour cadence. For a forcing cutoff `t`, each graph targets six hourly surge values **`t, t+1h, ..., t+5h`**. The next graph covers `t+6h` through `t+11h`, so the outputs concatenate without overlap. For example, forcing through 00:00 produces surge for 00:00–05:00; forcing through 06:00 produces 06:00–11:00.
-+Each epoch prints `[YYYY-MM-DD|HH:MM:SS]`, followed by exactly eight errors in the target's physical units (surge **meters**):
- 
--The alignment script uses separate input origins: forcing starts at Oct 25 00:00, while hourly station records start at Oct 25 01:00. Graph centers begin at Nov 1 00:00 on both axes, with earlier forcing retained for history; the different recording origins do not shift the labels. CSV `time` values are validated against the hourly convention when present; legacy files without that column use the assumed axis with a warning.
-+| Split | All windows | Top 5% peak windows |
-+|---|---|---|
-+| Train | RMSE, MAE | RMSE, MAE |
-+| Val | RMSE, MAE | RMSE, MAE |
- 
--Current `hist48` graphs store forcing through the center time and up to 48 hours of history. A 12-hour model uses three slices (`t-12h`, `t-6h`, `t`); a 0-hour baseline uses only `t`. Select one graph version per year/station in each root. When regenerating data, set the source paths in the forcing scripts and the manual `year_list` in `preprocessing/preprocessing_simulation.py` (currently `[2005]`), then use `preprocessing/time_align_unified.py` to build aligned graphs.
-+Top 5% means the `ceil(0.05 × N)` windows with the largest true maximum over the forecast horizon, within the whole split. Errors include all forecast positions in those windows. Validation restores dataset order and the original NumPy argsort/FP32 peak calculation; online Train metrics use stable sample-ID ordering for ties. This reporting subset is independent of the TRAIN threshold used by the losses.
- 
--## Model Options
-+Train metrics reuse online training predictions, including dropout/augmentation and changing weights; Val uses eval mode. There is no second diagnostic validation pass. DDP validation restores DistributedSampler padding: Val All includes duplicate padding samples, as in the original trainer; Val Peak counts each sample once. Val All also retains the original FP32 batch means and FP64 weighted accumulation. Training uses padding for synchronized updates, but its reported metrics count each sample once.
- 
--The spatial encoder is selected with `ENCODER_TYPE="GraphSAGE"` or `ENCODER_TYPE="CNN"`. The CNN path reads `grid_H` and `grid_W` from each graph, reshapes flattened node features from `(H*W, F)` to `(F, H, W)`, applies same-resolution 3x3 convolutions, and returns one `hidden_channels` token per grid node. No grid dimensions are hardcoded in the model or launcher.
 +A launcher run can contain many combinations. Each has a unique stem in its artifact filenames:
  
--`NUM_LAYERS` defaults to 2. GraphSAGE requires at least 2 layers and rejects 0 or 1 explicitly; CNN continues to support 1 or more layers.
+-Each station JSON stores `bathymetry_m` and its node ID/coordinates under `bathymetry_node`. Node coordinates describe the depth measurement location; the existing station coordinates remain the model's geographic inputs. Enabling bathymetry requires a finite `bathymetry_m` value. The existing seven-feature vector is preserved exactly by the default settings.
 +- `metrics_<stem>.jsonl`: epoch plus eight errors; best model selection uses **Val All RMSE**.
 +- `best_<stem>.pth`: model config/weights, normalization, station features, exact split tags and training config.
 +- `config_<stem>.json`: resolved Python arguments; `config_used.sh` retains the resolved shell sweep.
@@ -475,9 +479,25 @@
 +- `test_preds_<stem>.npz`: physical `y_true`, `y_pred` and tags for the best checkpoint.
 +- `train_<tag>.log`: launcher command, timestamped epoch metrics and final wall time. Long log names are shortened with a hash; the complete tag remains inside the log.
  
--`CNN_INTERMEDIATE_CHANNEL` defaults to 29 for new training. Intermediate CNN layers use this width, while the last layer outputs `HIDDEN_CHANNELS`. With five input features, two layers, and `HIDDEN_CHANNELS=128`, the CNN is `5 -> 29 -> 128` with 34,870 parameters, compared with 34,304 for GraphSAGE. Kernel size, grid resolution, and the downstream 128-dimensional interface are unchanged.
+-Both switches are saved in checkpoint arguments and config snapshots. Direct inference reads checkpoint settings when the CLI flags are omitted; inference launchers pass the configured values and reject mismatches, including a swap between elevation-only and bathymetry-only features despite their equal dimensions. New checkpoints must record both flags. Training and inference metadata report the selected flags and actual station-feature dimension.
 +`training_seconds` includes epoch metrics/checkpoint overhead. `wall_seconds` also includes data preparation and the final test. Each training process prints its final wall time; the launcher ends with wall time for the whole sweep.
  
+-### Time windows and preprocessing
+-
+-NCEP forcing is sampled every 6 hours. CMIP6 preprocessing selects every other 3-hour record to produce the same 6-hour cadence. For a forcing cutoff `t`, each graph targets six hourly surge values **`t, t+1h, ..., t+5h`**. The next graph covers `t+6h` through `t+11h`, so the outputs concatenate without overlap. For example, forcing through 00:00 produces surge for 00:00–05:00; forcing through 06:00 produces 06:00–11:00.
+-
+-The alignment script uses separate input origins: forcing starts at Oct 25 00:00, while hourly station records start at Oct 25 01:00. Graph centers begin at Nov 1 00:00 on both axes, with earlier forcing retained for history; the different recording origins do not shift the labels. CSV `time` values are validated against the hourly convention when present; legacy files without that column use the assumed axis with a warning.
+-
+-Current `hist48` graphs store forcing through the center time and up to 48 hours of history. A 12-hour model uses three slices (`t-12h`, `t-6h`, `t`); a 0-hour baseline uses only `t`. Select one graph version per year/station in each root. When regenerating data, set the source paths in the forcing scripts and the manual `year_list` in `preprocessing/preprocessing_simulation.py` (currently `[2005]`), then use `preprocessing/time_align_unified.py` to build aligned graphs.
+-
+-## Model Options
+-
+-The spatial encoder is selected with `ENCODER_TYPE="GraphSAGE"` or `ENCODER_TYPE="CNN"`. The CNN path reads `grid_H` and `grid_W` from each graph, reshapes flattened node features from `(H*W, F)` to `(F, H, W)`, applies same-resolution 3x3 convolutions, and returns one `hidden_channels` token per grid node. No grid dimensions are hardcoded in the model or launcher.
+-
+-`NUM_LAYERS` defaults to 2. GraphSAGE requires at least 2 layers and rejects 0 or 1 explicitly; CNN continues to support 1 or more layers.
+-
+-`CNN_INTERMEDIATE_CHANNEL` defaults to 29 for new training. Intermediate CNN layers use this width, while the last layer outputs `HIDDEN_CHANNELS`. With five input features, two layers, and `HIDDEN_CHANNELS=128`, the CNN is `5 -> 29 -> 128` with 34,870 parameters, compared with 34,304 for GraphSAGE. Kernel size, grid resolution, and the downstream 128-dimensional interface are unchanged.
+-
 -For PACT, `TEMPORAL_BLOCK` selects the middle sequence processor: `Transformer`, `MLP`, `LSTM`, or `GRU` (`attn` is accepted as an alias for `Transformer`). Every option receives time embeddings and maps `(B,L,hidden_channels)` back to the same shape, where `L=T` normally; all use the same horizon-query cross-attention readout. `TRANSFORMER_LAYERS` controls the depth of every temporal option, while `TRANSFORMER_FF_MULT` only affects Transformer/MLP. The MLP option is token-wise, so the final horizon cross-attention performs its cross-time aggregation.
 -
 -PACT always uses relative-to-present lag embeddings: chronological forcing `[t-12h, t-6h, t]` uses embedding indices `[2, 1, 0]`. Index 0 always represents the current forcing, and index 1 represents six hours before it. The input order is unchanged for every temporal block. Keep `MAX_TIME_STEPS` fixed across history experiments (the common configs use 32). There is no `TIME_ENCODING` config or CLI switch. The embedding parameter is `lag_embed.weight`; checkpoints using `time_embed.weight` require retraining.
@@ -4978,7 +4998,7 @@
 +    return EpochResult(metrics, arrays)
 --- original/emulator/training/losses.py
 +++ StormSurge/emulator/training/losses.py
-@@ -1,86 +1,112 @@
+@@ -1,86 +1,116 @@
 -"""Loss functions used by training.
 +"""Physical-unit objectives. Metrics are computed separately from these losses."""
  
@@ -5074,6 +5094,7 @@
 +    wmse_s: float = 0.1
 +    wmse_use_abs: bool = True
 +    tail_lambda: float = 0.1
++    tail_frac: float = 0.05
 +    slope_lambda: float = 0.01
 +    slope_mask_s: float = 0.1
 +    slope_robust: str = "charb"
@@ -5143,9 +5164,12 @@
 +            weighted_error = weight * error
 +        loss = weighted_error.mean() if core in ("wmse", "wmse_tail") else error.mean()
 +        if core in ("mse_tail", "wmse_tail", "mse_wtail") and c.tail_lambda:
-+            event = target.amax(dim=1) >= self.peak_threshold
 +            tail_error = weighted_error if core in ("wmse_tail", "mse_wtail") else error
-+            loss = loss + c.tail_lambda * (tail_error.mean(dim=1) * event).sum() / event.sum().clamp_min(1)
++            per_sample_tail_error = tail_error.mean(dim=1)
++            event = (target.amax(dim=1) >= self.peak_threshold).to(tail_error.dtype)
++            # Fixed TRAIN fraction keeps each event's weight independent of batch composition.
++            tail_loss = (per_sample_tail_error * event).mean() / c.tail_frac
++            loss = loss + c.tail_lambda * tail_loss
 +        if c.loss_mode.endswith("_slope") and c.slope_lambda and target.size(1) > 1:
 +            slope_error = prediction.diff(dim=1) - target.diff(dim=1)
 +            if c.slope_robust == "huber":
@@ -7082,7 +7106,7 @@
 +            with self.subTest(mode=mode, robust=robust, use_abs=use_abs, threshold=threshold):
 +                pred = initial.clone().requires_grad_()
 +                c = LossConfig(loss_mode=mode, slope_robust=robust, wmse_use_abs=use_abs,
-+                               tail_lambda=.2, slope_lambda=.3, wmse_s=.13, slope_mask_s=.21)
++                               tail_lambda=.2, tail_frac=.2, slope_lambda=.3, wmse_s=.13, slope_mask_s=.21)
 +                actual = ForecastLoss(c, stats, threshold, .4)(ForecastOutput(pred), pred, target)
 +                reference_pred = initial.clone().requires_grad_()
 +                squared = (reference_pred - target).square()
@@ -7090,9 +7114,9 @@
 +                core = mode.removesuffix('_slope')
 +                expected = (squared * weight).mean() if core in base_weighted else squared.mean()
 +                selected = target.max(dim=1).values >= threshold
-+                if 'tail' in core and selected.any():
++                if 'tail' in core:
 +                    tail_error = (squared * weight) if core in tail_weighted else squared
-+                    expected += .2 * tail_error[selected].mean()
++                    expected += .2 * tail_error[selected].sum() / (c.tail_frac * target.numel())
 +                if mode.endswith('_slope'):
 +                    difference = (reference_pred[:, 1:] - reference_pred[:, :-1]) - (target[:, 1:] - target[:, :-1])
 +                    if robust == 'charb':
@@ -9224,6 +9248,243 @@
  
  
  if __name__ == "__main__":
+--- original/tests/test_tail_loss.py
++++ StormSurge/tests/test_tail_loss.py
+@@ -0,0 +1,234 @@
++"""Sample-additive tail objectives, CLI wiring, accumulation, and CPU DDP."""
++
++import contextlib
++from dataclasses import replace
++from datetime import timedelta
++import io
++import itertools
++import json
++import math
++from pathlib import Path
++import tempfile
++import unittest
++from unittest.mock import patch
++
++import numpy as np
++import torch
++import torch.distributed as dist
++import torch.multiprocessing as mp
++from torch.nn.parallel import DistributedDataParallel
++from torch_geometric.data import Batch, Data
++
++import train
++from emulator.data import ForcingGraphStore, build_loader
++from emulator.models import ForecastOutput
++from emulator.training import ForecastLoss, LossConfig, run_epoch
++from test_pipeline import make_fixture
++
++
++CORES = ("mse_tail", "wmse_tail", "mse_wtail")
++TAIL_MODES = CORES + tuple(mode + "_slope" for mode in CORES)
++
++
++def stats(dtype=torch.float32):
++    return dict(x_center=torch.zeros(1, dtype=dtype), x_scale=torch.ones(1, dtype=dtype),
++                y_mean=torch.zeros(2, dtype=dtype), y_std=torch.ones(2, dtype=dtype))
++
++
++def tail_component(prediction, target, config):
++    """Remove the unchanged base/slope terms to observe only the tail contribution."""
++    normal = stats(prediction.dtype)
++    output = ForecastOutput(prediction)
++    enabled = ForecastLoss(config, normal, 1., 0.)(output, prediction, target)
++    disabled = ForecastLoss(replace(config, tail_lambda=0.), normal, 1., 0.)(output, prediction, target)
++    return enabled - disabled
++
++
++class TailLinearModel(torch.nn.Module):
++    def __init__(self):
++        super().__init__()
++        self.weight = torch.nn.Parameter(torch.tensor([[.2], [-.15]]))
++        self.bias = torch.nn.Parameter(torch.tensor([.1, -.2]))
++
++    def forward(self, batch, station_feat=None):
++        return ForecastOutput(torch.nn.functional.linear(batch.x, self.weight, self.bias))
++
++
++def samples(dtype=torch.float32):
++    # The first four windows contain no tail events; the next four all do.
++    targets = [[.1, .2], [.3, .2], [-2., -1.], [.8, .9], [1., .4],
++               [1.5, .2], [2., -.5], [1.2, 1.8], [-.5, .5], [1.1, .7]]
++    return [Data(x=torch.tensor([[(index + 1) / 5]], dtype=dtype),
++                 x_hist=torch.tensor([[[(index + 1) / 5]]], dtype=dtype),
++                 edge_index=torch.empty(2, 0, dtype=torch.long),
++                 y=torch.tensor([target], dtype=dtype), sample_id=torch.tensor([index]), tag=str(index))
++            for index, target in enumerate(targets)]
++
++
++def loader(data, batch_size):
++    return build_loader(data, None, batch_size, 0, False, False, 0, "fork")
++
++
++def ddp_tail_worker(rank, rendezvous, result_dir):
++    torch.set_num_threads(1)
++    dist.init_process_group("gloo", init_method=Path(rendezvous).as_uri(), rank=rank, world_size=2,
++                            timeout=timedelta(seconds=45))
++    completed = []
++    try:
++        for mode in TAIL_MODES:
++            config = LossConfig(loss_mode=mode, tail_frac=.25, tail_lambda=.3, slope_lambda=.2)
++            data = samples(torch.float64)[:8]
++            local = Batch.from_data_list(data[rank * 4:(rank + 1) * 4])
++            full = Batch.from_data_list(data)
++            assert int((local.y.amax(dim=1) >= 1.).sum()) == (0 if rank == 0 else 4)
++            network = DistributedDataParallel(TailLinearModel().double())
++            reference = TailLinearModel().double()
++            tail_component(network(local).prediction, local.y, config).backward()
++            tail_component(reference(full).prediction, full.y, config).backward()
++            for actual, expected in zip(network.module.parameters(), reference.parameters()):
++                torch.testing.assert_close(actual.grad, expected.grad, rtol=1e-12, atol=1e-12)
++
++            # Exercise the unchanged engine's no_sync and microbatch normalization.
++            data = samples()[:8]
++            network = DistributedDataParallel(TailLinearModel())
++            reference = TailLinearModel()
++            normal = stats()
++            criterion = ForecastLoss(config, normal, 1., 0.)
++            run_epoch(network, loader(data[rank * 4:(rank + 1) * 4], 2), torch.device("cpu"), normal,
++                      optimizer=torch.optim.SGD(network.parameters(), lr=.005), criterion=criterion,
++                      grad_accum_steps=2, distributed=True)
++            run_epoch(reference, loader(data, 8), torch.device("cpu"), normal,
++                      optimizer=torch.optim.SGD(reference.parameters(), lr=.005), criterion=criterion)
++            for actual, expected in zip(network.module.parameters(), reference.parameters()):
++                torch.testing.assert_close(actual, expected, rtol=1e-6, atol=1e-7)
++            completed.append(mode)
++        (Path(result_dir) / f"rank{rank}.json").write_text(json.dumps(completed))
++    finally:
++        dist.destroy_process_group()
++
++
++class TailLossTests(unittest.TestCase):
++    @classmethod
++    def setUpClass(cls):
++        torch.set_num_threads(1)
++
++    def test_equal_partitions_preserve_tail_loss_and_prediction_gradients(self):
++        target = torch.tensor([[1., 0.], [2., -.5], [.2, .1], [-2., -1.],
++                               [1.5, 1.2], [.8, .9], [-.1, .4], [.3, .7]], dtype=torch.float64)
++        initial = torch.arange(16, dtype=torch.float64).reshape(8, 2) / 7
++        for mode, fraction, size in itertools.product(TAIL_MODES, (.05, .25), (2, 4)):
++            with self.subTest(mode=mode, fraction=fraction, microbatch_size=size):
++                config = LossConfig(loss_mode=mode, tail_frac=fraction, tail_lambda=.3)
++                whole_prediction = initial.clone().requires_grad_()
++                divided_prediction = initial.clone().requires_grad_()
++                whole = tail_component(whole_prediction, target, config)
++                divided = torch.stack([tail_component(divided_prediction[start:start + size], target[start:start + size], config)
++                                       for start in range(0, 8, size)]).mean()
++                torch.testing.assert_close(divided, whole, rtol=1e-12, atol=1e-12)
++                whole.backward()
++                divided.backward()
++                torch.testing.assert_close(divided_prediction.grad, whole_prediction.grad, rtol=1e-12, atol=1e-12)
++
++    def test_tail_sample_gradient_is_independent_of_other_tail_samples(self):
++        fixed_target = torch.tensor([1.5, -.5], dtype=torch.float64)
++        fixed_prediction = torch.tensor([.2, .6], dtype=torch.float64)
++        for mode in TAIL_MODES:
++            config = LossConfig(loss_mode=mode, tail_frac=.2, tail_lambda=.3, wmse_s=.4)
++            weight = 1 + config.wmse_alpha * torch.sigmoid(fixed_target.abs() / config.wmse_s)
++            expected = 2 * (fixed_prediction - fixed_target) * config.tail_lambda / (config.tail_frac * 4 * 2)
++            if mode.removesuffix("_slope") in ("wmse_tail", "mse_wtail"):
++                expected = expected * weight
++            for other_tails in (0, 1, 3):
++                with self.subTest(mode=mode, other_tails=other_tails):
++                    target = torch.zeros(4, 2, dtype=torch.float64)
++                    target[0] = fixed_target
++                    target[1:1 + other_tails] = torch.tensor([2., .5], dtype=torch.float64)
++                    prediction = fixed_prediction.repeat(4, 1).requires_grad_()
++                    gradient, = torch.autograd.grad(tail_component(prediction, target, config), prediction)
++                    torch.testing.assert_close(gradient[0], expected, rtol=1e-12, atol=1e-12)
++
++    def test_no_tail_events_produce_differentiable_zero_and_zero_gradient(self):
++        target = torch.tensor([[-3., -1.], [.2, .7], [0., .9]], dtype=torch.float64)
++        for mode in TAIL_MODES:
++            with self.subTest(mode=mode):
++                prediction = torch.tensor([[.2, .1], [-.5, .3], [1.2, .4]], dtype=torch.float64, requires_grad=True)
++                config = LossConfig(loss_mode=mode, tail_frac=.05)
++                tail = tail_component(prediction, target, config)
++                self.assertTrue(tail.requires_grad)
++                self.assertEqual(tail.item(), 0.)
++                tail.backward()
++                torch.testing.assert_close(prediction.grad, torch.zeros_like(prediction), rtol=0, atol=1e-14)
++
++    def test_weighted_semantics_scale_and_inclusive_threshold(self):
++        # Only [1, 0] is an event, exactly on the threshold; [-1, 0] is not.
++        target = torch.tensor([[1., 0.], [-1., 0.]], dtype=torch.float64)
++        positive_weight = 1 + 2 / (1 + math.exp(-1))
++        for core, use_abs in itertools.product(CORES, (False, True)):
++            with self.subTest(core=core, use_abs=use_abs):
++                config = LossConfig(loss_mode=core, wmse_alpha=2., wmse_s=1., wmse_use_abs=use_abs,
++                                    tail_frac=.25, tail_lambda=.3)
++                prediction = torch.zeros_like(target, requires_grad=True)
++                loss = ForecastLoss(config, stats(torch.float64), 1., 0.)(ForecastOutput(prediction), prediction, target)
++                negative_weight = positive_weight if use_abs else 1 + 2 / (1 + math.exp(1))
++                base = (positive_weight + negative_weight) / 4 if core == "wmse_tail" else .5
++                tail = positive_weight if core in ("wmse_tail", "mse_wtail") else 1.
++                self.assertAlmostEqual(loss.item(), base + .3 * tail, places=12)
++                expected = torch.tensor([[-.5, 0.], [.5, 0.]], dtype=torch.float64)
++                if core == "wmse_tail":
++                    expected[:, 0] *= torch.tensor([positive_weight, negative_weight], dtype=torch.float64)
++                expected[0, 0] -= .6 * tail
++                loss.backward()
++                torch.testing.assert_close(prediction.grad, expected, rtol=1e-12, atol=1e-12)
++
++    def test_equal_microbatches_and_short_groups_match_concatenated_updates(self):
++        for mode in TAIL_MODES:
++            with self.subTest(mode=mode):
++                data, normal = samples(), stats()
++                config = LossConfig(loss_mode=mode, tail_frac=.25, tail_lambda=.3, slope_lambda=.2)
++                criterion = ForecastLoss(config, normal, 1., 0.)
++                accumulated, reference = TailLinearModel(), TailLinearModel()
++                run_epoch(accumulated, loader(data, 2), torch.device("cpu"), normal,
++                          optimizer=torch.optim.SGD(accumulated.parameters(), lr=.005), criterion=criterion,
++                          grad_accum_steps=3)
++                # Six samples in the first group, four in the final group; every microbatch has two.
++                run_epoch(reference, loader(data, 6), torch.device("cpu"), normal,
++                          optimizer=torch.optim.SGD(reference.parameters(), lr=.005), criterion=criterion)
++                for actual, expected in zip(accumulated.parameters(), reference.parameters()):
++                    torch.testing.assert_close(actual, expected, rtol=1e-6, atol=1e-7)
++
++    def test_training_cli_fraction_reaches_loss_and_saved_threshold(self):
++        self.assertEqual(LossConfig().tail_frac, .05)
++        with tempfile.TemporaryDirectory() as temporary:
++            root = Path(temporary)
++            graphs, stations = make_fixture(root)
++            store = ForcingGraphStore(graphs, "Battery")
++            train_indices = store.split()["train"]
++            peaks = np.asarray([store.graphs[index].y.max().item() for index in train_indices], dtype=np.float32)
++            expected_threshold = float(np.percentile(peaks, 75))
++            output_dir = root / "run"
++            with patch.object(train, "ForecastLoss", wraps=ForecastLoss) as observed, contextlib.redirect_stdout(io.StringIO()):
++                train.main(["--root_dir", str(graphs), "--station", "Battery", "--station_json_dir", str(stations),
++                            "--output_dir", str(output_dir), "--model", "baseline", "--head_type", "single", "--history_hours", "0",
++                            "--loss_mode", "mse_tail", "--tail_frac", ".25", "--tail_lambda", ".3", "--hidden_channels", "16",
++                            "--epochs", "1", "--warmup_epochs", "0", "--device", "cpu", "--num_workers", "0", "--x_aug", "0"])
++            config = observed.call_args.args[0]
++            self.assertEqual((config.tail_frac, config.tail_lambda), (.25, .3))
++            self.assertEqual(observed.call_args.args[2], expected_threshold)
++            checkpoint = torch.load(next(output_dir.glob("best_*.pth")), weights_only=False)
++            self.assertEqual(checkpoint["training_config"]["tail_frac"], .25)
++            self.assertEqual(checkpoint["training_config"]["tail_lambda"], .3)
++            self.assertEqual(checkpoint["loss_thresholds"]["tail_threshold"], expected_threshold)
++
++
++@unittest.skipUnless(dist.is_available() and dist.is_gloo_available(), "CPU Gloo is required")
++class TailDDPTests(unittest.TestCase):
++    def test_equal_rank_batches_and_accumulation_match_concatenation(self):
++        with tempfile.TemporaryDirectory() as temporary:
++            root = Path(temporary)
++            mp.spawn(ddp_tail_worker, args=(str(root / "rendezvous"), str(root)), nprocs=2, join=True)
++            for rank in range(2):
++                self.assertEqual(json.loads((root / f"rank{rank}.json").read_text()), list(TAIL_MODES))
++
++
++if __name__ == "__main__":
++    unittest.main()
 --- original/tests/test_time_alignment.py
 +++ StormSurge/tests/test_time_alignment.py
 @@ -38,7 +38,6 @@

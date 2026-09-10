@@ -1,6 +1,8 @@
 **验证证据的范围**
 
-本轮（2026-09-10）结果在 `dual_review_tests.txt`：**50项测试通过**。`dual_review_validation.json` 保存覆盖范围、运行环境和本轮 Python/shell 源码哈希。验证包括真实 TRAIN 事件比例、阈值解耦、五种 dual 模式的训练/保存/推理、两个 shell 推理入口和独立诊断输出。测试使用 CPU、PyTorch2.6+cu124、PyG2.7；当前 GPU 驱动不可用，未重跑 GPU/BF16/NCCL，也未做长程精度比较。
+最新sample-additive tail更新（2026-09-10）见 `sample_additive_tail.json` 和 `sample_additive_tail_tests.txt`：**全量70项测试通过**，包括新增7项tail测试。六种tail模式验证分批loss/梯度、固定样本梯度、空事件、加权语义、CLI/保存阈值、原有累积及两进程CPU/Gloo的平均梯度和DDP＋累积。唯一运行代码变化为LossConfig.tail_frac及tail归约分母；配置、模型、阈值计算、slope/dual项、engine及指标逐项核对未变。没有旧条件归约的运行选项。使用CPU、PyTorch2.6+cu124、PyG2.7；未验证新公式的GPU/BF16/NCCL执行或长程精度。
+
+此前dual接口复核结果在 `dual_review_tests.txt`：**50项测试通过**。`dual_review_validation.json` 保存当时覆盖范围、运行环境和 Python/shell 源码哈希。验证包括真实 TRAIN 事件比例、阈值解耦、五种 dual 模式的训练/保存/推理、两个 shell 推理入口和独立诊断输出。测试使用 CPU、PyTorch2.6+cu124、PyG2.7；当时 GPU 驱动不可用，未重跑 GPU/BF16/NCCL，也未做长程精度比较。
 
 随后CNN网格核对见 `cnn_grid_equivalence.json`、`cnn_grid_tests.txt` 和 `cnn_model_tests.txt`：72组原版CNN直接对照＋72组当前完整模型仅替换网格检查的隔离对照，输出、梯度、一步Adam更新及RNG逐位一致；另14项模型/训练推理测试通过。只恢复CNN的原地LeakyReLU写法，消除1×1双层eval案例中约2e-10的参数梯度舍入差，保留现有网格检查。覆盖正常PyG Batch的合法正整数矩形网格；未验证手工破坏的batch/ptr一致性。均为本次CPU FP32结果，与历史GPU记录区分。可用 `python docs/audit/verify_cnn_grid.py --original /path/to/Emulator` 复现数值对照。
 
@@ -10,7 +12,7 @@
 
 - `model_equivalence.json`、`gpu_equivalence.json`：原版模型及已确认stability数学的对应验证。新dual的清理对照对象是清理前的新dual，不是旧residual dual。
 - `scheduler_comparison.json`：仅提取当时的6组scheduler曲线对照，未将当时尚未修复的其他问题混入当前验证状态。
-- `protocol_*ranks.json`：恢复原训练协议后，与原版源码对照的统计、augmentation RNG、小scale loss/梯度和Val指标结果。
+- `protocol_*ranks.json`：恢复原训练协议后，与原版源码对照的统计、augmentation RNG、小scale loss/梯度和Val指标结果。其中tail loss使用当时的条件归约；本次有意改变tail目标，因此这些记录不证明当前tail与原版相等。
 - `smoke_ddp.txt`、`smoke_gpu.txt`及observed_rank文件：当时真实入口的两轮小型训练和rank/seed观测。
 - `integrity.json`：前一轮协议恢复相对其开始快照的文件变动记录，不是本次发布相对原版的完整差异。当前完整差异在上一级source_inventory文件中。
 

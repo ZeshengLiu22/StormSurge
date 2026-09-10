@@ -1,12 +1,12 @@
 **StormSurge 与原版 Emulator：当前差异、影响和还原建议**
 
-本报告对应独立仓库 [ZeshengLiu22/StormSurge](https://github.com/ZeshengLiu22/StormSurge) 的当前源码，本次更新以提交 `31912c0`（2026-09-10）为基准。此前已完成 `p_mean` 删除、dual阈值/先验/消融/推理诊断更新、metadata最小隐宽、自定义head/temporal宽度、Python构造默认值、baseline的lag容量校验范围及station JSON别名恢复；清晰API、训练/推理同H、原默认值和config读取路径、elevation/bathymetry独立开关及坏数据报错已确认，H=48h已验证。CNN网格检查已确认保留，原地LeakyReLU已恢复并完成数值对照。本次恢复GraphStore的pattern能力及原默认匹配范围、从TRAIN首图读取模型维度，并细化View/tag说明；View行为与既有tag格式本轮未调整。原版基准是本地 `Emulator` 实际文件，对应 [PACT_Storm_Surge_Emulator 的提交 bb62a22](https://github.com/BinaLab/PACT_Storm_Surge_Emulator/tree/bb62a2297a0d37a35db5bff352ee815e05676c93)。它相对上次基准 `3d4be39` 仅提交了此前本地 `.gitignore` 的3行变化，模型与训练源码未变；原版工作树干净。比较生成时间见 [comparison_summary.json](audit/comparison_summary.json)。
+本报告对应独立仓库 [ZeshengLiu22/StormSurge](https://github.com/ZeshengLiu22/StormSurge) 的当前源码，本次更新以提交 `2c38ba2`（2026-09-10）为基准。此前已完成 `p_mean` 删除、dual阈值/先验/消融/推理诊断更新、metadata最小隐宽、自定义head/temporal宽度、Python构造默认值、baseline的lag容量校验范围及station JSON别名恢复；清晰API、训练/推理同H、原默认值和config读取路径、elevation/bathymetry独立开关及坏数据报错已确认，H=48h已验证。CNN网格检查已确认保留，原地LeakyReLU已恢复并完成数值对照。GraphStore的pattern能力及原默认匹配范围、从TRAIN首图读取模型维度已恢复；用户现已确认保留当前View/tag，第三部分决定全部落实。本次仅将最终预测的tail loss改为按样本可加、以`tail_frac × B`为分母的公式；阈值计算、slope、dual分支监督、训练执行及所有已有config保持。原版基准是本地 `Emulator` 实际文件，对应 [PACT_Storm_Surge_Emulator 的提交 bb62a22](https://github.com/BinaLab/PACT_Storm_Surge_Emulator/tree/bb62a2297a0d37a35db5bff352ee815e05676c93)。它相对上次基准 `3d4be39` 仅提交了此前本地 `.gitignore` 的3行变化，模型与训练源码未变；原版工作树干净。比较生成时间见 [comparison_summary.json](audit/comparison_summary.json)。
 
-**结论：主扫描使用的基础空间拓扑和 H=0 baseline 保留；PACT 包含已确认的新 dual head 与稳定性数学改动。此外仍有自定义模型接口、输入检查、运行开关和输出组织等差异，不能概括为“仅改了 dual/stability”。** 当前已整体退役 `p_mean`，完善真实TRAIN事件先验、独立dual阈值、显式消融与可选推理诊断；此前恢复的DDP seed、归一化统计、验证补齐、loss下限、环境配方和推理/预处理汇报继续保留。
+**结论：主扫描使用的基础空间拓扑和 H=0 baseline 保留；PACT 包含已确认的新 dual head 与稳定性数学改动，所有tail模式使用已确认的新归约公式。此外仍有模型接口、输入检查、运行开关和输出组织等差异，不能概括为“仅改了 dual/stability”。** 当前已整体退役 `p_mean`，完善真实TRAIN事件先验、独立dual阈值、显式消融与可选推理诊断；此前恢复的DDP seed、归一化统计、验证补齐、loss下限、环境配方和推理/预处理汇报继续保留。
 
 本报告逐项列出当前实现与原版的差异、影响和还原建议。**表中的“建议还原”仍是未执行的建议**；已经完成的修改会明确标为已恢复、未变或已退役。`/home/exouser/media/volume/PACT-Data/StormSurge` 与 `/media/volume/PACT-Data/StormSurge` 指向同一独立仓库，原版目录保留。
 
-源码/config/既有文档比较共 **203 个路径：133 个相同、36 个修改、25 个新增、9 个删除，共70个差异文件**。不包含本报告、`docs/audit/`、数据、checkpoint、结果和缓存。逐文件hash及行数见 [CSV](audit/source_inventory.csv) / [JSON](audit/source_inventory.json)，完整行差异见 [original_to_current.diff](audit/original_to_current.diff)。文末列出全部70个文件。
+源码/config/既有文档比较共 **204 个路径：133 个相同、36 个修改、26 个新增、9 个删除，共71个差异文件**。不包含本报告、`docs/audit/`、数据、checkpoint、结果和缓存。逐文件hash及行数见 [CSV](audit/source_inventory.csv) / [JSON](audit/source_inventory.json)，完整行差异见 [original_to_current.diff](audit/original_to_current.diff)。文末列出全部71个文件。
 
 建议标签含义：**保留**＝不建议退回旧实现；**还原**＝建议恢复该具体能力或语义；**部分还原**＝恢复便利性或实验接口，但保留明确错误检查；**已恢复/未变**＝没有新的还原工作。建议是代码与实验设计判断，不是精度提升的实验证明。
 
@@ -34,9 +34,9 @@
 
 新dual阈值τ由TRAIN窗口峰值的 `exceedance_percentile` 分位确定，默认95；事件为窗口内至少一个时刻严格超过τ。body目标为 `min(Y,τ)`，excess目标为 `(Y−τ)+`，gate目标为事件0/1。μ/σ也仅由TRAIN拟合，`τ′=(τ−μ)/σ`。模型保持 `b′=τ′−softplus(τ′−a)`、`r′=softplus(d)`、`ŷ′=b′+p·r′`；物理body为 `μ+σb′`，物理excess为 `σr′`，excess不加μ。Excess辅助项mask非事件窗口后仍按整个 `B×K` 平均，不除事件数或q_E；事件窗口内未超阈的horizon仍监督为0。Gate BCE乘TRAIN的 `mean(σ²)`。推理forward不读取未来标签。完整定义和局限见 [dual head说明](../DUAL_HEAD_EXPLAINED.md)。
 
-原来的tail loss仍约束**最终预测在峰值窗口的误差**，使用独立tail_threshold及 `max(Y)>=tail_threshold`；slope loss约束**最终预测相邻horizon的一阶差分误差**，保留软mask和Charbonnier/Huber惩罚，至少需要两个horizon。二者没有被三项dual loss代数替代。`head_type=dual`、`dual_ablation=none`、`loss_mode=mse_tail_slope` 且tail/slope权重为正时，实际是 **MSE＋dual＋tail＋slope**；默认dual配置的mse仅启用MSE＋dual。保留原扫描组合，通过消融决定最终采用哪些项，不能预先断定新head一定更好。
+tail loss仍约束**最终预测在峰值窗口的误差**，使用独立tail_threshold及 `max(Y)>=tail_threshold`，本次仅改变归约分母，公式见第二节；slope loss约束**最终预测相邻horizon的一阶差分误差**，保留软mask和Charbonnier/Huber惩罚，至少需要两个horizon。二者没有被三项dual loss代数替代。`head_type=dual`、`dual_ablation=none`、`loss_mode=mse_tail_slope` 且tail/slope权重为正时，实际是 **MSE＋dual＋tail＋slope**；默认dual配置的mse仅启用MSE＋dual。保留原扫描组合，通过消融决定最终采用哪些项，不能预先断定新head一定更好。
 
-**二、已恢复或一直保持的训练与实验口径**
+**二、已确认的训练与实验口径**
 
 | 项目 | 原来做什么 | 当前状态 | 差异的影响 | 是否建议还原 |
 |---|---|---|---|---|
@@ -53,13 +53,33 @@
 | DDP Val All | DistributedSampler补齐；FP32 batch均值、FP64加权累计/all-reduce | 已恢复 | 不整除时重复样本仍计入All，保持best epoch/ROP的原实验口径 | **已恢复**，本研究按用户决定保留此口径 |
 | Val Peak | 原rank0完整验证集，按GT峰值选ceil(.05N)窗口 | 复用当前预测，去掉padding，恢复数据集顺序、原argsort/FP32归约 | 同一组预测时所测结果相同；batch内核/额外forward删除可能影响末位或后续RNG | **保留单次forward** |
 | loss种类 | mse/wmse/mse_tail/wmse_tail/mse_wtail，各可加_slope | 10种最终预测loss均保留；默认dual额外叠加三项监督，命名消融可去掉指定项 | MSE＋dual＋tail＋slope可同时启用；tail/slope作用于最终预测，dual作用于分支及gate；两类事件阈值已分开 | **保留全部组合**，完整监督与消融分开报告 |
+| tail loss归约 | `sum_b I_b l_b / max(1, sum_b I_b)`，按当前batch内tail样本数平均 | `sum_b I_b l_b / (tail_frac × B)`，六种tail及tail_slope模式统一使用；LossConfig新增tail_frac=.05，由既有CLI自动传入 | 固定batch大小下单个tail样本权重与其他tail数目无关；等大分批平均等价于合并；空tail贡献可微零。阈值仍是TRAIN窗口峰值的1−tail_frac分位，判断仍为>= | **已按用户要求更新**；不保留旧归约运行选项，已有TAIL_FRAC/TAIL_LAMBDA与其他训练行为不改 |
 | loss小参数下限 | wmse_s、slope_mask_s至少1e-6；Charb ε、Huber δ至少1e-12 | 已恢复，包括有限的0/负数/极小正数 | 普通常用值不变；极小值不再改变旧公式的有效scale | **已恢复** |
 | 梯度累积数学 | 同组microbatch等权，末组按实际microbatch数 | 保持 | 没有改成按不同microbatch样本数重新加权；DDP能力扩展另列 | **未变** |
 | 数据划分 | 完整年份分组，TRAIN-only统计，shuffle/future规则 | 合法比例、标准输入时保持 | 上一轮真实Battery 24组split对照一致；异常比例验证更严格 | **保持正常语义** |
 
+新tail公式中，令`q=tail_frac`、`B`为batch样本数、`K`为预测horizon数，`e[b,h]=(prediction[b,h]−target[b,h])²`。阈值仍仅在训练开始时从TRAIN拟合一次：
+
+```text
+p_b = max_h target[b,h]
+peak_threshold = Q_(1-q)({p_b : b in TRAIN})
+I_b = 1[p_b >= peak_threshold]
+l_b = mean_h tail_error[b,h]
+L_tail = sum_b I_b * l_b / (q * B)
+L_prediction = L_base + tail_lambda * L_tail + L_slope（仅所选模式启用的项）
+```
+
+| 模式（含对应_slope） | L_base | tail_error |
+|---|---|---|
+| mse_tail | mean(e) | e |
+| wmse_tail | mean(w × e) | w × e |
+| mse_wtail | mean(e) | w × e |
+
+`w`继续使用现有WMSE权重，slope与dual三项各自公式保持。`1/q`有意近似保留旧条件tail目标的期望尺度，分母不使用实际tail数量或TRAIN实测事件比例。等大microbatch的loss平均与合并batch相等；等大DDP本地batch仅用正常梯度平均，不新增跨rank事件数归约。现有累积仍按microbatch等权，末组仍除实际microbatch数，不改变大小不等microbatch的权重规则。`train.py`原有按`fields(LossConfig)`读取同名CLI参数的路径直接传入`--tail_frac`；checkpoint已有训练配置继续保存它，无需修改入口或config。
+
 DDP seed与augmentation局部随机顺序恢复，不代表整次训练逐位回到原版。原dual训练为日志额外做过train-mode forward，旧Val诊断也额外遍历DataLoader；删除它们会改变后续RNG消耗。**不建议为复现旧随机轨迹恢复无用forward。** 比较方法时应在当前同一代码/环境/预算下重新训练各对照。
 
-**三、仍待决定的模型与输入接口差异**
+**三、已确认并落实的模型与输入接口差异**
 
 | 项目 | 原来做什么 | 现在做什么 | 差异的影响 | 是否建议还原 |
 |---|---|---|---|---|
@@ -79,14 +99,14 @@ DDP seed与augmentation局部随机顺序恢复，不代表整次训练逐位回
 | pressure缺失 | 启用p_mean后，部分路径以零global编码或省略pressure token回退 | 不再读取、归一化或向图/View传递p_mean与其历史；也不再保留缺失回退策略 | 旧pressure模式不能继续使用；正常forcing仍保留压力空间去均值，五通道布局不变 | **已退役，不还原**；不要恢复缺失压力均值兼容层 |
 | CNN网格检查 | 同样要求统一grid_H/grid_W，并用batch.batch的bincount核对每图节点数 | 保留统一grid元数据检查，改用ptr.diff核对每图节点数 | 正常PyG Batch中两种计数相等；返回同一(B,H,W)，不改输入、权重或RNG。隔离替换检查的72组完整模型对照中输出、梯度、一步Adam更新逐位一致；异常输入接受范围仍可能不同 | **已确认保留**；合法正整数矩形网格计算经核对，无需还原检查 |
 | GraphStore构造 | 支持pattern/force_cpu/strict_station_filter/log_fn等；默认`*graphs.pt` | 恢复keyword-only pattern，默认`*graphs.pt`；现有第二位置参数仍是station_filter。恢复匹配非标准后缀时去扩展名的解析；CPU加载和严格站点筛选保持 | 可指定版本/年份等glob，匹配文件后按站点筛选再加载；标准文件tag不变；其余旧包装接口未恢复 | **已恢复pattern能力及原默认范围**；保留当前清晰API |
-| View与tag | 整理x/edge_index/y/x_hist/grid_H/grid_W/tag，并传p_mean；原版H=0已提供单帧x_hist；无sample_id | 核心forcing/标签/网格字段保持；新增sample_id、提前检查历史长度；p_mean退役；无版本段tag少一个空字段 | 历史足够时核心张量逐位一致；有版本段的常规tag一致。sample_id服务指标汇总，tag服务导出和checkpoint样本匹配；详解见下文 | **本轮核实并继续讨论**：建议保留sample_id/历史检查；tag按分析脚本依赖决定 |
+| View与tag | 整理x/edge_index/y/x_hist/grid_H/grid_W/tag，并传p_mean；原版H=0已提供单帧x_hist；无sample_id | 核心forcing/标签/网格字段保持；新增sample_id、提前检查历史长度；p_mean退役；无版本段tag少一个空字段 | 历史足够时核心张量逐位一致；有版本段的常规tag一致。sample_id服务指标汇总，tag服务导出和checkpoint样本匹配；详解见下文 | **已确认保留当前实现**：sample_id、历史检查及现有tag格式均保持 |
 | 模型维度来源 | 从首个TRAIN graph取in/out维度 | 恢复从`store.graphs[splits["train"][0]]`取x特征列数与y预测长度 | 被年份筛选排除、或不属TRAIN的store首图不再决定模型宽度；站点过滤本就在加载前完成。所有图维度一致时行为相同 | **已恢复TRAIN首图来源**；hidden和历史H仍由config设置 |
 
 View负责把store中的一个样本按所选历史窗口整理成PyG Data。例如每6小时一帧，H=12h时取[-12h,-6h,0h]三帧，H=48h时取九帧，H=0时保留当前一帧；旧版和当前在历史足够时的取值、顺序和张量排列相同。x、x_hist和edge_index参与预测；y用于loss与评估；grid_H/grid_W帮助CNN还原网格。这里的图字段与station JSON中的经纬度/elevation/bathymetry分别读取，不能把View差异理解为删掉了站点特征。
 
 sample_id是当前store内的整数位置，随着样本进入batch，用于指标汇总中的排序与重复样本识别，不拼入模型特征；改变batch顺序不会改变它。tag是文件名信息加文件内样本序号，例如`2000_2001_Battery_fixed315_hist48_graphs.pt`的第7号样本为`2000_2001_Battery_fixed315_hist48_7`，两版一致；如果文件为`2000_2001_Battery_graphs.pt`，旧tag为`2000_2001_Battery__7`，当前为`2000_2001_Battery_7`，差别仅在空版本段。当前checkpoint保存tag来找回test样本，因此tag格式也关系到保存后的样本匹配，不只是显示文字。原View也没有把center_time等所有原始graph属性全部透传；实际退役的特征字段是p_mean_hist/p_mean_curr。
 
-历史检查的区别是：请求H=48h却只有五帧时，旧View本身会返回五帧，当前View提前报错；缺少x_hist且H>0时旧View也没有主动补齐。H=0缺少存储历史时两版均用当前x生成单帧x_hist。这些行为已按原源码核实，本轮只修改GraphStore匹配与模型维度来源，View及既有tag语义继续讨论。
+历史检查的区别是：请求H=48h却只有五帧时，旧View本身会返回五帧，当前View提前报错；缺少x_hist且H>0时旧View也没有主动补齐。H=0缺少存储历史时两版均用当前x生成单帧x_hist。这些行为已按原源码核实；用户现已确认保留当前View及tag语义，本次没有相应代码改动。
 
 原版输入H的具体行为：PACT构造器没有history_steps参数，forward读取实际帧数；关闭已退役p_mean的常规路径中，同一对象在max_time_steps=32时可依次接收H=48h/24h/0h的9/5/1帧，33帧则超出容量。原infer.py的`--history_hours`可覆盖checkpoint记录的H；当前入口将它改为一致性声明。用户已确认训练与推理必须使用同一个H，不考虑换历史窗口；这个H由每次训练的config决定，不要求固定48h。
 
@@ -102,9 +122,9 @@ sample_id是当前store内的整数位置，随着样本进入batch，用于指�
 | 临时统计线程 | NumPy统计阶段设置OMP/MKL并恢复，含CPU数推断 | 去掉helper，保留torch_threads | 一次性统计耗时可能不同；环境变量中途设置的实际收益需测量 | **不机械还原**，确认瓶颈后再处理 |
 | threshold是否计算 | 最终loss需要时才拟合相应阈值 | 每种mode先拟合tail_threshold、wmse_threshold、独立dual τ及真实TRAIN事件比例 | baseline/single纯MSE仍有额外统计；dual即使用MSE也必须有τ/q_E；空或非finite TRAIN标签报错 | **可恢复按需计算**，保留dual所需τ/q_E和有效性检查 |
 | threshold广播 | FP32 tensor广播后使用 | rank0拟合并广播Python字典；其中保存物理阈值、原始事件比例、计数和分位，模型使用归一化τ | 原10种预测loss已有对照；新增元数据可追溯；标量精度和对象广播开销与原版不同 | **保留元数据**；小tensor广播可低优先级优化，不能丢失τ/q_E |
-| tail_frac极端边界 | threshold函数先将tail_frac夹到[1e-6, .999999]，空输入返回0阈值 | CLI/函数要求0<tail_frac<1，不再按原下限/上限夹紧；空或非finite TRAIN报错；dual百分位独立校验 | 默认.05不变；极端正值的tail阈值不再等价，但不会联动改变dual事件定义 | **可还原tail阈值函数的原极端夹紧**；保留空/坏TRAIN报错，dual先验独立处理 |
+| tail_frac极端边界 | threshold函数先将tail_frac夹到[1e-6, .999999]，空输入返回0阈值 | CLI/函数要求0<tail_frac<1，不再按原下限/上限夹紧；空或非finite TRAIN报错；dual百分位独立校验 | 默认.05不变；极端正值的tail阈值不再等价，但不会联动改变dual事件定义 | **本次按要求保持当前阈值计算及检查**；新归约不恢复极端夹紧，也不增加检查 |
 | mag校验范围 | mag只检查其使用的p_hi；p_lo不参与 | 合并函数也要求p_lo<p_hi | 可能拒绝原先可用的mag设置，例如p_lo=95、p_hi=90 | **还原按mode校验**，不要检查该mode不使用的参数 |
-| DDP梯度累积 | Python拒绝world>1且accum>1 | engine支持no_sync累积；shell仍保持原单进程累积限制 | 新能力不改变原shell扫描；直接Python有更大允许范围 | **保留能力**；使用前单独验证该组合 |
+| DDP梯度累积 | Python拒绝world>1且accum>1 | engine支持no_sync累积；shell仍保持原单进程累积限制 | 新能力不改变原shell扫描；直接Python有更大允许范围 | **保留能力**；本次六种tail模式已做两rank CPU/Gloo＋累积与合并batch对照 |
 | final test执行 | 原DDP test评估、rank0再导出预测 | rank0一次计算指标并导出 | 无重复forward；不再把DDP padding计入最终Test。可能与旧Test打印数值不同 | **保留**，测试集每个真实样本一次更合适；Val按已决定的原口径 |
 | Train指标 | 原按batch累计Train RMSE/MAE，另有诊断 | 在线预测按sample_id整理All/Peak5；DDP重复训练样本在报告中只计一次 | Train报告的加权/归约与旧版不同；优化仍使用sampler补齐数据 | **保留并说明**；Train在线指标不能当作固定模型的train-eval |
 | Peak数据收集 | 原rank0独立full pass＋aux诊断 | 各rank每窗口4标量，gather后计算指标 | 少forward，多一次窗口记录收集；内存/通讯随窗口数增长 | **保留**，大数据瓶颈可后续优化收集，不恢复诊断forward |
@@ -153,13 +173,13 @@ sample_id是当前store内的整数位置，随着样本进入batch，用于指�
 | LICENSE与静态资源 | 原许可证、station JSON等 | 对应文件逐字保留 | 仓库独立不删除原授权/归属信息 | **保留** |
 | .gitignore | 此前本地experiment_configs忽略项已随bb62a22提交 | 当前未继承该项；大数据/结果/checkpoint仍忽略 | 属于仓库管理差异，无模型影响；基准已改为干净的bb62a22，不能继续称未提交修改 | **不必自动还原该项** |
 | README/方法说明 | 原大README及changelog | 当前README、新dual/stability说明；旧changelog移除 | 新入口更清楚，但历史记录变少 | **保留新说明**；若需要历史追溯，建议将旧changelog作为历史文档归档 |
-| 测试 | 旧模型/诊断/推理接口测试 | 模型/梯度/dual loss/配置/预处理/往返测试；恢复前全量50项通过，本轮模型接口及相关流程34项通过 | CPU测试不覆盖所有旧接口；旧缺失p_mean测试已随功能退役；历史GPU/DDP证据不能替代当前消融验证 | **保留当前测试**；恢复仍需支持的接口时补相应案例 |
-| 独立仓库 | 原Emulator自己的Git历史/remote | StormSurge以ce697f9独立初始化，本次更新基准31912c0已同步origin/main | origin指向新repo，原版历史未迁入；当前194份文件纳入源码/config/既有文档比较 | **保留独立仓库** |
+| 测试 | 旧模型/诊断/推理接口测试 | 模型/梯度/dual loss/配置/预处理/往返测试；新tail公式增加分批、固定样本、空事件、加权、累积与两rank Gloo检查；本次全量70项通过 | CPU测试不覆盖所有旧接口；旧缺失p_mean测试已随功能退役；历史GPU证据不能替代当前tail公式验证 | **保留当前测试**；恢复仍需支持的接口时补相应案例 |
+| 独立仓库 | 原Emulator自己的Git历史/remote | StormSurge以ce697f9独立初始化，本次更新基准2c38ba2已同步origin/main | origin指向新repo，原版历史未迁入；当前195份文件纳入源码/config/既有文档比较 | **保留独立仓库** |
 | 数据与机器路径 | profile引用外部Data/graph/station目录 | 原profile路径保持，数据未打包进Git | Git独立不意味着自动复制大数据；换机器需要设置ROOT_DIR、STATION_JSON_DIR、Python环境等 | **保留实验配置值**，按部署机器显式覆盖路径 |
 
 **七、建议优先顺序与验证范围**
 
-metadata最小隐宽、自定义head/temporal宽度、直接构造默认值、baseline的lag容量校验适用范围、JSON文件名/字段别名、GraphStore的pattern能力及TRAIN首图维度来源已恢复；训练/推理使用相同配置H已确认保留，原32帧lag容量覆盖48小时所需的9帧。metadata的elevation/bathymetry独立开关及原默认保持，启用的数据缺失或无效时直接报错。View/tag已细化说明，本轮未改其行为。tail_frac原极端夹紧、mag按mode校验、未显式配置TF32时的原行为与关键JSON原子写入仍值得恢复。`p_mean` 已明确退役，不再建议恢复其建层顺序、缺失回退或数据字段。
+metadata最小隐宽、自定义head/temporal宽度、直接构造默认值、baseline的lag容量校验适用范围、JSON文件名/字段别名、GraphStore的pattern能力及TRAIN首图维度来源已恢复；训练/推理使用相同配置H已确认保留，原32帧lag容量覆盖48小时所需的9帧。metadata的elevation/bathymetry独立开关及原默认保持，启用的数据缺失或无效时直接报错。View/tag已确认保留当前实现，第三部分均已落实。新tail归约已按要求实现，当前阈值计算及检查保持，不恢复原极端夹紧。mag按mode校验、未显式配置TF32时的原行为与关键JSON原子写入仍是待讨论的独立建议，本次不实施。`p_mean` 已明确退役，不再建议恢复其建层顺序、缺失回退或数据字段。
 
 建议继续保留新dual、默认完整分支监督、真实TRAIN事件先验、独立阈值、显式机制消融和可选推理诊断；也保留已确认的PACT稳定性数学、输入存储隔离、单次forward指标、严格的默认评估人口/站点检查、新checkpoint格式和全部原扫描组合。消融配置已提供实验接口，效果仍需同代码、同环境、同预算的独立训练，不能把接口实现当作收益证据。
 
@@ -177,7 +197,9 @@ CNN网格检查另做**144组CPU FP32逐位对照**：72组从原版源码直接
 
 GraphStore pattern与TRAIN首图维度恢复执行`test_pipeline`、`test_config_interfaces`、`test_training`：**18/18通过**。覆盖自定义glob排除损坏文件、站点筛选先于加载、原默认`*graphs.pt`、非标准匹配后缀和标准/空版本tag保持。baseline CNN H=12h与PACT dual GraphSAGE H=48h各做两次单epoch训练，分别保留/移除一张年份被排除且in/out维度均不同的store首图，模型均采用TRAIN的3输入/4输出，训练权重、归一化及test预测逐位相同；两组checkpoint推理也一致。另直接执行原View源码，在H=0/12/24/48h核对核心字段逐位一致，确认H0无历史时原本就生成单帧，以及五帧不足48h时的新旧处理差异。View类和已有标准tag代码未改。日志：[store_train_shape_tests.txt](audit/evidence/store_train_shape_tests.txt)；范围与源码哈希：[store_train_shape_restore.json](audit/evidence/store_train_shape_restore.json)。
 
-以下数值证据来自首次迁移前的历史验证；保留其当时的对照结论，但不把含已退役pressure路径或旧初始化的结果视为当前event-prior/ablation接口的验证。首次独立快照的42项日志在 [publication_tests.txt](audit/evidence/publication_tests.txt)，与上面的恢复前50项证据区分：
+本次sample-additive tail更新执行`python -m unittest discover -s tests -v`：**70/70通过**，其中新增7项tail专用测试。六种tail模式覆盖等大分批的loss/预测梯度一致、固定tail样本在不同事件数量下的解析梯度、空事件可微零、普通/加权base与tail语义和>=阈值边界。实际CLI训练核对tail_frac=.25进入LossConfig、TRAIN阈值及checkpoint配置；等大microbatch和短累积组的一步参数更新与合并batch一致。两进程CPU/Gloo还验证rank0无事件、rank1全事件时的正常DDP平均梯度，以及现有engine的DDP＋no_sync累积；无需跨rank事件数归约。现有slope、dual、sampler/指标、累积、scheduler、114份profile及390组合检查全部通过。唯一运行代码改动为`emulator/training/losses.py`中的字段与tail归约；所有已有config、模型、train.py、阈值、engine、数据加载/采样和指标文件逐字未变，同文件的slope及dual代码也核对未变。日志：[sample_additive_tail_tests.txt](audit/evidence/sample_additive_tail_tests.txt)；公式、范围、环境与源码哈希：[sample_additive_tail.json](audit/evidence/sample_additive_tail.json)。
+
+以下数值证据来自首次迁移前的历史验证；保留其当时的对照结论，但不把含已退役pressure路径或旧初始化的结果视为当前event-prior/ablation接口的验证。历史tail loss对照使用当时的条件归约，**不代表本次新tail目标与原版相等**；新归约按本节专用测试验证。首次独立快照的42项日志在 [publication_tests.txt](audit/evidence/publication_tests.txt)，与上面的恢复前50项证据区分：
 
 | 验证 | 对照方式与结果 | 证据 |
 |---|---|---|
@@ -189,7 +211,7 @@ GraphStore pattern与TRAIN首图维度恢复执行`test_pipeline`、`test_config
 | 恢复后统计/RNG/loss/Val | CPU、H100、两rank CPU/Gloo：统计与augmentation局部RNG所测差0；每种环境100组小scale loss差0，梯度差≤1.87e-9；Val补齐/Peak对照一致 | [CPU](audit/evidence/protocol_cpu_1ranks.json)、[GPU](audit/evidence/protocol_cuda_1ranks.json)、[DDP](audit/evidence/protocol_cpu_2ranks.json) |
 | 实际入口短训练 | 两轮H48 dual：CPU DDP使用seed42/43、sampler0；H100 BF16/TF32完成反传、保存、最终推理 | [DDP](audit/evidence/smoke_ddp.txt)、[GPU](audit/evidence/smoke_gpu.txt) |
 
-上述恢复前50项及本轮34项测试使用 **CPU、PyTorch2.6+cu124、PyG2.7**；原2.8+cu128 YAML没有重新安装验证。本轮未重跑GPU/BF16/NCCL。上表H100/GPU与CPU/Gloo两rank均为历史记录，历史也未验证两GPU/NCCL；本轮没有长程训练、跨seed稳定性或正式精度比较。短训练、同权重对照、函数级一致性证明不同层面的性质；它们**不能证明长期stability已彻底根治、gate已经校准，也不能证明新dual比single或GNN比CNN更好**。证据边界见 [evidence/README.md](audit/evidence/README.md)。
+上述源码测试使用 **CPU、PyTorch2.6+cu124、PyG2.7**；原2.8+cu128 YAML没有重新安装验证。本次70项包含新的CPU/Gloo两rank tail验证，未重跑GPU/BF16/NCCL。上表H100/GPU与旧协议CPU/Gloo记录仍为历史结果，历史也未验证两GPU/NCCL；本轮没有长程训练、跨seed稳定性或正式精度比较。短训练、同权重对照、函数级一致性证明不同层面的性质；它们**不能证明长期stability已彻底根治、gate已经校准，也不能证明新dual比single或GNN比CNN更好**。证据边界见 [evidence/README.md](audit/evidence/README.md)。
 
 更新逐文件比较可运行：
 
@@ -199,7 +221,7 @@ python docs/audit/compare_original.py --original /path/to/Emulator
 
 脚本重新生成hash清单、计数、完整diff和训练CLI声明比较；本报告的内容及建议随代码更新，章节和表格格式保持。首次发布的v2来源hash在 [v2_source_hashes.json](audit/v2_source_hashes.json)，迁移核对在 [migration_verification.json](audit/migration_verification.json)，两者继续作为历史快照，不代表当前工作树。
 
-**八、全部70个差异文件的索引**
+**八、全部71个差异文件的索引**
 
 下面的索引逐个覆盖生成清单中的修改/新增/删除文件。语义影响与还原建议在上表对应项目展开；行数变化本身不等于架构或训练数学变化。
 
@@ -209,7 +231,7 @@ python docs/audit/compare_original.py --original /path/to/Emulator
 |---|---|---|---|---|
 | 修改 52→49 | [.gitignore](../.gitignore) | 原版已提交的experiment_configs忽略项 → 未继承该项 | 版本管理范围不同，无训练影响；原版当前工作树干净 | 不自动还原该忽略项 |
 | 新增 0→217 | [DUAL_HEAD_EXPLAINED.md](../DUAL_HEAD_EXPLAINED.md) | 无独立说明 → 新dual公式、真实先验、独立阈值、消融与诊断 | 明确分支语义、物理单位和证据局限 | 保留 |
-| 修改 483→152 | [README.md](../README.md) | 原综合README → 当前使用说明、独立仓库来源与本报告入口 | 运行说明与当前实现对应，历史细节减少 | 保留；历史内容可归档 |
+| 修改 483→162 | [README.md](../README.md) | 原综合README → 当前使用说明、独立仓库来源与本报告入口 | 运行说明与当前实现对应，历史细节减少 | 保留；历史内容可归档 |
 | 新增 0→42 | [STABILITY_AND_DUAL_HEAD.md](../STABILITY_AND_DUAL_HEAD.md) | 无 → 当前stability/dual及显式推理诊断边界 | 区分默认完整监督、消融与常规训练日志 | 保留 |
 | 删除 108→0 | [changelog.md](https://github.com/BinaLab/PACT_Storm_Surge_Emulator/blob/bb62a2297a0d37a35db5bff352ee815e05676c93/changelog.md) | 旧变更历史 → 删除 | 失去本地历史说明 | 建议作为历史文档归档 |
 | 修改 40→41 | [configs/configs_infer/infer_config_common.sh](../configs/configs_infer/infer_config_common.sh) | 原推理common → 加默认关闭的DUAL_DIAGNOSTICS | 显式开关独立诊断，不改变默认推理导出 | 保留可选开关 |
@@ -229,7 +251,7 @@ python docs/audit/compare_original.py --original /path/to/Emulator
 | 删除 26→0 | [emulator/common/io_utils.py](https://github.com/BinaLab/PACT_Storm_Surge_Emulator/blob/bb62a2297a0d37a35db5bff352ee815e05676c93/emulator/common/io_utils.py) | atomic JSON helper → 删除，调用方直接写 | 中断时报告可能不完整 | 建议恢复关键写入的原子性 |
 | 修改 99→26 | [emulator/common/runtime.py](../emulator/common/runtime.py) | 分散seed/线程/标签helper → 统一runtime及时间戳 | TF32默认、确定性控制、临时线程不同 | 恢复未指定TF32语义；其余按第四表 |
 | 修改 43→7 | [emulator/data/__init__.py](../emulator/data/__init__.py) | 旧store/split/stats导出 → 简化新接口 | 外部Python导入改变 | 不为旧checkpoint恢复全部包装 |
-| 修改 351→83 | [emulator/data/graph_store.py](../emulator/data/graph_store.py) | 原加载/独立split/pressure属性 → pattern能力及原默认恢复、store.split、严格历史View，无p_mean | 标准文件tag与View本轮保持；sample_id、空版本tag和其余旧公开接口差异另述 | pattern已恢复；View/tag继续讨论，不恢复p_mean |
+| 修改 351→83 | [emulator/data/graph_store.py](../emulator/data/graph_store.py) | 原加载/独立split/pressure属性 → pattern能力及原默认恢复、store.split、严格历史View，无p_mean | 标准文件tag与View保持；sample_id、空版本tag和其余旧公开接口差异另述 | pattern已恢复；View/tag已确认保留，不恢复p_mean |
 | 修改 118→22 | [emulator/data/normalization.py](../emulator/data/normalization.py) | 原地修改输入及可选均值统计 → 新tensor赋值，无p_mean | 避免共享存储污染；保留原forcing归一化和augmentation RNG | 保留赋值方式与退役决定 |
 | 修改 103→52 | [emulator/data/station_metadata.py](../emulator/data/station_metadata.py) | 别名/缺省解析与encoder → 恢复文件名/字段别名，启用字段严格解析，encoder并入模型 | 两个字段开关保持；缺失/坏值直接报错，不再补0；模型内metadata最小隐宽已恢复 | 已恢复别名，保留独立开关与finite检查 |
 | 修改 310→102 | [emulator/data/stats.py](../emulator/data/stats.py) | 多个stats/可选均值函数 → 统一X/Y统计，独立三个阈值与严格TRAIN q_E | 原主要统计语义保留；默认gate初始化现在依赖真实事件比例 | 保留τ/q_E；按第二/四表处理其他差异 |
@@ -245,7 +267,7 @@ python docs/audit/compare_original.py --original /path/to/Emulator
 | 修改 13→5 | [emulator/training/__init__.py](../emulator/training/__init__.py) | 多个epoch函数 → ForecastLoss/run_epoch/metric接口 | 训练循环复用，公开导入变化 | 保留 |
 | 新增 0→245 | [emulator/training/arguments.py](../emulator/training/arguments.py) | 大train.py中的parser → 独立parser，阈值/消融/运行参数，删除p_mean | 默认完整监督；明确消融可去掉指定项，其他边界仍有差异 | 保留模式规则；恢复误收紧的范围/别名 |
 | 修改 586→112 | [emulator/training/engine.py](../emulator/training/engine.py) | 训练/验证/预测/诊断多个循环 → 共享run_epoch，显式推理时才收集dual数组 | 单次forward；Val原口径保留，Train/Test报告差异另列 | 保留共享循环与可选导出 |
-| 修改 86→112 | [emulator/training/losses.py](../emulator/training/losses.py) | 旧预测loss函数 → 10种最终loss＋物理分支监督＋命名消融 | MSE/dual/tail/slope可叠加；excess仍用全batch分母 | 保留默认完整监督、显式消融及原预测模式 |
+| 修改 86→116 | [emulator/training/losses.py](../emulator/training/losses.py) | 旧预测loss函数 → 10种最终loss＋物理分支监督＋命名消融；tail新增固定tail_frac×B分母 | tail事件权重不依赖同batch的事件数量，支持等大分批平均；slope与dual项保持，excess仍用全batch分母 | 已更新tail归约，不保留旧选项；保留其他loss语义 |
 | 新增 0→33 | [emulator/training/metrics.py](../emulator/training/metrics.py) | 无独立模块 → 4指标/窗口汇总 | 新增Train Peak、去重及finite检查 | 保留 |
 | 修改 708→316 | [infer.py](../infer.py) | 旧checkpoint/逐年推理 → 当前checkpoint及共享engine，独立dual诊断 | 旧报告保留；新导出固定TRAIN阈值，scope/override仍有差异 | 按第五表保留检查、旧汇报和可选诊断 |
 | 修改 330→340 | [infer.sh](../infer.sh) | 原tmux启动 → 显式Python/fallback，透传DUAL_DIAGNOSTICS并记录快照 | 可控制环境及独立诊断 | 保留 |
@@ -259,7 +281,7 @@ python docs/audit/compare_original.py --original /path/to/Emulator
 | 修改 172→159 | [preprocessing/preprocessing_forcing_NCEP_Mean_Removal.py](../preprocessing/preprocessing_forcing_NCEP_Mean_Removal.py) | 顶层处理及均值字段 → main/CLI和原forcing输出，删除p_mean | 安全import，原默认与主要warn/skip保留；额外字段减少 | 保留参数化与退役决定 |
 | 修改 355→357 | [preprocessing/preprocessing_simulation.py](../preprocessing/preprocessing_simulation.py) | 原处理 → 原逻辑/默认恢复＋argv和--years | 默认仍2005，可明确选择其他年 | 保留扩展 |
 | 修改 1008→931 | [preprocessing/time_align_unified.py](../preprocessing/time_align_unified.py) | 原fixed/peryear及p_mean历史传递 → 保留两种对齐/fallback和别名，删除均值图属性 | forcing/标签对齐保持；旧均值属性消费者需适配 | 保留主流程，不恢复已退役属性 |
-| 新增 0→161 | [tests/test_config_interfaces.py](../tests/test_config_interfaces.py) | 无 → 原profile/390组合/loss/scheduler检查，删除p_mean专用断言 | 原扫描及10种loss有回归保护 | 保留 |
+| 新增 0→161 | [tests/test_config_interfaces.py](../tests/test_config_interfaces.py) | 无 → 原profile/390组合/loss/scheduler检查，删除p_mean专用断言；tail参考值同步新公式 | 原扫描及10种loss有回归保护，slope的Charb/Huber公式继续核对 | 保留 |
 | 删除 271→0 | [tests/test_core_architecture.py](https://github.com/BinaLab/PACT_Storm_Surge_Emulator/blob/bb62a2297a0d37a35db5bff352ee815e05676c93/tests/test_core_architecture.py) | 旧架构API测试 → 删除，由新测试覆盖部分功能 | 不能把旧每个接口视为仍被测试 | 恢复接口时补回相应案例 |
 | 新增 0→246 | [tests/test_dual_experiments.py](../tests/test_dual_experiments.py) | 无 → 真实TRAIN先验、阈值解耦、5种模式/梯度及诊断/shell贯通 | 覆盖当前新增接口、边界及标签独立性；不是长期精度实验 | 保留 |
 | 新增 0→158 | [tests/test_dual_loss.py](../tests/test_dual_loss.py) | 无 → 强制dual loss、warning、保存与梯度测试 | 验证三项确实参与训练 | 保留 |
@@ -273,6 +295,7 @@ python docs/audit/compare_original.py --original /path/to/Emulator
 | 新增 0→277 | [tests/test_pipeline.py](../tests/test_pipeline.py) | 无 → 训练/保存/推理、split、metadata别名/开关、pattern及TRAIN首图维度回归 | 验证新checkpoint闭环、文件加载筛选、被排除首图不干扰模型尺寸或训练结果 | 保留 |
 | 新增 0→114 | [tests/test_preprocessing_pipeline.py](../tests/test_preprocessing_pipeline.py) | 无 → NetCDF/CSV/forcing/graph实际小样本管道 | 验证恢复后的默认与输出 | 保留 |
 | 修改 45→113 | [tests/test_station_metadata.py](../tests/test_station_metadata.py) | 原特征开关/缩放检查 → 增加文件名/字段别名顺序、缺失及无效值检查 | 27组字段别名与开关隔离受检，坏数据不回退 | 保留 |
+| 新增 0→234 | [tests/test_tail_loss.py](../tests/test_tail_loss.py) | 无 → 新tail归约的分批、梯度、空事件、权重、CLI、累积与两rank Gloo测试 | 六种tail模式等大分批/跨rank/累积与合并batch对照；保留现有训练执行 | 保留 |
 | 修改 101→124 | [tests/test_time_alignment.py](../tests/test_time_alignment.py) | 旧timestamp测试 → 保留并加fixed315、输出形状和fallback验证 | forcing历史与标签时间对齐受检；均值字段已删除 | 保留当前主流程测试 |
 | 新增 0→96 | [tests/test_training.py](../tests/test_training.py) | 无 → 物理指标/单次forward/累积/存储隔离测试 | 防止精简后数值与输入污染回归 | 保留 |
 | 修改 1522→214 | [train.py](../train.py) | 原大入口 → 模块化编排、TRAIN阈值/q_E拟合广播和元数据保存，恢复TRAIN首图模型维度 | 旧协议大部保留；默认dual与消融分开记录，无p_mean；被筛除首图不决定模型维度 | 按表逐项处理，TRAIN首图维度已恢复 |

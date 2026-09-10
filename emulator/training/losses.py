@@ -57,6 +57,7 @@ class LossConfig:
     wmse_s: float = 0.1
     wmse_use_abs: bool = True
     tail_lambda: float = 0.1
+    tail_frac: float = 0.05
     slope_lambda: float = 0.01
     slope_mask_s: float = 0.1
     slope_robust: str = "charb"
@@ -88,9 +89,12 @@ class ForecastLoss(nn.Module):
             weighted_error = weight * error
         loss = weighted_error.mean() if core in ("wmse", "wmse_tail") else error.mean()
         if core in ("mse_tail", "wmse_tail", "mse_wtail") and c.tail_lambda:
-            event = target.amax(dim=1) >= self.peak_threshold
             tail_error = weighted_error if core in ("wmse_tail", "mse_wtail") else error
-            loss = loss + c.tail_lambda * (tail_error.mean(dim=1) * event).sum() / event.sum().clamp_min(1)
+            per_sample_tail_error = tail_error.mean(dim=1)
+            event = (target.amax(dim=1) >= self.peak_threshold).to(tail_error.dtype)
+            # Fixed TRAIN fraction keeps each event's weight independent of batch composition.
+            tail_loss = (per_sample_tail_error * event).mean() / c.tail_frac
+            loss = loss + c.tail_lambda * tail_loss
         if c.loss_mode.endswith("_slope") and c.slope_lambda and target.size(1) > 1:
             slope_error = prediction.diff(dim=1) - target.diff(dim=1)
             if c.slope_robust == "huber":
