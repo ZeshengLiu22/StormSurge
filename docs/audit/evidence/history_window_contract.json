@@ -1,0 +1,164 @@
+{
+  "generated_utc": "2026-09-10T02:22:18.161406+00:00",
+  "decisions": {
+    "training_and_inference_use_same_configured_history": true,
+    "history_is_not_fixed_to_48": true,
+    "cross_history_inference_supported": false,
+    "baseline_zero_history": "spatial only",
+    "baseline_positive_history": "spatial plus one-layer LSTM",
+    "baseline_lag_capacity_check": false
+  },
+  "retained_defaults": {
+    "history_hours": 24,
+    "history_hours_unit": "hours",
+    "max_time_steps": 32,
+    "max_time_steps_unit": "frames including the current frame"
+  },
+  "data_history": {
+    "maximum_hours": 48,
+    "interval_hours": 6,
+    "required_frames": 9
+  },
+  "changes_this_validation": "Documentation and evidence only; no runtime code, configuration or validation changes.",
+  "source_sha256": {
+    "emulator/models/architectures.py": "57b05af35ee0250b227f7b548e372897689e4c8e3e330b89c635d3597cde58c4",
+    "emulator/training/arguments.py": "739d0f796a5075ec3dc6330bbad2ce55be8e3abf5839b2cfaa9a0ffe19f14fa8",
+    "emulator/data/graph_store.py": "cd20f734b602af78ec649e26ef466ffb98cf342c67420d16e7b8c7ae79baae38",
+    "train.py": "1ce10b068795f7db066dc5f150beb3da9bce3b99cbc507ae299d3cb2bf518b5e",
+    "train.sh": "3f69ec7bf066842d7a72d380496ac12be6bdc9e570f40956f4f252a70e2f7716",
+    "infer.py": "1bed809358aa2161b7ba4bc89da946a9a3dd82b10f1376d2b8569610c02188c1",
+    "preprocessing/time_align_unified.py": "333f5af8ab41b946f99d9375e58bed64ac5f286c98913ffaf26eafb8cab0fca6"
+  },
+  "verification": {
+    "passed": 10,
+    "failed": 0,
+    "elapsed_seconds": 0.7723432169877924,
+    "environment": {
+      "device": "cpu",
+      "torch": "2.6.0+cu124"
+    },
+    "scope": "One-epoch synthetic training and checkpoint inference; not a production accuracy evaluation.",
+    "results": [
+      {
+        "model": "baseline",
+        "encoder": "GraphSAGE",
+        "history_hours": 0,
+        "history_supplied": true,
+        "hidden_channels": 16,
+        "max_time_steps": 32,
+        "frames": 1,
+        "checkpoint_history_reused": true,
+        "mismatched_history_rejected": true,
+        "prediction_max_abs_diff": 0.0
+      },
+      {
+        "model": "baseline",
+        "encoder": "GraphSAGE",
+        "history_hours": 12,
+        "history_supplied": true,
+        "hidden_channels": 16,
+        "max_time_steps": 32,
+        "frames": 3,
+        "checkpoint_history_reused": true,
+        "mismatched_history_rejected": true,
+        "prediction_max_abs_diff": 0.0
+      },
+      {
+        "model": "baseline",
+        "encoder": "GraphSAGE",
+        "history_hours": 24,
+        "history_supplied": false,
+        "hidden_channels": 16,
+        "max_time_steps": 32,
+        "frames": 5,
+        "checkpoint_history_reused": true,
+        "mismatched_history_rejected": true,
+        "prediction_max_abs_diff": 0.0
+      },
+      {
+        "model": "baseline",
+        "encoder": "GraphSAGE",
+        "history_hours": 48,
+        "history_supplied": true,
+        "hidden_channels": 128,
+        "max_time_steps": 32,
+        "frames": 9,
+        "checkpoint_history_reused": true,
+        "mismatched_history_rejected": true,
+        "prediction_max_abs_diff": 0.0
+      },
+      {
+        "model": "perceiver3",
+        "encoder": "GraphSAGE",
+        "history_hours": 0,
+        "history_supplied": true,
+        "hidden_channels": 16,
+        "max_time_steps": 32,
+        "frames": 1,
+        "checkpoint_history_reused": true,
+        "mismatched_history_rejected": true,
+        "prediction_max_abs_diff": 0.0
+      },
+      {
+        "model": "perceiver3",
+        "encoder": "GraphSAGE",
+        "history_hours": 12,
+        "history_supplied": true,
+        "hidden_channels": 16,
+        "max_time_steps": 32,
+        "frames": 3,
+        "checkpoint_history_reused": true,
+        "mismatched_history_rejected": true,
+        "prediction_max_abs_diff": 0.0
+      },
+      {
+        "model": "perceiver3",
+        "encoder": "GraphSAGE",
+        "history_hours": 24,
+        "history_supplied": false,
+        "hidden_channels": 16,
+        "max_time_steps": 32,
+        "frames": 5,
+        "checkpoint_history_reused": true,
+        "mismatched_history_rejected": true,
+        "prediction_max_abs_diff": 0.0
+      },
+      {
+        "model": "perceiver3",
+        "encoder": "GraphSAGE",
+        "history_hours": 48,
+        "history_supplied": true,
+        "hidden_channels": 128,
+        "max_time_steps": 32,
+        "frames": 9,
+        "checkpoint_history_reused": true,
+        "mismatched_history_rejected": true,
+        "prediction_max_abs_diff": 0.0
+      },
+      {
+        "model": "baseline",
+        "encoder": "CNN",
+        "history_hours": 48,
+        "history_supplied": true,
+        "hidden_channels": 128,
+        "max_time_steps": 32,
+        "frames": 9,
+        "checkpoint_history_reused": true,
+        "mismatched_history_rejected": true,
+        "prediction_max_abs_diff": 0.0
+      },
+      {
+        "model": "perceiver3",
+        "encoder": "CNN",
+        "history_hours": 48,
+        "history_supplied": true,
+        "hidden_channels": 128,
+        "max_time_steps": 32,
+        "frames": 9,
+        "checkpoint_history_reused": true,
+        "mismatched_history_rejected": true,
+        "prediction_max_abs_diff": 0.0
+      }
+    ]
+  }
+}

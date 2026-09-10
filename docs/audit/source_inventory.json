@@ -1307,9 +1307,9 @@
     "path": "emulator/training/arguments.py",
     "status": "added",
     "original_sha256": null,
-    "current_sha256": "a70917f82a65a6b599ced4474692293875082b0a49f98e91299e9b472702bfdd",
+    "current_sha256": "739d0f796a5075ec3dc6330bbad2ce55be8e3abf5839b2cfaa9a0ffe19f14fa8",
     "original_lines": 0,
-    "current_lines": 244
+    "current_lines": 245
   },
   {
     "path": "emulator/training/engine.py",

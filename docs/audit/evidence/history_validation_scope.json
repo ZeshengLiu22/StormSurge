@@ -1,0 +1,143 @@
+{
+  "generated_utc": "2026-09-10T02:11:10.327150+00:00",
+  "before_head": "f4a91d1",
+  "original_head": "bb62a2297a0d37a35db5bff352ee815e05676c93",
+  "change": "Restrict --max_time_steps capacity validation to --model perceiver3 (PACT).",
+  "defaults_decision": "Pending discussion: retain original CLI/shell default H=24 and all explicit configs.",
+  "baseline_profiles": {
+    "total": 36,
+    "history_hours_counts": {
+      "0": 18,
+      "12": 18
+    }
+  },
+  "regression_tests": {
+    "command": "python -m unittest -v test_config_interfaces test_pipeline",
+    "passed": 10,
+    "failed": 0,
+    "elapsed_seconds": 8.74,
+    "log": "test_every_training_profile_generates_valid_commands (test_config_interfaces.ConfigInterfaceTests.test_every_training_profile_generates_valid_commands) ... ok\ntest_lag_embedding_capacity_covers_the_history_window (test_config_interfaces.ConfigInterfaceTests.test_lag_embedding_capacity_covers_the_history_window) ... ok\ntest_loss_modes_match_physical_unit_reference_and_gradients (test_config_interfaces.ConfigInterfaceTests.test_loss_modes_match_physical_unit_reference_and_gradients) ... ok\ntest_original_conditional_cartesian_sweep_has_all_390_combinations (test_config_interfaces.ConfigInterfaceTests.test_original_conditional_cartesian_sweep_has_all_390_combinations) ... ok\ntest_removed_residual_head_flags_fail_instead_of_being_ignored (test_config_interfaces.ConfigInterfaceTests.test_removed_residual_head_flags_fail_instead_of_being_ignored) ... ok\ntest_rop_configuration_reaches_the_scheduler_and_snapshot (test_config_interfaces.ConfigInterfaceTests.test_rop_configuration_reaches_the_scheduler_and_snapshot) ... ok\ntest_fresh_train_checkpoint_and_inference_roundtrip (test_pipeline.PipelineTests.test_fresh_train_checkpoint_and_inference_roundtrip) ... ok\ntest_original_flags_and_defaults (test_pipeline.PipelineTests.test_original_flags_and_defaults) ... ok\ntest_station_filter_precedes_loading_and_split_is_by_year (test_pipeline.PipelineTests.test_station_filter_precedes_loading_and_split_is_by_year) ... ok\ntest_warmup_cosine_matches_previous_schedule_without_deprecated_calls (test_pipeline.PipelineTests.test_warmup_cosine_matches_previous_schedule_without_deprecated_calls) ... ok\n\n----------------------------------------------------------------------\nRan 10 tests in 8.740s\n\nOK\n"
+  },
+  "scope_checks": {
+    "capacity_cases": [
+      {
+        "model": "baseline",
+        "history_hours": 0,
+        "max_time_steps": 0,
+        "accepted": true
+      },
+      {
+        "model": "baseline",
+        "history_hours": 12,
+        "max_time_steps": 1,
+        "accepted": true
+      },
+      {
+        "model": "baseline",
+        "history_hours": 48,
+        "max_time_steps": 1,
+        "accepted": true
+      },
+      {
+        "model": "baseline",
+        "history_hours": 192,
+        "max_time_steps": 32,
+        "accepted": true
+      },
+      {
+        "model": "perceiver3",
+        "history_hours": 0,
+        "max_time_steps": 0,
+        "accepted": false
+      },
+      {
+        "model": "perceiver3",
+        "history_hours": 0,
+        "max_time_steps": 1,
+        "accepted": true
+      },
+      {
+        "model": "perceiver3",
+        "history_hours": 48,
+        "max_time_steps": 8,
+        "accepted": false
+      },
+      {
+        "model": "perceiver3",
+        "history_hours": 48,
+        "max_time_steps": 9,
+        "accepted": true
+      },
+      {
+        "model": "perceiver3",
+        "history_hours": 192,
+        "max_time_steps": 32,
+        "accepted": false
+      }
+    ],
+    "malformed_history_cases": 4,
+    "pact_history_consistency_preserved": true,
+    "insufficient_data_rejected": true,
+    "cli_default_history_hours": 24,
+    "shell_default_history_hours": 24,
+    "baseline_zero_history_is_spatial_only": true
+  },
+  "original_pact_dynamic_h": {
+    "same_model_instance": true,
+    "max_time_steps": 32,
+    "pmean_enabled": false,
+    "results": [
+      {
+        "history_hours": 48,
+        "frames": 9,
+        "accepted": true,
+        "output_shape": [
+          2,
+          4
+        ]
+      },
+      {
+        "history_hours": 24,
+        "frames": 5,
+        "accepted": true,
+        "output_shape": [
+          2,
+          4
+        ]
+      },
+      {
+        "history_hours": 0,
+        "frames": 1,
+        "accepted": true,
+        "output_shape": [
+          2,
+          4
+        ]
+      },
+      {
+        "history_hours": 192,
+        "frames": 33,
+        "accepted": false,
+        "error": "T=33 exceeds max_time_steps=32. Increase --max_time_steps."
+      }
+    ]
+  },
+  "original_source_sha256": {
+    "emulator/models/architectures.py": "b2f07583db67ce6e33efaad88d933ef6efc24053ed2ab35633c009927ceb9104",
+    "train.py": "50af7cdfb84773711a5879d822774113053b1b8dd27c658e576f316724d9f026",
+    "train.sh": "b6b33402c2eaae001e6138f2cc999936d10eaf573de03a6121b8dda142d55aad",
+    "infer.py": "2595195829680ffe1ff83f34f3e91e21664fa8577d6bdd8a2515f591c9de8763"
+  },
+  "changed_source_sha256": {
+    "emulator/training/arguments.py": {
+      "before": "a70917f82a65a6b599ced4474692293875082b0a49f98e91299e9b472702bfdd",
+      "after": "739d0f796a5075ec3dc6330bbad2ce55be8e3abf5839b2cfaa9a0ffe19f14fa8"
+    }
+  },
+  "environment": {
+    "device": "cpu",
+    "torch": "2.6.0+cu124",
+    "torch_geometric": "2.7.0"
+  },
+  "scope": "Synthetic forward/backward checks and existing configuration/pipeline regression tests; no change to model H consistency, CLI/shell defaults or config values."
+}

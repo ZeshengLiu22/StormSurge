@@ -191,7 +191,8 @@ def parse_args(argv=None):
     parser.add_argument("--transformer_layers", type=int, default=2)
     parser.add_argument("--transformer_ff_mult", type=float, default=4.0)
     parser.add_argument("--transformer_dropout", type=float, default=0.05)
-    parser.add_argument("--max_time_steps", type=int, default=32)
+    parser.add_argument("--max_time_steps", type=int, default=32,
+                        help="PACT lag-embedding capacity, including the current step; ignored by baseline.")
     parser.add_argument("--run_tag", type=str, default=None)
     parser.add_argument(
         "--output_dir",
@@ -219,7 +220,7 @@ def parse_args(argv=None):
         parser.error("CNN requires positive layer count and intermediate width.")
     if args.history_hours < 0 or args.history_hours % 6:
         parser.error("--history_hours must be a nonnegative multiple of 6.")
-    if args.max_time_steps < args.history_hours // 6 + 1:
+    if args.model == "perceiver3" and args.max_time_steps < args.history_hours // 6 + 1:
         parser.error("--max_time_steps is smaller than the requested history window.")
     if min(args.batch_size, args.epochs, args.grad_accum_steps, args.torch_threads, args.transformer_layers) < 1:
         parser.error("Batch size, epochs, accumulation, threads and temporal depth must be positive.")
