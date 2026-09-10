@@ -1,0 +1,214 @@
+{
+  "device": "cuda",
+  "world_size": 1,
+  "torch": "2.6.0+cu124",
+  "statistics": [
+    {
+      "data": "fixture",
+      "mode": "zscore",
+      "nodes": 256,
+      "max_abs_difference": {
+        "x_center": 0.0,
+        "x_scale": 0.0,
+        "y_mean": 0.0,
+        "y_std": 0.0,
+        "pmean_center": 0.0,
+        "pmean_scale": 0.0
+      }
+    },
+    {
+      "data": "fixture",
+      "mode": "robust",
+      "nodes": 0,
+      "max_abs_difference": {
+        "x_center": 0.0,
+        "x_scale": 0.0,
+        "y_mean": 0.0,
+        "y_std": 0.0,
+        "pmean_center": 0.0,
+        "pmean_scale": 0.0
+      }
+    },
+    {
+      "data": "fixture",
+      "mode": "robust",
+      "nodes": -1,
+      "max_abs_difference": {
+        "x_center": 0.0,
+        "x_scale": 0.0,
+        "y_mean": 0.0,
+        "y_std": 0.0,
+        "pmean_center": 0.0,
+        "pmean_scale": 0.0
+      }
+    },
+    {
+      "data": "fixture",
+      "mode": "robust",
+      "nodes": 256,
+      "max_abs_difference": {
+        "x_center": 0.0,
+        "x_scale": 0.0,
+        "y_mean": 0.0,
+        "y_std": 0.0,
+        "pmean_center": 0.0,
+        "pmean_scale": 0.0
+      }
+    },
+    {
+      "data": "fixture",
+      "mode": "robust",
+      "nodes": 900,
+      "max_abs_difference": {
+        "x_center": 0.0,
+        "x_scale": 0.0,
+        "y_mean": 0.0,
+        "y_std": 0.0,
+        "pmean_center": 0.0,
+        "pmean_scale": 0.0
+      }
+    },
+    {
+      "data": "fixture",
+      "mode": "mag",
+      "nodes": 0,
+      "max_abs_difference": {
+        "x_center": 0.0,
+        "x_scale": 0.0,
+        "y_mean": 0.0,
+        "y_std": 0.0,
+        "pmean_center": 0.0,
+        "pmean_scale": 0.0
+      }
+    },
+    {
+      "data": "fixture",
+      "mode": "mag",
+      "nodes": -1,
+      "max_abs_difference": {
+        "x_center": 0.0,
+        "x_scale": 0.0,
+        "y_mean": 0.0,
+        "y_std": 0.0,
+        "pmean_center": 0.0,
+        "pmean_scale": 0.0
+      }
+    },
+    {
+      "data": "fixture",
+      "mode": "mag",
+      "nodes": 256,
+      "max_abs_difference": {
+        "x_center": 0.0,
+        "x_scale": 0.0,
+        "y_mean": 0.0,
+        "y_std": 0.0,
+        "pmean_center": 0.0,
+        "pmean_scale": 0.0
+      }
+    },
+    {
+      "data": "fixture",
+      "mode": "mag",
+      "nodes": 900,
+      "max_abs_difference": {
+        "x_center": 0.0,
+        "x_scale": 0.0,
+        "y_mean": 0.0,
+        "y_std": 0.0,
+        "pmean_center": 0.0,
+        "pmean_scale": 0.0
+      }
+    },
+    {
+      "data": "Battery",
+      "mode": "zscore",
+      "nodes": 256,
+      "max_abs_difference": {
+        "x_center": 0.0,
+        "x_scale": 0.0,
+        "y_mean": 0.0,
+        "y_std": 0.0
+      }
+    }
+  ],
+  "augmentation": [
+    {
+      "probability": 0.0,
+      "clip": 0.0,
+      "outputs_exact": true,
+      "next_rng_draws_exact": true
+    },
+    {
+      "probability": 0.0,
+      "clip": 1.0,
+      "outputs_exact": true,
+      "next_rng_draws_exact": true
+    },
+    {
+      "probability": 0.5,
+      "clip": 0.0,
+      "outputs_exact": true,
+      "next_rng_draws_exact": true
+    },
+    {
+      "probability": 0.5,
+      "clip": 1.0,
+      "outputs_exact": true,
+      "next_rng_draws_exact": true
+    },
+    {
+      "probability": 1.0,
+      "clip": 0.0,
+      "outputs_exact": true,
+      "next_rng_draws_exact": true
+    },
+    {
+      "probability": 1.0,
+      "clip": 1.0,
+      "outputs_exact": true,
+      "next_rng_draws_exact": true
+    },
+    {
+      "probability": 2.0,
+      "clip": 0.0,
+      "outputs_exact": true,
+      "next_rng_draws_exact": true
+    },
+    {
+      "probability": 2.0,
+      "clip": 1.0,
+      "outputs_exact": true,
+      "next_rng_draws_exact": true
+    }
+  ],
+  "losses": {
+    "comparisons": 100,
+    "max_loss_difference": 0.0,
+    "max_gradient_difference": 1.862645149230957e-09
+  },
+  "validation": [
+    {
+      "samples": 1,
+      "padded_samples": 1,
+      "exact_original_metrics": true,
+      "metrics": {
+        "rmse_all": 0.9759610574684244,
+        "mae_all": 0.9750000238418579,
+        "rmse_peak5": 0.9759610295295715,
+        "mae_peak5": 0.9750000238418579
+      }
+    },
+    {
+      "samples": 43,
+      "padded_samples": 43,
+      "exact_original_metrics": true,
+      "metrics": {
+        "rmse_all": 14.315632045581426,
+        "mae_all": 9.050987922868064,
+        "rmse_peak5": 24.265243530273438,
+        "mae_peak5": 17.594316482543945
+      }
+    }
+  ]
+}

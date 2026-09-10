@@ -1,0 +1,224 @@
+{
+  "removed": {
+    "alpha_init_logit": {
+      "flags": [
+        "--alpha_init_logit"
+      ],
+      "default": -2.0,
+      "choices": null,
+      "action": "_StoreAction",
+      "type": "float"
+    },
+    "gate_bias_init": {
+      "flags": [
+        "--gate_bias_init"
+      ],
+      "default": -2.0,
+      "choices": null,
+      "action": "_StoreAction",
+      "type": "float"
+    },
+    "tail_tanh_clip": {
+      "flags": [
+        "--tail_tanh_clip"
+      ],
+      "default": 2.5,
+      "choices": null,
+      "action": "_StoreAction",
+      "type": "float"
+    }
+  },
+  "added": {
+    "body_loss_weight": {
+      "flags": [
+        "--body_loss_weight"
+      ],
+      "default": 1.0,
+      "choices": null,
+      "action": "_StoreAction",
+      "type": "float"
+    },
+    "deterministic": {
+      "flags": [
+        "--deterministic"
+      ],
+      "default": 0,
+      "choices": [
+        0,
+        1
+      ],
+      "action": "_StoreAction",
+      "type": "parse_bool_int"
+    },
+    "device": {
+      "flags": [
+        "--device"
+      ],
+      "default": "auto",
+      "choices": [
+        "auto",
+        "cpu",
+        "cuda"
+      ],
+      "action": "_StoreAction",
+      "type": null
+    },
+    "dual_loss": {
+      "flags": [
+        "--dual_loss"
+      ],
+      "default": 1,
+      "choices": [
+        0,
+        1
+      ],
+      "action": "_StoreAction",
+      "type": "parse_bool_int"
+    },
+    "dual_mode": {
+      "flags": [
+        "--dual_mode"
+      ],
+      "default": "exceedance",
+      "choices": [
+        "exceedance"
+      ],
+      "action": "_StoreAction",
+      "type": null
+    },
+    "excess_loss_weight": {
+      "flags": [
+        "--excess_loss_weight"
+      ],
+      "default": 1.0,
+      "choices": null,
+      "action": "_StoreAction",
+      "type": "float"
+    },
+    "gate_loss_weight": {
+      "flags": [
+        "--gate_loss_weight"
+      ],
+      "default": 1.0,
+      "choices": null,
+      "action": "_StoreAction",
+      "type": "float"
+    },
+    "max_grad_norm": {
+      "flags": [
+        "--max_grad_norm"
+      ],
+      "default": 0.0,
+      "choices": null,
+      "action": "_StoreAction",
+      "type": "float"
+    },
+    "stable_arch": {
+      "flags": [
+        "--stable_arch"
+      ],
+      "default": 1,
+      "choices": [
+        1
+      ],
+      "action": "_StoreAction",
+      "type": "parse_bool_int"
+    },
+    "use_station_meta": {
+      "flags": [
+        "--use_station_meta"
+      ],
+      "default": 1,
+      "choices": [
+        0,
+        1
+      ],
+      "action": "_StoreAction",
+      "type": "parse_bool_int"
+    }
+  },
+  "changed": {
+    "gate_mode": {
+      "original": {
+        "flags": [
+          "--gate_mode"
+        ],
+        "default": "window",
+        "choices": [
+          "window",
+          "horizon"
+        ],
+        "action": "_StoreAction",
+        "type": "str"
+      },
+      "current": {
+        "flags": [
+          "--gate_mode"
+        ],
+        "default": "window",
+        "choices": [
+          "window"
+        ],
+        "action": "_StoreAction",
+        "type": null
+      }
+    },
+    "head_type": {
+      "original": {
+        "flags": [
+          "--head_type"
+        ],
+        "default": "dual",
+        "choices": [
+          "single",
+          "dual"
+        ],
+        "action": "_StoreAction",
+        "type": "canonical_head_type"
+      },
+      "current": {
+        "flags": [
+          "--head_type"
+        ],
+        "default": "dual",
+        "choices": [
+          "single",
+          "dual"
+        ],
+        "action": "_StoreAction",
+        "type": "str.lower"
+      }
+    },
+    "temporal_block": {
+      "original": {
+        "flags": [
+          "--temporal_block"
+        ],
+        "default": "Transformer",
+        "choices": [
+          "MLP",
+          "LSTM",
+          "GRU",
+          "Transformer"
+        ],
+        "action": "_StoreAction",
+        "type": "canonical_temporal_block"
+      },
+      "current": {
+        "flags": [
+          "--temporal_block"
+        ],
+        "default": "Transformer",
+        "choices": [
+          "MLP",
+          "LSTM",
+          "GRU",
+          "Transformer"
+        ],
+        "action": "_StoreAction",
+        "type": "temporal_block_name"
+      }
+    }
+  },
+  "unchanged_count": 76
+}

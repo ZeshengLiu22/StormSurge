@@ -1,0 +1,3 @@
+[2026-09-09|23:45:54] Epoch 001/2 | Train rmse_all=1.063720 mae_all=0.851544 rmse_peak5=1.676616 mae_peak5=1.563686 | Val rmse_all=0.874753 mae_all=0.811178 rmse_peak5=0.874753 mae_peak5=0.811178
+[2026-09-09|23:45:54] Epoch 002/2 | Train rmse_all=1.036074 mae_all=0.831424 rmse_peak5=1.594263 mae_peak5=1.524430 | Val rmse_all=0.865269 mae_all=0.809148 rmse_peak5=0.865269 mae_peak5=0.809148
+[2026-09-09|23:45:54] Wall time: 00:00:01.050 (1.050 s)

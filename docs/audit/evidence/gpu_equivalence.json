@@ -1,0 +1,168 @@
+{
+  "gpu": "NVIDIA H100 80GB HBM3",
+  "cases": 16,
+  "max_prediction_difference": 0.0,
+  "max_gradient_difference": 0.0,
+  "rows": [
+    {
+      "kind": "baseline",
+      "encoder": "GraphSAGE",
+      "history_hours": 0,
+      "dtype": "fp32",
+      "max_prediction_difference": 0.0,
+      "max_gradient_difference": 0.0,
+      "same_seed_initialization_equal": true,
+      "parameters": 34308
+    },
+    {
+      "kind": "baseline",
+      "encoder": "GraphSAGE",
+      "history_hours": 0,
+      "dtype": "bf16",
+      "max_prediction_difference": 0.0,
+      "max_gradient_difference": 0.0,
+      "same_seed_initialization_equal": true,
+      "parameters": 34308
+    },
+    {
+      "kind": "baseline",
+      "encoder": "GraphSAGE",
+      "history_hours": 48,
+      "dtype": "fp32",
+      "max_prediction_difference": 0.0,
+      "max_gradient_difference": 0.0,
+      "same_seed_initialization_equal": true,
+      "parameters": 166404
+    },
+    {
+      "kind": "baseline",
+      "encoder": "GraphSAGE",
+      "history_hours": 48,
+      "dtype": "bf16",
+      "max_prediction_difference": 0.0,
+      "max_gradient_difference": 0.0,
+      "same_seed_initialization_equal": true,
+      "parameters": 166404
+    },
+    {
+      "kind": "baseline",
+      "encoder": "CNN",
+      "history_hours": 0,
+      "dtype": "fp32",
+      "max_prediction_difference": 0.0,
+      "max_gradient_difference": 0.0,
+      "same_seed_initialization_equal": true,
+      "parameters": 34864
+    },
+    {
+      "kind": "baseline",
+      "encoder": "CNN",
+      "history_hours": 0,
+      "dtype": "bf16",
+      "max_prediction_difference": 0.0,
+      "max_gradient_difference": 0.0,
+      "same_seed_initialization_equal": true,
+      "parameters": 34864
+    },
+    {
+      "kind": "baseline",
+      "encoder": "CNN",
+      "history_hours": 48,
+      "dtype": "fp32",
+      "max_prediction_difference": 0.0,
+      "max_gradient_difference": 0.0,
+      "same_seed_initialization_equal": true,
+      "parameters": 166960
+    },
+    {
+      "kind": "baseline",
+      "encoder": "CNN",
+      "history_hours": 48,
+      "dtype": "bf16",
+      "max_prediction_difference": 0.0,
+      "max_gradient_difference": 0.0,
+      "same_seed_initialization_equal": true,
+      "parameters": 166960
+    },
+    {
+      "kind": "pact",
+      "encoder": "GraphSAGE",
+      "history_hours": 0,
+      "dtype": "fp32",
+      "max_prediction_difference": 0.0,
+      "max_gradient_difference": 0.0,
+      "same_seed_initialization_equal": true,
+      "parameters": 618245
+    },
+    {
+      "kind": "pact",
+      "encoder": "GraphSAGE",
+      "history_hours": 0,
+      "dtype": "bf16",
+      "max_prediction_difference": 0.0,
+      "max_gradient_difference": 0.0,
+      "same_seed_initialization_equal": true,
+      "parameters": 618245
+    },
+    {
+      "kind": "pact",
+      "encoder": "GraphSAGE",
+      "history_hours": 48,
+      "dtype": "fp32",
+      "max_prediction_difference": 0.0,
+      "max_gradient_difference": 0.0,
+      "same_seed_initialization_equal": true,
+      "parameters": 618245
+    },
+    {
+      "kind": "pact",
+      "encoder": "GraphSAGE",
+      "history_hours": 48,
+      "dtype": "bf16",
+      "max_prediction_difference": 0.0,
+      "max_gradient_difference": 0.0,
+      "same_seed_initialization_equal": true,
+      "parameters": 618245
+    },
+    {
+      "kind": "pact",
+      "encoder": "CNN",
+      "history_hours": 0,
+      "dtype": "fp32",
+      "max_prediction_difference": 0.0,
+      "max_gradient_difference": 0.0,
+      "same_seed_initialization_equal": true,
+      "parameters": 618801
+    },
+    {
+      "kind": "pact",
+      "encoder": "CNN",
+      "history_hours": 0,
+      "dtype": "bf16",
+      "max_prediction_difference": 0.0,
+      "max_gradient_difference": 0.0,
+      "same_seed_initialization_equal": true,
+      "parameters": 618801
+    },
+    {
+      "kind": "pact",
+      "encoder": "CNN",
+      "history_hours": 48,
+      "dtype": "fp32",
+      "max_prediction_difference": 0.0,
+      "max_gradient_difference": 0.0,
+      "same_seed_initialization_equal": true,
+      "parameters": 618801
+    },
+    {
+      "kind": "pact",
+      "encoder": "CNN",
+      "history_hours": 48,
+      "dtype": "bf16",
+      "max_prediction_difference": 0.0,
+      "max_gradient_difference": 0.0,
+      "same_seed_initialization_equal": true,
+      "parameters": 618801
+    }
+  ]
+}

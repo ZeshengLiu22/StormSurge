@@ -1,0 +1,22 @@
+{
+  "generated_utc": "2026-09-10T00:04:01.023259+00:00",
+  "original_repository": "https://github.com/BinaLab/PACT_Storm_Surge_Emulator",
+  "original_head": "3d4be39c48214cbcd3afbdc51ec48f7fb839e0de",
+  "original_worktree_status": [
+    " M .gitignore"
+  ],
+  "current_repository": "https://github.com/ZeshengLiu22/StormSurge",
+  "counts": {
+    "modified": 29,
+    "added": 19,
+    "unchanged": 140,
+    "deleted": 9
+  },
+  "total_paths": 197,
+  "excluded": [
+    "docs/ORIGINAL_COMPARISON.md",
+    "docs/audit/**",
+    "ignored data/results/checkpoints/caches",
+    ".git/**"
+  ]
+}

@@ -1,0 +1,176 @@
+{
+  "changed_paths": [
+    "README.md",
+    "configs/train_config_NCEP_Battery_Stable_Single.sh",
+    "emulator/data/normalization.py",
+    "emulator/data/stats.py",
+    "emulator/inference/__init__.py",
+    "emulator/inference/grouping.py",
+    "emulator/training/arguments.py",
+    "emulator/training/engine.py",
+    "emulator/training/losses.py",
+    "emulator/training/metrics.py",
+    "environment_dataprep.yml",
+    "environment_training.yml",
+    "infer.py",
+    "preprocessing/forcing_cmip6.py",
+    "preprocessing/preprocessing_forcing_CMIP6_AWI_Mean_Removal.py",
+    "preprocessing/preprocessing_forcing_CMIP6_CNRM_Mean_Removal.py",
+    "preprocessing/preprocessing_forcing_CMIP6_EC_EARTH_Mean_Removal.py",
+    "preprocessing/preprocessing_forcing_CMIP6_MPI_Mean_Removal.py",
+    "preprocessing/preprocessing_forcing_CMIP6_MRI_Mean_Removal.py",
+    "preprocessing/preprocessing_forcing_NCEP_Mean_Removal.py",
+    "preprocessing/preprocessing_simulation.py",
+    "preprocessing/time_align_unified.py",
+    "tests/test_config_interfaces.py",
+    "tests/test_inference_reporting.py",
+    "tests/test_preprocessing_pipeline.py",
+    "tests/test_time_alignment.py",
+    "tests/test_training.py",
+    "train.py"
+  ],
+  "changes": {
+    "README.md": {
+      "before": "97cae90d186911f7ccf4034753ef9aa343ce22b52bbf2427af374c70fadd797b",
+      "after": "489b1d85dd2b0b5ec1d2b4e43256c9002d146e00f2aeb03ad76b13a274ec7b29"
+    },
+    "configs/train_config_NCEP_Battery_Stable_Single.sh": {
+      "before": "b9afffdb7e26b7c179ee84e05b286579a9bfa319689ca4ce581b0f614ef1ae77",
+      "after": "12a949fe05fcfa1880a1ad3254dd66460f5707f8298d983a150faa0a8b7f442d"
+    },
+    "emulator/data/normalization.py": {
+      "before": "b7add53f9ebac35721576c51f60fca33767e5095aa69f6b0f0a3ba709dfbd880",
+      "after": "c58550fe4597e7c3ae26403a1adf3fd902f4c7a4d6310aa75520f44cdeff708c"
+    },
+    "emulator/data/stats.py": {
+      "before": "ab4b317257208551a5f72c0a0d6dcf3f87db6e223beaa6cf7df1180a9787287d",
+      "after": "343ae07322b61c3d3c58b15b72bad7a15fbbbb082e340fafd1af2a3a772abb0a"
+    },
+    "emulator/inference/__init__.py": {
+      "before": null,
+      "after": "a4a17f727e269fea79f9974d8f06c75e7959f12ea85fb72c938d63d0982345fa"
+    },
+    "emulator/inference/grouping.py": {
+      "before": null,
+      "after": "a2a1aabec95bde2780e688ef91129a62fb5e4c44d47b4a222cfe3cc358c89902"
+    },
+    "emulator/training/arguments.py": {
+      "before": "f0f25a07b76460747ddc27447fd76d37ba546d217a6a6cc55deca28be18c145c",
+      "after": "f4fbe33e43b040dd308012ad746b062a5aace425a1149ff4fd43dc7d0fee4564"
+    },
+    "emulator/training/engine.py": {
+      "before": "d0a05d245c84a1f4a9cba02f52972edf903cd7f21886fe964d7e277082c52d66",
+      "after": "1b8b683d481f36ffb489fd18a027e514879beb1d604030d1ba9b9da18a945f89"
+    },
+    "emulator/training/losses.py": {
+      "before": "10fdf02e5e420f3d2ba34a4f9d779fcb35b5dfe86bd03401d35b94110bb09537",
+      "after": "fed873bec21e52749a1b814cd9575f168edd7bb36464955035a0cff4c5ef3e27"
+    },
+    "emulator/training/metrics.py": {
+      "before": "aaf794c3ed089d88e6962bacf6b8a8691fe88242eef063a919120fe1782e3d49",
+      "after": "a16bad5f040d1725cf97e47628b9d3ea19da39d10c3ad14f34a0a59c95ecd0e9"
+    },
+    "environment_dataprep.yml": {
+      "before": "71956a38e14faf4e8ea75bc25750fb77dda91473e1853922106de15317124ec0",
+      "after": "e3b10843e616112b6bac839f060f58f21fddde6644b6d5d51a9aa63a11dea9cd"
+    },
+    "environment_training.yml": {
+      "before": "25b1efe5e0d540ec23bcc78e05041865a482629981cae0b9391a7e98a603a8af",
+      "after": "e5ec667014aea9f3d20574ff644b7fea0405ba86b93b2e64bd136c1c2ee43859"
+    },
+    "infer.py": {
+      "before": "fd8c8b733738a4741c57de1c26a0c76471ddfd2104d0def79bcfd6cd015431ae",
+      "after": "dbdf889e50e0f44b83b4779f6f102b8c93e66bc37011dc5fb2506f6aea5ad28a"
+    },
+    "preprocessing/forcing_cmip6.py": {
+      "before": "6d2f98c7068e18f5231f3b32fc65d6829361a25ce45699449de23bca6b7bb8b3",
+      "after": "86704b4c63a26b6af4f429b15073997ea55ab8df423f5925801b1a614f294fec"
+    },
+    "preprocessing/preprocessing_forcing_CMIP6_AWI_Mean_Removal.py": {
+      "before": null,
+      "after": "4e0c3dd6fcbabfb8a3aec75d03ce74c2fb79d1487ba383ff90d9aa8fa02f29dd"
+    },
+    "preprocessing/preprocessing_forcing_CMIP6_CNRM_Mean_Removal.py": {
+      "before": null,
+      "after": "ed48270bff6f1a915656b441b404982efbe9d4ffea7283a0eb0dd75f4bd48473"
+    },
+    "preprocessing/preprocessing_forcing_CMIP6_EC_EARTH_Mean_Removal.py": {
+      "before": null,
+      "after": "fec4b6965676802871b4a2671fc6e4c9d971aaf32abf0291c264ef790cf82d05"
+    },
+    "preprocessing/preprocessing_forcing_CMIP6_MPI_Mean_Removal.py": {
+      "before": null,
+      "after": "d6399517e7883260fa24a52bbdc5f018574a9b82d89c591bb7779fba5e2f8da3"
+    },
+    "preprocessing/preprocessing_forcing_CMIP6_MRI_Mean_Removal.py": {
+      "before": null,
+      "after": "5bbf4666cdb762413fa97a7233b9c6532a3e9fee8888c76426bdacce62fd8be4"
+    },
+    "preprocessing/preprocessing_forcing_NCEP_Mean_Removal.py": {
+      "before": "19a9acf7ed8a0434b4f2c864e5e0d41f940885526f56a5f471d86af9802e63af",
+      "after": "1d70219e40ea25c0c883eea676c8ffe53063185e1b5abc60bfd582253e036b6c"
+    },
+    "preprocessing/preprocessing_simulation.py": {
+      "before": "564f237d39ce7a7f8fc76ad447bdb8cb21afae7d71ce8eda70215c9b8303c6c6",
+      "after": "dd8a6dc993e06b9e81f3f7db0412f3490f3596ecf31ed6546022c95129ba6b7c"
+    },
+    "preprocessing/time_align_unified.py": {
+      "before": "b3855a85f5b0377b781e4235c4ee68a9924384dc7323eb390c310559804dd427",
+      "after": "1c9d274dd9e3baf8116af199e66ded2e0ba5f22bb7b6f39af852e85acb258f80"
+    },
+    "tests/test_config_interfaces.py": {
+      "before": "c5a90da8be9fc347c37ae779a0b56b60d416f231f2eb9ec0a195b6df4bff8b73",
+      "after": "b0fafb7deb16d8ac665e4fd7fde38362826ea30a27d85c240221ee439f522306"
+    },
+    "tests/test_inference_reporting.py": {
+      "before": null,
+      "after": "dc30b147a1e28c599bae07d11f90c5a1d4387b08e01c05f85f3682696db18e40"
+    },
+    "tests/test_preprocessing_pipeline.py": {
+      "before": "e2be835fd7f6f738d8af413969ff75a8436f205971a430cdee33455e657bf9ab",
+      "after": "c41a39ed9700ca0ade938cb30630478850bd6b0b88b24019c5791b3a72681413"
+    },
+    "tests/test_time_alignment.py": {
+      "before": "1a3cb134442c8ed700637dbb4bde7dac21c857d86d7490672701fd89c9ed1fbd",
+      "after": "7e88d14b4b0a5bb74d3b8f5c5742bbd59aae27cf5d11fa3656a358704e8199b9"
+    },
+    "tests/test_training.py": {
+      "before": "eb01be704dcf24b11e3739ba96d2f49ba3b00342cdd092013ba6072f7622f647",
+      "after": "9de30032af3404312b4dc87deb5cab8f19977e86f7fd74972e1dc045f71abeb3"
+    },
+    "train.py": {
+      "before": "26ba8dbcaba0871864daea271078e2fcf6527511f4021eff053f486f8d1b8f30",
+      "after": "674b0301ce12a568daa8b2e0894935c3134ea56163b73f00b18f868f7ecc2a4e"
+    }
+  },
+  "held_unchanged": [
+    "DUAL_HEAD_EXPLAINED.md",
+    "STABILITY_AND_DUAL_HEAD.md",
+    "emulator/models/heads.py",
+    "emulator/models/pressure.py",
+    "emulator/models/spatial.py",
+    "emulator/models/temporal.py",
+    "emulator/common/runtime.py",
+    "emulator/data/graph_store.py",
+    "emulator/data/station_metadata.py",
+    "emulator/models/__init__.py",
+    "emulator/models/architectures.py",
+    "infer.sh",
+    "infer_multi.sh",
+    "train.sh"
+  ],
+  "original_files_restored_exactly": [
+    "environment_training.yml",
+    "environment_dataprep.yml",
+    "preprocessing/preprocessing_forcing_CMIP6_AWI_Mean_Removal.py",
+    "preprocessing/preprocessing_forcing_CMIP6_CNRM_Mean_Removal.py",
+    "preprocessing/preprocessing_forcing_CMIP6_EC_EARTH_Mean_Removal.py",
+    "preprocessing/preprocessing_forcing_CMIP6_MPI_Mean_Removal.py",
+    "preprocessing/preprocessing_forcing_CMIP6_MRI_Mean_Removal.py"
+  ],
+  "original_configs_present": 127,
+  "original_training_profiles_byte_identical": 112,
+  "config_changes_this_turn": [
+    "configs/train_config_NCEP_Battery_Stable_Single.sh"
+  ]
+}

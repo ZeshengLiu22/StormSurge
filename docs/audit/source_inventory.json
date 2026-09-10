@@ -1,0 +1,1578 @@
+[
+  {
+    "path": ".gitignore",
+    "status": "modified",
+    "original_sha256": "7e8db6e1da5d9221d05fe22e9927fb7b856bf9223c7152f3bc55c637b93eb870",
+    "current_sha256": "7157f7a333fedf0f27f93a336977ccdc56b76129ed4692de0536f30416681ba5",
+    "original_lines": 52,
+    "current_lines": 49
+  },
+  {
+    "path": "DUAL_HEAD_EXPLAINED.md",
+    "status": "added",
+    "original_sha256": null,
+    "current_sha256": "5ac6ccb6f56f38f04ab14190f495b67d537674832b0270f16fe34a0a0fa8e13e",
+    "original_lines": 0,
+    "current_lines": 183
+  },
+  {
+    "path": "LICENSE",
+    "status": "unchanged",
+    "original_sha256": "2413ccd32f7bdd06ced42807f7e3df326bb99f6a76447269aaca64693e5ce587",
+    "current_sha256": "2413ccd32f7bdd06ced42807f7e3df326bb99f6a76447269aaca64693e5ce587",
+    "original_lines": 21,
+    "current_lines": 21
+  },
+  {
+    "path": "README.md",
+    "status": "modified",
+    "original_sha256": "636d97a02975bde02bc9c3986e4f9247a81ecf6dc721906b94473e3f7a8239e1",
+    "current_sha256": "88a50a556a9adce4f3481ef30f4f98002dc19b35d5ef17583fc0dfd84be481c4",
+    "original_lines": 483,
+    "current_lines": 132
+  },
+  {
+    "path": "STABILITY_AND_DUAL_HEAD.md",
+    "status": "added",
+    "original_sha256": null,
+    "current_sha256": "3f220907bd44104e7f054cca53ba51aec7f1b83ae7a641820f78e7f5615a3630",
+    "original_lines": 0,
+    "current_lines": 40
+  },
+  {
+    "path": "changelog.md",
+    "status": "deleted",
+    "original_sha256": "19f7a53c22ce8e0ff38b10e6b275f60a9478f25a17a50ff00797a93ca9c959b6",
+    "current_sha256": null,
+    "original_lines": 108,
+    "current_lines": 0
+  },
+  {
+    "path": "configs/configs_infer/infer_config_AWI.sh",
+    "status": "unchanged",
+    "original_sha256": "fbca1701f7f257d544a6f9f332c83c374a3af0b5fe28a30cb43877eb928a9988",
+    "current_sha256": "fbca1701f7f257d544a6f9f332c83c374a3af0b5fe28a30cb43877eb928a9988",
+    "original_lines": 11,
+    "current_lines": 11
+  },
+  {
+    "path": "configs/configs_infer/infer_config_CNRM.sh",
+    "status": "unchanged",
+    "original_sha256": "6606332be6b3c50dfadd445e30e0b48dbc6dfc7666e930c6dcbb926e49f02a18",
+    "current_sha256": "6606332be6b3c50dfadd445e30e0b48dbc6dfc7666e930c6dcbb926e49f02a18",
+    "original_lines": 11,
+    "current_lines": 11
+  },
+  {
+    "path": "configs/configs_infer/infer_config_EC_EARTH.sh",
+    "status": "unchanged",
+    "original_sha256": "ef1b25a70cdb47719177eebd07b56c992036c99efdaaf942056ab1d9087b9ffd",
+    "current_sha256": "ef1b25a70cdb47719177eebd07b56c992036c99efdaaf942056ab1d9087b9ffd",
+    "original_lines": 11,
+    "current_lines": 11
+  },
+  {
+    "path": "configs/configs_infer/infer_config_MPI.sh",
+    "status": "unchanged",
+    "original_sha256": "b7863c71f0e70663447da6db9abdf90be2549156659655ed2460c3f452531495",
+    "current_sha256": "b7863c71f0e70663447da6db9abdf90be2549156659655ed2460c3f452531495",
+    "original_lines": 11,
+    "current_lines": 11
+  },
+  {
+    "path": "configs/configs_infer/infer_config_MRI.sh",
+    "status": "unchanged",
+    "original_sha256": "a45b90e8b494dca83bdbe74a5249f6daadaebbcd6c0390f50c7bc2c7bbf7a06a",
+    "current_sha256": "a45b90e8b494dca83bdbe74a5249f6daadaebbcd6c0390f50c7bc2c7bbf7a06a",
+    "original_lines": 11,
+    "current_lines": 11
+  },
+  {
+    "path": "configs/configs_infer/infer_config_NCEP.sh",
+    "status": "unchanged",
+    "original_sha256": "f492833496ff1cb675db5e10df0a406098820826d7f09439139d0b1531df46fa",
+    "current_sha256": "f492833496ff1cb675db5e10df0a406098820826d7f09439139d0b1531df46fa",
+    "original_lines": 11,
+    "current_lines": 11
+  },
+  {
+    "path": "configs/configs_infer/infer_config_common.sh",
+    "status": "unchanged",
+    "original_sha256": "9f359d8c53fff7c7b3c64be4f34aff7dc9c690922abdf223b70576dc838f97aa",
+    "current_sha256": "9f359d8c53fff7c7b3c64be4f34aff7dc9c690922abdf223b70576dc838f97aa",
+    "original_lines": 40,
+    "current_lines": 40
+  },
+  {
+    "path": "configs/configs_infer/infer_multi_config_AWI.sh",
+    "status": "unchanged",
+    "original_sha256": "cdbd32b4c939c12c9339a0c5f795ebecbd662c2c2cad693d7d245d36c8a2d229",
+    "current_sha256": "cdbd32b4c939c12c9339a0c5f795ebecbd662c2c2cad693d7d245d36c8a2d229",
+    "original_lines": 17,
+    "current_lines": 17
+  },
+  {
+    "path": "configs/configs_infer/infer_multi_config_CNRM.sh",
+    "status": "unchanged",
+    "original_sha256": "92d863c948fd2d9cfc4440d135ef9dc68bb86eb90f184003e58d2fad2be235b5",
+    "current_sha256": "92d863c948fd2d9cfc4440d135ef9dc68bb86eb90f184003e58d2fad2be235b5",
+    "original_lines": 17,
+    "current_lines": 17
+  },
+  {
+    "path": "configs/configs_infer/infer_multi_config_EC_EARTH.sh",
+    "status": "unchanged",
+    "original_sha256": "b4158fb4ce8a4be284307e6e2a0740e283de97284a762d37512e7c3c18d5abe5",
+    "current_sha256": "b4158fb4ce8a4be284307e6e2a0740e283de97284a762d37512e7c3c18d5abe5",
+    "original_lines": 17,
+    "current_lines": 17
+  },
+  {
+    "path": "configs/configs_infer/infer_multi_config_MPI.sh",
+    "status": "unchanged",
+    "original_sha256": "f8922f0bb49e8ce2a20076f70497f78d1366ac337615567017cdd81341bc4dfc",
+    "current_sha256": "f8922f0bb49e8ce2a20076f70497f78d1366ac337615567017cdd81341bc4dfc",
+    "original_lines": 17,
+    "current_lines": 17
+  },
+  {
+    "path": "configs/configs_infer/infer_multi_config_MRI.sh",
+    "status": "unchanged",
+    "original_sha256": "39259801524c73595b493264576d6388dbdc9e134328031084184773902b8d80",
+    "current_sha256": "39259801524c73595b493264576d6388dbdc9e134328031084184773902b8d80",
+    "original_lines": 17,
+    "current_lines": 17
+  },
+  {
+    "path": "configs/configs_infer/infer_multi_config_NCEP.sh",
+    "status": "unchanged",
+    "original_sha256": "5d4f3a2fb5ab0d9dd6f414eebfe127fee335eb48fed1f9346a7cc4af00c88791",
+    "current_sha256": "5d4f3a2fb5ab0d9dd6f414eebfe127fee335eb48fed1f9346a7cc4af00c88791",
+    "original_lines": 17,
+    "current_lines": 17
+  },
+  {
+    "path": "configs/configs_train/AWI/train_config_AWI_Battery_Baseline_0h.sh",
+    "status": "unchanged",
+    "original_sha256": "2f0bce9faa2e11c51f2a9ad49e4a60ea0fb5b240f8bf593776bae38ee389b44e",
+    "current_sha256": "2f0bce9faa2e11c51f2a9ad49e4a60ea0fb5b240f8bf593776bae38ee389b44e",
+    "original_lines": 8,
+    "current_lines": 8
+  },
+  {
+    "path": "configs/configs_train/AWI/train_config_AWI_Battery_Baseline_12h.sh",
+    "status": "unchanged",
+    "original_sha256": "5741051bdcaa9d0f239a4ca94096b251971fa24c848ea6d5fa59f23c8c93e9f7",
+    "current_sha256": "5741051bdcaa9d0f239a4ca94096b251971fa24c848ea6d5fa59f23c8c93e9f7",
+    "original_lines": 8,
+    "current_lines": 8
+  },
+  {
+    "path": "configs/configs_train/AWI/train_config_AWI_Battery_P3_Base.sh",
+    "status": "unchanged",
+    "original_sha256": "c8890f89d4ea246223885dc684b85849bb71b4807c863a35a13b971f6a988557",
+    "current_sha256": "c8890f89d4ea246223885dc684b85849bb71b4807c863a35a13b971f6a988557",
+    "original_lines": 8,
+    "current_lines": 8
+  },
+  {
+    "path": "configs/configs_train/AWI/train_config_AWI_Battery_P3_Base_PastOnly.sh",
+    "status": "unchanged",
+    "original_sha256": "9c29a9197659ca9e943011ea7a07b0423b38057faa80008eb72cdd7f25925471",
+    "current_sha256": "9c29a9197659ca9e943011ea7a07b0423b38057faa80008eb72cdd7f25925471",
+    "original_lines": 8,
+    "current_lines": 8
+  },
+  {
+    "path": "configs/configs_train/AWI/train_config_AWI_Battery_P3_Best.sh",
+    "status": "unchanged",
+    "original_sha256": "35bc4856ba4dbadb708873fb4d214a8ea7d967df91acdec26570acc055645b1a",
+    "current_sha256": "35bc4856ba4dbadb708873fb4d214a8ea7d967df91acdec26570acc055645b1a",
+    "original_lines": 9,
+    "current_lines": 9
+  },
+  {
+    "path": "configs/configs_train/AWI/train_config_AWI_Battery_P3_Best_FutureOnly.sh",
+    "status": "unchanged",
+    "original_sha256": "e89ac44f94e90bada965c77741867bf5adc35abd562622df763514e289c070a0",
+    "current_sha256": "e89ac44f94e90bada965c77741867bf5adc35abd562622df763514e289c070a0",
+    "original_lines": 12,
+    "current_lines": 12
+  },
+  {
+    "path": "configs/configs_train/AWI/train_config_AWI_Battery_P3_Best_PastOnly.sh",
+    "status": "unchanged",
+    "original_sha256": "8bd7c39879b5e1baaf1cca1f0bb4ba6b9426b5fdface4894e4c082f07b25a013",
+    "current_sha256": "8bd7c39879b5e1baaf1cca1f0bb4ba6b9426b5fdface4894e4c082f07b25a013",
+    "original_lines": 9,
+    "current_lines": 9
+  },
+  {
+    "path": "configs/configs_train/AWI/train_config_AWI_Battery_P3_Best_shuffle.sh",
+    "status": "unchanged",
+    "original_sha256": "21df9ea823bddbf7003fc2f060b6db8a3b967bde27ef4c847217e188c5699b4b",
+    "current_sha256": "21df9ea823bddbf7003fc2f060b6db8a3b967bde27ef4c847217e188c5699b4b",
+    "original_lines": 10,
+    "current_lines": 10
+  },
+  {
+    "path": "configs/configs_train/CNRM/train_config_CNRM_Battery_Baseline_0h.sh",
+    "status": "unchanged",
+    "original_sha256": "6addd14df1c265e00efa34a10595149f459a4d22cf53a8cab0db8df365b8ff28",
+    "current_sha256": "6addd14df1c265e00efa34a10595149f459a4d22cf53a8cab0db8df365b8ff28",
+    "original_lines": 8,
+    "current_lines": 8
+  },
+  {
+    "path": "configs/configs_train/CNRM/train_config_CNRM_Battery_Baseline_12h.sh",
+    "status": "unchanged",
+    "original_sha256": "c3aa87a59a334283000733f92d8dac3be715f47ad2222ca20d2fa73e777f1a9a",
+    "current_sha256": "c3aa87a59a334283000733f92d8dac3be715f47ad2222ca20d2fa73e777f1a9a",
+    "original_lines": 8,
+    "current_lines": 8
+  },
+  {
+    "path": "configs/configs_train/CNRM/train_config_CNRM_Battery_P3_Base.sh",
+    "status": "unchanged",
+    "original_sha256": "da52b68f9fdb98863b586851bc63da0863d6b66d80da6fc3dea58da3a6b16f23",
+    "current_sha256": "da52b68f9fdb98863b586851bc63da0863d6b66d80da6fc3dea58da3a6b16f23",
+    "original_lines": 8,
+    "current_lines": 8
+  },
+  {
+    "path": "configs/configs_train/CNRM/train_config_CNRM_Battery_P3_Base_PastOnly.sh",
+    "status": "unchanged",
+    "original_sha256": "45607ef0a93b76ac24cb9320eca5a86208a7d2f9b391836364d6b959dc7d766a",
+    "current_sha256": "45607ef0a93b76ac24cb9320eca5a86208a7d2f9b391836364d6b959dc7d766a",
+    "original_lines": 8,
+    "current_lines": 8
+  },
+  {
+    "path": "configs/configs_train/CNRM/train_config_CNRM_Battery_P3_Best.sh",
+    "status": "unchanged",
+    "original_sha256": "48ef17b98c254c186c09c4876c3651890e0101b8ddf863f8c08e9d10f78a6730",
+    "current_sha256": "48ef17b98c254c186c09c4876c3651890e0101b8ddf863f8c08e9d10f78a6730",
+    "original_lines": 9,
+    "current_lines": 9
+  },
+  {
+    "path": "configs/configs_train/CNRM/train_config_CNRM_Battery_P3_Best_FutureOnly.sh",
+    "status": "unchanged",
+    "original_sha256": "9b5da1296e1a80607514335028fbbff838a495320ae20ac0b0bb75f71201d7c4",
+    "current_sha256": "9b5da1296e1a80607514335028fbbff838a495320ae20ac0b0bb75f71201d7c4",
+    "original_lines": 12,
+    "current_lines": 12
+  },
+  {
+    "path": "configs/configs_train/CNRM/train_config_CNRM_Battery_P3_Best_PastOnly.sh",
+    "status": "unchanged",
+    "original_sha256": "5f6916cddba8155661d8a56683ffee10409e771e37b07b7d07f622f571abd956",
+    "current_sha256": "5f6916cddba8155661d8a56683ffee10409e771e37b07b7d07f622f571abd956",
+    "original_lines": 9,
+    "current_lines": 9
+  },
+  {
+    "path": "configs/configs_train/CNRM/train_config_CNRM_Battery_P3_Best_shuffle.sh",
+    "status": "unchanged",
+    "original_sha256": "63d5371dccaee73318eb2b2a38f824b8789a29f0526502f49fa46af5992e268a",
+    "current_sha256": "63d5371dccaee73318eb2b2a38f824b8789a29f0526502f49fa46af5992e268a",
+    "original_lines": 10,
+    "current_lines": 10
+  },
+  {
+    "path": "configs/configs_train/EC_EARTH/train_config_EC_EARTH_Battery_Baseline_0h.sh",
+    "status": "unchanged",
+    "original_sha256": "87a32bad8c838774e87b353264f6b23d1b2a64c32cb2ed00f7b9ede4cf44e384",
+    "current_sha256": "87a32bad8c838774e87b353264f6b23d1b2a64c32cb2ed00f7b9ede4cf44e384",
+    "original_lines": 8,
+    "current_lines": 8
+  },
+  {
+    "path": "configs/configs_train/EC_EARTH/train_config_EC_EARTH_Battery_Baseline_12h.sh",
+    "status": "unchanged",
+    "original_sha256": "b75b59fc7155d267a4abc4817061ea448bb1117f5008340039831e923e43f852",
+    "current_sha256": "b75b59fc7155d267a4abc4817061ea448bb1117f5008340039831e923e43f852",
+    "original_lines": 8,
+    "current_lines": 8
+  },
+  {
+    "path": "configs/configs_train/EC_EARTH/train_config_EC_EARTH_Battery_P3_Base.sh",
+    "status": "unchanged",
+    "original_sha256": "655c88d8b0c141f7f634dcb9efea48e579a4d246d1940fee84ec3bbd23cafe3c",
+    "current_sha256": "655c88d8b0c141f7f634dcb9efea48e579a4d246d1940fee84ec3bbd23cafe3c",
+    "original_lines": 8,
+    "current_lines": 8
+  },
+  {
+    "path": "configs/configs_train/EC_EARTH/train_config_EC_EARTH_Battery_P3_Base_PastOnly.sh",
+    "status": "unchanged",
+    "original_sha256": "1237ad09f4447d390f3d1e86ac04f90e7ef5f22a6e11f8ce5c43c8a5c6e3ab4f",
+    "current_sha256": "1237ad09f4447d390f3d1e86ac04f90e7ef5f22a6e11f8ce5c43c8a5c6e3ab4f",
+    "original_lines": 8,
+    "current_lines": 8
+  },
+  {
+    "path": "configs/configs_train/EC_EARTH/train_config_EC_EARTH_Battery_P3_Best.sh",
+    "status": "unchanged",
+    "original_sha256": "b924ec7c163787b9628e4da335a428c58d44f7777260aafdcb0177a29e1d59b6",
+    "current_sha256": "b924ec7c163787b9628e4da335a428c58d44f7777260aafdcb0177a29e1d59b6",
+    "original_lines": 9,
+    "current_lines": 9
+  },
+  {
+    "path": "configs/configs_train/EC_EARTH/train_config_EC_EARTH_Battery_P3_Best_FutureOnly.sh",
+    "status": "unchanged",
+    "original_sha256": "d9b7c5a499b4bf4d7a1b8dc9fa78c5dd387efc2320f4a3596889a456a5772439",
+    "current_sha256": "d9b7c5a499b4bf4d7a1b8dc9fa78c5dd387efc2320f4a3596889a456a5772439",
+    "original_lines": 12,
+    "current_lines": 12
+  },
+  {
+    "path": "configs/configs_train/EC_EARTH/train_config_EC_EARTH_Battery_P3_Best_PastOnly.sh",
+    "status": "unchanged",
+    "original_sha256": "fdf867b7c312d7f35430d6321082903d11709bf8c0a3970108560bca221d48e8",
+    "current_sha256": "fdf867b7c312d7f35430d6321082903d11709bf8c0a3970108560bca221d48e8",
+    "original_lines": 9,
+    "current_lines": 9
+  },
+  {
+    "path": "configs/configs_train/EC_EARTH/train_config_EC_EARTH_Battery_P3_Best_shuffle.sh",
+    "status": "unchanged",
+    "original_sha256": "8e6426d0fd1f97d1c9ccf7c86eb3c1898bcaf35e206ebe3284ab5cf201475d65",
+    "current_sha256": "8e6426d0fd1f97d1c9ccf7c86eb3c1898bcaf35e206ebe3284ab5cf201475d65",
+    "original_lines": 10,
+    "current_lines": 10
+  },
+  {
+    "path": "configs/configs_train/MPI/train_config_MPI_Battery_Baseline_0h.sh",
+    "status": "unchanged",
+    "original_sha256": "837fa4de63a2184fd80a791a7ff71279ca014f2689468e512971e224e42cce67",
+    "current_sha256": "837fa4de63a2184fd80a791a7ff71279ca014f2689468e512971e224e42cce67",
+    "original_lines": 8,
+    "current_lines": 8
+  },
+  {
+    "path": "configs/configs_train/MPI/train_config_MPI_Battery_Baseline_12h.sh",
+    "status": "unchanged",
+    "original_sha256": "a0e21cd929f5b7ab5e34cd6c63a4348c73b6c52c8876db39e7e689c6ad0d2bdb",
+    "current_sha256": "a0e21cd929f5b7ab5e34cd6c63a4348c73b6c52c8876db39e7e689c6ad0d2bdb",
+    "original_lines": 8,
+    "current_lines": 8
+  },
+  {
+    "path": "configs/configs_train/MPI/train_config_MPI_Battery_P3_Base.sh",
+    "status": "unchanged",
+    "original_sha256": "05b28defc91713c046449209db3b45267d8e7ec1ccefdc81b53e0f2fccfadfcc",
+    "current_sha256": "05b28defc91713c046449209db3b45267d8e7ec1ccefdc81b53e0f2fccfadfcc",
+    "original_lines": 8,
+    "current_lines": 8
+  },
+  {
+    "path": "configs/configs_train/MPI/train_config_MPI_Battery_P3_Base_PastOnly.sh",
+    "status": "unchanged",
+    "original_sha256": "a27dc0fa11c653a546e319a6e429400c719b666308e03b3476245fc53d137ce4",
+    "current_sha256": "a27dc0fa11c653a546e319a6e429400c719b666308e03b3476245fc53d137ce4",
+    "original_lines": 8,
+    "current_lines": 8
+  },
+  {
+    "path": "configs/configs_train/MPI/train_config_MPI_Battery_P3_Best.sh",
+    "status": "unchanged",
+    "original_sha256": "ff4a3fe982925fda106fecd3b2cb70b77ba065ecac19885fe809decc0fdc49a6",
+    "current_sha256": "ff4a3fe982925fda106fecd3b2cb70b77ba065ecac19885fe809decc0fdc49a6",
+    "original_lines": 9,
+    "current_lines": 9
+  },
+  {
+    "path": "configs/configs_train/MPI/train_config_MPI_Battery_P3_Best_FutureOnly.sh",
+    "status": "unchanged",
+    "original_sha256": "ba84e29a29191bebe50e14431d59fc4dbe7325288f1e15e42d7b7011b0abcb08",
+    "current_sha256": "ba84e29a29191bebe50e14431d59fc4dbe7325288f1e15e42d7b7011b0abcb08",
+    "original_lines": 12,
+    "current_lines": 12
+  },
+  {
+    "path": "configs/configs_train/MPI/train_config_MPI_Battery_P3_Best_PastOnly.sh",
+    "status": "unchanged",
+    "original_sha256": "3d6e61323424baa1b3918a5bc2cca76e958efb44ef664835afa92cec751cac26",
+    "current_sha256": "3d6e61323424baa1b3918a5bc2cca76e958efb44ef664835afa92cec751cac26",
+    "original_lines": 9,
+    "current_lines": 9
+  },
+  {
+    "path": "configs/configs_train/MPI/train_config_MPI_Battery_P3_Best_shuffle.sh",
+    "status": "unchanged",
+    "original_sha256": "cfd8705a0f92db5c66a58a9d3687d2d67c425c9c2c4c59e1307f9370b60377fa",
+    "current_sha256": "cfd8705a0f92db5c66a58a9d3687d2d67c425c9c2c4c59e1307f9370b60377fa",
+    "original_lines": 10,
+    "current_lines": 10
+  },
+  {
+    "path": "configs/configs_train/MRI/train_config_MRI_Battery_Baseline_0h.sh",
+    "status": "unchanged",
+    "original_sha256": "2904e184980f498cce0db98244426ada0cde4fc25e0ba7e6bff9e64c66c92b6a",
+    "current_sha256": "2904e184980f498cce0db98244426ada0cde4fc25e0ba7e6bff9e64c66c92b6a",
+    "original_lines": 8,
+    "current_lines": 8
+  },
+  {
+    "path": "configs/configs_train/MRI/train_config_MRI_Battery_Baseline_12h.sh",
+    "status": "unchanged",
+    "original_sha256": "f2f88b5324d38d522187db66b21db8cf01b777c3791eae97c4db636d11bc6975",
+    "current_sha256": "f2f88b5324d38d522187db66b21db8cf01b777c3791eae97c4db636d11bc6975",
+    "original_lines": 8,
+    "current_lines": 8
+  },
+  {
+    "path": "configs/configs_train/MRI/train_config_MRI_Battery_P3_Base.sh",
+    "status": "unchanged",
+    "original_sha256": "eec1b4c6211a9aff2b17891a2f6ae26748a85699f775bce8855bf636cc288064",
+    "current_sha256": "eec1b4c6211a9aff2b17891a2f6ae26748a85699f775bce8855bf636cc288064",
+    "original_lines": 8,
+    "current_lines": 8
+  },
+  {
+    "path": "configs/configs_train/MRI/train_config_MRI_Battery_P3_Base_PastOnly.sh",
+    "status": "unchanged",
+    "original_sha256": "71e98c65c31fbae4a95e9c89fc8500cbd9d01d5438046fbfb75c4c4ffaff684f",
+    "current_sha256": "71e98c65c31fbae4a95e9c89fc8500cbd9d01d5438046fbfb75c4c4ffaff684f",
+    "original_lines": 8,
+    "current_lines": 8
+  },
+  {
+    "path": "configs/configs_train/MRI/train_config_MRI_Battery_P3_Best.sh",
+    "status": "unchanged",
+    "original_sha256": "662380924173450b083404cb718ec8fe48f6a58a03dc8250de89860a5e7c658f",
+    "current_sha256": "662380924173450b083404cb718ec8fe48f6a58a03dc8250de89860a5e7c658f",
+    "original_lines": 9,
+    "current_lines": 9
+  },
+  {
+    "path": "configs/configs_train/MRI/train_config_MRI_Battery_P3_Best_FutureOnly.sh",
+    "status": "unchanged",
+    "original_sha256": "8f48839aed2a0a42cf2795f47fc1af9a327190f667437cbf677326eea3998e7e",
+    "current_sha256": "8f48839aed2a0a42cf2795f47fc1af9a327190f667437cbf677326eea3998e7e",
+    "original_lines": 12,
+    "current_lines": 12
+  },
+  {
+    "path": "configs/configs_train/MRI/train_config_MRI_Battery_P3_Best_PastOnly.sh",
+    "status": "unchanged",
+    "original_sha256": "95d0209737d6b90eae5ee5fd4aeb29cb291f7f07586f541090770404ac764693",
+    "current_sha256": "95d0209737d6b90eae5ee5fd4aeb29cb291f7f07586f541090770404ac764693",
+    "original_lines": 9,
+    "current_lines": 9
+  },
+  {
+    "path": "configs/configs_train/MRI/train_config_MRI_Battery_P3_Best_shuffle.sh",
+    "status": "unchanged",
+    "original_sha256": "63414ba70929da86a8570c4897d11e86b1e37e9bf05a3094f207bc653f3ef020",
+    "current_sha256": "63414ba70929da86a8570c4897d11e86b1e37e9bf05a3094f207bc653f3ef020",
+    "original_lines": 10,
+    "current_lines": 10
+  },
+  {
+    "path": "configs/configs_train/NCEP/train_config_NCEP_Battery_Baseline_0h.sh",
+    "status": "unchanged",
+    "original_sha256": "f802fafb3d8fe24211347facb7ded8fcdcc696f5db84c403834328f233fd9ace",
+    "current_sha256": "f802fafb3d8fe24211347facb7ded8fcdcc696f5db84c403834328f233fd9ace",
+    "original_lines": 8,
+    "current_lines": 8
+  },
+  {
+    "path": "configs/configs_train/NCEP/train_config_NCEP_Battery_Baseline_12h.sh",
+    "status": "unchanged",
+    "original_sha256": "d270b66aa978c2c461d6b1bfab8906d1e267b4d1fbccca588539b894a04735bd",
+    "current_sha256": "d270b66aa978c2c461d6b1bfab8906d1e267b4d1fbccca588539b894a04735bd",
+    "original_lines": 9,
+    "current_lines": 9
+  },
+  {
+    "path": "configs/configs_train/NCEP/train_config_NCEP_Battery_P3_Base.sh",
+    "status": "unchanged",
+    "original_sha256": "1d7c085d147daee5c3057ede9db31fa04f4a4a4104ae9879dddf3ed4326c32ca",
+    "current_sha256": "1d7c085d147daee5c3057ede9db31fa04f4a4a4104ae9879dddf3ed4326c32ca",
+    "original_lines": 8,
+    "current_lines": 8
+  },
+  {
+    "path": "configs/configs_train/NCEP/train_config_NCEP_Battery_P3_Best.sh",
+    "status": "unchanged",
+    "original_sha256": "1dd63e3cc0583b426fd41acc8e046408cfc5984ed6d90f3416be32d095da25eb",
+    "current_sha256": "1dd63e3cc0583b426fd41acc8e046408cfc5984ed6d90f3416be32d095da25eb",
+    "original_lines": 9,
+    "current_lines": 9
+  },
+  {
+    "path": "configs/configs_train/NCEP/train_config_NCEP_Boston_Baseline_0h.sh",
+    "status": "unchanged",
+    "original_sha256": "86c24e5fcc68997113f5b0cfada2fb196915b356e58345477466b737af0feb63",
+    "current_sha256": "86c24e5fcc68997113f5b0cfada2fb196915b356e58345477466b737af0feb63",
+    "original_lines": 8,
+    "current_lines": 8
+  },
+  {
+    "path": "configs/configs_train/NCEP/train_config_NCEP_Boston_Baseline_12h.sh",
+    "status": "unchanged",
+    "original_sha256": "a16ecaea2a03dfb18b1ebb2ffd6ab7555fa4a6a2cdd4ac1198f3507e80a261f5",
+    "current_sha256": "a16ecaea2a03dfb18b1ebb2ffd6ab7555fa4a6a2cdd4ac1198f3507e80a261f5",
+    "original_lines": 8,
+    "current_lines": 8
+  },
+  {
+    "path": "configs/configs_train/NCEP/train_config_NCEP_Boston_P3_Base.sh",
+    "status": "unchanged",
+    "original_sha256": "e6d3aea51a9238c194a8bf2b7268cc1881f32d63ffc46c8a81506b0901c8433a",
+    "current_sha256": "e6d3aea51a9238c194a8bf2b7268cc1881f32d63ffc46c8a81506b0901c8433a",
+    "original_lines": 8,
+    "current_lines": 8
+  },
+  {
+    "path": "configs/configs_train/NCEP/train_config_NCEP_Boston_P3_Best.sh",
+    "status": "unchanged",
+    "original_sha256": "1857aaf8fcf6b4054c73e13d130ba11faf04882e97df1594e60087ee923ad82e",
+    "current_sha256": "1857aaf8fcf6b4054c73e13d130ba11faf04882e97df1594e60087ee923ad82e",
+    "original_lines": 9,
+    "current_lines": 9
+  },
+  {
+    "path": "configs/configs_train/NCEP/train_config_NCEP_CBBT_Baseline_0h.sh",
+    "status": "unchanged",
+    "original_sha256": "967636474c7e92a0a7d6b38dfde32ff5904750e1f9451be22ed2e39e383da745",
+    "current_sha256": "967636474c7e92a0a7d6b38dfde32ff5904750e1f9451be22ed2e39e383da745",
+    "original_lines": 8,
+    "current_lines": 8
+  },
+  {
+    "path": "configs/configs_train/NCEP/train_config_NCEP_CBBT_Baseline_12h.sh",
+    "status": "unchanged",
+    "original_sha256": "347a096906bb9b7130aae718e815a6fe5716f934f533a4bfdd28cd87b2e7e8b5",
+    "current_sha256": "347a096906bb9b7130aae718e815a6fe5716f934f533a4bfdd28cd87b2e7e8b5",
+    "original_lines": 8,
+    "current_lines": 8
+  },
+  {
+    "path": "configs/configs_train/NCEP/train_config_NCEP_CBBT_P3_Base.sh",
+    "status": "unchanged",
+    "original_sha256": "397af394dfe89fa8e3d79be2c2c9be63807703cf652395d9205283a9a8e559cf",
+    "current_sha256": "397af394dfe89fa8e3d79be2c2c9be63807703cf652395d9205283a9a8e559cf",
+    "original_lines": 8,
+    "current_lines": 8
+  },
+  {
+    "path": "configs/configs_train/NCEP/train_config_NCEP_CBBT_P3_Best.sh",
+    "status": "unchanged",
+    "original_sha256": "06c1d4bec44005d46df67b3bd671dc7756de0603639755e8f7a8770290df564f",
+    "current_sha256": "06c1d4bec44005d46df67b3bd671dc7756de0603639755e8f7a8770290df564f",
+    "original_lines": 9,
+    "current_lines": 9
+  },
+  {
+    "path": "configs/configs_train/NCEP/train_config_NCEP_Lewes_Baseline_0h.sh",
+    "status": "unchanged",
+    "original_sha256": "d2da8f06b1435bcc4c448f8da774977ab2868c3d24d597b54da032801f5c6482",
+    "current_sha256": "d2da8f06b1435bcc4c448f8da774977ab2868c3d24d597b54da032801f5c6482",
+    "original_lines": 8,
+    "current_lines": 8
+  },
+  {
+    "path": "configs/configs_train/NCEP/train_config_NCEP_Lewes_Baseline_12h.sh",
+    "status": "unchanged",
+    "original_sha256": "0acec06181a1943db2cc4af40fdc1cb4ec5670b3450ddfcf298379c8f9f9e4c3",
+    "current_sha256": "0acec06181a1943db2cc4af40fdc1cb4ec5670b3450ddfcf298379c8f9f9e4c3",
+    "original_lines": 8,
+    "current_lines": 8
+  },
+  {
+    "path": "configs/configs_train/NCEP/train_config_NCEP_Lewes_P3_Base.sh",
+    "status": "unchanged",
+    "original_sha256": "7749d74f8ccfe5509fbf0af9f48e11813bbf3a59408659a96866605257aad987",
+    "current_sha256": "7749d74f8ccfe5509fbf0af9f48e11813bbf3a59408659a96866605257aad987",
+    "original_lines": 8,
+    "current_lines": 8
+  },
+  {
+    "path": "configs/configs_train/NCEP/train_config_NCEP_Lewes_P3_Best.sh",
+    "status": "unchanged",
+    "original_sha256": "ca4fa9525ff37ef9b37a6889dd69f0c2eac3059c6a8df8aa0906319b737384b4",
+    "current_sha256": "ca4fa9525ff37ef9b37a6889dd69f0c2eac3059c6a8df8aa0906319b737384b4",
+    "original_lines": 9,
+    "current_lines": 9
+  },
+  {
+    "path": "configs/configs_train/train_config_common.sh",
+    "status": "modified",
+    "original_sha256": "1458066565a8bd6596a1a329f213a68ce43db4d2048317be9144da87fbf1abd1",
+    "current_sha256": "68e2adc5831f3c231b0d15d2d4157248c0e2be1207337bfdc4e0c44e11184560",
+    "original_lines": 94,
+    "current_lines": 97
+  },
+  {
+    "path": "configs/configs_train_single/AWI/train_config_AWI_Battery_Baseline_0h.sh",
+    "status": "unchanged",
+    "original_sha256": "2f0bce9faa2e11c51f2a9ad49e4a60ea0fb5b240f8bf593776bae38ee389b44e",
+    "current_sha256": "2f0bce9faa2e11c51f2a9ad49e4a60ea0fb5b240f8bf593776bae38ee389b44e",
+    "original_lines": 8,
+    "current_lines": 8
+  },
+  {
+    "path": "configs/configs_train_single/AWI/train_config_AWI_Battery_Baseline_12h.sh",
+    "status": "unchanged",
+    "original_sha256": "5741051bdcaa9d0f239a4ca94096b251971fa24c848ea6d5fa59f23c8c93e9f7",
+    "current_sha256": "5741051bdcaa9d0f239a4ca94096b251971fa24c848ea6d5fa59f23c8c93e9f7",
+    "original_lines": 8,
+    "current_lines": 8
+  },
+  {
+    "path": "configs/configs_train_single/AWI/train_config_AWI_Battery_P3_Base.sh",
+    "status": "unchanged",
+    "original_sha256": "c8890f89d4ea246223885dc684b85849bb71b4807c863a35a13b971f6a988557",
+    "current_sha256": "c8890f89d4ea246223885dc684b85849bb71b4807c863a35a13b971f6a988557",
+    "original_lines": 8,
+    "current_lines": 8
+  },
+  {
+    "path": "configs/configs_train_single/AWI/train_config_AWI_Battery_P3_Base_PastOnly.sh",
+    "status": "unchanged",
+    "original_sha256": "9c29a9197659ca9e943011ea7a07b0423b38057faa80008eb72cdd7f25925471",
+    "current_sha256": "9c29a9197659ca9e943011ea7a07b0423b38057faa80008eb72cdd7f25925471",
+    "original_lines": 8,
+    "current_lines": 8
+  },
+  {
+    "path": "configs/configs_train_single/AWI/train_config_AWI_Battery_P3_Best.sh",
+    "status": "unchanged",
+    "original_sha256": "35bc4856ba4dbadb708873fb4d214a8ea7d967df91acdec26570acc055645b1a",
+    "current_sha256": "35bc4856ba4dbadb708873fb4d214a8ea7d967df91acdec26570acc055645b1a",
+    "original_lines": 9,
+    "current_lines": 9
+  },
+  {
+    "path": "configs/configs_train_single/AWI/train_config_AWI_Battery_P3_Best_FutureOnly.sh",
+    "status": "unchanged",
+    "original_sha256": "e89ac44f94e90bada965c77741867bf5adc35abd562622df763514e289c070a0",
+    "current_sha256": "e89ac44f94e90bada965c77741867bf5adc35abd562622df763514e289c070a0",
+    "original_lines": 12,
+    "current_lines": 12
+  },
+  {
+    "path": "configs/configs_train_single/AWI/train_config_AWI_Battery_P3_Best_PastOnly.sh",
+    "status": "unchanged",
+    "original_sha256": "8bd7c39879b5e1baaf1cca1f0bb4ba6b9426b5fdface4894e4c082f07b25a013",
+    "current_sha256": "8bd7c39879b5e1baaf1cca1f0bb4ba6b9426b5fdface4894e4c082f07b25a013",
+    "original_lines": 9,
+    "current_lines": 9
+  },
+  {
+    "path": "configs/configs_train_single/AWI/train_config_AWI_Battery_P3_Best_shuffle.sh",
+    "status": "unchanged",
+    "original_sha256": "21df9ea823bddbf7003fc2f060b6db8a3b967bde27ef4c847217e188c5699b4b",
+    "current_sha256": "21df9ea823bddbf7003fc2f060b6db8a3b967bde27ef4c847217e188c5699b4b",
+    "original_lines": 10,
+    "current_lines": 10
+  },
+  {
+    "path": "configs/configs_train_single/CNRM/train_config_CNRM_Battery_Baseline_0h.sh",
+    "status": "unchanged",
+    "original_sha256": "6addd14df1c265e00efa34a10595149f459a4d22cf53a8cab0db8df365b8ff28",
+    "current_sha256": "6addd14df1c265e00efa34a10595149f459a4d22cf53a8cab0db8df365b8ff28",
+    "original_lines": 8,
+    "current_lines": 8
+  },
+  {
+    "path": "configs/configs_train_single/CNRM/train_config_CNRM_Battery_Baseline_12h.sh",
+    "status": "unchanged",
+    "original_sha256": "c3aa87a59a334283000733f92d8dac3be715f47ad2222ca20d2fa73e777f1a9a",
+    "current_sha256": "c3aa87a59a334283000733f92d8dac3be715f47ad2222ca20d2fa73e777f1a9a",
+    "original_lines": 8,
+    "current_lines": 8
+  },
+  {
+    "path": "configs/configs_train_single/CNRM/train_config_CNRM_Battery_P3_Base.sh",
+    "status": "unchanged",
+    "original_sha256": "da52b68f9fdb98863b586851bc63da0863d6b66d80da6fc3dea58da3a6b16f23",
+    "current_sha256": "da52b68f9fdb98863b586851bc63da0863d6b66d80da6fc3dea58da3a6b16f23",
+    "original_lines": 8,
+    "current_lines": 8
+  },
+  {
+    "path": "configs/configs_train_single/CNRM/train_config_CNRM_Battery_P3_Base_PastOnly.sh",
+    "status": "unchanged",
+    "original_sha256": "45607ef0a93b76ac24cb9320eca5a86208a7d2f9b391836364d6b959dc7d766a",
+    "current_sha256": "45607ef0a93b76ac24cb9320eca5a86208a7d2f9b391836364d6b959dc7d766a",
+    "original_lines": 8,
+    "current_lines": 8
+  },
+  {
+    "path": "configs/configs_train_single/CNRM/train_config_CNRM_Battery_P3_Best.sh",
+    "status": "unchanged",
+    "original_sha256": "48ef17b98c254c186c09c4876c3651890e0101b8ddf863f8c08e9d10f78a6730",
+    "current_sha256": "48ef17b98c254c186c09c4876c3651890e0101b8ddf863f8c08e9d10f78a6730",
+    "original_lines": 9,
+    "current_lines": 9
+  },
+  {
+    "path": "configs/configs_train_single/CNRM/train_config_CNRM_Battery_P3_Best_FutureOnly.sh",
+    "status": "unchanged",
+    "original_sha256": "9b5da1296e1a80607514335028fbbff838a495320ae20ac0b0bb75f71201d7c4",
+    "current_sha256": "9b5da1296e1a80607514335028fbbff838a495320ae20ac0b0bb75f71201d7c4",
+    "original_lines": 12,
+    "current_lines": 12
+  },
+  {
+    "path": "configs/configs_train_single/CNRM/train_config_CNRM_Battery_P3_Best_PastOnly.sh",
+    "status": "unchanged",
+    "original_sha256": "5f6916cddba8155661d8a56683ffee10409e771e37b07b7d07f622f571abd956",
+    "current_sha256": "5f6916cddba8155661d8a56683ffee10409e771e37b07b7d07f622f571abd956",
+    "original_lines": 9,
+    "current_lines": 9
+  },
+  {
+    "path": "configs/configs_train_single/CNRM/train_config_CNRM_Battery_P3_Best_shuffle.sh",
+    "status": "unchanged",
+    "original_sha256": "63d5371dccaee73318eb2b2a38f824b8789a29f0526502f49fa46af5992e268a",
+    "current_sha256": "63d5371dccaee73318eb2b2a38f824b8789a29f0526502f49fa46af5992e268a",
+    "original_lines": 10,
+    "current_lines": 10
+  },
+  {
+    "path": "configs/configs_train_single/EC_EARTH/train_config_EC_EARTH_Battery_Baseline_0h.sh",
+    "status": "unchanged",
+    "original_sha256": "87a32bad8c838774e87b353264f6b23d1b2a64c32cb2ed00f7b9ede4cf44e384",
+    "current_sha256": "87a32bad8c838774e87b353264f6b23d1b2a64c32cb2ed00f7b9ede4cf44e384",
+    "original_lines": 8,
+    "current_lines": 8
+  },
+  {
+    "path": "configs/configs_train_single/EC_EARTH/train_config_EC_EARTH_Battery_Baseline_12h.sh",
+    "status": "unchanged",
+    "original_sha256": "b75b59fc7155d267a4abc4817061ea448bb1117f5008340039831e923e43f852",
+    "current_sha256": "b75b59fc7155d267a4abc4817061ea448bb1117f5008340039831e923e43f852",
+    "original_lines": 8,
+    "current_lines": 8
+  },
+  {
+    "path": "configs/configs_train_single/EC_EARTH/train_config_EC_EARTH_Battery_P3_Base.sh",
+    "status": "unchanged",
+    "original_sha256": "655c88d8b0c141f7f634dcb9efea48e579a4d246d1940fee84ec3bbd23cafe3c",
+    "current_sha256": "655c88d8b0c141f7f634dcb9efea48e579a4d246d1940fee84ec3bbd23cafe3c",
+    "original_lines": 8,
+    "current_lines": 8
+  },
+  {
+    "path": "configs/configs_train_single/EC_EARTH/train_config_EC_EARTH_Battery_P3_Base_PastOnly.sh",
+    "status": "unchanged",
+    "original_sha256": "1237ad09f4447d390f3d1e86ac04f90e7ef5f22a6e11f8ce5c43c8a5c6e3ab4f",
+    "current_sha256": "1237ad09f4447d390f3d1e86ac04f90e7ef5f22a6e11f8ce5c43c8a5c6e3ab4f",
+    "original_lines": 8,
+    "current_lines": 8
+  },
+  {
+    "path": "configs/configs_train_single/EC_EARTH/train_config_EC_EARTH_Battery_P3_Best.sh",
+    "status": "unchanged",
+    "original_sha256": "b924ec7c163787b9628e4da335a428c58d44f7777260aafdcb0177a29e1d59b6",
+    "current_sha256": "b924ec7c163787b9628e4da335a428c58d44f7777260aafdcb0177a29e1d59b6",
+    "original_lines": 9,
+    "current_lines": 9
+  },
+  {
+    "path": "configs/configs_train_single/EC_EARTH/train_config_EC_EARTH_Battery_P3_Best_FutureOnly.sh",
+    "status": "unchanged",
+    "original_sha256": "d9b7c5a499b4bf4d7a1b8dc9fa78c5dd387efc2320f4a3596889a456a5772439",
+    "current_sha256": "d9b7c5a499b4bf4d7a1b8dc9fa78c5dd387efc2320f4a3596889a456a5772439",
+    "original_lines": 12,
+    "current_lines": 12
+  },
+  {
+    "path": "configs/configs_train_single/EC_EARTH/train_config_EC_EARTH_Battery_P3_Best_PastOnly.sh",
+    "status": "unchanged",
+    "original_sha256": "fdf867b7c312d7f35430d6321082903d11709bf8c0a3970108560bca221d48e8",
+    "current_sha256": "fdf867b7c312d7f35430d6321082903d11709bf8c0a3970108560bca221d48e8",
+    "original_lines": 9,
+    "current_lines": 9
+  },
+  {
+    "path": "configs/configs_train_single/EC_EARTH/train_config_EC_EARTH_Battery_P3_Best_shuffle.sh",
+    "status": "unchanged",
+    "original_sha256": "8e6426d0fd1f97d1c9ccf7c86eb3c1898bcaf35e206ebe3284ab5cf201475d65",
+    "current_sha256": "8e6426d0fd1f97d1c9ccf7c86eb3c1898bcaf35e206ebe3284ab5cf201475d65",
+    "original_lines": 10,
+    "current_lines": 10
+  },
+  {
+    "path": "configs/configs_train_single/MPI/train_config_MPI_Battery_Baseline_0h.sh",
+    "status": "unchanged",
+    "original_sha256": "837fa4de63a2184fd80a791a7ff71279ca014f2689468e512971e224e42cce67",
+    "current_sha256": "837fa4de63a2184fd80a791a7ff71279ca014f2689468e512971e224e42cce67",
+    "original_lines": 8,
+    "current_lines": 8
+  },
+  {
+    "path": "configs/configs_train_single/MPI/train_config_MPI_Battery_Baseline_12h.sh",
+    "status": "unchanged",
+    "original_sha256": "a0e21cd929f5b7ab5e34cd6c63a4348c73b6c52c8876db39e7e689c6ad0d2bdb",
+    "current_sha256": "a0e21cd929f5b7ab5e34cd6c63a4348c73b6c52c8876db39e7e689c6ad0d2bdb",
+    "original_lines": 8,
+    "current_lines": 8
+  },
+  {
+    "path": "configs/configs_train_single/MPI/train_config_MPI_Battery_P3_Base.sh",
+    "status": "unchanged",
+    "original_sha256": "05b28defc91713c046449209db3b45267d8e7ec1ccefdc81b53e0f2fccfadfcc",
+    "current_sha256": "05b28defc91713c046449209db3b45267d8e7ec1ccefdc81b53e0f2fccfadfcc",
+    "original_lines": 8,
+    "current_lines": 8
+  },
+  {
+    "path": "configs/configs_train_single/MPI/train_config_MPI_Battery_P3_Base_PastOnly.sh",
+    "status": "unchanged",
+    "original_sha256": "a27dc0fa11c653a546e319a6e429400c719b666308e03b3476245fc53d137ce4",
+    "current_sha256": "a27dc0fa11c653a546e319a6e429400c719b666308e03b3476245fc53d137ce4",
+    "original_lines": 8,
+    "current_lines": 8
+  },
+  {
+    "path": "configs/configs_train_single/MPI/train_config_MPI_Battery_P3_Best.sh",
+    "status": "unchanged",
+    "original_sha256": "ff4a3fe982925fda106fecd3b2cb70b77ba065ecac19885fe809decc0fdc49a6",
+    "current_sha256": "ff4a3fe982925fda106fecd3b2cb70b77ba065ecac19885fe809decc0fdc49a6",
+    "original_lines": 9,
+    "current_lines": 9
+  },
+  {
+    "path": "configs/configs_train_single/MPI/train_config_MPI_Battery_P3_Best_FutureOnly.sh",
+    "status": "unchanged",
+    "original_sha256": "ba84e29a29191bebe50e14431d59fc4dbe7325288f1e15e42d7b7011b0abcb08",
+    "current_sha256": "ba84e29a29191bebe50e14431d59fc4dbe7325288f1e15e42d7b7011b0abcb08",
+    "original_lines": 12,
+    "current_lines": 12
+  },
+  {
+    "path": "configs/configs_train_single/MPI/train_config_MPI_Battery_P3_Best_PastOnly.sh",
+    "status": "unchanged",
+    "original_sha256": "3d6e61323424baa1b3918a5bc2cca76e958efb44ef664835afa92cec751cac26",
+    "current_sha256": "3d6e61323424baa1b3918a5bc2cca76e958efb44ef664835afa92cec751cac26",
+    "original_lines": 9,
+    "current_lines": 9
+  },
+  {
+    "path": "configs/configs_train_single/MPI/train_config_MPI_Battery_P3_Best_shuffle.sh",
+    "status": "unchanged",
+    "original_sha256": "cfd8705a0f92db5c66a58a9d3687d2d67c425c9c2c4c59e1307f9370b60377fa",
+    "current_sha256": "cfd8705a0f92db5c66a58a9d3687d2d67c425c9c2c4c59e1307f9370b60377fa",
+    "original_lines": 10,
+    "current_lines": 10
+  },
+  {
+    "path": "configs/configs_train_single/MRI/train_config_MRI_Battery_Baseline_0h.sh",
+    "status": "unchanged",
+    "original_sha256": "2904e184980f498cce0db98244426ada0cde4fc25e0ba7e6bff9e64c66c92b6a",
+    "current_sha256": "2904e184980f498cce0db98244426ada0cde4fc25e0ba7e6bff9e64c66c92b6a",
+    "original_lines": 8,
+    "current_lines": 8
+  },
+  {
+    "path": "configs/configs_train_single/MRI/train_config_MRI_Battery_Baseline_12h.sh",
+    "status": "unchanged",
+    "original_sha256": "f2f88b5324d38d522187db66b21db8cf01b777c3791eae97c4db636d11bc6975",
+    "current_sha256": "f2f88b5324d38d522187db66b21db8cf01b777c3791eae97c4db636d11bc6975",
+    "original_lines": 8,
+    "current_lines": 8
+  },
+  {
+    "path": "configs/configs_train_single/MRI/train_config_MRI_Battery_P3_Base.sh",
+    "status": "unchanged",
+    "original_sha256": "eec1b4c6211a9aff2b17891a2f6ae26748a85699f775bce8855bf636cc288064",
+    "current_sha256": "eec1b4c6211a9aff2b17891a2f6ae26748a85699f775bce8855bf636cc288064",
+    "original_lines": 8,
+    "current_lines": 8
+  },
+  {
+    "path": "configs/configs_train_single/MRI/train_config_MRI_Battery_P3_Base_PastOnly.sh",
+    "status": "unchanged",
+    "original_sha256": "71e98c65c31fbae4a95e9c89fc8500cbd9d01d5438046fbfb75c4c4ffaff684f",
+    "current_sha256": "71e98c65c31fbae4a95e9c89fc8500cbd9d01d5438046fbfb75c4c4ffaff684f",
+    "original_lines": 8,
+    "current_lines": 8
+  },
+  {
+    "path": "configs/configs_train_single/MRI/train_config_MRI_Battery_P3_Best.sh",
+    "status": "unchanged",
+    "original_sha256": "662380924173450b083404cb718ec8fe48f6a58a03dc8250de89860a5e7c658f",
+    "current_sha256": "662380924173450b083404cb718ec8fe48f6a58a03dc8250de89860a5e7c658f",
+    "original_lines": 9,
+    "current_lines": 9
+  },
+  {
+    "path": "configs/configs_train_single/MRI/train_config_MRI_Battery_P3_Best_FutureOnly.sh",
+    "status": "unchanged",
+    "original_sha256": "8f48839aed2a0a42cf2795f47fc1af9a327190f667437cbf677326eea3998e7e",
+    "current_sha256": "8f48839aed2a0a42cf2795f47fc1af9a327190f667437cbf677326eea3998e7e",
+    "original_lines": 12,
+    "current_lines": 12
+  },
+  {
+    "path": "configs/configs_train_single/MRI/train_config_MRI_Battery_P3_Best_PastOnly.sh",
+    "status": "unchanged",
+    "original_sha256": "95d0209737d6b90eae5ee5fd4aeb29cb291f7f07586f541090770404ac764693",
+    "current_sha256": "95d0209737d6b90eae5ee5fd4aeb29cb291f7f07586f541090770404ac764693",
+    "original_lines": 9,
+    "current_lines": 9
+  },
+  {
+    "path": "configs/configs_train_single/MRI/train_config_MRI_Battery_P3_Best_shuffle.sh",
+    "status": "unchanged",
+    "original_sha256": "63414ba70929da86a8570c4897d11e86b1e37e9bf05a3094f207bc653f3ef020",
+    "current_sha256": "63414ba70929da86a8570c4897d11e86b1e37e9bf05a3094f207bc653f3ef020",
+    "original_lines": 10,
+    "current_lines": 10
+  },
+  {
+    "path": "configs/configs_train_single/NCEP/train_config_NCEP_Battery_Baseline_0h.sh",
+    "status": "unchanged",
+    "original_sha256": "f802fafb3d8fe24211347facb7ded8fcdcc696f5db84c403834328f233fd9ace",
+    "current_sha256": "f802fafb3d8fe24211347facb7ded8fcdcc696f5db84c403834328f233fd9ace",
+    "original_lines": 8,
+    "current_lines": 8
+  },
+  {
+    "path": "configs/configs_train_single/NCEP/train_config_NCEP_Battery_Baseline_12h.sh",
+    "status": "unchanged",
+    "original_sha256": "d270b66aa978c2c461d6b1bfab8906d1e267b4d1fbccca588539b894a04735bd",
+    "current_sha256": "d270b66aa978c2c461d6b1bfab8906d1e267b4d1fbccca588539b894a04735bd",
+    "original_lines": 9,
+    "current_lines": 9
+  },
+  {
+    "path": "configs/configs_train_single/NCEP/train_config_NCEP_Battery_P3_Base.sh",
+    "status": "unchanged",
+    "original_sha256": "1d7c085d147daee5c3057ede9db31fa04f4a4a4104ae9879dddf3ed4326c32ca",
+    "current_sha256": "1d7c085d147daee5c3057ede9db31fa04f4a4a4104ae9879dddf3ed4326c32ca",
+    "original_lines": 8,
+    "current_lines": 8
+  },
+  {
+    "path": "configs/configs_train_single/NCEP/train_config_NCEP_Battery_P3_Best.sh",
+    "status": "unchanged",
+    "original_sha256": "1dd63e3cc0583b426fd41acc8e046408cfc5984ed6d90f3416be32d095da25eb",
+    "current_sha256": "1dd63e3cc0583b426fd41acc8e046408cfc5984ed6d90f3416be32d095da25eb",
+    "original_lines": 9,
+    "current_lines": 9
+  },
+  {
+    "path": "configs/configs_train_single/NCEP/train_config_NCEP_Boston_Baseline_0h.sh",
+    "status": "unchanged",
+    "original_sha256": "86c24e5fcc68997113f5b0cfada2fb196915b356e58345477466b737af0feb63",
+    "current_sha256": "86c24e5fcc68997113f5b0cfada2fb196915b356e58345477466b737af0feb63",
+    "original_lines": 8,
+    "current_lines": 8
+  },
+  {
+    "path": "configs/configs_train_single/NCEP/train_config_NCEP_Boston_Baseline_12h.sh",
+    "status": "unchanged",
+    "original_sha256": "a16ecaea2a03dfb18b1ebb2ffd6ab7555fa4a6a2cdd4ac1198f3507e80a261f5",
+    "current_sha256": "a16ecaea2a03dfb18b1ebb2ffd6ab7555fa4a6a2cdd4ac1198f3507e80a261f5",
+    "original_lines": 8,
+    "current_lines": 8
+  },
+  {
+    "path": "configs/configs_train_single/NCEP/train_config_NCEP_Boston_P3_Base.sh",
+    "status": "unchanged",
+    "original_sha256": "e6d3aea51a9238c194a8bf2b7268cc1881f32d63ffc46c8a81506b0901c8433a",
+    "current_sha256": "e6d3aea51a9238c194a8bf2b7268cc1881f32d63ffc46c8a81506b0901c8433a",
+    "original_lines": 8,
+    "current_lines": 8
+  },
+  {
+    "path": "configs/configs_train_single/NCEP/train_config_NCEP_Boston_P3_Best.sh",
+    "status": "unchanged",
+    "original_sha256": "1857aaf8fcf6b4054c73e13d130ba11faf04882e97df1594e60087ee923ad82e",
+    "current_sha256": "1857aaf8fcf6b4054c73e13d130ba11faf04882e97df1594e60087ee923ad82e",
+    "original_lines": 9,
+    "current_lines": 9
+  },
+  {
+    "path": "configs/configs_train_single/NCEP/train_config_NCEP_CBBT_Baseline_0h.sh",
+    "status": "unchanged",
+    "original_sha256": "967636474c7e92a0a7d6b38dfde32ff5904750e1f9451be22ed2e39e383da745",
+    "current_sha256": "967636474c7e92a0a7d6b38dfde32ff5904750e1f9451be22ed2e39e383da745",
+    "original_lines": 8,
+    "current_lines": 8
+  },
+  {
+    "path": "configs/configs_train_single/NCEP/train_config_NCEP_CBBT_Baseline_12h.sh",
+    "status": "unchanged",
+    "original_sha256": "347a096906bb9b7130aae718e815a6fe5716f934f533a4bfdd28cd87b2e7e8b5",
+    "current_sha256": "347a096906bb9b7130aae718e815a6fe5716f934f533a4bfdd28cd87b2e7e8b5",
+    "original_lines": 8,
+    "current_lines": 8
+  },
+  {
+    "path": "configs/configs_train_single/NCEP/train_config_NCEP_CBBT_P3_Base.sh",
+    "status": "unchanged",
+    "original_sha256": "397af394dfe89fa8e3d79be2c2c9be63807703cf652395d9205283a9a8e559cf",
+    "current_sha256": "397af394dfe89fa8e3d79be2c2c9be63807703cf652395d9205283a9a8e559cf",
+    "original_lines": 8,
+    "current_lines": 8
+  },
+  {
+    "path": "configs/configs_train_single/NCEP/train_config_NCEP_CBBT_P3_Best.sh",
+    "status": "unchanged",
+    "original_sha256": "06c1d4bec44005d46df67b3bd671dc7756de0603639755e8f7a8770290df564f",
+    "current_sha256": "06c1d4bec44005d46df67b3bd671dc7756de0603639755e8f7a8770290df564f",
+    "original_lines": 9,
+    "current_lines": 9
+  },
+  {
+    "path": "configs/configs_train_single/NCEP/train_config_NCEP_Lewes_Baseline_0h.sh",
+    "status": "unchanged",
+    "original_sha256": "d2da8f06b1435bcc4c448f8da774977ab2868c3d24d597b54da032801f5c6482",
+    "current_sha256": "d2da8f06b1435bcc4c448f8da774977ab2868c3d24d597b54da032801f5c6482",
+    "original_lines": 8,
+    "current_lines": 8
+  },
+  {
+    "path": "configs/configs_train_single/NCEP/train_config_NCEP_Lewes_Baseline_12h.sh",
+    "status": "unchanged",
+    "original_sha256": "0acec06181a1943db2cc4af40fdc1cb4ec5670b3450ddfcf298379c8f9f9e4c3",
+    "current_sha256": "0acec06181a1943db2cc4af40fdc1cb4ec5670b3450ddfcf298379c8f9f9e4c3",
+    "original_lines": 8,
+    "current_lines": 8
+  },
+  {
+    "path": "configs/configs_train_single/NCEP/train_config_NCEP_Lewes_P3_Base.sh",
+    "status": "unchanged",
+    "original_sha256": "7749d74f8ccfe5509fbf0af9f48e11813bbf3a59408659a96866605257aad987",
+    "current_sha256": "7749d74f8ccfe5509fbf0af9f48e11813bbf3a59408659a96866605257aad987",
+    "original_lines": 8,
+    "current_lines": 8
+  },
+  {
+    "path": "configs/configs_train_single/NCEP/train_config_NCEP_Lewes_P3_Best.sh",
+    "status": "unchanged",
+    "original_sha256": "ca4fa9525ff37ef9b37a6889dd69f0c2eac3059c6a8df8aa0906319b737384b4",
+    "current_sha256": "ca4fa9525ff37ef9b37a6889dd69f0c2eac3059c6a8df8aa0906319b737384b4",
+    "original_lines": 9,
+    "current_lines": 9
+  },
+  {
+    "path": "configs/configs_train_single/train_config_common.sh",
+    "status": "modified",
+    "original_sha256": "23049a320832e0c56f5728bc83d74820489e17c5dff78eb2c5df87bdfc50dcba",
+    "current_sha256": "caba8c1a333ce99e4d466467af43f9c94897075240f5a402af43a2aba234776f",
+    "original_lines": 95,
+    "current_lines": 98
+  },
+  {
+    "path": "configs/train_config_NCEP_Battery_Stable_Dual.sh",
+    "status": "added",
+    "original_sha256": null,
+    "current_sha256": "a6b881f774c063a091c72a473e9093acb0d2318488a1b9fe0e721c064e26345b",
+    "original_lines": 0,
+    "current_lines": 5
+  },
+  {
+    "path": "configs/train_config_NCEP_Battery_Stable_Single.sh",
+    "status": "added",
+    "original_sha256": null,
+    "current_sha256": "12a949fe05fcfa1880a1ad3254dd66460f5707f8298d983a150faa0a8b7f442d",
+    "original_lines": 0,
+    "current_lines": 32
+  },
+  {
+    "path": "emulator/__init__.py",
+    "status": "unchanged",
+    "original_sha256": "51e67819dff8dab4aa9c6fb6137bdaa752418efe515577eb1bc6ca92f75cbaaa",
+    "current_sha256": "51e67819dff8dab4aa9c6fb6137bdaa752418efe515577eb1bc6ca92f75cbaaa",
+    "original_lines": 17,
+    "current_lines": 17
+  },
+  {
+    "path": "emulator/common/__init__.py",
+    "status": "modified",
+    "original_sha256": "0bf5c449a0f134cdbd448dc872da20f5ff3c6608bc414332078ca4ffd3136ef4",
+    "current_sha256": "e085d6d57ddcd94a9f3c4fa2256b2be70a2de95acca98ca1f37b97855c282687",
+    "original_lines": 28,
+    "current_lines": 3
+  },
+  {
+    "path": "emulator/common/cli.py",
+    "status": "modified",
+    "original_sha256": "9dc6dc7c2a329ec0e84d63bb66e67027eb6f9a09de337bd35552bc3ee920d6df",
+    "current_sha256": "b3654a0d73862d7551ae8e4f3d7f5b579c8d5da358cc84cd9e0dada1d0d9c9ec",
+    "original_lines": 12,
+    "current_lines": 20
+  },
+  {
+    "path": "emulator/common/distributed.py",
+    "status": "deleted",
+    "original_sha256": "5c63247da9033d2a6313c8a646bc9bbfaf3835c4b806db8b556f91fae31aac84",
+    "current_sha256": null,
+    "original_lines": 53,
+    "current_lines": 0
+  },
+  {
+    "path": "emulator/common/inference_artifacts.sh",
+    "status": "modified",
+    "original_sha256": "e84acd48715969350dd919e85a6792c2f25b6f5cc1fc88d887e941148e8a062c",
+    "current_sha256": "24a623dea8f1ebb006c909b62af600dad7cbcdf24086f89589fcd4128d2d3b57",
+    "original_lines": 72,
+    "current_lines": 72
+  },
+  {
+    "path": "emulator/common/io_utils.py",
+    "status": "deleted",
+    "original_sha256": "35ea11851fd777ef79a67df7dd48fd52aecddcbabb3ebbf33a499a7b8788f4f5",
+    "current_sha256": null,
+    "original_lines": 26,
+    "current_lines": 0
+  },
+  {
+    "path": "emulator/common/runtime.py",
+    "status": "modified",
+    "original_sha256": "9e682dade366ff36017fc4c7fa4f2523a85974640c0cde0db08f014997e30af2",
+    "current_sha256": "6197b9cd163e95f9afc419d42f9932403eb6c980ef072012d53aff2f56e5ad41",
+    "original_lines": 99,
+    "current_lines": 26
+  },
+  {
+    "path": "emulator/data/__init__.py",
+    "status": "modified",
+    "original_sha256": "91f7adc2177828a4b9a18c718b9438757756db92325d3824228939eb98d26305",
+    "current_sha256": "45382fc84fa4519495150401f5c2c4daa046e3992ea406a049be379d28d0f3e6",
+    "original_lines": 43,
+    "current_lines": 7
+  },
+  {
+    "path": "emulator/data/graph_store.py",
+    "status": "modified",
+    "original_sha256": "29274664e7b7f3f34dd3c5c92f3b8830fd645d3f2dbb9d74ca82036ca385bc9d",
+    "current_sha256": "331a6eb67989f7c88664d0bdad974e950f98dfd75d100a10ad5ef21e70ff7ec0",
+    "original_lines": 351,
+    "current_lines": 92
+  },
+  {
+    "path": "emulator/data/loaders.py",
+    "status": "unchanged",
+    "original_sha256": "1d28870c8808f0250f39b993265098459fb5b5d6186a7089a8fdcd9df6c38d98",
+    "current_sha256": "1d28870c8808f0250f39b993265098459fb5b5d6186a7089a8fdcd9df6c38d98",
+    "original_lines": 59,
+    "current_lines": 59
+  },
+  {
+    "path": "emulator/data/normalization.py",
+    "status": "modified",
+    "original_sha256": "b7a9a88221ff9a73f94779601699b6aa8b637844f37daab254f0261810b7124e",
+    "current_sha256": "c58550fe4597e7c3ae26403a1adf3fd902f4c7a4d6310aa75520f44cdeff708c",
+    "original_lines": 118,
+    "current_lines": 26
+  },
+  {
+    "path": "emulator/data/station_metadata.py",
+    "status": "modified",
+    "original_sha256": "3b37df8ffa94b884d33b5b435216608a6ba5c4462a13a59b4cca0cbca3d6d555",
+    "current_sha256": "841262a04eed8b73f6c78f26fb384ea0e3af75dbd640e44334017533c0984c04",
+    "original_lines": 103,
+    "current_lines": 25
+  },
+  {
+    "path": "emulator/data/stats.py",
+    "status": "modified",
+    "original_sha256": "a3c960348c8627808387cfa0eda1007dfdba76efed699f25a6f0f97b7e224d39",
+    "current_sha256": "343ae07322b61c3d3c58b15b72bad7a15fbbbb082e340fafd1af2a3a772abb0a",
+    "original_lines": 310,
+    "current_lines": 110
+  },
+  {
+    "path": "emulator/inference/__init__.py",
+    "status": "modified",
+    "original_sha256": "faad0994e4ab7131e27d281925bc8af406302b5ff86cff249618eb083a0df2d0",
+    "current_sha256": "a4a17f727e269fea79f9974d8f06c75e7959f12ea85fb72c938d63d0982345fa",
+    "original_lines": 10,
+    "current_lines": 5
+  },
+  {
+    "path": "emulator/inference/engine.py",
+    "status": "deleted",
+    "original_sha256": "9a6d971d93cca13543d63c4459d6564fb5a893f2e77e611b844cd2add7119b75",
+    "current_sha256": null,
+    "original_lines": 103,
+    "current_lines": 0
+  },
+  {
+    "path": "emulator/inference/grouping.py",
+    "status": "modified",
+    "original_sha256": "c74705152aa568765047faa675d73aa758e8652c367950cdb6611ab291321afb",
+    "current_sha256": "a2a1aabec95bde2780e688ef91129a62fb5e4c44d47b4a222cfe3cc358c89902",
+    "original_lines": 30,
+    "current_lines": 46
+  },
+  {
+    "path": "emulator/models/__init__.py",
+    "status": "modified",
+    "original_sha256": "f65e5247653704dc2b5c69660186563ed665662be8c9ca89ebaac3d54c87b4bb",
+    "current_sha256": "26e8b89607c8966329baffb8d0ea11228d41a38ee86c1c1057623aea319f4308",
+    "original_lines": 25,
+    "current_lines": 4
+  },
+  {
+    "path": "emulator/models/architectures.py",
+    "status": "modified",
+    "original_sha256": "b2f07583db67ce6e33efaad88d933ef6efc24053ed2ab35633c009927ceb9104",
+    "current_sha256": "c00ea660e341c4774df8161e7cd15ed98e6efe88e150207542c1c6596626bf51",
+    "original_lines": 891,
+    "current_lines": 157
+  },
+  {
+    "path": "emulator/models/heads.py",
+    "status": "added",
+    "original_sha256": null,
+    "current_sha256": "94ab70fffeb49e18855baf111c9517a0b20dc86a0b7f68140dbca0af118f0e2a",
+    "original_lines": 0,
+    "current_lines": 60
+  },
+  {
+    "path": "emulator/models/pressure.py",
+    "status": "added",
+    "original_sha256": null,
+    "current_sha256": "23157b7bbc1a5a4cde3dc48c2a9f0aad7327fcdd7e2ce84c0fcfe519331b4f0b",
+    "original_lines": 0,
+    "current_lines": 30
+  },
+  {
+    "path": "emulator/models/spatial.py",
+    "status": "added",
+    "original_sha256": null,
+    "current_sha256": "e8d0ef1523e2752bb61e803252db3420ab47e4b08a6f9888d48bf10a3c5904de",
+    "original_lines": 0,
+    "current_lines": 49
+  },
+  {
+    "path": "emulator/models/temporal.py",
+    "status": "added",
+    "original_sha256": null,
+    "current_sha256": "e44e63e5e4fc1d42dec167a6c3d0a472c7b3de8a696b1711812d48be30758085",
+    "original_lines": 0,
+    "current_lines": 48
+  },
+  {
+    "path": "emulator/training/__init__.py",
+    "status": "modified",
+    "original_sha256": "91e5769220070ee69bf67e5305be92f30ab43c37abab920589a746710c316fc5",
+    "current_sha256": "f28c24f7090dbeee9aa5c978ef974a24d90d653067a4300f9a9a3084cc555de0",
+    "original_lines": 13,
+    "current_lines": 5
+  },
+  {
+    "path": "emulator/training/arguments.py",
+    "status": "added",
+    "original_sha256": null,
+    "current_sha256": "f4fbe33e43b040dd308012ad746b062a5aace425a1149ff4fd43dc7d0fee4564",
+    "original_lines": 0,
+    "current_lines": 259
+  },
+  {
+    "path": "emulator/training/engine.py",
+    "status": "modified",
+    "original_sha256": "759056bb39a838158cbfcc6c959fc42fcae211202e9940ba32c16396f0c48892",
+    "current_sha256": "1b8b683d481f36ffb489fd18a027e514879beb1d604030d1ba9b9da18a945f89",
+    "original_lines": 586,
+    "current_lines": 99
+  },
+  {
+    "path": "emulator/training/losses.py",
+    "status": "modified",
+    "original_sha256": "a365c788251991f54a1694259163d6df663ead2914338c0303bbffa84e067a9e",
+    "current_sha256": "fed873bec21e52749a1b814cd9575f168edd7bb36464955035a0cff4c5ef3e27",
+    "original_lines": 86,
+    "current_lines": 97
+  },
+  {
+    "path": "emulator/training/metrics.py",
+    "status": "added",
+    "original_sha256": null,
+    "current_sha256": "a16bad5f040d1725cf97e47628b9d3ea19da39d10c3ad14f34a0a59c95ecd0e9",
+    "original_lines": 0,
+    "current_lines": 33
+  },
+  {
+    "path": "environment_dataprep.yml",
+    "status": "unchanged",
+    "original_sha256": "e3b10843e616112b6bac839f060f58f21fddde6644b6d5d51a9aa63a11dea9cd",
+    "current_sha256": "e3b10843e616112b6bac839f060f58f21fddde6644b6d5d51a9aa63a11dea9cd",
+    "original_lines": 346,
+    "current_lines": 346
+  },
+  {
+    "path": "environment_training.yml",
+    "status": "unchanged",
+    "original_sha256": "e5ec667014aea9f3d20574ff644b7fea0405ba86b93b2e64bd136c1c2ee43859",
+    "current_sha256": "e5ec667014aea9f3d20574ff644b7fea0405ba86b93b2e64bd136c1c2ee43859",
+    "original_lines": 90,
+    "current_lines": 90
+  },
+  {
+    "path": "infer.py",
+    "status": "modified",
+    "original_sha256": "2595195829680ffe1ff83f34f3e91e21664fa8577d6bdd8a2515f591c9de8763",
+    "current_sha256": "dbdf889e50e0f44b83b4779f6f102b8c93e66bc37011dc5fb2506f6aea5ad28a",
+    "original_lines": 708,
+    "current_lines": 294
+  },
+  {
+    "path": "infer.sh",
+    "status": "modified",
+    "original_sha256": "fd22a14d59b5f3cc4d49ed3b9b4998cf20cf678aaa62e275d2cf6f990297d542",
+    "current_sha256": "75ca5c97ba069e9ba8a85cdf8842dd82697280b0d302976d44274aa3516e7b4a",
+    "original_lines": 330,
+    "current_lines": 336
+  },
+  {
+    "path": "infer_multi.sh",
+    "status": "modified",
+    "original_sha256": "62df0a60a275feee38e9a277c1398b2fdc4161af69d95e69f6eb3430a9ca0fc8",
+    "current_sha256": "48bf4d73c5501c122ccf10eedc3a5f69652d9cf19695ed57675fdc7f0b58abba",
+    "original_lines": 289,
+    "current_lines": 291
+  },
+  {
+    "path": "preprocessing/forcing_cmip6.py",
+    "status": "added",
+    "original_sha256": null,
+    "current_sha256": "86704b4c63a26b6af4f429b15073997ea55ab8df423f5925801b1a614f294fec",
+    "original_lines": 0,
+    "current_lines": 75
+  },
+  {
+    "path": "preprocessing/preprocessing_forcing_CMIP6_AWI_Mean_Removal.py",
+    "status": "unchanged",
+    "original_sha256": "4e0c3dd6fcbabfb8a3aec75d03ce74c2fb79d1487ba383ff90d9aa8fa02f29dd",
+    "current_sha256": "4e0c3dd6fcbabfb8a3aec75d03ce74c2fb79d1487ba383ff90d9aa8fa02f29dd",
+    "original_lines": 214,
+    "current_lines": 214
+  },
+  {
+    "path": "preprocessing/preprocessing_forcing_CMIP6_CNRM_Mean_Removal.py",
+    "status": "unchanged",
+    "original_sha256": "ed48270bff6f1a915656b441b404982efbe9d4ffea7283a0eb0dd75f4bd48473",
+    "current_sha256": "ed48270bff6f1a915656b441b404982efbe9d4ffea7283a0eb0dd75f4bd48473",
+    "original_lines": 214,
+    "current_lines": 214
+  },
+  {
+    "path": "preprocessing/preprocessing_forcing_CMIP6_EC_EARTH_Mean_Removal.py",
+    "status": "unchanged",
+    "original_sha256": "fec4b6965676802871b4a2671fc6e4c9d971aaf32abf0291c264ef790cf82d05",
+    "current_sha256": "fec4b6965676802871b4a2671fc6e4c9d971aaf32abf0291c264ef790cf82d05",
+    "original_lines": 214,
+    "current_lines": 214
+  },
+  {
+    "path": "preprocessing/preprocessing_forcing_CMIP6_MPI_Mean_Removal.py",
+    "status": "unchanged",
+    "original_sha256": "d6399517e7883260fa24a52bbdc5f018574a9b82d89c591bb7779fba5e2f8da3",
+    "current_sha256": "d6399517e7883260fa24a52bbdc5f018574a9b82d89c591bb7779fba5e2f8da3",
+    "original_lines": 214,
+    "current_lines": 214
+  },
+  {
+    "path": "preprocessing/preprocessing_forcing_CMIP6_MRI_Mean_Removal.py",
+    "status": "unchanged",
+    "original_sha256": "5bbf4666cdb762413fa97a7233b9c6532a3e9fee8888c76426bdacce62fd8be4",
+    "current_sha256": "5bbf4666cdb762413fa97a7233b9c6532a3e9fee8888c76426bdacce62fd8be4",
+    "original_lines": 214,
+    "current_lines": 214
+  },
+  {
+    "path": "preprocessing/preprocessing_forcing_NCEP_Mean_Removal.py",
+    "status": "modified",
+    "original_sha256": "a5c0cf0fb4c31fefdc24b20de14a12622fdf2a89f8113b13050d186fbf190559",
+    "current_sha256": "1d70219e40ea25c0c883eea676c8ffe53063185e1b5abc60bfd582253e036b6c",
+    "original_lines": 172,
+    "current_lines": 163
+  },
+  {
+    "path": "preprocessing/preprocessing_simulation.py",
+    "status": "modified",
+    "original_sha256": "74b16e0305ffcd5ff42dcc44e0ed426fb348c960db64994e03fd112f447b0162",
+    "current_sha256": "dd8a6dc993e06b9e81f3f7db0412f3490f3596ecf31ed6546022c95129ba6b7c",
+    "original_lines": 355,
+    "current_lines": 357
+  },
+  {
+    "path": "preprocessing/time_align_unified.py",
+    "status": "modified",
+    "original_sha256": "2924d3827ec03b692bed17b3d74cbca5067bb97cb02897f511bfcad095f1d340",
+    "current_sha256": "1c9d274dd9e3baf8116af199e66ded2e0ba5f22bb7b6f39af852e85acb258f80",
+    "original_lines": 1008,
+    "current_lines": 1008
+  },
+  {
+    "path": "station_json/Battery.json",
+    "status": "unchanged",
+    "original_sha256": "ac5e53f863a21806c9c8d9243c2318677796a34c114c0c9c0952ceb2d1cfa320",
+    "current_sha256": "ac5e53f863a21806c9c8d9243c2318677796a34c114c0c9c0952ceb2d1cfa320",
+    "original_lines": 92,
+    "current_lines": 92
+  },
+  {
+    "path": "station_json/Boston.json",
+    "status": "unchanged",
+    "original_sha256": "709e0a4b3c5ddc77496435e1f15280f457c5cbb2a47b1eea02328a2da8a5aea1",
+    "current_sha256": "709e0a4b3c5ddc77496435e1f15280f457c5cbb2a47b1eea02328a2da8a5aea1",
+    "original_lines": 92,
+    "current_lines": 92
+  },
+  {
+    "path": "station_json/CBBT.json",
+    "status": "unchanged",
+    "original_sha256": "a319d59e3fd6c014b92e3bb56245092fbf5964f721a20595a83fb6a2fa5df203",
+    "current_sha256": "a319d59e3fd6c014b92e3bb56245092fbf5964f721a20595a83fb6a2fa5df203",
+    "original_lines": 92,
+    "current_lines": 92
+  },
+  {
+    "path": "station_json/Lewes.json",
+    "status": "unchanged",
+    "original_sha256": "684a57e640f93d752dc236f48957fb15c4e75508920765b7e30076d1b8e36416",
+    "current_sha256": "684a57e640f93d752dc236f48957fb15c4e75508920765b7e30076d1b8e36416",
+    "original_lines": 92,
+    "current_lines": 92
+  },
+  {
+    "path": "tests/test_config_interfaces.py",
+    "status": "added",
+    "original_sha256": null,
+    "current_sha256": "b0fafb7deb16d8ac665e4fd7fde38362826ea30a27d85c240221ee439f522306",
+    "original_lines": 0,
+    "current_lines": 207
+  },
+  {
+    "path": "tests/test_core_architecture.py",
+    "status": "deleted",
+    "original_sha256": "466f70ae4c91481ba0acbd2ef83897008347c2da1318d22b9046e60ddb48fb61",
+    "current_sha256": null,
+    "original_lines": 271,
+    "current_lines": 0
+  },
+  {
+    "path": "tests/test_dual_loss.py",
+    "status": "added",
+    "original_sha256": null,
+    "current_sha256": "6db58b27553b985b210950f59d3154eb9c3cddec4c4e482c0dbd970116473da4",
+    "original_lines": 0,
+    "current_lines": 158
+  },
+  {
+    "path": "tests/test_forcing.py",
+    "status": "added",
+    "original_sha256": null,
+    "current_sha256": "f7e74d8423d87bc6dae8aacca4802926ae92f8f7b53217ea198c3d69f19d5a4a",
+    "original_lines": 0,
+    "current_lines": 23
+  },
+  {
+    "path": "tests/test_inference_artifacts.py",
+    "status": "deleted",
+    "original_sha256": "2207ecd0b94c5b24f4a63c8b2dbef1782a3cb53b4a078289d0c3d57f0975e0e1",
+    "current_sha256": null,
+    "original_lines": 179,
+    "current_lines": 0
+  },
+  {
+    "path": "tests/test_inference_audit.py",
+    "status": "deleted",
+    "original_sha256": "eee73d615be7182b8e024f11ff34713a3c7aaecdfb60532e52ef66bc1977e815",
+    "current_sha256": null,
+    "original_lines": 116,
+    "current_lines": 0
+  },
+  {
+    "path": "tests/test_inference_reporting.py",
+    "status": "added",
+    "original_sha256": null,
+    "current_sha256": "dc30b147a1e28c599bae07d11f90c5a1d4387b08e01c05f85f3682696db18e40",
+    "original_lines": 0,
+    "current_lines": 129
+  },
+  {
+    "path": "tests/test_missing_pmean.py",
+    "status": "deleted",
+    "original_sha256": "b114e16ab9f4aa058c97623106c4e7c18b697673b81d5668d90a86bc976ece80",
+    "current_sha256": null,
+    "original_lines": 117,
+    "current_lines": 0
+  },
+  {
+    "path": "tests/test_model_audit.py",
+    "status": "deleted",
+    "original_sha256": "65b2e94d889261868e0229fd4dec72cbc7ae1a151e5b945a5b41e5dfce873f3e",
+    "current_sha256": null,
+    "original_lines": 107,
+    "current_lines": 0
+  },
+  {
+    "path": "tests/test_models.py",
+    "status": "added",
+    "original_sha256": null,
+    "current_sha256": "386e077102244d6059af9c9cc4130b1137cab342310318ad372625a114e2d33d",
+    "original_lines": 0,
+    "current_lines": 113
+  },
+  {
+    "path": "tests/test_pipeline.py",
+    "status": "added",
+    "original_sha256": null,
+    "current_sha256": "77c57de386e71af984efb7ae7c44920fb071110380bc681b9fe876008e8bc61b",
+    "original_lines": 0,
+    "current_lines": 135
+  },
+  {
+    "path": "tests/test_preprocessing_pipeline.py",
+    "status": "added",
+    "original_sha256": null,
+    "current_sha256": "c41a39ed9700ca0ade938cb30630478850bd6b0b88b24019c5791b3a72681413",
+    "original_lines": 0,
+    "current_lines": 111
+  },
+  {
+    "path": "tests/test_station_metadata.py",
+    "status": "unchanged",
+    "original_sha256": "99d35b4761ea4e1969eda0181f938bcafb1f7df79df63c32d92f8d05cc017b74",
+    "current_sha256": "99d35b4761ea4e1969eda0181f938bcafb1f7df79df63c32d92f8d05cc017b74",
+    "original_lines": 45,
+    "current_lines": 45
+  },
+  {
+    "path": "tests/test_time_alignment.py",
+    "status": "modified",
+    "original_sha256": "bc5f4014e46d43b65c6d0dd4434ac457b1bd016788859eab19a82ab0aafb4c4a",
+    "current_sha256": "7e88d14b4b0a5bb74d3b8f5c5742bbd59aae27cf5d11fa3656a358704e8199b9",
+    "original_lines": 101,
+    "current_lines": 122
+  },
+  {
+    "path": "tests/test_training.py",
+    "status": "added",
+    "original_sha256": null,
+    "current_sha256": "9de30032af3404312b4dc87deb5cab8f19977e86f7fd74972e1dc045f71abeb3",
+    "original_lines": 0,
+    "current_lines": 96
+  },
+  {
+    "path": "train.py",
+    "status": "modified",
+    "original_sha256": "50af7cdfb84773711a5879d822774113053b1b8dd27c658e576f316724d9f026",
+    "current_sha256": "674b0301ce12a568daa8b2e0894935c3134ea56163b73f00b18f868f7ecc2a4e",
+    "original_lines": 1522,
+    "current_lines": 204
+  },
+  {
+    "path": "train.sh",
+    "status": "modified",
+    "original_sha256": "b6b33402c2eaae001e6138f2cc999936d10eaf573de03a6121b8dda142d55aad",
+    "current_sha256": "b23967ddf2f80f8d2bc41c8d0d52f9fe2eaed93ee0dea7bc7d7e415992657cf1",
+    "original_lines": 649,
+    "current_lines": 708
+  }
+]

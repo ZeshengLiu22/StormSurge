@@ -1,0 +1,38 @@
+{
+  "rank": 0,
+  "samplers": [
+    {
+      "seed": 0,
+      "rank": 0,
+      "shuffle": true,
+      "dataset_size": 6,
+      "num_samples": 3,
+      "drop_last": false,
+      "initial_indices": [
+        2,
+        3,
+        1
+      ]
+    },
+    {
+      "seed": 0,
+      "rank": 0,
+      "shuffle": false,
+      "dataset_size": 1,
+      "num_samples": 1,
+      "drop_last": false,
+      "initial_indices": [
+        0
+      ]
+    }
+  ],
+  "seed": 42,
+  "torch_initial_seed": 42,
+  "best_epoch": 2,
+  "val": {
+    "rmse_all": 0.8525857639521075,
+    "mae_all": 0.8109077215194702,
+    "rmse_peak5": 0.8525857925415039,
+    "mae_peak5": 0.8109077215194702
+  }
+}

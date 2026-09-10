@@ -1,0 +1,13 @@
+{
+  "rank": 0,
+  "samplers": [],
+  "seed": 42,
+  "torch_initial_seed": 42,
+  "best_epoch": 2,
+  "val": {
+    "rmse_all": 0.8652687840906843,
+    "mae_all": 0.8091480731964111,
+    "rmse_peak5": 0.8652687668800354,
+    "mae_peak5": 0.8091480731964111
+  }
+}

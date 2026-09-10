@@ -1,0 +1,62 @@
+..........................................
+----------------------------------------------------------------------
+Ran 42 tests in 13.539s
+
+OK
+Reading mesh from /tmp/tmp8rjddl3b/fort.14 ...
+Mesh loaded: 4 nodes, 1 elements
+
+Nearest mesh node for each station:
+  Lewes, DE → node 0 (lon=-75.1192, lat=38.7828), approx distance ~ 0.0000 deg
+  Boston, MA → node 1 (lon=-71.0503, lat=42.3539), approx distance ~ 0.0000 deg
+  CBBT, Chesapeake Channel, VA → node 2 (lon=-76.0833, lat=37.0329), approx distance ~ 0.0000 deg
+  The Battery, NY → node 3 (lon=-74.0140, lat=40.7010), approx distance ~ 0.0000 deg
+
+===== Processing simulation starting 2001 (approx 2001_2002) =====
+  Node coordinates match between fort.14 and fort.63.
+  nc time:   2001-10-25 01:00:00 → 2001-10-25 03:00:00  (nt=3)
+  tide time: 2001-10-25 02:00:00 → 2001-10-25 04:00:00  (nt=3)
+  Aligned time window: 2001-10-25 02:00:00 → 2001-10-25 03:00:00 (nt=2)
+  Saved full aligned data to /tmp/tmp8rjddl3b/full/fort_2001_zeta_tide_full.npz
+  Lewes, DE – node 0: min nc=4.000, max nc=8.000, min nc_tide=100.000, max nc_tide=104.000
+    Saved station CSV: /tmp/tmp8rjddl3b/csv/2001_2002_Lewes.csv
+  Boston, MA – node 1: min nc=5.000, max nc=9.000, min nc_tide=101.000, max nc_tide=105.000
+    Saved station CSV: /tmp/tmp8rjddl3b/csv/2001_2002_Boston.csv
+  CBBT, Chesapeake Channel, VA – node 2: min nc=6.000, max nc=10.000, min nc_tide=102.000, max nc_tide=106.000
+    Saved station CSV: /tmp/tmp8rjddl3b/csv/2001_2002_CBBT.csv
+  The Battery, NY – node 3: min nc=7.000, max nc=11.000, min nc_tide=103.000, max nc_tide=107.000
+    Saved station CSV: /tmp/tmp8rjddl3b/csv/2001_2002_Battery.csv
+
+================= CONFIG =================
+data_root       : /tmp/tmp9eyktetr
+model_tag       : NCEP
+forcing_dir     : /tmp/tmp9eyktetr/forcing
+csv_dir         : /tmp/tmp9eyktetr/csv
+out_root_fixed  : /tmp/tmp9eyktetr/fixed/NCEP
+out_root_peryear: /tmp/tmp9eyktetr/aligned/NCEP
+stations        : ['Battery']
+years           : [2000]
+exclude_years   : []
+edge_mode       : grid4
+max_edges       : 50,000,000
+MAX_HISTORY_HRS : 48 => window length 9
+=========================================
+
+[peryear cutoff] Year 2000, Battery: last in-cap time 2000-11-01 23:00:00 -> last full day 2000-11-01
+[peryear cutoff] Year 2000: common last full day (capped by Mar 31) = 2000-11-01
+
+=== Year 2000 | forcing=forcing_local_2000.npz | shape=(32, 2, 2, 5) | peryear_last_day=2000-11-01 ===
+edge_index shape: (2, 8)  (nodes=4, edges=8)
+PERYEAR 2000 Battery  | N=   4 | forcing_centers=(4, 2, 2, 5) | nodes=    4 | edges=8 | station_hours=24 | p_mean_t=missing | end_center=2000-11-01 18:00:00
+  Saved dict  : /tmp/tmp9eyktetr/aligned/NCEP/dicts/2000_2001_Battery_peryear_hist48_dict.npz
+  Saved graphs: /tmp/tmp9eyktetr/aligned/NCEP/graphs/2000_2001_Battery_peryear_hist48_graphs.pt (num_graphs=4)
+
+Sanity check file: /tmp/tmp9eyktetr/aligned/NCEP/graphs/2000_2001_Battery_peryear_hist48_graphs.pt
+Loaded graphs: 4
+x shape      : (4, 5)
+x_hist shape : (9, 4, 5) (should be 9, 4, 5)
+y shape      : (6,)
+edge_index   : (2, 8)
+grid_H,grid_W: 2 2
+center_time  : 2000-11-01 00:00:00
+p_mean_hist  : <not present> (your forcing npz did not include p_mean_t)

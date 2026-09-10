@@ -1,0 +1,7 @@
+
+*****************************************
+Setting OMP_NUM_THREADS environment variable for each process to be 1 in default, to avoid your system being overloaded, please further tune the variable for optimal performance in your application as needed. 
+*****************************************
+[2026-09-09|23:45:50] Epoch 001/2 | Train rmse_all=1.052019 mae_all=0.823809 rmse_peak5=1.710589 mae_peak5=1.583555 | Val rmse_all=0.861240 mae_all=0.814031 rmse_peak5=0.861241 mae_peak5=0.814031
+[2026-09-09|23:45:50] Epoch 002/2 | Train rmse_all=1.119747 mae_all=0.896796 rmse_peak5=1.581833 mae_peak5=1.519910 | Val rmse_all=0.852586 mae_all=0.810908 rmse_peak5=0.852586 mae_peak5=0.810908
+[2026-09-09|23:45:50] Wall time: 00:00:00.248 (0.248 s)

@@ -1,0 +1,47 @@
+{
+  "provenance": "Extracted scheduler-only evidence from the pre-restoration original/v2 audit; scheduler implementation did not change during restoration or publication.",
+  "scheduler_cases": [
+    {
+      "epochs": 300,
+      "warmup_epochs": 5,
+      "max_lr_difference": 6.071532165918825e-18,
+      "first_epoch_lr": 0.0005,
+      "last_epoch_lr": 1.1417342318628248e-06
+    },
+    {
+      "epochs": 300,
+      "warmup_epochs": 0,
+      "max_lr_difference": 1.734723475976807e-18,
+      "first_epoch_lr": 0.005,
+      "last_epoch_lr": 1.1370491709023981e-06
+    },
+    {
+      "epochs": 3,
+      "warmup_epochs": 5,
+      "max_lr_difference": 4.336808689942018e-19,
+      "first_epoch_lr": 0.0005,
+      "last_epoch_lr": 0.0023
+    },
+    {
+      "epochs": 5,
+      "warmup_epochs": 5,
+      "max_lr_difference": 4.336808689942018e-19,
+      "first_epoch_lr": 0.0005,
+      "last_epoch_lr": 0.0040999999999999995
+    },
+    {
+      "epochs": 12,
+      "warmup_epochs": 1,
+      "max_lr_difference": 4.87890977618477e-19,
+      "first_epoch_lr": 0.0005,
+      "last_epoch_lr": 0.00010224731245056383
+    },
+    {
+      "epochs": 12,
+      "warmup_epochs": 11,
+      "max_lr_difference": 4.336808689942018e-19,
+      "first_epoch_lr": 0.0005,
+      "last_epoch_lr": 0.005
+    }
+  ]
+}

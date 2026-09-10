@@ -1,0 +1,42 @@
+{
+  "generated_utc": "2026-09-10T00:02:36.387269+00:00",
+  "copied_source_files": 188,
+  "unchanged_copied_files": 187,
+  "documentation_changes": [
+    "README.md"
+  ],
+  "source_v2_unchanged": true,
+  "all_copied_python_shell_config_files_byte_identical": true,
+  "models_byte_identical_to_v2": {
+    "emulator/models/__init__.py": "26e8b89607c8966329baffb8d0ea11228d41a38ee86c1c1057623aea319f4308",
+    "emulator/models/architectures.py": "c00ea660e341c4774df8161e7cd15ed98e6efe88e150207542c1c6596626bf51",
+    "emulator/models/heads.py": "94ab70fffeb49e18855baf111c9517a0b20dc86a0b7f68140dbca0af118f0e2a",
+    "emulator/models/pressure.py": "23157b7bbc1a5a4cde3dc48c2a9f0aad7327fcdd7e2ce84c0fcfe519331b4f0b",
+    "emulator/models/spatial.py": "e8d0ef1523e2752bb61e803252db3420ab47e4b08a6f9888d48bf10a3c5904de",
+    "emulator/models/temporal.py": "e44e63e5e4fc1d42dec167a6c3d0a472c7b3de8a696b1711812d48be30758085"
+  },
+  "original_configs_present": 127,
+  "original_configs_identical": 125,
+  "modified_original_configs": [
+    "configs/configs_train/train_config_common.sh",
+    "configs/configs_train_single/train_config_common.sh"
+  ],
+  "original_files_restored_exactly": {
+    "environment_training.yml": "e5ec667014aea9f3d20574ff644b7fea0405ba86b93b2e64bd136c1c2ee43859",
+    "environment_dataprep.yml": "e3b10843e616112b6bac839f060f58f21fddde6644b6d5d51a9aa63a11dea9cd",
+    "LICENSE": "2413ccd32f7bdd06ced42807f7e3df326bb99f6a76447269aaca64693e5ce587",
+    "preprocessing/preprocessing_forcing_CMIP6_AWI_Mean_Removal.py": "4e0c3dd6fcbabfb8a3aec75d03ce74c2fb79d1487ba383ff90d9aa8fa02f29dd",
+    "preprocessing/preprocessing_forcing_CMIP6_CNRM_Mean_Removal.py": "ed48270bff6f1a915656b441b404982efbe9d4ffea7283a0eb0dd75f4bd48473",
+    "preprocessing/preprocessing_forcing_CMIP6_EC_EARTH_Mean_Removal.py": "fec4b6965676802871b4a2671fc6e4c9d971aaf32abf0291c264ef790cf82d05",
+    "preprocessing/preprocessing_forcing_CMIP6_MPI_Mean_Removal.py": "d6399517e7883260fa24a52bbdc5f018574a9b82d89c591bb7779fba5e2f8da3",
+    "preprocessing/preprocessing_forcing_CMIP6_MRI_Mean_Removal.py": "5bbf4666cdb762413fa97a7233b9c6532a3e9fee8888c76426bdacce62fd8be4"
+  },
+  "git_history": "Standalone initial commit; no original Git history imported",
+  "origin": "https://github.com/ZeshengLiu22/StormSurge.git",
+  "tests": {
+    "suite": "python -m unittest discover -s tests",
+    "passed": 42,
+    "failed": 0,
+    "environment": "installed PyTorch 2.6.0+cu124 plus data preparation test dependencies"
+  }
+}
