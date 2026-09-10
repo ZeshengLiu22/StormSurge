@@ -4,6 +4,8 @@ Independent experimental repository for PACT, derived from [PACT_Storm_Surge_Emu
 
 The [original-versus-current comparison](docs/ORIGINAL_COMPARISON.md) lists the old behavior, current behavior, impact, and restoration recommendation for each change. Original experiment combinations are preserved; input data paths in the shell profiles still refer to external datasets and should be set for the machine running them.
 
+The [archived Emulator changelog](docs/history/Emulator_changelog.md) is an unmodified copy of `changelog.md` from original commit `bb62a2297a0d37a35db5bff352ee815e05676c93`. It records that version's behavior and validation; use the current documentation for this repository. Existing config files remain in place for a separate review.
+
 This folder is the experimental training implementation for **fresh runs**. It has one current backbone, a single head or a supervised body/exceedance dual head, and no old checkpoint loader or recovery guard.
 
 ## Model flow

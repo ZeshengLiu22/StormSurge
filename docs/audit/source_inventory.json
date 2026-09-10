@@ -27,9 +27,9 @@
     "path": "README.md",
     "status": "modified",
     "original_sha256": "636d97a02975bde02bc9c3986e4f9247a81ecf6dc721906b94473e3f7a8239e1",
-    "current_sha256": "d2d19e79d92a9aefdccd2250828ca2af8b2b4fc39264deed6edd66d26ec64372",
+    "current_sha256": "68e62ab02273f4421fbf78a7c2b3600ac80d5147f9b5a228c348c167eec01936",
     "original_lines": 483,
-    "current_lines": 164
+    "current_lines": 166
   },
   {
     "path": "STABILITY_AND_DUAL_HEAD.md",
@@ -1110,6 +1110,14 @@
     "current_sha256": "ffb85e1b0e939ec406685e061696205a3c98363e51846f96750608a86759e13b",
     "original_lines": 0,
     "current_lines": 31
+  },
+  {
+    "path": "docs/history/Emulator_changelog.md",
+    "status": "added",
+    "original_sha256": null,
+    "current_sha256": "19f7a53c22ce8e0ff38b10e6b275f60a9478f25a17a50ff00797a93ca9c959b6",
+    "original_lines": 0,
+    "current_lines": 108
   },
   {
     "path": "emulator/__init__.py",

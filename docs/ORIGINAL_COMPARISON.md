@@ -1,12 +1,14 @@
 **StormSurge 与原版 Emulator：当前差异、影响和还原建议**
 
-本报告对应独立仓库 [ZeshengLiu22/StormSurge](https://github.com/ZeshengLiu22/StormSurge) 的当前源码，本次更新以提交 `9a49f41`（2026-09-10）为基准。此前已完成 `p_mean` 删除、dual阈值/先验/消融/推理诊断更新、metadata最小隐宽、自定义head/temporal宽度、Python构造默认值、baseline的lag容量校验范围及station JSON别名恢复；清晰API、训练/推理同H、原默认值和config读取路径、elevation/bathymetry独立开关及坏数据报错已确认，H=48h已验证。CNN网格检查已确认保留，原地LeakyReLU已恢复并完成数值对照。GraphStore的pattern能力及原默认匹配范围、从TRAIN首图读取模型维度已恢复；用户现已确认保留当前View/tag，第三部分决定全部落实。此前已将最终预测tail loss改为按样本可加、以`tail_frac × B`为分母的公式。此前已删除stable_arch参数及三处配置声明，保留dual_mode，并补齐最佳checkpoint的完整Val/Test输出。本次按用户确认恢复mag按mode校验及head/temporal参数首尾strip；统计线程、阈值计算/广播、tail_frac、DDP累积及新版Train指标均确认保持。所有config、模型、优化器、累积和AMP路径未改；单进程对照与验证范围见第七节。原版基准是本地 `Emulator` 实际文件，对应 [PACT_Storm_Surge_Emulator 的提交 bb62a22](https://github.com/BinaLab/PACT_Storm_Surge_Emulator/tree/bb62a2297a0d37a35db5bff352ee815e05676c93)。它相对上次基准 `3d4be39` 仅提交了此前本地 `.gitignore` 的3行变化，模型与训练源码未变；原版工作树干净。比较生成时间见 [comparison_summary.json](audit/comparison_summary.json)。
+文档归档更新（2026-09-10，以`17d27ef`为基准）：原版`bb62a22`的`changelog.md`已逐字归档至[历史记录](history/Emulator_changelog.md)，其中的功能和验证结论仅对应原版。按用户决定，JSON原子写入、补充旧测试及其他可选修改暂不实施；现有133份config保留原位置和内容，后续另行讨论。本次仅修改文档和生成的比较清单；下面保留最近一次代码更新及其验证记录。
+
+本报告对应独立仓库 [ZeshengLiu22/StormSurge](https://github.com/ZeshengLiu22/StormSurge) 的当前源码，最近一次代码更新以提交 `9a49f41`（2026-09-10）为基准。此前已完成 `p_mean` 删除、dual阈值/先验/消融/推理诊断更新、metadata最小隐宽、自定义head/temporal宽度、Python构造默认值、baseline的lag容量校验范围及station JSON别名恢复；清晰API、训练/推理同H、原默认值和config读取路径、elevation/bathymetry独立开关及坏数据报错已确认，H=48h已验证。CNN网格检查已确认保留，原地LeakyReLU已恢复并完成数值对照。GraphStore的pattern能力及原默认匹配范围、从TRAIN首图读取模型维度已恢复；用户现已确认保留当前View/tag，第三部分决定全部落实。此前已将最终预测tail loss改为按样本可加、以`tail_frac × B`为分母的公式。此前已删除stable_arch参数及三处配置声明，保留dual_mode，并补齐最佳checkpoint的完整Val/Test输出。本次按用户确认恢复mag按mode校验及head/temporal参数首尾strip；统计线程、阈值计算/广播、tail_frac、DDP累积及新版Train指标均确认保持。所有config、模型、优化器、累积和AMP路径未改；单进程对照与验证范围见第七节。原版基准是本地 `Emulator` 实际文件，对应 [PACT_Storm_Surge_Emulator 的提交 bb62a22](https://github.com/BinaLab/PACT_Storm_Surge_Emulator/tree/bb62a2297a0d37a35db5bff352ee815e05676c93)。它相对上次基准 `3d4be39` 仅提交了此前本地 `.gitignore` 的3行变化，模型与训练源码未变；原版工作树干净。比较生成时间见 [comparison_summary.json](audit/comparison_summary.json)。
 
 **结论：主扫描使用的基础空间拓扑和 H=0 baseline 保留；PACT 包含已确认的新 dual head 与稳定性数学改动，所有tail模式使用已确认的新归约公式。此外仍有模型接口、输入检查、运行开关和输出组织等差异，不能概括为“仅改了 dual/stability”。** 当前已整体退役 `p_mean`，完善真实TRAIN事件先验、独立dual阈值、显式消融与可选推理诊断；此前恢复的DDP seed、归一化统计、验证补齐、loss下限、环境配方和推理/预处理汇报继续保留。
 
 本报告逐项列出当前实现与原版的差异、影响和还原建议。**表中的“建议还原”仍是未执行的建议**；已经完成的修改会明确标为已恢复、未变或已退役。`/home/exouser/media/volume/PACT-Data/StormSurge` 与 `/media/volume/PACT-Data/StormSurge` 指向同一独立仓库，原版目录保留。
 
-源码/config/既有文档比较共 **204 个路径：133 个相同、36 个修改、26 个新增、9 个删除，共71个差异文件**。不包含本报告、`docs/audit/`、数据、checkpoint、结果和缓存。逐文件hash及行数见 [CSV](audit/source_inventory.csv) / [JSON](audit/source_inventory.json)，完整行差异见 [original_to_current.diff](audit/original_to_current.diff)。文末列出全部71个文件。
+源码/config/既有文档比较共 **205 个路径：133 个相同、36 个修改、27 个新增、9 个删除，共72个差异文件**。不包含本报告、`docs/audit/`、数据、checkpoint、结果和缓存。逐文件hash及行数见 [CSV](audit/source_inventory.csv) / [JSON](audit/source_inventory.json)，完整行差异见 [original_to_current.diff](audit/original_to_current.diff)。文末列出全部72个文件。
 
 建议标签含义：**保留**＝不建议退回旧实现；**还原**＝建议恢复该具体能力或语义；**部分还原**＝恢复便利性或实验接口，但保留明确错误检查；**已恢复/未变**＝没有新的还原工作。建议是代码与实验设计判断，不是精度提升的实验证明。
 
@@ -160,7 +162,7 @@ DDP与累积可以组合：例如2张GPU、每张32个样本、累积4次，名�
 | 时间输出 | UTC文本、epoch time等 | `[Date\|Time]`＋最终wall time，summary保存循环时间与wall_seconds | wall包含准备/最终测试；与逐epoch或单forward时间不是同一口径。日志用本地datetime，当前机器UTC | **保留**；跨时区比较需注意时间标签 |
 | 训练artifact命名 | 原可读tag/MD5、旧summary NPZ等 | 参数SHA256 stem、JSONL/JSON、独立配置和压缩test_preds；summary已补齐完整val字典 | 结束同时给最佳Val/Test；此前移除stable_arch后Python配置hash自然改变，shell run tag固定文字保持 | **保留当前主格式及完整Val/Test** |
 | 同目录重复运行 | 原结果可被同名覆盖 | config使用exclusive创建，相同显式tag/参数会报FileExistsError | 原命令重跑可能需要新run_tag/目录；默认生成新的时间标签 | **保留防覆盖行为**，复跑使用独立run目录 |
-| JSON写入 | 部分原helper用atomic替换 | 部分直接write_text | 中断时可能留下不完整报告 | **建议还原关键JSON的原子写入**，无需恢复全部IO包装层 |
+| JSON写入 | 部分原helper用atomic替换 | 部分直接write_text | 中断时可能留下不完整报告 | **已确认暂不修改**；本次不恢复原子写入 |
 | checkpoint | 原schema与模型键；推理重建旧模型 | model_config/model_state/normalization、station_feat和精确split_tags；另存loss_thresholds/dual_metadata及有效消融设置 | 保存物理τ、q_E、gate_init_prior、事件数、TRAIN窗口数、分位及事件定义；原版及含已删p_mean字段的中间checkpoint不直接兼容 | **保留新格式与TRAIN元数据**；从头训练，用保存的模式重建 |
 | dual诊断导出 | 原有辅助诊断没有当前受监督body/excess分解与同一事件口径 | 显式--dual_diagnostics导出独立NPZ/JSON，保存对齐的p、物理body/excess、p×excess、E、truth/prediction/tags及TRAIN元数据 | 总体/逐年Brier、stepwise AP、梯形PR-AUC、10个可靠性分箱、正负事件gate直方图和条件误差；无正事件PR为null；复用推理forward，增加导出内存和磁盘 | **保留可选导出**；不自动绘图，不从Test拟合τ，两个PR面积须分别标注 |
 | 默认推理样本 | 从checkpoint args对当前目录重新划分年份 | 按训练时保存的test tags | 目录增加/缺失年份时结果不同；避免推理时悄悄更换test population | **保留saved tags**；需要重划分应明确另选scope |
@@ -184,14 +186,14 @@ DDP与累积可以组合：例如2张GPU、每张32个样本、累积4次，名�
 | time alignment | fixed315/peryear、两个out_root参数、缺time回退、缺年skip；可读取并传播p_mean历史 | 保留两种模式、原fallback/skip及--out_root别名；不再向图添加p_mean或其历史 | 原main的fixed调用本就注释，当前默认也只跑peryear；forcing/标签时间对齐保持，额外图属性减少 | **保留恢复结果与别名**；不恢复p_mean图属性 |
 | LICENSE与静态资源 | 原许可证、station JSON等 | 对应文件逐字保留 | 仓库独立不删除原授权/归属信息 | **保留** |
 | .gitignore | 此前本地experiment_configs忽略项已随bb62a22提交 | 当前未继承该项；大数据/结果/checkpoint仍忽略 | 属于仓库管理差异，无模型影响；基准已改为干净的bb62a22，不能继续称未提交修改 | **不必自动还原该项** |
-| README/方法说明 | 原大README及changelog | 当前README、新dual/stability说明；旧changelog移除 | 新入口更清楚，但历史记录变少 | **保留新说明**；若需要历史追溯，建议将旧changelog作为历史文档归档 |
+| README/方法说明 | 原大README及changelog | 当前README、新dual/stability说明；旧changelog已逐字归档至docs/history/Emulator_changelog.md | 当前说明与原版历史分开，原记录的功能和验证结论仅对应原版 | **已归档旧changelog，保留新说明** |
 | 测试 | 旧模型/诊断/推理接口测试 | 模型/梯度/loss/配置/预处理/往返测试；本次新增mag及strip案例，全量72项通过；18组修改前后单进程训练逐位一致 | 包含CPU/Gloo累积；当前没有GPU实测，不能把CPU对照当作GPU速度或完整精度实验 | **保留当前测试及明确验证范围** |
-| 独立仓库 | 原Emulator自己的Git历史/remote | StormSurge以ce697f9独立初始化，本次更新基准9a49f41已同步origin/main | origin指向新repo，原版历史未迁入；当前195份文件纳入源码/config/既有文档比较 | **保留独立仓库** |
+| 独立仓库 | 原Emulator自己的Git历史/remote | StormSurge以ce697f9独立初始化，最近代码更新17d27ef已同步origin/main | origin指向新repo，原版历史未迁入；当前196份文件纳入源码/config/既有文档比较 | **保留独立仓库** |
 | 数据与机器路径 | profile引用外部Data/graph/station目录 | 原profile路径保持，数据未打包进Git | Git独立不意味着自动复制大数据；换机器需要设置ROOT_DIR、STATION_JSON_DIR、Python环境等 | **保留实验配置值**，按部署机器显式覆盖路径 |
 
 **七、建议优先顺序与验证范围**
 
-metadata最小隐宽、自定义head/temporal宽度、直接构造默认值、baseline的lag容量校验适用范围、JSON文件名/字段别名、GraphStore的pattern能力及TRAIN首图维度来源已恢复；训练/推理使用相同配置H已确认保留，原32帧lag容量覆盖48小时所需的9帧。metadata的elevation/bathymetry独立开关及原默认保持，启用的数据缺失或无效时直接报错。View/tag已确认保留当前实现，第三部分均已落实。新tail归约已按要求实现，当前阈值计算及检查保持，不恢复原极端夹紧。第四部分的保留决定已标明；stable_arch已删除，最终Val/Test完整汇报已补齐。线程、阈值协议、tail_frac、DDP现状及新版Train指标已确认保留；mag按mode校验与head/temporal的strip已补齐。TF32保留明确开关的建议与关键JSON原子写入仍是独立项目，本次不调整。`p_mean` 已明确退役，不再建议恢复其建层顺序、缺失回退或数据字段。
+metadata最小隐宽、自定义head/temporal宽度、直接构造默认值、baseline的lag容量校验适用范围、JSON文件名/字段别名、GraphStore的pattern能力及TRAIN首图维度来源已恢复；训练/推理使用相同配置H已确认保留，原32帧lag容量覆盖48小时所需的9帧。metadata的elevation/bathymetry独立开关及原默认保持，启用的数据缺失或无效时直接报错。View/tag已确认保留当前实现，第三部分均已落实。新tail归约已按要求实现，当前阈值计算及检查保持，不恢复原极端夹紧。第四部分的保留决定已标明；stable_arch已删除，最终Val/Test完整汇报已补齐。线程、阈值协议、tail_frac、DDP现状及新版Train指标已确认保留；mag按mode校验与head/temporal的strip已补齐。现有TF32开关保持；用户已确认JSON原子写入与补充旧测试暂不实施。原版changelog现已逐字归档，现有133份config保留原位置和内容，后续另行讨论。`p_mean` 已明确退役，不再建议恢复其建层顺序、缺失回退或数据字段。
 
 建议继续保留新dual、默认完整分支监督、真实TRAIN事件先验、独立阈值、显式机制消融和可选推理诊断；也保留已确认的PACT稳定性数学、输入存储隔离、单次forward指标、严格的默认评估人口/站点检查、新checkpoint格式和全部原扫描组合。消融配置已提供实验接口，效果仍需同代码、同环境、同预算的独立训练，不能把接口实现当作收益证据。
 
@@ -237,7 +239,7 @@ python docs/audit/compare_original.py --original /path/to/Emulator
 
 脚本重新生成hash清单、计数、完整diff和训练CLI声明比较；本报告的内容及建议随代码更新，章节和表格格式保持。首次发布的v2来源hash在 [v2_source_hashes.json](audit/v2_source_hashes.json)，迁移核对在 [migration_verification.json](audit/migration_verification.json)，两者继续作为历史快照，不代表当前工作树。
 
-**八、全部71个差异文件的索引**
+**八、全部72个差异文件的索引**
 
 下面的索引逐个覆盖生成清单中的修改/新增/删除文件。语义影响与还原建议在上表对应项目展开；行数变化本身不等于架构或训练数学变化。
 
@@ -247,9 +249,9 @@ python docs/audit/compare_original.py --original /path/to/Emulator
 |---|---|---|---|---|
 | 修改 52→49 | [.gitignore](../.gitignore) | 原版已提交的experiment_configs忽略项 → 未继承该项 | 版本管理范围不同，无训练影响；原版当前工作树干净 | 不自动还原该忽略项 |
 | 新增 0→217 | [DUAL_HEAD_EXPLAINED.md](../DUAL_HEAD_EXPLAINED.md) | 无独立说明 → 新dual公式、真实先验、独立阈值、消融与诊断 | 明确分支语义、物理单位和证据局限 | 保留 |
-| 修改 483→164 | [README.md](../README.md) | 原综合README → 当前使用说明、独立仓库来源与本报告入口 | 运行说明与当前实现对应，历史细节减少 | 保留；历史内容可归档 |
+| 修改 483→166 | [README.md](../README.md) | 原综合README → 当前使用说明、独立仓库来源与本报告入口 | 运行说明与当前实现对应，历史细节减少 | 保留；旧changelog已归档 |
 | 新增 0→42 | [STABILITY_AND_DUAL_HEAD.md](../STABILITY_AND_DUAL_HEAD.md) | 无 → 当前stability/dual及显式推理诊断边界 | 区分默认完整监督、消融与常规训练日志 | 保留 |
-| 删除 108→0 | [changelog.md](https://github.com/BinaLab/PACT_Storm_Surge_Emulator/blob/bb62a2297a0d37a35db5bff352ee815e05676c93/changelog.md) | 旧变更历史 → 删除 | 失去本地历史说明 | 建议作为历史文档归档 |
+| 删除 108→0 | [changelog.md](https://github.com/BinaLab/PACT_Storm_Surge_Emulator/blob/bb62a2297a0d37a35db5bff352ee815e05676c93/changelog.md) | 旧根目录文件 → 原文归档至docs/history/Emulator_changelog.md | 本地保留完整原版历史，原路径删除由下方新增归档路径对应 | 已归档 |
 | 修改 40→41 | [configs/configs_infer/infer_config_common.sh](../configs/configs_infer/infer_config_common.sh) | 原推理common → 加默认关闭的DUAL_DIAGNOSTICS | 显式开关独立诊断，不改变默认推理导出 | 保留可选开关 |
 | 修改 94→92 | [configs/configs_train/train_config_common.sh](../configs/configs_train/train_config_common.sh) | 旧head/p_mean配置 → 新dual、独立百分位及命名消融，删除均值接口 | 原扫描超参数保持；dual方法和可选机制改变 | 保留当前dual与退役决定 |
 | 修改 95→93 | [configs/configs_train_single/train_config_common.sh](../configs/configs_train_single/train_config_common.sh) | 旧单GPU公共配置 → 同样接入新dual/消融，删除p_mean | 单GPU累积语义保留；名称不表示single head | 保留 |
@@ -259,12 +261,13 @@ python docs/audit/compare_original.py --original /path/to/Emulator
 | 新增 0→5 | [configs/dual_ablations/train_config_NCEP_Battery_No_Gate_BCE.sh](../configs/dual_ablations/train_config_NCEP_Battery_No_Gate_BCE.sh) | 无 → 引用Stable Dual，关闭gate BCE | gate仍从最终预测loss接受梯度；其他训练条件继承，结果目录独立 | 保留命名对照，效果待实验 |
 | 新增 0→5 | [configs/train_config_NCEP_Battery_Stable_Dual.sh](../configs/train_config_NCEP_Battery_Stable_Dual.sh) | 无 → 新dual对照profile | 新增实验入口，引用Single公共条件 | 保留 |
 | 新增 0→31 | [configs/train_config_NCEP_Battery_Stable_Single.sh](../configs/train_config_NCEP_Battery_Stable_Single.sh) | 无 → 新single对照profile，修正移动后的source路径；冗余STABLE_ARCH声明已删除 | 新增对照且已恢复可执行，其他实验条件保持 | 保留 |
+| 新增 0→108 | [docs/history/Emulator_changelog.md](history/Emulator_changelog.md) | 无归档路径 → 原版bb62a22的changelog逐字副本 | 保存历史记录，不代表当前功能或当前验证结果 | 已按用户要求归档 |
 | 修改 28→3 | [emulator/common/__init__.py](../emulator/common/__init__.py) | 导出多个runtime/DDP/IO helper → configure_runtime | 外部旧导入需适配 | 保留精简；必要时薄适配 |
 | 修改 12→24 | [emulator/common/cli.py](../emulator/common/cli.py) | bool解析 → 共享bool/head/temporal解析，head/temporal首尾strip恢复 | attn及大小写解析保持，训练/推理使用同一函数 | 已恢复strip |
 | 删除 53→0 | [emulator/common/distributed.py](https://github.com/BinaLab/PACT_Storm_Surge_Emulator/blob/bb62a2297a0d37a35db5bff352ee815e05676c93/emulator/common/distributed.py) | rank/DDP/all-reduce/print包装 → 删除并直接调用torch | Slurm能力及旧公开导入不同 | 保留精简，Slurm暂不还原 |
 | 新增 0→19 | [emulator/common/dual.py](../emulator/common/dual.py) | 无 → 统一5种模式和有限gate初始化先验 | 默认完整监督，命名例外共用同一规则 | 保留 |
 | 修改 72→72 | [emulator/common/inference_artifacts.sh](../emulator/common/inference_artifacts.sh) | 原快照变量 → 加运行选择及诊断开关，删p_mean | 重放记录实际推理选择 | 保留 |
-| 删除 26→0 | [emulator/common/io_utils.py](https://github.com/BinaLab/PACT_Storm_Surge_Emulator/blob/bb62a2297a0d37a35db5bff352ee815e05676c93/emulator/common/io_utils.py) | atomic JSON helper → 删除，调用方直接写 | 中断时报告可能不完整 | 建议恢复关键写入的原子性 |
+| 删除 26→0 | [emulator/common/io_utils.py](https://github.com/BinaLab/PACT_Storm_Surge_Emulator/blob/bb62a2297a0d37a35db5bff352ee815e05676c93/emulator/common/io_utils.py) | atomic JSON helper → 删除，调用方直接写 | 中断时报告可能不完整 | 已确认暂不恢复原子写入 |
 | 修改 99→26 | [emulator/common/runtime.py](../emulator/common/runtime.py) | 分散seed/线程/标签helper → 统一runtime及时间戳 | TF32默认、确定性控制、临时线程不同 | 当前建议保留明确TF32开关；其他决定见第四表 |
 | 修改 43→7 | [emulator/data/__init__.py](../emulator/data/__init__.py) | 旧store/split/stats导出 → 简化新接口 | 外部Python导入改变 | 不为旧checkpoint恢复全部包装 |
 | 修改 351→83 | [emulator/data/graph_store.py](../emulator/data/graph_store.py) | 原加载/独立split/pressure属性 → pattern能力及原默认恢复、store.split、严格历史View，无p_mean | 标准文件tag与View保持；sample_id、空版本tag和其余旧公开接口差异另述 | pattern已恢复；View/tag已确认保留，不恢复p_mean |
@@ -302,7 +305,7 @@ python docs/audit/compare_original.py --original /path/to/Emulator
 | 新增 0→246 | [tests/test_dual_experiments.py](../tests/test_dual_experiments.py) | 无 → 真实TRAIN先验、阈值解耦、5种模式/梯度及诊断/shell贯通 | 覆盖当前新增接口、边界及标签独立性；不是长期精度实验 | 保留 |
 | 新增 0→158 | [tests/test_dual_loss.py](../tests/test_dual_loss.py) | 无 → 强制dual loss、warning、保存与梯度测试 | 验证三项确实参与训练 | 保留 |
 | 新增 0→24 | [tests/test_forcing.py](../tests/test_forcing.py) | 无 → generic forcing公式测试 | 验证新可选入口数学 | 保留 |
-| 删除 179→0 | [tests/test_inference_artifacts.py](https://github.com/BinaLab/PACT_Storm_Surge_Emulator/blob/bb62a2297a0d37a35db5bff352ee815e05676c93/tests/test_inference_artifacts.py) | 旧shell快照/重放测试 → 删除 | 旧覆盖未完全由当前测试替代 | 建议适配后补回仍适用的行为测试 |
+| 删除 179→0 | [tests/test_inference_artifacts.py](https://github.com/BinaLab/PACT_Storm_Surge_Emulator/blob/bb62a2297a0d37a35db5bff352ee815e05676c93/tests/test_inference_artifacts.py) | 旧shell快照/重放测试 → 删除 | 旧覆盖未完全由当前测试替代 | 已确认暂不补充旧测试 |
 | 删除 116→0 | [tests/test_inference_audit.py](https://github.com/BinaLab/PACT_Storm_Surge_Emulator/blob/bb62a2297a0d37a35db5bff352ee815e05676c93/tests/test_inference_audit.py) | 旧checkpoint/推理回退测试 → 删除 | 原部分scope/fallback不再支持 | 按决定保留的接口补回案例 |
 | 新增 0→129 | [tests/test_inference_reporting.py](../tests/test_inference_reporting.py) | 无 → 当前逐年/分组/时间/格式测试 | 覆盖科学汇报与样本权重；固定测试目录后缀避免随机尾下划线误报，产品命名不改 | 保留 |
 | 删除 117→0 | [tests/test_missing_pmean.py](https://github.com/BinaLab/PACT_Storm_Surge_Emulator/blob/bb62a2297a0d37a35db5bff352ee815e05676c93/tests/test_missing_pmean.py) | 旧缺压力均值回退测试 → 随功能退役删除 | 对应旧模式已不受支持 | 不恢复已退役功能的测试 |
