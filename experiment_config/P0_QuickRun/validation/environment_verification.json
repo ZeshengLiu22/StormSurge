@@ -1,0 +1,17 @@
+{
+  "python": "/media/volume/PACT-Data/conda_envs/torchpyg-cu124/bin/python",
+  "torch": "2.6.0+cu124",
+  "torch_geometric": "2.7.0",
+  "host_cuda_available": true,
+  "gpu": "NVIDIA H100 80GB HBM3",
+  "sandbox_cuda_available": false,
+  "graph_files": {
+    "CBBT": 36,
+    "Lewes": 36,
+    "Battery": 36,
+    "Boston": 36
+  },
+  "root_dir": "/media/share/PACT/Data/Grid4_New/NCEP/graphs",
+  "station_json_dir": "/media/volume/PACT-Data/StormSurge/station_json",
+  "training_started": false
+}

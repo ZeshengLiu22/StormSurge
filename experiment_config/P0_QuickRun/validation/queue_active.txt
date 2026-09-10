@@ -1,0 +1,4 @@
+ID   State      Output               E-Level  Times(r/u/s)   Command [run=1/1]
+1    running    /tmp/p0-queue-probe-imj7ygwp/spool/ts-out.IdAM2F                         [P0_Test_Fail]bash /home/exouser/.local/bin/qsub_local_worker /tmp/p0-queue-probe-imj7ygwp/probe work train.sh P0_Test_Fail /tmp/p0-queue-probe-imj7ygwp/probe work/probe config.sh
+2    queued     (file)                                       [P0_Test_Pass]bash /home/exouser/.local/bin/qsub_local_worker /tmp/p0-queue-probe-imj7ygwp/probe work train.sh P0_Test_Pass /tmp/p0-queue-probe-imj7ygwp/probe work/probe config.sh
+0    finished   /tmp/p0-queue-probe-imj7ygwp/spool/ts-out.6liY5s 0        0.08/0.02/0.05 [P0_Test]bash /home/exouser/.local/bin/qsub_local_worker /media/volume/PACT-Data/StormSurge train.sh P0_Test experiment_config/P0_QuickRun/train_config_NCEP_Battery_24h_dual_tail_slope.sh

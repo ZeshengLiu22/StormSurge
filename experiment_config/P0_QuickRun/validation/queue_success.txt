@@ -1,0 +1,43 @@
+=========================================
+Config file:   /tmp/p0-queue-probe-imj7ygwp/probe work/probe config.sh
+Host:          js2-h100-1
+Workdir:       /tmp/p0-queue-probe-imj7ygwp/probe work
+Run name:      NCEP_Battery_24h_dual_tail_slope
+Run dir:       /tmp/p0-queue-probe-imj7ygwp/probe work/./All_Results/P0_QuickRun/NCEP_Battery_24h_dual_tail_slope__20000101_000002
+Run dir style: runname_timestamp
+Results root:  /tmp/p0-queue-probe-imj7ygwp/probe work/./All_Results/P0_QuickRun
+Python:        /media/volume/PACT-Data/conda_envs/torchpyg-cu124/bin/python (DO_CONDA=0)
+tmux:          USE_TMUX=1 SESSION_NAME=P0_Test_Pass DRY_RUN=0
+LAUNCHER:      /media/volume/PACT-Data/conda_envs/torchpyg-cu124/bin/python -u
+Train script:  /tmp/p0-queue-probe-imj7ygwp/process_stub.py
+Model:         perceiver3
+Encoder:       GraphSAGE
+CNN width:     29 (intermediate channels)
+Temporal:      Transformer
+Head:          dual
+Station feats: site_elevation=0 bathymetry=0 (PACT)
+Grad accum:    4 (nominal effective batch=1024)
+ROOT_DIR:      /media/share/PACT/Data/Grid4_New/NCEP/graphs
+TEST_ROOT_DIR: <none>
+TRAIN_DATA_TAG:NCEP
+TEST_DATA_TAG: NCEP
+LR_LIST:       5e-3
+Loss modes:    mse_tail_slope
+Loss weights:  body=1 excess=2 gate=0.5 tail=0.025 slope=0.01 (terms enabled by head/loss mode)
+H_LIST:        24
+Split:         train=0.6 val=0.2 shuffle_years=0 future_only=0 future_year_threshold=2030 seed=42
+MASTER_ADDR:   127.0.0.1
+MASTER_PORT:   29700
+SLURM_JOB_ID:  <none>
+CUDA_VISIBLE_DEVICES:  0
+num_gpus:      1
+Scheduler:     cosine (ROP_METRIC=val_rmse_phys)
+DISABLE_OOD:   1 (x_norm=zscore, x_clip=0, x_aug=0)
+DL:            workers=0 pin=0 pers=0 prefetch=0 mp=fork
+Precision:     AMP=1 AMP_DTYPE=bf16 TF32=1
+=========================================
+[INFO] launching inside tmux session: P0_Test_Pass
+Attach: tmux attach -t P0_Test_Pass
+Artifacts: /tmp/p0-queue-probe-imj7ygwp/probe work/./All_Results/P0_QuickRun/NCEP_Battery_24h_dual_tail_slope__20000101_000002
+[qsub_local_worker] waiting for tmux session to finish: P0_Test_Pass
+[qsub_local_worker] tmux session finished: P0_Test_Pass

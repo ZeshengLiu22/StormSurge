@@ -198,11 +198,12 @@ fi
 
 # Unified training-artifact root. Relative paths are resolved from WORKDIR.
 : "${ALL_RESULTS_ROOT:=}"
+# Opt in per config; historical configs retain timestamp-first directory names.
+: "${RUN_DIR_NAME_STYLE:=timestamp_runname}"
 
 : "${DRY_RUN:=0}"
 if [[ "${DRY_RUN}" == "1" ]]; then
   DO_CONDA=0
-  USE_TMUX=0
 fi
 
 # =========================
@@ -232,6 +233,10 @@ elif [[ -n "${CONDA_PREFIX:-}" && -x "${CONDA_PREFIX}/bin/python" ]]; then
   PYTHON_BIN="${CONDA_PREFIX}/bin/python"
 else
   PYTHON_BIN="$(command -v python)"
+fi
+if ! command -v "${PYTHON_BIN}" >/dev/null 2>&1; then
+  echo "[FATAL] Python interpreter not found or not executable: ${PYTHON_BIN}" >&2
+  exit 2
 fi
 
 # =========================
@@ -333,13 +338,22 @@ RUN_NAME_SAFE="${RUN_NAME//[^A-Za-z0-9._-]/_}"
 if [[ -z "${RUN_NAME_SAFE}" ]]; then
   RUN_NAME_SAFE="train"
 fi
+PACT_RUN_NAME="${RUN_NAME}"
+PACT_RUNSTAMP="${RUNSTAMP}"
+if [[ "${USE_TMUX}" == "1" ]]; then
+  SESSION_NAME="${SESSION_NAME:-${RUN_NAME_SAFE}_${RUNSTAMP}}"
+fi
 
 if [[ -z "${ALL_RESULTS_ROOT}" ]]; then
   ALL_RESULTS_ROOT="${WORKDIR}/All_Results"
 elif [[ "${ALL_RESULTS_ROOT}" != /* ]]; then
   ALL_RESULTS_ROOT="${WORKDIR}/${ALL_RESULTS_ROOT}"
 fi
-RUN_DIR="${ALL_RESULTS_ROOT}/${RUNSTAMP}_${RUN_NAME_SAFE}"
+case "${RUN_DIR_NAME_STYLE}" in
+  timestamp_runname) RUN_DIR="${ALL_RESULTS_ROOT}/${RUNSTAMP}_${RUN_NAME_SAFE}" ;;
+  runname_timestamp) RUN_DIR="${ALL_RESULTS_ROOT}/${RUN_NAME_SAFE}__${RUNSTAMP}" ;;
+  *) echo "[FATAL] Unknown RUN_DIR_NAME_STYLE: ${RUN_DIR_NAME_STYLE}" >&2; exit 2 ;;
+esac
 
 write_resolved_config() {
   local output_path="$1"
@@ -364,6 +378,7 @@ write_resolved_config() {
     MP_CONTEXT USE_TMUX DO_CONDA CONDA_MODULE CONDA_SH CONDA_ENV
     GATE_MODE NODE_READ_HEADS TIME_READ_HEADS TRANSFORMER_LAYERS
     TRANSFORMER_FF_MULT TRANSFORMER_DROPOUT MAX_TIME_STEPS ALL_RESULTS_ROOT
+    RUN_DIR_NAME_STYLE PACT_RUN_NAME PACT_RUNSTAMP SESSION_NAME
   )
 
   {
@@ -383,7 +398,18 @@ write_resolved_config() {
 # submitted job produces exactly one launcher directory.  Direct/no-tmux runs
 # and tmux-inner runs create it here as usual.
 if [[ "${DRY_RUN}" != "1" ]] && { [[ "${USE_TMUX}" != "1" || "${TMUX_INNER}" == "1" ]] || ! command -v tmux >/dev/null 2>&1; }; then
-  mkdir -p "${RUN_DIR}"
+  if [[ "${RUN_DIR_NAME_STYLE}" == "runname_timestamp" ]]; then
+    mkdir -p "${ALL_RESULTS_ROOT}"
+    # A repeated name within the same second must never overwrite a prior run.
+    if ! mkdir "${RUN_DIR}"; then
+      echo "[FATAL] Cannot create a fresh run directory: ${RUN_DIR}" >&2
+      exit 2
+    fi
+  else
+    mkdir -p "${RUN_DIR}"
+  fi
+  exec > >(tee -a "${RUN_DIR}/launcher.log") 2>&1
+  trap 'status=$?; printf "%s\n" "$status" > "${RUN_DIR}/exit_status"; exit "$status"' EXIT
   write_resolved_config "${RUN_DIR}/config_used.sh"
 fi
 
@@ -393,6 +419,11 @@ echo "Host:          $(hostname)"
 echo "Workdir:       ${WORKDIR}"
 echo "Run name:      ${RUN_NAME}"
 echo "Run dir:       ${RUN_DIR}"
+echo "Run dir style: ${RUN_DIR_NAME_STYLE}"
+echo "Results root:  ${ALL_RESULTS_ROOT}"
+echo "Python:        ${PYTHON_BIN} (DO_CONDA=${DO_CONDA})"
+echo "tmux:          USE_TMUX=${USE_TMUX} SESSION_NAME=${SESSION_NAME:-<unset>} DRY_RUN=${DRY_RUN}"
+echo "LAUNCHER:      ${TRAIN_LAUNCH[*]}"
 echo "Train script:  ${TRAIN_PY}"
 echo "Model:         ${MODEL}"
 echo "Encoder:       ${ENCODER_TYPE}"
@@ -409,6 +440,7 @@ echo "TRAIN_DATA_TAG:${TRAIN_DATA_TAG}"
 echo "TEST_DATA_TAG: ${TEST_DATA_TAG}"
 echo "LR_LIST:       ${LR_LIST[*]}"
 echo "Loss modes:    ${LOSS_MODE_LIST[*]}"
+echo "Loss weights:  body=${BODY_LOSS_WEIGHT} excess=${EXCESS_LOSS_WEIGHT} gate=${GATE_LOSS_WEIGHT} tail=${TAIL_LAMBDA_LIST[*]} slope=${SLOPE_LAMBDA_LIST[*]} (terms enabled by head/loss mode)"
 echo "H_LIST:        ${HISTORY_HOURS_LIST[*]}"
 echo "Split:         train=${TRAIN_RATIO} val=${VAL_RATIO} shuffle_years=${SHUFFLE_YEARS} future_only=${FUTURE_ONLY} future_year_threshold=${FUTURE_YEAR_THRESHOLD} seed=${SEED}"
 echo "MASTER_ADDR:   ${MASTER_ADDR}"
@@ -419,20 +451,20 @@ echo "num_gpus:      ${num_gpus}"
 echo "Scheduler:     ${SCHEDULER} (ROP_METRIC=${ROP_METRIC})"
 echo "DISABLE_OOD:   ${DISABLE_OOD} (x_norm=${X_NORM}, x_clip=${X_CLIP}, x_aug=${X_AUG})"
 echo "DL:            workers=${NUM_WORKERS} pin=${PIN_MEMORY} pers=${PERSISTENT_WORKERS} prefetch=${PREFETCH_FACTOR} mp=${MP_CONTEXT}"
+echo "Precision:     AMP=${USE_AMP} AMP_DTYPE=${AMP_DTYPE} TF32=${USE_TF32}"
 echo "========================================="
 
 # =========================
 # Optional: tmux wrapper
 # =========================
-if [[ "${USE_TMUX}" == "1" && "${TMUX_INNER}" == "0" ]] && command -v tmux >/dev/null 2>&1; then
+if [[ "${DRY_RUN}" != "1" && "${USE_TMUX}" == "1" && "${TMUX_INNER}" == "0" ]] && command -v tmux >/dev/null 2>&1; then
   # qsub_local exports SESSION_NAME=<job-label>. Honor it so the queue worker
   # can track this detached session and keep the single-GPU slot occupied.
-  SESSION_NAME="${SESSION_NAME:-${RUN_NAME_SAFE}_${RUNSTAMP}}"
   STATUS_HANDOFF=""
   if [[ -n "${QSUB_LOCAL_STATUS_FILE:-}" ]]; then
     printf -v STATUS_HANDOFF 'printf "%%s\n" "$status" > %q; ' "${QSUB_LOCAL_STATUS_FILE}"
   fi
-  printf -v TMUX_INNER_CMD 'PACT_RUNSTAMP=%q PACT_RUN_NAME=%q bash %q %q --_tmux_inner; status=$?; %s if [[ ${status} -ne 0 ]]; then echo; echo "[tmux] train.sh exited with status ${status}; closing failed session so the local queue can continue."; fi; exit "${status}"' "${RUNSTAMP}" "${RUN_NAME}" "${SCRIPT_PATH}" "${CONFIG_PATH}" "${STATUS_HANDOFF}"
+  printf -v TMUX_INNER_CMD 'DRY_RUN=0 SESSION_NAME=%q PACT_RUNSTAMP=%q PACT_RUN_NAME=%q bash %q %q --_tmux_inner; status=$?; %s if [[ ${status} -ne 0 ]]; then echo; echo "[tmux] train.sh exited with status ${status}; closing failed session so the local queue can continue."; fi; exit "${status}"' "${SESSION_NAME}" "${RUNSTAMP}" "${RUN_NAME}" "${SCRIPT_PATH}" "${CONFIG_PATH}" "${STATUS_HANDOFF}"
   printf -v TMUX_CMD 'bash -lc %q' "${TMUX_INNER_CMD}"
   echo "[INFO] launching inside tmux session: ${SESSION_NAME}"
   tmux new-session -d -s "${SESSION_NAME}" -c "${WORKDIR}" "${TMUX_CMD}"

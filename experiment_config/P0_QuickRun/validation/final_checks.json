@@ -1,0 +1,13 @@
+{
+  "status": "PASS",
+  "initial_head": "9e9a4703a1f995787a61898b7911ca54f6598d61",
+  "baseline_files": 140,
+  "legacy_configs_unchanged": 133,
+  "changed_existing_files": [
+    "train.sh"
+  ],
+  "train_sh_sha256": "0b830c29b838a44bb6ef2158537f1aca24ad1682140444e5295f07f9052466c4",
+  "normal_queue_modified": false,
+  "real_training_started": false,
+  "production_result_root_created": false
+}

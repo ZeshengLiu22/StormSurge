@@ -1,0 +1,46 @@
+=========================================
+Config file:   /tmp/p0-queue-probe-imj7ygwp/probe work/probe config.sh
+Host:          js2-h100-1
+Workdir:       /tmp/p0-queue-probe-imj7ygwp/probe work
+Run name:      NCEP_Battery_24h_dual_tail_slope
+Run dir:       /tmp/p0-queue-probe-imj7ygwp/probe work/./All_Results/P0_QuickRun/NCEP_Battery_24h_dual_tail_slope__20000101_000002
+Run dir style: runname_timestamp
+Results root:  /tmp/p0-queue-probe-imj7ygwp/probe work/./All_Results/P0_QuickRun
+Python:        /media/volume/PACT-Data/conda_envs/torchpyg-cu124/bin/python (DO_CONDA=0)
+tmux:          USE_TMUX=1 SESSION_NAME=P0_Test_Pass DRY_RUN=0
+LAUNCHER:      /media/volume/PACT-Data/conda_envs/torchpyg-cu124/bin/python -u
+Train script:  /tmp/p0-queue-probe-imj7ygwp/process_stub.py
+Model:         perceiver3
+Encoder:       GraphSAGE
+CNN width:     29 (intermediate channels)
+Temporal:      Transformer
+Head:          dual
+Station feats: site_elevation=0 bathymetry=0 (PACT)
+Grad accum:    4 (nominal effective batch=1024)
+ROOT_DIR:      /media/share/PACT/Data/Grid4_New/NCEP/graphs
+TEST_ROOT_DIR: <none>
+TRAIN_DATA_TAG:NCEP
+TEST_DATA_TAG: NCEP
+LR_LIST:       5e-3
+Loss modes:    mse_tail_slope
+Loss weights:  body=1 excess=2 gate=0.5 tail=0.025 slope=0.01 (terms enabled by head/loss mode)
+H_LIST:        24
+Split:         train=0.6 val=0.2 shuffle_years=0 future_only=0 future_year_threshold=2030 seed=42
+MASTER_ADDR:   127.0.0.1
+MASTER_PORT:   30186
+SLURM_JOB_ID:  <none>
+CUDA_VISIBLE_DEVICES:  0
+num_gpus:      1
+Scheduler:     cosine (ROP_METRIC=val_rmse_phys)
+DISABLE_OOD:   1 (x_norm=zscore, x_clip=0, x_aug=0)
+DL:            workers=0 pin=0 pers=0 prefetch=0 mp=fork
+Precision:     AMP=1 AMP_DTYPE=bf16 TF32=1
+=========================================
+-----------------------------------------
+RUN_TAG:  Battery_NCEPtoNCEP_perceiver3_ga4_nrh8_trh8_L2_ff4.0_td0.0_stable1v3_exceedance_gmwindow_eq95_danone_lossmse_tail_slope_tf0.05_tl0.025_sl0.01_sms0.10_charb_hist24h_hid128_L2_bs256_lr5e-3_ep300_schcosine_xnzscore
+LOG:      /tmp/p0-queue-probe-imj7ygwp/probe work/./All_Results/P0_QuickRun/NCEP_Battery_24h_dual_tail_slope__20000101_000002/train_Battery_NCEPtoNCEP_perceiver3_ga4_nrh8_trh8_L2_ff4.0_td0.0_stable1v3_exceedance_gmwindow_eq95_danone_lossmse_tail_slope_tf0.05_tl0.025_sl0.01_sms0.10_charb_hist24h_hid128_L2_bs256_lr5e-3_ep300_schcosine_xnzscore.log
+LAUNCHER: /media/volume/PACT-Data/conda_envs/torchpyg-cu124/bin/python -u
+-----------------------------------------
+CMD: /tmp/p0-queue-probe-imj7ygwp/process_stub.py --root_dir /media/share/PACT/Data/Grid4_New/NCEP/graphs --model perceiver3 --exceedance_percentile 95 --dual_ablation none --encoder_type GraphSAGE --cnn_intermediate_channel 29 --batch_size 256 --lr 5e-3 --epochs 300 --hidden_channels 128 --num_layers 2 --dropout 0.05 --head_dropout 0.05 --max_grad_norm 0 --deterministic 0 --history_hours 24 --seed 42 --train_ratio 0.6 --val_ratio 0.2 --shuffle_years 0 --future_only 0 --future_year_threshold 2030 --run_tag Battery_NCEPtoNCEP_perceiver3_ga4_nrh8_trh8_L2_ff4.0_td0.0_stable1v3_exceedance_gmwindow_eq95_danone_lossmse_tail_slope_tf0.05_tl0.025_sl0.01_sms0.10_charb_hist24h_hid128_L2_bs256_lr5e-3_ep300_schcosine_xnzscore_20000101_000002 --output_dir /tmp/p0-queue-probe-imj7ygwp/probe\ work/./All_Results/P0_QuickRun/NCEP_Battery_24h_dual_tail_slope__20000101_000002 --torch_threads 1 --num_workers 0 --prefetch_factor 0 --mp_context fork --x_norm zscore --x_p_lo 1.0 --x_p_hi 99.0 --x_nodes_per_graph 256 --x_clip 0 --x_aug 0 --x_aug_prob 0 --x_aug_scale 0 --x_aug_bias 0 --station_json_dir /media/volume/PACT-Data/StormSurge/station_json --use_site_elevation 0 --use_bathymetry 0 --station Battery --grad_accum_steps 4 --amp --amp_dtype bf16 --tf32 --head_type dual --dual_mode exceedance --tail_frac 0.05 --temporal_block Transformer --node_read_heads 8 --time_read_heads 8 --transformer_layers 2 --transformer_ff_mult 4.0 --transformer_dropout 0.0 --max_time_steps 32 --gate_mode window --dual_loss 1 --body_loss_weight 1 --excess_loss_weight 2 --gate_loss_weight 0.5 --scheduler cosine --warmup_epochs 5 --warmup_start_factor 0.1 --min_lr 1e-6 --loss_mode mse_tail_slope --wmse_q 95 --wmse_alpha 4.0 --wmse_s 0.10 --wmse_use_abs 1 --tail_frac 0.05 --tail_lambda 0.025 --slope_lambda 0.01 --slope_mask_s 0.10 --slope_robust charb --slope_charb_eps 1e-3 
+P0 PROCESS STUB: no torch import, model, optimizer, data load or training
+[2026-09-10|06:55:31] Wall time (all combinations): 0 s | Artifacts: /tmp/p0-queue-probe-imj7ygwp/probe work/./All_Results/P0_QuickRun/NCEP_Battery_24h_dual_tail_slope__20000101_000002

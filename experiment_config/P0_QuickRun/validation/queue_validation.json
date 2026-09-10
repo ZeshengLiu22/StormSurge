@@ -1,0 +1,24 @@
+{
+  "status": "PASS",
+  "production_queue_functions_sha256": "e60cd26bba2d14afc018eb986a264fbbbc522312074047267e381444037ef55b",
+  "bashrc_sha256": "b079a9ec1404b6422d96afdc5bc94cec53b46367772df801cd9b2bc6c25a6e15",
+  "worker_sha256": "c3ac9c6375044de85e7dbc3c5bf302114817f1bd53020ce12f3bac3684132b95",
+  "checks": [
+    "Actual qsub_local train.sh P0_Test <selected P0 config>: one dry command; correct script, argument, session and semantic name; no tmux session or result folder.",
+    "While the first detached tmux stub was active, its worker retained the single queue slot and the second task stayed queued.",
+    "Exactly one tmux session and one semantic/timestamp result folder per stub invocation; exit statuses 23 and 0 propagated to task-spooler; failed job released the slot.",
+    "A duplicate semantic name/timestamp is rejected without overwriting the earlier run."
+  ],
+  "dry_queue_jobs": 1,
+  "stub_queue_jobs": 2,
+  "tmux_sessions_started": 2,
+  "result_directories": 2,
+  "failure_status": 23,
+  "success_status": 0,
+  "single_slot_wait_verified": true,
+  "stale_test_sessions": false,
+  "stale_test_queue": false,
+  "normal_queue_modified": false,
+  "real_training_started": false,
+  "gpu_training_seconds": 0
+}
