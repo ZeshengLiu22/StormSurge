@@ -1,6 +1,7 @@
 """Physical-unit objectives. Metrics are computed separately from these losses."""
 
 from dataclasses import dataclass
+import math
 import os
 
 import torch
@@ -8,7 +9,28 @@ from torch import nn
 import torch.nn.functional as F
 
 from emulator.common.runtime import log_message
-from emulator.common.dual import DUAL_ABLATIONS
+from emulator.common.dual import DUAL_ABLATIONS, dual_excess_target
+from .excess_amplitude import excess_amplitude_terms, validate_event_prior
+
+
+def validate_excess_amp_config(config):
+    """Validate the optional objective and return its effective ablation weight."""
+    weight = getattr(config, "excess_amp_loss_weight", 0.0)
+    pool = getattr(config, "excess_amp_pool", "max")
+    if not math.isfinite(weight) or weight < 0:
+        raise ValueError("--excess_amp_loss_weight must be finite and nonnegative.")
+    if pool not in ("max", "smoothmax"):
+        raise ValueError("--excess_amp_pool must be max or smoothmax.")
+    if weight > 0 and getattr(config, "head_type", "dual") != "dual":
+        raise ValueError("Excess-amplitude supervision requires the supervised dual exceedance head "
+                         "(--model perceiver3 --head_type dual).")
+    if "excess_amp_loss_weight" in DUAL_ABLATIONS.get(config.dual_ablation, ()):
+        weight = 0.0
+    if weight > 0 and pool == "smoothmax":
+        beta = getattr(config, "excess_amp_beta", 20.0)
+        if not math.isfinite(beta) or beta <= 0:
+            raise ValueError("--excess_amp_beta must be finite and positive for smoothmax (inverse meters).")
+    return weight
 
 
 def enforce_dual_loss(config):
@@ -40,9 +62,8 @@ def dual_loss_terms(output, target_norm, y_std):
     Excess risk uses the WHOLE batch denominator. Non-event windows have zero
     excess auxiliary gradient; rare-event batches never amplify it by 1/p.
     """
-    excess_target = (target_norm - output.threshold).clamp_min(0)
+    event, excess_target = dual_excess_target(target_norm, output.threshold)
     body_target = torch.minimum(target_norm, output.threshold)
-    event = (target_norm > output.threshold).any(dim=1, keepdim=True)
     body = ((output.body - body_target) * y_std).square().mean()
     excess = (((output.excess - excess_target) * y_std).square() * event).mean()
     gate = (F.binary_cross_entropy_with_logits(output.gate_logits, event.float()) * y_std.square().mean()
@@ -68,19 +89,27 @@ class LossConfig:
     excess_loss_weight: float = 1.0
     gate_loss_weight: float = 1.0
     dual_ablation: str = "none"
+    excess_amp_loss_weight: float = 0.0
+    excess_amp_pool: str = "max"
+    excess_amp_beta: float = 20.0
 
 
 class ForecastLoss(nn.Module):
-    def __init__(self, config, stats, peak_threshold, wmse_threshold):
+    def __init__(self, config, stats, peak_threshold, wmse_threshold, event_prior=None):
         super().__init__()
         self.config = config
         self.register_buffer("y_mean", stats["y_mean"])
         self.register_buffer("y_std", stats["y_std"])
         self.peak_threshold = peak_threshold
         self.wmse_threshold = wmse_threshold
+        if validate_excess_amp_config(config) > 0:
+            validate_event_prior(event_prior)
+        self.event_prior = event_prior
 
     def forward(self, output, prediction, target):
         c = self.config
+        if output.body is None and getattr(c, "excess_amp_loss_weight", 0.0) > 0:
+            raise ValueError("Excess-amplitude supervision requires the supervised dual exceedance head.")
         error = (prediction - target).square()
         core = c.loss_mode.removesuffix("_slope")
         if core in ("wmse", "wmse_tail", "mse_wtail"):
@@ -110,7 +139,13 @@ class ForecastLoss(nn.Module):
             enforce_dual_loss(c)
             if not c.dual_loss:
                 return loss
-            body, excess, gate = dual_loss_terms(output, (target - self.y_mean) / self.y_std, self.y_std)
+            target_norm = (target - self.y_mean) / self.y_std
+            body, excess, gate = dual_loss_terms(output, target_norm, self.y_std)
             dual_loss = c.body_loss_weight * body + c.excess_loss_weight * excess + c.gate_loss_weight * gate
             loss = loss + dual_loss
+            # Leave the historical numerical/RNG path untouched at weight zero.
+            if getattr(c, "excess_amp_loss_weight", 0.0) > 0:
+                amplitude = excess_amplitude_terms(output.excess, target_norm, output.threshold, self.y_std,
+                    self.event_prior, getattr(c, "excess_amp_pool", "max"), getattr(c, "excess_amp_beta", 20.0))
+                loss = loss + c.excess_amp_loss_weight * amplitude.loss
         return loss

@@ -190,15 +190,24 @@ class PipelineTests(unittest.TestCase):
                     train.main(args)
                 # Two epochs of train/Val plus one final Test; reporting adds no evaluation pass.
                 self.assertEqual(observed.call_count, 5)
-                self.assertEqual(len(console.getvalue().splitlines()), 4)
+                lines = console.getvalue().splitlines()
+                # Best-checkpoint messages were added to production after this test.
+                best_lines = [line.split('] ', 1)[1] for line in lines if '] [Best] ' in line]
+                self.assertEqual(len(lines) - len(best_lines), 4)
                 for line in console.getvalue().splitlines():
                     self.assertRegex(line, r"^\[\d{4}-\d{2}-\d{2}\|\d{2}:\d{2}:\d{2}\]")
                 self.assertIn("Wall time:", console.getvalue().splitlines()[-1])
                 logs = [json.loads(line) for line in next(output.glob("metrics_*.jsonl")).read_text().splitlines()]
+                running_best, expected_best_lines = float('inf'), []
                 for record in logs:
                     self.assertEqual(set(record), {"epoch", "train", "val"})
                     for part in ("train", "val"):
                         self.assertEqual(tuple(record[part]), METRIC_NAMES)
+                    if record['val']['rmse_all'] < running_best:
+                        running_best = record['val']['rmse_all']
+                        expected_best_lines.append(f"[Best] Epoch {record['epoch']:03d}/2 | "
+                                                   f"{train.format_metrics('Val', record['val'])}")
+                self.assertEqual(best_lines, expected_best_lines)
                 checkpoint = torch.load(next(output.glob("best_*.pth")), weights_only=False)
                 summary = json.loads(next(output.glob("summary_*.json")).read_text())
                 self.assertEqual(summary["val"], checkpoint["val"])

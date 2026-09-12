@@ -142,6 +142,9 @@ fi
 : "${DUAL_ABLATION:=none}"
 : "${BODY_LOSS_WEIGHT:=1}"
 : "${EXCESS_LOSS_WEIGHT:=1}"
+: "${EXCESS_AMP_LOSS_WEIGHT:=0}"
+: "${EXCESS_AMP_POOL:=max}"
+: "${EXCESS_AMP_BETA:=20.0}"  # inverse meters; unused by max pooling
 : "${GATE_LOSS_WEIGHT:=1}"
 : "${ROP_METRIC:=val_rmse_phys}"   # val_rmse_phys | val_rmse_peak
 
@@ -372,6 +375,7 @@ write_resolved_config() {
     WARMUP_EPOCHS WARMUP_START_FACTOR MIN_LR MAX_GRAD_NORM
     DETERMINISTIC DUAL_MODE DUAL_LOSS EXCEEDANCE_PERCENTILE DUAL_ABLATION
     BODY_LOSS_WEIGHT EXCESS_LOSS_WEIGHT GATE_LOSS_WEIGHT
+    EXCESS_AMP_LOSS_WEIGHT EXCESS_AMP_POOL EXCESS_AMP_BETA
     X_NORM X_P_LO X_P_HI X_NODES_PER_GRAPH X_CLIP X_AUG X_AUG_PROB
     X_AUG_SCALE X_AUG_BIAS DISABLE_OOD USE_AMP AMP_DTYPE USE_TF32
     TORCH_THREADS NUM_WORKERS PIN_MEMORY PERSISTENT_WORKERS PREFETCH_FACTOR
@@ -605,6 +609,9 @@ for LOSS_MODE in "${LOSS_MODE_LIST[@]}"; do
                 --model "${MODEL}"
                 --exceedance_percentile "${EXCEEDANCE_PERCENTILE}"
                 --dual_ablation "${DUAL_ABLATION}"
+                --excess_amp_loss_weight "${EXCESS_AMP_LOSS_WEIGHT}"
+                --excess_amp_pool "${EXCESS_AMP_POOL}"
+                --excess_amp_beta "${EXCESS_AMP_BETA}"
                 --encoder_type "${ENCODER_TYPE}"
                 --cnn_intermediate_channel "${CNN_INTERMEDIATE_CHANNEL}"
                 --batch_size "${BATCH_SIZE}"

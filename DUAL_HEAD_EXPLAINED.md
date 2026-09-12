@@ -131,6 +131,8 @@ Tail loss 保持 `max(y) >= tail_threshold`；dual 的事件定义保持严格 `
 | `fixed_gate` | L_b、L_r | `p(X) ≡ q_E` |
 
 消融只将指定项的有效权重置0；仍启用的项不能通过权重0意外关闭。`no_branch_supervision` 将 `dual_loss` 置0。
+新增可选的[物理 excess 峰值幅度监督](docs/EXCESS_AMPLITUDE.md)默认权重为0，独立于上述三项，且不会被自动恢复为1。
+`no_excess_loss` 和 `no_branch_supervision` 同时关闭轨迹 excess 与峰值幅度监督；`no_gate_bce`、`fixed_gate` 可保留正的幅度权重。
 固定 gate 不建立可学习 gate MLP，原始 q_E 作为 buffer 保存，允许精确取0或1；没有 BCE 项。
 其参数预算少一个 gate MLP，应在结果中注明。其他消融保留相同 decoder 参数量和最终预测 loss。
 固定 gate 输出 `gate_logits=None`、`gate_probability=q_E`，其余模式返回有限 logits 和 sigmoid 概率。

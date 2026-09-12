@@ -6,7 +6,7 @@ from pathlib import Path
 
 from emulator.common.cli import head_type_name, parse_bool_int, temporal_block_name
 from emulator.common.dual import DUAL_ABLATIONS
-from .losses import enforce_dual_loss
+from .losses import enforce_dual_loss, validate_excess_amp_config
 
 
 def parse_args(argv=None):
@@ -174,6 +174,12 @@ def parse_args(argv=None):
                         help="Explicit mechanism experiment; none enforces full branch supervision.")
     parser.add_argument("--body_loss_weight", type=float, default=1.0)
     parser.add_argument("--excess_loss_weight", type=float, default=1.0)
+    parser.add_argument("--excess_amp_loss_weight", type=float, default=0.0,
+                        help="Optional physical excess peak-amplitude loss; requires the supervised dual head.")
+    parser.add_argument("--excess_amp_pool", choices=["max", "smoothmax"], default="max",
+                        help="Peak pooling after horizon-wise physical conversion; max is the primary objective.")
+    parser.add_argument("--excess_amp_beta", type=float, default=20.0,
+                        help="Smoothmax sharpness in inverse meters; unused by max or a zero amplitude weight.")
     parser.add_argument("--gate_loss_weight", type=float, default=1.0)
     parser.add_argument("--max_grad_norm", type=float, default=0.0, help="0 disables optional gradient clipping.")
     parser.add_argument("--deterministic", type=parse_bool_int, choices=[0, 1], default=0,
@@ -235,6 +241,10 @@ def parse_args(argv=None):
     for name in ("wmse_s", "slope_mask_s", "slope_charb_eps", "slope_huber_delta"):
         if not math.isfinite(getattr(args, name)):
             parser.error(f"--{name} must be finite; small values use the original numerical floor.")
+    try:
+        validate_excess_amp_config(args)
+    except ValueError as error:
+        parser.error(str(error))
     if args.head_type == "dual":
         enforce_dual_loss(args)
     else:

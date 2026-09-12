@@ -3,6 +3,31 @@
 import numpy as np
 
 
+def summarize_excess_amplitude(excess_phys, target_excess_phys, event):
+    """Hard-maximum branch amplitude errors on true TRAIN-threshold events.
+
+    Inputs reuse the dual export and its physical excess target. This is a
+    mechanism diagnostic, independent of gate probability and training pool;
+    it never fits thresholds or participates in checkpoint selection.
+    """
+    prediction = np.asarray(excess_phys, dtype=np.float64)
+    target = np.asarray(target_excess_phys, dtype=np.float64)
+    event = np.asarray(event, dtype=bool).reshape(-1)
+    if prediction.ndim != 2 or prediction.shape != target.shape or len(prediction) != len(event):
+        raise ValueError("Excess-amplitude diagnostics require aligned (N,K) excess arrays and N events.")
+    if not np.isfinite(prediction).all() or not np.isfinite(target).all():
+        raise ValueError("Excess-amplitude diagnostics require finite values.")
+    names = ("excess_amp_rmse", "excess_amp_mae", "excess_amp_bias",
+             "pred_excess_amp_mean", "target_excess_amp_mean")
+    if not event.any():
+        return dict.fromkeys(names)
+    a_pred = prediction[event].max(axis=1)
+    a_target = target[event].max(axis=1)
+    error = a_pred - a_target
+    return dict(zip(names, map(float, (np.sqrt(np.mean(error ** 2)), np.mean(np.abs(error)),
+                                      np.mean(error), np.mean(a_pred), np.mean(a_target)))))
+
+
 def summarize_dual(arrays, tau_phys, bins=10):
     """Use a fixed TRAIN threshold; tied scores enter the PR curve as one group.
 
@@ -54,10 +79,12 @@ def summarize_dual(arrays, tau_phys, bins=10):
         gate_groups[name] = dict(count=len(values), mean=float(values.mean()) if len(values) else None,
                                  histogram=np.histogram(values, bins=edges)[0].tolist())
     error = prediction - truth
+    excess_target = np.maximum(truth - tau_phys, 0)
     return dict(samples=count, events=positives, event_prevalence=positives / count if count else None,
                 brier=float(np.mean((probability - event) ** 2)) if count else None,
                 average_precision=average_precision, pr_auc_trapezoid=pr_auc,
                 precision=precision, recall=recall, reliability=reliability, gate_groups=gate_groups,
                 event_window_rmse=rmse(error, event), non_event_window_rmse=rmse(error, ~event),
                 body_rmse=rmse(body - np.minimum(truth, tau_phys), np.ones(count, dtype=bool)),
-                excess_event_rmse=rmse(excess - np.maximum(truth - tau_phys, 0), event))
+                excess_event_rmse=rmse(excess - excess_target, event),
+                **summarize_excess_amplitude(excess, excess_target, event))

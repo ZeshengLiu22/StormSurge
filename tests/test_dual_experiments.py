@@ -25,6 +25,7 @@ from emulator.inference.dual_diagnostics import summarize_dual
 from emulator.models import ForecastOutput, ModelConfig, build_model
 from emulator.models.heads import ExceedanceHead
 from emulator.training import ForecastLoss, LossConfig, dual_loss_terms
+from emulator.training.excess_amplitude import excess_amplitude_terms
 from test_config_interfaces import dry_commands
 from test_models import graph_batch
 from test_pipeline import make_fixture
@@ -82,15 +83,20 @@ class DualExperimentTests(unittest.TestCase):
                                         torch.ones(2, 2, requires_grad=True),
                                         None if mode == 'fixed_gate' else torch.zeros(2, 1, requires_grad=True),
                                         torch.ones(1, 2))
-                config = LossConfig(dual_ablation=mode)
+                config = LossConfig(dual_ablation=mode, excess_amp_loss_weight=.7)
                 prediction = output.prediction * stats['y_std'] + stats['y_mean']
-                loss = ForecastLoss(config, stats, 3., 2.)(output, prediction, target)
+                loss = ForecastLoss(config, stats, 3., 2., event_prior=.2)(output, prediction, target)
                 terms = dual_loss_terms(output, norm_target, stats['y_std'])
                 expected = (prediction - target).square().mean()
                 for name, term in zip(('body_loss_weight', 'excess_loss_weight', 'gate_loss_weight'), terms):
                     self.assertEqual(getattr(config, name), 0 if name in disabled else 1)
                     if name not in disabled:
                         expected = expected + term
+                if 'excess_amp_loss_weight' not in disabled:
+                    amplitude = excess_amplitude_terms(output.excess, norm_target, output.threshold,
+                                                       stats['y_std'], .2)
+                    expected = expected + .7 * amplitude.loss
+                self.assertEqual(config.excess_amp_loss_weight, 0 if 'excess_amp_loss_weight' in disabled else .7)
                 torch.testing.assert_close(loss, expected)
                 loss.backward()
                 for name, tensor in zip(('body_loss_weight', 'excess_loss_weight', 'gate_loss_weight'),
@@ -187,6 +193,8 @@ class DualExperimentTests(unittest.TestCase):
                         report = json.loads((output / 'diagnostics/dual_diagnostics.json').read_text())
                         self.assertAlmostEqual(report['overall']['brier'],
                                                float(np.mean((arrays['gate_probability'].astype(float) - arrays['event']) ** 2)))
+                        self.assertTrue({'excess_amp_rmse', 'excess_amp_mae', 'excess_amp_bias',
+                                         'pred_excess_amp_mean', 'target_excess_amp_mean'} <= report['overall'].keys())
                     if mode == 'fixed_gate':
                         repo = Path(__file__).resolve().parents[1]
                         for launcher in ('infer.sh', 'infer_multi.sh'):

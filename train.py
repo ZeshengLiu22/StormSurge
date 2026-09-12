@@ -121,7 +121,8 @@ def train(args, device, distributed, rank, wall_start):
     if distributed:
         model = DistributedDataParallel(model, device_ids=[device.index] if device.type == "cuda" else None)
     loss_config = LossConfig(**{field.name: getattr(args, field.name) for field in fields(LossConfig)})
-    criterion = ForecastLoss(loss_config, stats, fitted["tail_threshold"], fitted["wmse_threshold"]).to(device)
+    criterion = ForecastLoss(loss_config, stats, fitted["tail_threshold"], fitted["wmse_threshold"],
+                             event_prior=fitted["event_prior"]).to(device)
     optimizer = torch.optim.Adam(model.parameters(), lr=args.lr, weight_decay=1e-5)
     def lr_multiplier(epoch):
         if epoch < args.warmup_epochs:

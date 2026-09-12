@@ -6,10 +6,17 @@ import math
 DUAL_ABLATIONS = {
     "none": (),
     "no_gate_bce": ("gate_loss_weight",),
-    "no_excess_loss": ("excess_loss_weight",),
-    "no_branch_supervision": ("body_loss_weight", "excess_loss_weight", "gate_loss_weight"),
+    "no_excess_loss": ("excess_loss_weight", "excess_amp_loss_weight"),
+    "no_branch_supervision": ("body_loss_weight", "excess_loss_weight", "excess_amp_loss_weight", "gate_loss_weight"),
     "fixed_gate": ("gate_loss_weight",),
 }
+
+
+def dual_excess_target(target_norm, threshold):
+    """The production normalized excess target and strict TRAIN-threshold event."""
+    excess_target = (target_norm - threshold).clamp_min(0)
+    event = (target_norm > threshold).any(dim=1, keepdim=True)
+    return event, excess_target
 
 
 def initial_gate_prior(event_prior):

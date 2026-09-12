@@ -1,0 +1,498 @@
+{
+  "validated_utc": "2026-09-12",
+  "baseline_commit": "9e615c4e84087bac9d477680e166c94929affd5d",
+  "files_modified": [
+    "DUAL_HEAD_EXPLAINED.md",
+    "README.md",
+    "STABILITY_AND_DUAL_HEAD.md",
+    "docs/EXCESS_AMPLITUDE.md",
+    "docs/audit/evidence/excess_amplitude_tests.txt",
+    "docs/audit/evidence/excess_amplitude_validation.json",
+    "emulator/common/dual.py",
+    "emulator/inference/dual_diagnostics.py",
+    "emulator/training/arguments.py",
+    "emulator/training/excess_amplitude.py",
+    "emulator/training/losses.py",
+    "tests/test_dual_experiments.py",
+    "tests/test_excess_amplitude.py",
+    "tests/test_pipeline.py",
+    "train.py",
+    "train.sh"
+  ],
+  "formula": "mean_i(E_i * (pool_h(excess_norm_i,h * y_std_h) - pool_h(clamp_min(target_norm_i,h - threshold_h, 0) * y_std_h))**2) / event_prior",
+  "event_definition": "any_h(target_norm_i,h > output.threshold_h); strict TRAIN event, ties excluded",
+  "prior_source": "train.py passes fitted[\"event_prior\"] from fit_loss_thresholds: event_count / train_windows",
+  "defaults": {
+    "excess_amp_loss_weight": 0.0,
+    "excess_amp_pool": "max",
+    "excess_amp_beta": 20.0
+  },
+  "ablations": {
+    "no_excess_loss": [
+      "excess_loss_weight",
+      "excess_amp_loss_weight"
+    ],
+    "no_branch_supervision": [
+      "body_loss_weight",
+      "excess_loss_weight",
+      "excess_amp_loss_weight",
+      "gate_loss_weight"
+    ],
+    "amplitude_allowed": [
+      "none",
+      "no_gate_bce",
+      "fixed_gate"
+    ]
+  },
+  "disabled_path": "No amplitude helper call; bitwise equality of loss, predictions, branch outputs, parameter gradients, state and CPU RNG verified across all ten loss modes and both heads; old four-argument and old config callers supported.",
+  "model_architecture_changed": false,
+  "checkpoint_selection": "unchanged: minimum validation rmse_all",
+  "runtime": {
+    "python": "3.11.16",
+    "torch": "2.6.0+cu124",
+    "cuda_runtime": "12.4",
+    "cuda_available": true,
+    "cuda_devices": 1,
+    "cuda_device": "NVIDIA H100 80GB HBM3",
+    "cuda_bf16": true
+  },
+  "tests": {
+    "command": "GLOO_SOCKET_IFNAME=lo PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=/tmp/pact-validation-deps /media/volume/PACT-Data/conda_envs/torchpyg-cu124/bin/python -m unittest discover -s tests -v",
+    "total": 95,
+    "passed": 95,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "per_module": {
+      "test_config_interfaces": 8,
+      "test_dual_experiments": 9,
+      "test_dual_loss": 6,
+      "test_excess_amplitude": 23,
+      "test_forcing": 1,
+      "test_inference_reporting": 3,
+      "test_models": 9,
+      "test_pipeline": 8,
+      "test_preprocessing_pipeline": 4,
+      "test_station_metadata": 9,
+      "test_tail_loss": 7,
+      "test_time_alignment": 4,
+      "test_training": 4
+    },
+    "cpu_bf16": "passed",
+    "cuda_fp16_bf16": "passed on NVIDIA H100 80GB HBM3",
+    "ddp": "passed: two Gloo CPU ranks, including an event-free rank; scalar loss and parameter gradients match concatenated global batch for max and smoothmax",
+    "log": "docs/audit/evidence/excess_amplitude_tests.txt",
+    "log_sha256": "23f95ceacf80f2b8a55203d0be97e43dc5eb8130c880b0d7992fa6d5d69e0742"
+  },
+  "regression_notes": [
+    "Initial sandbox run could not initialize local Gloo communications and could not see CUDA; final test run used approved host access.",
+    "Full preprocessing tests used pre-existing pandas/netCDF4 test dependencies in /tmp/pact-validation-deps; no environment installation or upgrade was required.",
+    "The pre-existing pipeline assertion expected four log lines despite baseline commit 9e615c4 adding [Best] checkpoint logs. Failure reproduced on unmodified baseline. Updated only the assertion to verify one exact [Best] message per actual validation improvement; production logging unchanged."
+  ],
+  "static_checks": {
+    "pyflakes_changed_python_files": "passed",
+    "git_diff_check": "passed",
+    "bash_n_train_sh": "passed"
+  },
+  "old_config_dry_runs": {
+    "base_commit": "9e615c4e84087bac9d477680e166c94929affd5d",
+    "defaults": {
+      "excess_amp_loss_weight": 0.0,
+      "excess_amp_pool": "max",
+      "excess_amp_beta": 20.0
+    },
+    "p0_configs": 32,
+    "p1_configs": 32,
+    "results": [
+      {
+        "config": "experiment_config/P0_QuickRun/train_config_NCEP_Battery_24h_dual_mse.sh",
+        "commands_equal_except_new_defaults": true,
+        "old_resolved_arguments_equal": true,
+        "config_sha256_unchanged": true
+      },
+      {
+        "config": "experiment_config/P0_QuickRun/train_config_NCEP_Battery_24h_dual_slope.sh",
+        "commands_equal_except_new_defaults": true,
+        "old_resolved_arguments_equal": true,
+        "config_sha256_unchanged": true
+      },
+      {
+        "config": "experiment_config/P0_QuickRun/train_config_NCEP_Battery_24h_dual_tail.sh",
+        "commands_equal_except_new_defaults": true,
+        "old_resolved_arguments_equal": true,
+        "config_sha256_unchanged": true
+      },
+      {
+        "config": "experiment_config/P0_QuickRun/train_config_NCEP_Battery_24h_dual_tail_slope.sh",
+        "commands_equal_except_new_defaults": true,
+        "old_resolved_arguments_equal": true,
+        "config_sha256_unchanged": true
+      },
+      {
+        "config": "experiment_config/P0_QuickRun/train_config_NCEP_Battery_24h_single_mse.sh",
+        "commands_equal_except_new_defaults": true,
+        "old_resolved_arguments_equal": true,
+        "config_sha256_unchanged": true
+      },
+      {
+        "config": "experiment_config/P0_QuickRun/train_config_NCEP_Battery_24h_single_slope.sh",
+        "commands_equal_except_new_defaults": true,
+        "old_resolved_arguments_equal": true,
+        "config_sha256_unchanged": true
+      },
+      {
+        "config": "experiment_config/P0_QuickRun/train_config_NCEP_Battery_24h_single_tail.sh",
+        "commands_equal_except_new_defaults": true,
+        "old_resolved_arguments_equal": true,
+        "config_sha256_unchanged": true
+      },
+      {
+        "config": "experiment_config/P0_QuickRun/train_config_NCEP_Battery_24h_single_tail_slope.sh",
+        "commands_equal_except_new_defaults": true,
+        "old_resolved_arguments_equal": true,
+        "config_sha256_unchanged": true
+      },
+      {
+        "config": "experiment_config/P0_QuickRun/train_config_NCEP_Boston_24h_dual_mse.sh",
+        "commands_equal_except_new_defaults": true,
+        "old_resolved_arguments_equal": true,
+        "config_sha256_unchanged": true
+      },
+      {
+        "config": "experiment_config/P0_QuickRun/train_config_NCEP_Boston_24h_dual_slope.sh",
+        "commands_equal_except_new_defaults": true,
+        "old_resolved_arguments_equal": true,
+        "config_sha256_unchanged": true
+      },
+      {
+        "config": "experiment_config/P0_QuickRun/train_config_NCEP_Boston_24h_dual_tail.sh",
+        "commands_equal_except_new_defaults": true,
+        "old_resolved_arguments_equal": true,
+        "config_sha256_unchanged": true
+      },
+      {
+        "config": "experiment_config/P0_QuickRun/train_config_NCEP_Boston_24h_dual_tail_slope.sh",
+        "commands_equal_except_new_defaults": true,
+        "old_resolved_arguments_equal": true,
+        "config_sha256_unchanged": true
+      },
+      {
+        "config": "experiment_config/P0_QuickRun/train_config_NCEP_Boston_24h_single_mse.sh",
+        "commands_equal_except_new_defaults": true,
+        "old_resolved_arguments_equal": true,
+        "config_sha256_unchanged": true
+      },
+      {
+        "config": "experiment_config/P0_QuickRun/train_config_NCEP_Boston_24h_single_slope.sh",
+        "commands_equal_except_new_defaults": true,
+        "old_resolved_arguments_equal": true,
+        "config_sha256_unchanged": true
+      },
+      {
+        "config": "experiment_config/P0_QuickRun/train_config_NCEP_Boston_24h_single_tail.sh",
+        "commands_equal_except_new_defaults": true,
+        "old_resolved_arguments_equal": true,
+        "config_sha256_unchanged": true
+      },
+      {
+        "config": "experiment_config/P0_QuickRun/train_config_NCEP_Boston_24h_single_tail_slope.sh",
+        "commands_equal_except_new_defaults": true,
+        "old_resolved_arguments_equal": true,
+        "config_sha256_unchanged": true
+      },
+      {
+        "config": "experiment_config/P0_QuickRun/train_config_NCEP_CBBT_24h_dual_mse.sh",
+        "commands_equal_except_new_defaults": true,
+        "old_resolved_arguments_equal": true,
+        "config_sha256_unchanged": true
+      },
+      {
+        "config": "experiment_config/P0_QuickRun/train_config_NCEP_CBBT_24h_dual_slope.sh",
+        "commands_equal_except_new_defaults": true,
+        "old_resolved_arguments_equal": true,
+        "config_sha256_unchanged": true
+      },
+      {
+        "config": "experiment_config/P0_QuickRun/train_config_NCEP_CBBT_24h_dual_tail.sh",
+        "commands_equal_except_new_defaults": true,
+        "old_resolved_arguments_equal": true,
+        "config_sha256_unchanged": true
+      },
+      {
+        "config": "experiment_config/P0_QuickRun/train_config_NCEP_CBBT_24h_dual_tail_slope.sh",
+        "commands_equal_except_new_defaults": true,
+        "old_resolved_arguments_equal": true,
+        "config_sha256_unchanged": true
+      },
+      {
+        "config": "experiment_config/P0_QuickRun/train_config_NCEP_CBBT_24h_single_mse.sh",
+        "commands_equal_except_new_defaults": true,
+        "old_resolved_arguments_equal": true,
+        "config_sha256_unchanged": true
+      },
+      {
+        "config": "experiment_config/P0_QuickRun/train_config_NCEP_CBBT_24h_single_slope.sh",
+        "commands_equal_except_new_defaults": true,
+        "old_resolved_arguments_equal": true,
+        "config_sha256_unchanged": true
+      },
+      {
+        "config": "experiment_config/P0_QuickRun/train_config_NCEP_CBBT_24h_single_tail.sh",
+        "commands_equal_except_new_defaults": true,
+        "old_resolved_arguments_equal": true,
+        "config_sha256_unchanged": true
+      },
+      {
+        "config": "experiment_config/P0_QuickRun/train_config_NCEP_CBBT_24h_single_tail_slope.sh",
+        "commands_equal_except_new_defaults": true,
+        "old_resolved_arguments_equal": true,
+        "config_sha256_unchanged": true
+      },
+      {
+        "config": "experiment_config/P0_QuickRun/train_config_NCEP_Lewes_24h_dual_mse.sh",
+        "commands_equal_except_new_defaults": true,
+        "old_resolved_arguments_equal": true,
+        "config_sha256_unchanged": true
+      },
+      {
+        "config": "experiment_config/P0_QuickRun/train_config_NCEP_Lewes_24h_dual_slope.sh",
+        "commands_equal_except_new_defaults": true,
+        "old_resolved_arguments_equal": true,
+        "config_sha256_unchanged": true
+      },
+      {
+        "config": "experiment_config/P0_QuickRun/train_config_NCEP_Lewes_24h_dual_tail.sh",
+        "commands_equal_except_new_defaults": true,
+        "old_resolved_arguments_equal": true,
+        "config_sha256_unchanged": true
+      },
+      {
+        "config": "experiment_config/P0_QuickRun/train_config_NCEP_Lewes_24h_dual_tail_slope.sh",
+        "commands_equal_except_new_defaults": true,
+        "old_resolved_arguments_equal": true,
+        "config_sha256_unchanged": true
+      },
+      {
+        "config": "experiment_config/P0_QuickRun/train_config_NCEP_Lewes_24h_single_mse.sh",
+        "commands_equal_except_new_defaults": true,
+        "old_resolved_arguments_equal": true,
+        "config_sha256_unchanged": true
+      },
+      {
+        "config": "experiment_config/P0_QuickRun/train_config_NCEP_Lewes_24h_single_slope.sh",
+        "commands_equal_except_new_defaults": true,
+        "old_resolved_arguments_equal": true,
+        "config_sha256_unchanged": true
+      },
+      {
+        "config": "experiment_config/P0_QuickRun/train_config_NCEP_Lewes_24h_single_tail.sh",
+        "commands_equal_except_new_defaults": true,
+        "old_resolved_arguments_equal": true,
+        "config_sha256_unchanged": true
+      },
+      {
+        "config": "experiment_config/P0_QuickRun/train_config_NCEP_Lewes_24h_single_tail_slope.sh",
+        "commands_equal_except_new_defaults": true,
+        "old_resolved_arguments_equal": true,
+        "config_sha256_unchanged": true
+      },
+      {
+        "config": "experiment_config/P1_WeightProbe/train_config_NCEP_Battery_24h_dual_ex10_notail.sh",
+        "commands_equal_except_new_defaults": true,
+        "old_resolved_arguments_equal": true,
+        "config_sha256_unchanged": true
+      },
+      {
+        "config": "experiment_config/P1_WeightProbe/train_config_NCEP_Battery_24h_dual_ex10_tail005.sh",
+        "commands_equal_except_new_defaults": true,
+        "old_resolved_arguments_equal": true,
+        "config_sha256_unchanged": true
+      },
+      {
+        "config": "experiment_config/P1_WeightProbe/train_config_NCEP_Battery_24h_dual_ex10_tail010.sh",
+        "commands_equal_except_new_defaults": true,
+        "old_resolved_arguments_equal": true,
+        "config_sha256_unchanged": true
+      },
+      {
+        "config": "experiment_config/P1_WeightProbe/train_config_NCEP_Battery_24h_dual_ex2_tail005.sh",
+        "commands_equal_except_new_defaults": true,
+        "old_resolved_arguments_equal": true,
+        "config_sha256_unchanged": true
+      },
+      {
+        "config": "experiment_config/P1_WeightProbe/train_config_NCEP_Battery_24h_dual_ex2_tail010.sh",
+        "commands_equal_except_new_defaults": true,
+        "old_resolved_arguments_equal": true,
+        "config_sha256_unchanged": true
+      },
+      {
+        "config": "experiment_config/P1_WeightProbe/train_config_NCEP_Battery_24h_dual_ex5_notail.sh",
+        "commands_equal_except_new_defaults": true,
+        "old_resolved_arguments_equal": true,
+        "config_sha256_unchanged": true
+      },
+      {
+        "config": "experiment_config/P1_WeightProbe/train_config_NCEP_Battery_24h_dual_ex5_tail005.sh",
+        "commands_equal_except_new_defaults": true,
+        "old_resolved_arguments_equal": true,
+        "config_sha256_unchanged": true
+      },
+      {
+        "config": "experiment_config/P1_WeightProbe/train_config_NCEP_Battery_24h_dual_ex5_tail010.sh",
+        "commands_equal_except_new_defaults": true,
+        "old_resolved_arguments_equal": true,
+        "config_sha256_unchanged": true
+      },
+      {
+        "config": "experiment_config/P1_WeightProbe/train_config_NCEP_Boston_24h_dual_ex10_notail.sh",
+        "commands_equal_except_new_defaults": true,
+        "old_resolved_arguments_equal": true,
+        "config_sha256_unchanged": true
+      },
+      {
+        "config": "experiment_config/P1_WeightProbe/train_config_NCEP_Boston_24h_dual_ex10_tail005.sh",
+        "commands_equal_except_new_defaults": true,
+        "old_resolved_arguments_equal": true,
+        "config_sha256_unchanged": true
+      },
+      {
+        "config": "experiment_config/P1_WeightProbe/train_config_NCEP_Boston_24h_dual_ex10_tail010.sh",
+        "commands_equal_except_new_defaults": true,
+        "old_resolved_arguments_equal": true,
+        "config_sha256_unchanged": true
+      },
+      {
+        "config": "experiment_config/P1_WeightProbe/train_config_NCEP_Boston_24h_dual_ex2_tail005.sh",
+        "commands_equal_except_new_defaults": true,
+        "old_resolved_arguments_equal": true,
+        "config_sha256_unchanged": true
+      },
+      {
+        "config": "experiment_config/P1_WeightProbe/train_config_NCEP_Boston_24h_dual_ex2_tail010.sh",
+        "commands_equal_except_new_defaults": true,
+        "old_resolved_arguments_equal": true,
+        "config_sha256_unchanged": true
+      },
+      {
+        "config": "experiment_config/P1_WeightProbe/train_config_NCEP_Boston_24h_dual_ex5_notail.sh",
+        "commands_equal_except_new_defaults": true,
+        "old_resolved_arguments_equal": true,
+        "config_sha256_unchanged": true
+      },
+      {
+        "config": "experiment_config/P1_WeightProbe/train_config_NCEP_Boston_24h_dual_ex5_tail005.sh",
+        "commands_equal_except_new_defaults": true,
+        "old_resolved_arguments_equal": true,
+        "config_sha256_unchanged": true
+      },
+      {
+        "config": "experiment_config/P1_WeightProbe/train_config_NCEP_Boston_24h_dual_ex5_tail010.sh",
+        "commands_equal_except_new_defaults": true,
+        "old_resolved_arguments_equal": true,
+        "config_sha256_unchanged": true
+      },
+      {
+        "config": "experiment_config/P1_WeightProbe/train_config_NCEP_CBBT_24h_dual_ex10_notail.sh",
+        "commands_equal_except_new_defaults": true,
+        "old_resolved_arguments_equal": true,
+        "config_sha256_unchanged": true
+      },
+      {
+        "config": "experiment_config/P1_WeightProbe/train_config_NCEP_CBBT_24h_dual_ex10_tail005.sh",
+        "commands_equal_except_new_defaults": true,
+        "old_resolved_arguments_equal": true,
+        "config_sha256_unchanged": true
+      },
+      {
+        "config": "experiment_config/P1_WeightProbe/train_config_NCEP_CBBT_24h_dual_ex10_tail010.sh",
+        "commands_equal_except_new_defaults": true,
+        "old_resolved_arguments_equal": true,
+        "config_sha256_unchanged": true
+      },
+      {
+        "config": "experiment_config/P1_WeightProbe/train_config_NCEP_CBBT_24h_dual_ex2_tail005.sh",
+        "commands_equal_except_new_defaults": true,
+        "old_resolved_arguments_equal": true,
+        "config_sha256_unchanged": true
+      },
+      {
+        "config": "experiment_config/P1_WeightProbe/train_config_NCEP_CBBT_24h_dual_ex2_tail010.sh",
+        "commands_equal_except_new_defaults": true,
+        "old_resolved_arguments_equal": true,
+        "config_sha256_unchanged": true
+      },
+      {
+        "config": "experiment_config/P1_WeightProbe/train_config_NCEP_CBBT_24h_dual_ex5_notail.sh",
+        "commands_equal_except_new_defaults": true,
+        "old_resolved_arguments_equal": true,
+        "config_sha256_unchanged": true
+      },
+      {
+        "config": "experiment_config/P1_WeightProbe/train_config_NCEP_CBBT_24h_dual_ex5_tail005.sh",
+        "commands_equal_except_new_defaults": true,
+        "old_resolved_arguments_equal": true,
+        "config_sha256_unchanged": true
+      },
+      {
+        "config": "experiment_config/P1_WeightProbe/train_config_NCEP_CBBT_24h_dual_ex5_tail010.sh",
+        "commands_equal_except_new_defaults": true,
+        "old_resolved_arguments_equal": true,
+        "config_sha256_unchanged": true
+      },
+      {
+        "config": "experiment_config/P1_WeightProbe/train_config_NCEP_Lewes_24h_dual_ex10_notail.sh",
+        "commands_equal_except_new_defaults": true,
+        "old_resolved_arguments_equal": true,
+        "config_sha256_unchanged": true
+      },
+      {
+        "config": "experiment_config/P1_WeightProbe/train_config_NCEP_Lewes_24h_dual_ex10_tail005.sh",
+        "commands_equal_except_new_defaults": true,
+        "old_resolved_arguments_equal": true,
+        "config_sha256_unchanged": true
+      },
+      {
+        "config": "experiment_config/P1_WeightProbe/train_config_NCEP_Lewes_24h_dual_ex10_tail010.sh",
+        "commands_equal_except_new_defaults": true,
+        "old_resolved_arguments_equal": true,
+        "config_sha256_unchanged": true
+      },
+      {
+        "config": "experiment_config/P1_WeightProbe/train_config_NCEP_Lewes_24h_dual_ex2_tail005.sh",
+        "commands_equal_except_new_defaults": true,
+        "old_resolved_arguments_equal": true,
+        "config_sha256_unchanged": true
+      },
+      {
+        "config": "experiment_config/P1_WeightProbe/train_config_NCEP_Lewes_24h_dual_ex2_tail010.sh",
+        "commands_equal_except_new_defaults": true,
+        "old_resolved_arguments_equal": true,
+        "config_sha256_unchanged": true
+      },
+      {
+        "config": "experiment_config/P1_WeightProbe/train_config_NCEP_Lewes_24h_dual_ex5_notail.sh",
+        "commands_equal_except_new_defaults": true,
+        "old_resolved_arguments_equal": true,
+        "config_sha256_unchanged": true
+      },
+      {
+        "config": "experiment_config/P1_WeightProbe/train_config_NCEP_Lewes_24h_dual_ex5_tail005.sh",
+        "commands_equal_except_new_defaults": true,
+        "old_resolved_arguments_equal": true,
+        "config_sha256_unchanged": true
+      },
+      {
+        "config": "experiment_config/P1_WeightProbe/train_config_NCEP_Lewes_24h_dual_ex5_tail010.sh",
+        "commands_equal_except_new_defaults": true,
+        "old_resolved_arguments_equal": true,
+        "config_sha256_unchanged": true
+      }
+    ]
+  },
+  "dry_run_comparison": "Commands match after removing the three new default flags; parsed old values match exactly. Only staged checkout artifact-directory prefixes are normalized. All 64 source config SHA-256 hashes remain unchanged.",
+  "real_data_training_started": false,
+  "scientific_weight_chosen": false,
+  "val_or_test_tuning": false,
+  "experiment_configs_created": false
+}
