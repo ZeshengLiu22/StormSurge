@@ -5,8 +5,8 @@ import math
 from pathlib import Path
 
 from emulator.common.cli import head_type_name, parse_bool_int, temporal_block_name
-from emulator.common.dual import DUAL_ABLATIONS
-from .losses import enforce_dual_loss, validate_excess_amp_config
+from emulator.common.dual import DUAL_ABLATIONS, EXCESS_FORMULATIONS
+from .losses import enforce_dual_loss, validate_excess_amp_config, validate_shape_config
 
 
 def parse_args(argv=None):
@@ -174,6 +174,12 @@ def parse_args(argv=None):
                         help="Explicit mechanism experiment; none enforces full branch supervision.")
     parser.add_argument("--body_loss_weight", type=float, default=1.0)
     parser.add_argument("--excess_loss_weight", type=float, default=1.0)
+    parser.add_argument("--excess_formulation", choices=EXCESS_FORMULATIONS, default="direct",
+                        help="Direct normalized excess (legacy) or physical severity times normalized temporal shape.")
+    parser.add_argument("--shape_loss_weight", type=float, default=0.0,
+                        help="Optional dimensionless temporal shape supervision; requires severity_shape.")
+    parser.add_argument("--severity_shape_eps", type=float, default=1e-6,
+                        help="Positive floor for per-window raw-shape and physical target-amplitude normalization.")
     parser.add_argument("--excess_amp_loss_weight", type=float, default=0.0,
                         help="Optional physical excess peak-amplitude loss; requires the supervised dual head.")
     parser.add_argument("--excess_amp_pool", choices=["max", "smoothmax"], default="max",
@@ -243,6 +249,7 @@ def parse_args(argv=None):
             parser.error(f"--{name} must be finite; small values use the original numerical floor.")
     try:
         validate_excess_amp_config(args)
+        validate_shape_config(args)
     except ValueError as error:
         parser.error(str(error))
     if args.head_type == "dual":

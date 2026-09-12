@@ -116,6 +116,11 @@ def train(args, device, distributed, rank, wall_start):
                         station_feat_dim=station_feat.numel() if station_feat is not None else 0,
                         peak_threshold_norm=((fitted["tau_phys"] - stats_cpu["y_mean"]) / stats_cpu["y_std"]).tolist()
                         if args.head_type == "dual" else None, peak_prior=fitted["event_prior"])
+    if dual_metadata is not None:
+        dual_metadata["excess_formulation"] = args.excess_formulation
+    if args.excess_formulation == "severity_shape":
+        model_values["target_y_std"] = stats_cpu["y_std"].tolist()
+        dual_metadata["severity_shape_eps"] = args.severity_shape_eps
     model_config = ModelConfig(**model_values)
     model = build_model(model_config).to(device)
     if distributed:

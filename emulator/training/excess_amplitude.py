@@ -19,13 +19,19 @@ class ExcessAmplitudeTerms(NamedTuple):
 
 def validate_event_prior(event_prior):
     if event_prior is None or not math.isfinite(event_prior) or event_prior <= 0:
-        raise ValueError("Excess-amplitude supervision requires a finite, positive TRAIN event_prior "
+        raise ValueError("Event-only excess supervision requires a finite, positive TRAIN event_prior "
                          "from fit_loss_thresholds (event_count / train_windows).")
 
 
 def _full_precision(value):
     # Preserve float64 callers, but avoid low-precision physical products/squares.
     return value.float() if value.dtype in (torch.float16, torch.bfloat16) else value
+
+
+def physical_excess_target(target_norm, threshold, y_std):
+    """Shared strict event and physical target for amplitude and shape supervision."""
+    event, excess_target_norm = dual_excess_target(target_norm, threshold)
+    return event, _full_precision(excess_target_norm) * _full_precision(y_std)
 
 
 def peak_pool(values, pool="max", beta=20.0):
@@ -61,8 +67,7 @@ def excess_amplitude_terms(excess_pred_norm, target_norm, threshold, y_std,
     so a rank with no events retains a differentiable, exactly zero loss.
     """
     validate_event_prior(event_prior)
-    event, excess_target_norm = dual_excess_target(target_norm, threshold)
-    r_target_phys = _full_precision(excess_target_norm) * _full_precision(y_std)
+    event, r_target_phys = physical_excess_target(target_norm, threshold, y_std)
     r_pred_phys = _full_precision(excess_pred_norm) * _full_precision(y_std)
     a_pred = peak_pool(r_pred_phys, pool, beta)
     a_target = peak_pool(r_target_phys, pool, beta)

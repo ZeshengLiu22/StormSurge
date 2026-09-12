@@ -270,12 +270,16 @@ def main(argv=None):
                  y_pred=arrays["y_pred"], tags=arrays["tags"].astype(object))
     if args.dual_diagnostics:
         tau_phys = dual_metadata["tau_phys"]
+        formulation_metadata = dict(excess_formulation=config.excess_formulation)
+        if config.excess_formulation == "severity_shape":
+            formulation_metadata["severity_shape_eps"] = config.severity_shape_eps
         event = np.any(arrays["y_true"].astype(np.float64) > tau_phys, axis=1)
         np.savez_compressed(out_dir / "dual_diagnostics.npz", **arrays, event=event,
                             contribution_phys=arrays["gate_probability"][:, None] * arrays["excess_phys"],
                             tau_phys=tau_phys, event_prior=dual_metadata["event_prior"],
-                            dual_ablation=config.dual_ablation)
+                            dual_ablation=config.dual_ablation, **formulation_metadata)
         diagnostic_report = dict(train=dual_metadata,
+                                 **formulation_metadata,
                                  scope="external_all_years" if external else "held_out_years",
                                  years=sorted(year_to_indices), overall=summarize_dual(arrays, tau_phys),
                                  by_year={year: summarize_dual(item, tau_phys)

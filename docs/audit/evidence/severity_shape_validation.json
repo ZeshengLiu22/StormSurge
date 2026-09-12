@@ -1,0 +1,692 @@
+{
+  "validated_utc": "2026-09-12T22:32:51.287420+00:00",
+  "baseline": {
+    "commit": "e2846dd9e6a83397640cb6f39401e03d2bc9d84a",
+    "source": "/media/volume/PACT-Data/StormSurge",
+    "tracked_worktree": "clean post-Instruction-2",
+    "preserved_untracked": [
+      "experiment_config/P1_WeightProbe/"
+    ],
+    "tests_before_source_changes": 95,
+    "baseline_test_result": "95 passed; zero failures/errors/skips",
+    "baseline_log_sha256": "3aed8d60a173282384d8294dc9161bfec5feb7fca082d0aa6771838615244c79"
+  },
+  "files_modified": [
+    "DUAL_HEAD_EXPLAINED.md",
+    "README.md",
+    "STABILITY_AND_DUAL_HEAD.md",
+    "docs/EXCESS_AMPLITUDE.md",
+    "docs/SEVERITY_SHAPE.md",
+    "docs/audit/evidence/severity_shape_tests.txt",
+    "docs/audit/evidence/severity_shape_validation.json",
+    "emulator/common/dual.py",
+    "emulator/models/architectures.py",
+    "emulator/models/heads.py",
+    "emulator/training/arguments.py",
+    "emulator/training/engine.py",
+    "emulator/training/excess_amplitude.py",
+    "emulator/training/excess_shape.py",
+    "emulator/training/losses.py",
+    "infer.py",
+    "tests/test_severity_shape.py",
+    "train.py",
+    "train.sh"
+  ],
+  "direct_compatibility": {
+    "result": "passed",
+    "reference_commit": "e2846dd9e6a83397640cb6f39401e03d2bc9d84a",
+    "preserved_head": "ExceedanceHead; original body/excess/gate/threshold and optional fixed-gate buffer",
+    "new_direct_modules_or_buffers": false,
+    "strict_old_state_loading": true,
+    "reference_cases": 6,
+    "reference_scope": "PACT single/learned-dual/fixed-dual, history_steps 0/2",
+    "bitwise_matches": [
+      "constructor RNG",
+      "state-dict key order",
+      "initial parameter and buffer values",
+      "strict loading",
+      "all original output fields",
+      "dropout forward RNG"
+    ],
+    "automated_regression": "Frozen post-#2 direct-head reference plus legacy ModelConfig dictionary with no new fields; exact output/gradient/RNG checks",
+    "legacy_fields_omitted": [
+      "excess_formulation",
+      "target_y_std",
+      "severity_shape_eps"
+    ]
+  },
+  "defaults": {
+    "excess_formulation": "direct",
+    "shape_loss_weight": 0.0,
+    "severity_shape_eps": 1e-06,
+    "excess_amp_loss_weight": 0.0,
+    "excess_amp_pool": "max",
+    "excess_amp_beta": 20.0
+  },
+  "equations": {
+    "severity_phys": "softplus(severity(context.mean(dim=1)))",
+    "shape_raw": "softplus(shape(context))",
+    "shape": "shape_raw / clamp_min(max_h(shape_raw), severity_shape_eps)",
+    "excess_phys": "severity_phys[:,None] * shape",
+    "excess_norm": "excess_phys / target_y_std",
+    "prediction_norm": "body_norm + p_event * excess_norm",
+    "prediction_phys": "body_phys + p_event * severity_phys[:,None] * shape",
+    "target": "clamp_min(target_norm - output.threshold, 0) * y_std",
+    "shape_target": "target / clamp_min(max_h(target), severity_shape_eps)",
+    "shape_loss": "mean_i[E_i * mean_h((shape_i,h - shape_target_i,h)^2)] / event_prior"
+  },
+  "units": {
+    "severity_phys": "meters",
+    "excess_phys": "meters",
+    "target_y_std": "meters per normalized unit",
+    "excess_norm": "normalized target units",
+    "shape": "dimensionless",
+    "shape_target": "dimensionless",
+    "shape_loss": "dimensionless",
+    "amplitude_loss": "square meters",
+    "severity_shape_eps": "same numerical floor applied to raw shape and physical target amplitude, in each quantity's units"
+  },
+  "target_scale": {
+    "source": "stats_cpu[\"y_std\"].tolist() from TRAIN only",
+    "model_config": "target_y_std",
+    "head_buffer": "head.target_y_std",
+    "buffer_shape": "[1,K]",
+    "validation": "1D vector, length out_channels, all entries finite and positive",
+    "direct_buffer_registered": false
+  },
+  "initialization": {
+    "severity_final_weight": 0.0,
+    "severity_final_bias": "log(expm1(0.1))",
+    "severity_phys_initial_m": 0.1,
+    "shape_final_weight": 0.0,
+    "shape_final_bias": "log(expm1(1.0))",
+    "raw_shape_initial": 1.0,
+    "normalized_shape_initial_at_default_eps": 1.0,
+    "new_label_derived_statistic": false,
+    "gate": "unchanged clipped empirical-prior logit; fixed gate uses exact empirical prior"
+  },
+  "instruction2_reuse": {
+    "amplitude_control": "EXCESS_AMP_LOSS_WEIGHT",
+    "severity_loss_weight_added": false,
+    "target_helper": "emulator.training.excess_amplitude.physical_excess_target (exact #2 operations extracted)",
+    "amplitude_helper": "emulator.training.excess_amplitude.excess_amplitude_terms",
+    "shape_helper": "emulator.training.excess_shape.excess_shape_target / excess_shape_loss",
+    "event_helper": "emulator.common.dual.dual_excess_target",
+    "prior_validator": "validate_event_prior from #2",
+    "prior_source": "fit_loss_thresholds event_prior = strict TRAIN event_count / train_windows",
+    "hard_max": "severity_phys equals peak physical excess when shape maximum >= epsilon before normalization",
+    "smoothmax": "unchanged physical trajectory pooling on both sides; sensitivity only"
+  },
+  "ablations": {
+    "no_excess_loss": [
+      "excess_loss_weight",
+      "excess_amp_loss_weight",
+      "shape_loss_weight"
+    ],
+    "no_branch_supervision": [
+      "body_loss_weight",
+      "excess_loss_weight",
+      "excess_amp_loss_weight",
+      "shape_loss_weight",
+      "gate_loss_weight"
+    ],
+    "optional_terms_allowed": [
+      "none",
+      "no_gate_bce",
+      "fixed_gate"
+    ],
+    "optional_zero_weights_forced_on": false
+  },
+  "checkpoint": {
+    "reconstruction": "ModelConfig(**checkpoint[\"model_config\"]), build_model, strict=True state loading",
+    "saved_fields": [
+      "excess_formulation",
+      "target_y_std",
+      "severity_shape_eps"
+    ],
+    "training_config_preserves": [
+      "excess_formulation",
+      "shape_loss_weight",
+      "excess_amp_loss_weight",
+      "excess_amp_pool",
+      "excess_amp_beta",
+      "severity_shape_eps"
+    ]
+  },
+  "diagnostics": {
+    "new_arrays": [
+      "severity_phys",
+      "excess_shape"
+    ],
+    "added_only_when_present": true,
+    "preserved": [
+      "gate_probability",
+      "body_phys",
+      "excess_phys",
+      "final prediction",
+      "existing #2 amplitude metrics"
+    ],
+    "metadata": [
+      "excess_formulation",
+      "severity_shape_eps only for severity_shape"
+    ],
+    "normal_prediction_npz_fields": [
+      "y_true",
+      "y_pred",
+      "tags"
+    ],
+    "extra_inference_pass": false,
+    "selection": "unchanged validation rmse_all"
+  },
+  "tests": {
+    "command": "GLOO_SOCKET_IFNAME=lo PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=/tmp/pact-validation-deps /media/volume/PACT-Data/conda_envs/torchpyg-cu124/bin/python -m unittest discover -s tests -v",
+    "total": 120,
+    "passed": 120,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "severity_tests": 25,
+    "instruction2_tests": 23,
+    "per_module": {
+      "test_config_interfaces": 8,
+      "test_dual_experiments": 9,
+      "test_dual_loss": 6,
+      "test_excess_amplitude": 23,
+      "test_forcing": 1,
+      "test_inference_reporting": 3,
+      "test_models": 9,
+      "test_pipeline": 8,
+      "test_preprocessing_pipeline": 4,
+      "test_severity_shape": 25,
+      "test_station_metadata": 9,
+      "test_tail_loss": 7,
+      "test_time_alignment": 4,
+      "test_training": 4
+    },
+    "cpu_bf16": "passed",
+    "cuda_fp16_bf16": "passed on H100",
+    "ddp": "two Gloo CPU ranks, one without events; global scalar and gradients agree for max and smoothmax",
+    "log": "docs/audit/evidence/severity_shape_tests.txt",
+    "log_sha256": "fa1f05353ed757811b754845b966a038e39bbdfc7b35bc4bd68a43164f16c0c9"
+  },
+  "runtime": {
+    "python": "3.11.16",
+    "torch": "2.6.0+cu124",
+    "cuda_runtime": "12.4",
+    "cuda_available": true,
+    "cuda_devices": 1,
+    "cuda_device": "NVIDIA H100 80GB HBM3",
+    "cuda_bf16": true
+  },
+  "static_checks": [
+    "pyflakes on all changed Python files: passed",
+    "git diff --check: passed",
+    "bash -n train.sh: passed"
+  ],
+  "old_config_dry_runs": {
+    "base_commit": "e2846dd9e6a83397640cb6f39401e03d2bc9d84a",
+    "p0_configs": 32,
+    "p1_configs": 32,
+    "new_defaults": {
+      "excess_formulation": "direct",
+      "shape_loss_weight": 0.0,
+      "severity_shape_eps": 1e-06
+    },
+    "results": [
+      {
+        "config": "experiment_config/P0_QuickRun/train_config_NCEP_Battery_24h_dual_mse.sh",
+        "previous_command_arguments_equal": true,
+        "previous_parsed_values_equal": true,
+        "run_tag_unchanged": true,
+        "source_sha256": "ee8bfab773ccd2b22763e72b0d6c7ec3d70430dcda65aee47628c4805888a1c5"
+      },
+      {
+        "config": "experiment_config/P0_QuickRun/train_config_NCEP_Battery_24h_dual_slope.sh",
+        "previous_command_arguments_equal": true,
+        "previous_parsed_values_equal": true,
+        "run_tag_unchanged": true,
+        "source_sha256": "510293e0aad2315b87fe5a78b41f484e557c74c8605563d3204394d67107f9fe"
+      },
+      {
+        "config": "experiment_config/P0_QuickRun/train_config_NCEP_Battery_24h_dual_tail.sh",
+        "previous_command_arguments_equal": true,
+        "previous_parsed_values_equal": true,
+        "run_tag_unchanged": true,
+        "source_sha256": "01659b93c50a01c078f91b60526acdd1adf6ba0c9a7672246ca6de2209947bcc"
+      },
+      {
+        "config": "experiment_config/P0_QuickRun/train_config_NCEP_Battery_24h_dual_tail_slope.sh",
+        "previous_command_arguments_equal": true,
+        "previous_parsed_values_equal": true,
+        "run_tag_unchanged": true,
+        "source_sha256": "70cd18c661ce12b850a9a19dca4b41f02517824d7838723e7e1aaeacf98f2a4b"
+      },
+      {
+        "config": "experiment_config/P0_QuickRun/train_config_NCEP_Battery_24h_single_mse.sh",
+        "previous_command_arguments_equal": true,
+        "previous_parsed_values_equal": true,
+        "run_tag_unchanged": true,
+        "source_sha256": "6ffdb837e0119e7871b66d4992e10cdc1ad67be5e2754e0189cfbdd089e46b49"
+      },
+      {
+        "config": "experiment_config/P0_QuickRun/train_config_NCEP_Battery_24h_single_slope.sh",
+        "previous_command_arguments_equal": true,
+        "previous_parsed_values_equal": true,
+        "run_tag_unchanged": true,
+        "source_sha256": "10a594e78d0720d1d20090403099e33f642dcc51d80c5c49a574baee38a6f8f9"
+      },
+      {
+        "config": "experiment_config/P0_QuickRun/train_config_NCEP_Battery_24h_single_tail.sh",
+        "previous_command_arguments_equal": true,
+        "previous_parsed_values_equal": true,
+        "run_tag_unchanged": true,
+        "source_sha256": "e46ef9c068372d4b7e6071e44f70a8df67556f6ec6278cbc5c21a45a29a1352d"
+      },
+      {
+        "config": "experiment_config/P0_QuickRun/train_config_NCEP_Battery_24h_single_tail_slope.sh",
+        "previous_command_arguments_equal": true,
+        "previous_parsed_values_equal": true,
+        "run_tag_unchanged": true,
+        "source_sha256": "6290b7da6ba1d2429dc4d53060588b1944e4f0bb604b4b3d9ed8b3579463e5ca"
+      },
+      {
+        "config": "experiment_config/P0_QuickRun/train_config_NCEP_Boston_24h_dual_mse.sh",
+        "previous_command_arguments_equal": true,
+        "previous_parsed_values_equal": true,
+        "run_tag_unchanged": true,
+        "source_sha256": "df0057909c8b67fd93c8eff14484805eda6cdbcae62283613f73020515bf9c59"
+      },
+      {
+        "config": "experiment_config/P0_QuickRun/train_config_NCEP_Boston_24h_dual_slope.sh",
+        "previous_command_arguments_equal": true,
+        "previous_parsed_values_equal": true,
+        "run_tag_unchanged": true,
+        "source_sha256": "850516fef6c07582550e83a7392b8c0f82a0b70a89ece4a7021c93fbb50647a7"
+      },
+      {
+        "config": "experiment_config/P0_QuickRun/train_config_NCEP_Boston_24h_dual_tail.sh",
+        "previous_command_arguments_equal": true,
+        "previous_parsed_values_equal": true,
+        "run_tag_unchanged": true,
+        "source_sha256": "1c7f0bd0210aea6e7d6b24162e68cad52276fa672054100372a90f7d359fe52b"
+      },
+      {
+        "config": "experiment_config/P0_QuickRun/train_config_NCEP_Boston_24h_dual_tail_slope.sh",
+        "previous_command_arguments_equal": true,
+        "previous_parsed_values_equal": true,
+        "run_tag_unchanged": true,
+        "source_sha256": "d0d14eddc598de92fff4e86b2aa9b756c16f0a982d8d08475473f42f35a07fdf"
+      },
+      {
+        "config": "experiment_config/P0_QuickRun/train_config_NCEP_Boston_24h_single_mse.sh",
+        "previous_command_arguments_equal": true,
+        "previous_parsed_values_equal": true,
+        "run_tag_unchanged": true,
+        "source_sha256": "59ebd72959005902db319bae6826d2b690aa1e6a8c561721db1505f4c051c01c"
+      },
+      {
+        "config": "experiment_config/P0_QuickRun/train_config_NCEP_Boston_24h_single_slope.sh",
+        "previous_command_arguments_equal": true,
+        "previous_parsed_values_equal": true,
+        "run_tag_unchanged": true,
+        "source_sha256": "b6ef1baaa922eeb1c736bcb68ddb9ff66c624da5c137a76bc46fc3fa7e0dacf5"
+      },
+      {
+        "config": "experiment_config/P0_QuickRun/train_config_NCEP_Boston_24h_single_tail.sh",
+        "previous_command_arguments_equal": true,
+        "previous_parsed_values_equal": true,
+        "run_tag_unchanged": true,
+        "source_sha256": "de17c7b3826a3e33edf1eb0d03d6f519e727d3a4d398f39da7682dfce2ddb833"
+      },
+      {
+        "config": "experiment_config/P0_QuickRun/train_config_NCEP_Boston_24h_single_tail_slope.sh",
+        "previous_command_arguments_equal": true,
+        "previous_parsed_values_equal": true,
+        "run_tag_unchanged": true,
+        "source_sha256": "658bae75b1a0a1541eb241409e5d5c8bf877daa7a29e7e798db3c77d89365dd8"
+      },
+      {
+        "config": "experiment_config/P0_QuickRun/train_config_NCEP_CBBT_24h_dual_mse.sh",
+        "previous_command_arguments_equal": true,
+        "previous_parsed_values_equal": true,
+        "run_tag_unchanged": true,
+        "source_sha256": "8364505e18ec2d1a5f291d7aa8013e30bc5c81280c13f946a3946a697a74112c"
+      },
+      {
+        "config": "experiment_config/P0_QuickRun/train_config_NCEP_CBBT_24h_dual_slope.sh",
+        "previous_command_arguments_equal": true,
+        "previous_parsed_values_equal": true,
+        "run_tag_unchanged": true,
+        "source_sha256": "e016c7ac21a091de3e820527658767916e002a497c2b1bf188b5ee5947833a30"
+      },
+      {
+        "config": "experiment_config/P0_QuickRun/train_config_NCEP_CBBT_24h_dual_tail.sh",
+        "previous_command_arguments_equal": true,
+        "previous_parsed_values_equal": true,
+        "run_tag_unchanged": true,
+        "source_sha256": "d4bd0870c682fa5b7f74ea0565cd2a77b51f333aed929385d49574e7613004c3"
+      },
+      {
+        "config": "experiment_config/P0_QuickRun/train_config_NCEP_CBBT_24h_dual_tail_slope.sh",
+        "previous_command_arguments_equal": true,
+        "previous_parsed_values_equal": true,
+        "run_tag_unchanged": true,
+        "source_sha256": "721e0292b7cb39dd89f69cd2346d078ce23aa1d622179674a5f388c24ac62fac"
+      },
+      {
+        "config": "experiment_config/P0_QuickRun/train_config_NCEP_CBBT_24h_single_mse.sh",
+        "previous_command_arguments_equal": true,
+        "previous_parsed_values_equal": true,
+        "run_tag_unchanged": true,
+        "source_sha256": "8d191abac09be3b1f0867371672dfcc4bb2efa0866cbc3f31e4e821a03460042"
+      },
+      {
+        "config": "experiment_config/P0_QuickRun/train_config_NCEP_CBBT_24h_single_slope.sh",
+        "previous_command_arguments_equal": true,
+        "previous_parsed_values_equal": true,
+        "run_tag_unchanged": true,
+        "source_sha256": "c8a20053ac98218b9a7a573b6f189a051d5a400bcdc53df0b4bc2fe92c241f3c"
+      },
+      {
+        "config": "experiment_config/P0_QuickRun/train_config_NCEP_CBBT_24h_single_tail.sh",
+        "previous_command_arguments_equal": true,
+        "previous_parsed_values_equal": true,
+        "run_tag_unchanged": true,
+        "source_sha256": "3b0ecc7ed6e0793a5b7c1840810b399974300b419ebe8f53ddc32be778cf9c1b"
+      },
+      {
+        "config": "experiment_config/P0_QuickRun/train_config_NCEP_CBBT_24h_single_tail_slope.sh",
+        "previous_command_arguments_equal": true,
+        "previous_parsed_values_equal": true,
+        "run_tag_unchanged": true,
+        "source_sha256": "d78a02b400d6edd9654a40c18749b6fd67dc31f915ad22f73461a2d0f4ebf7ca"
+      },
+      {
+        "config": "experiment_config/P0_QuickRun/train_config_NCEP_Lewes_24h_dual_mse.sh",
+        "previous_command_arguments_equal": true,
+        "previous_parsed_values_equal": true,
+        "run_tag_unchanged": true,
+        "source_sha256": "0f15fce43e9be30046c297281829e83414edec4f3321ae7e67edea51165d8188"
+      },
+      {
+        "config": "experiment_config/P0_QuickRun/train_config_NCEP_Lewes_24h_dual_slope.sh",
+        "previous_command_arguments_equal": true,
+        "previous_parsed_values_equal": true,
+        "run_tag_unchanged": true,
+        "source_sha256": "d503a33840f1eb27555b392ebbd049656d56c4cc4574ecc238f4eb0c47a0280d"
+      },
+      {
+        "config": "experiment_config/P0_QuickRun/train_config_NCEP_Lewes_24h_dual_tail.sh",
+        "previous_command_arguments_equal": true,
+        "previous_parsed_values_equal": true,
+        "run_tag_unchanged": true,
+        "source_sha256": "31e7f4cf05e729cc2a0f695c66b7d878cf7b4071843966e3f5f3236bc44c9924"
+      },
+      {
+        "config": "experiment_config/P0_QuickRun/train_config_NCEP_Lewes_24h_dual_tail_slope.sh",
+        "previous_command_arguments_equal": true,
+        "previous_parsed_values_equal": true,
+        "run_tag_unchanged": true,
+        "source_sha256": "a9047023e1b1ce7562de9f3364c7344c29800f4940f4b717176b1212fb85f712"
+      },
+      {
+        "config": "experiment_config/P0_QuickRun/train_config_NCEP_Lewes_24h_single_mse.sh",
+        "previous_command_arguments_equal": true,
+        "previous_parsed_values_equal": true,
+        "run_tag_unchanged": true,
+        "source_sha256": "87ad6c9e14e1ff2225c35a223fdb54b0c84c192b0a00e795055fe6d02c603ec5"
+      },
+      {
+        "config": "experiment_config/P0_QuickRun/train_config_NCEP_Lewes_24h_single_slope.sh",
+        "previous_command_arguments_equal": true,
+        "previous_parsed_values_equal": true,
+        "run_tag_unchanged": true,
+        "source_sha256": "217f1ce43fe3fabcc3db00c7dafbd0e913d03bf354178af6478ceb82fc258691"
+      },
+      {
+        "config": "experiment_config/P0_QuickRun/train_config_NCEP_Lewes_24h_single_tail.sh",
+        "previous_command_arguments_equal": true,
+        "previous_parsed_values_equal": true,
+        "run_tag_unchanged": true,
+        "source_sha256": "c1c15aa83201f33f55350ed78e3886b32932d8884ac6caae73d3a66877996b8c"
+      },
+      {
+        "config": "experiment_config/P0_QuickRun/train_config_NCEP_Lewes_24h_single_tail_slope.sh",
+        "previous_command_arguments_equal": true,
+        "previous_parsed_values_equal": true,
+        "run_tag_unchanged": true,
+        "source_sha256": "eadb5eeaf60a8983845a10476536c6c25175758cce2f3d6d33c7e80e93808546"
+      },
+      {
+        "config": "experiment_config/P1_WeightProbe/train_config_NCEP_Battery_24h_dual_ex10_notail.sh",
+        "previous_command_arguments_equal": true,
+        "previous_parsed_values_equal": true,
+        "run_tag_unchanged": true,
+        "source_sha256": "71f44086d2b0c7aa23b34b695a5d3757468d851dd85b35a380911ba7f3e35d2a"
+      },
+      {
+        "config": "experiment_config/P1_WeightProbe/train_config_NCEP_Battery_24h_dual_ex10_tail005.sh",
+        "previous_command_arguments_equal": true,
+        "previous_parsed_values_equal": true,
+        "run_tag_unchanged": true,
+        "source_sha256": "35a317e258be079d32f64a360f28d65534af510ff0fcec7b3478a14597f9f677"
+      },
+      {
+        "config": "experiment_config/P1_WeightProbe/train_config_NCEP_Battery_24h_dual_ex10_tail010.sh",
+        "previous_command_arguments_equal": true,
+        "previous_parsed_values_equal": true,
+        "run_tag_unchanged": true,
+        "source_sha256": "a6d2d18c85803d5c5a0e221b0f071e7cde66fee04724a81fc29debdc5498052d"
+      },
+      {
+        "config": "experiment_config/P1_WeightProbe/train_config_NCEP_Battery_24h_dual_ex2_tail005.sh",
+        "previous_command_arguments_equal": true,
+        "previous_parsed_values_equal": true,
+        "run_tag_unchanged": true,
+        "source_sha256": "1d71c510f67054b16f5cd60f836af415f17e6b1f715159f73dcffbb0a8bbffd7"
+      },
+      {
+        "config": "experiment_config/P1_WeightProbe/train_config_NCEP_Battery_24h_dual_ex2_tail010.sh",
+        "previous_command_arguments_equal": true,
+        "previous_parsed_values_equal": true,
+        "run_tag_unchanged": true,
+        "source_sha256": "a12ef2c1e63cd4c27a9af677c0ec6b7a7d7fae6f97a3b823970bf11d746ddf3c"
+      },
+      {
+        "config": "experiment_config/P1_WeightProbe/train_config_NCEP_Battery_24h_dual_ex5_notail.sh",
+        "previous_command_arguments_equal": true,
+        "previous_parsed_values_equal": true,
+        "run_tag_unchanged": true,
+        "source_sha256": "84e308f0d2f0057422ef490f2ee4e043b72d1df33b5816bf0484370882b36727"
+      },
+      {
+        "config": "experiment_config/P1_WeightProbe/train_config_NCEP_Battery_24h_dual_ex5_tail005.sh",
+        "previous_command_arguments_equal": true,
+        "previous_parsed_values_equal": true,
+        "run_tag_unchanged": true,
+        "source_sha256": "bd9e43aba90032982150d84eb6d06791e57c68e2cf68b4c770c239a94f2354c2"
+      },
+      {
+        "config": "experiment_config/P1_WeightProbe/train_config_NCEP_Battery_24h_dual_ex5_tail010.sh",
+        "previous_command_arguments_equal": true,
+        "previous_parsed_values_equal": true,
+        "run_tag_unchanged": true,
+        "source_sha256": "81ed9e563e574f10fa5eed6aa7f750d70dcde92664a2aa01b6af79a7c5021a77"
+      },
+      {
+        "config": "experiment_config/P1_WeightProbe/train_config_NCEP_Boston_24h_dual_ex10_notail.sh",
+        "previous_command_arguments_equal": true,
+        "previous_parsed_values_equal": true,
+        "run_tag_unchanged": true,
+        "source_sha256": "c77661d0006712764dd62b814e4f374bef44027bc29ff6f772e18cf096fcb9f6"
+      },
+      {
+        "config": "experiment_config/P1_WeightProbe/train_config_NCEP_Boston_24h_dual_ex10_tail005.sh",
+        "previous_command_arguments_equal": true,
+        "previous_parsed_values_equal": true,
+        "run_tag_unchanged": true,
+        "source_sha256": "cb150a18a41bb69acc7c34fbed405692b4d21b78493315d470b4a1a1977b2e86"
+      },
+      {
+        "config": "experiment_config/P1_WeightProbe/train_config_NCEP_Boston_24h_dual_ex10_tail010.sh",
+        "previous_command_arguments_equal": true,
+        "previous_parsed_values_equal": true,
+        "run_tag_unchanged": true,
+        "source_sha256": "dd404b8dd3b080432ba5d7de97514f8ebc2271f1c6f3a3ba9008dd26b31d9fb8"
+      },
+      {
+        "config": "experiment_config/P1_WeightProbe/train_config_NCEP_Boston_24h_dual_ex2_tail005.sh",
+        "previous_command_arguments_equal": true,
+        "previous_parsed_values_equal": true,
+        "run_tag_unchanged": true,
+        "source_sha256": "2fefedc907db6675fc35cf360d6ceaebb2f38dda5afb7b85b5405f71e7f99d89"
+      },
+      {
+        "config": "experiment_config/P1_WeightProbe/train_config_NCEP_Boston_24h_dual_ex2_tail010.sh",
+        "previous_command_arguments_equal": true,
+        "previous_parsed_values_equal": true,
+        "run_tag_unchanged": true,
+        "source_sha256": "0bcf7028aa448072b9a02547c1cc058b9e46be05b4ad155ea11bb9a222f8e130"
+      },
+      {
+        "config": "experiment_config/P1_WeightProbe/train_config_NCEP_Boston_24h_dual_ex5_notail.sh",
+        "previous_command_arguments_equal": true,
+        "previous_parsed_values_equal": true,
+        "run_tag_unchanged": true,
+        "source_sha256": "c5520d25935e8d220ebc4ea7dd84cd27447a7a85e2b4f1f0d92230e1621a0427"
+      },
+      {
+        "config": "experiment_config/P1_WeightProbe/train_config_NCEP_Boston_24h_dual_ex5_tail005.sh",
+        "previous_command_arguments_equal": true,
+        "previous_parsed_values_equal": true,
+        "run_tag_unchanged": true,
+        "source_sha256": "52a6f292ac8ea588cc70330f477c02f3fc6060aa38a6560fe2bfcd15ff0af3ea"
+      },
+      {
+        "config": "experiment_config/P1_WeightProbe/train_config_NCEP_Boston_24h_dual_ex5_tail010.sh",
+        "previous_command_arguments_equal": true,
+        "previous_parsed_values_equal": true,
+        "run_tag_unchanged": true,
+        "source_sha256": "6ac33b61246e1cd06ad9883195543c6825949a936c0209cc22ee5b5a6cfbc354"
+      },
+      {
+        "config": "experiment_config/P1_WeightProbe/train_config_NCEP_CBBT_24h_dual_ex10_notail.sh",
+        "previous_command_arguments_equal": true,
+        "previous_parsed_values_equal": true,
+        "run_tag_unchanged": true,
+        "source_sha256": "27619a8114225dde02725346d08b389f317cb689482cc9f5c45e38c9878625c5"
+      },
+      {
+        "config": "experiment_config/P1_WeightProbe/train_config_NCEP_CBBT_24h_dual_ex10_tail005.sh",
+        "previous_command_arguments_equal": true,
+        "previous_parsed_values_equal": true,
+        "run_tag_unchanged": true,
+        "source_sha256": "b65e87504981ea5e4f1cbae133c481908fea2f0b8ede555252e46fb4774477b2"
+      },
+      {
+        "config": "experiment_config/P1_WeightProbe/train_config_NCEP_CBBT_24h_dual_ex10_tail010.sh",
+        "previous_command_arguments_equal": true,
+        "previous_parsed_values_equal": true,
+        "run_tag_unchanged": true,
+        "source_sha256": "0f05205e803f03737d755180e93536f61045ce9980e24d654e09ab41919c1515"
+      },
+      {
+        "config": "experiment_config/P1_WeightProbe/train_config_NCEP_CBBT_24h_dual_ex2_tail005.sh",
+        "previous_command_arguments_equal": true,
+        "previous_parsed_values_equal": true,
+        "run_tag_unchanged": true,
+        "source_sha256": "163b49029e7cb736c98e92c8ea20eb2d27a3a6d796982c521f2cb7c00c2305ec"
+      },
+      {
+        "config": "experiment_config/P1_WeightProbe/train_config_NCEP_CBBT_24h_dual_ex2_tail010.sh",
+        "previous_command_arguments_equal": true,
+        "previous_parsed_values_equal": true,
+        "run_tag_unchanged": true,
+        "source_sha256": "e80eb102f48115053d658945428092a55a75545c2d95c699ef371e1509a9af06"
+      },
+      {
+        "config": "experiment_config/P1_WeightProbe/train_config_NCEP_CBBT_24h_dual_ex5_notail.sh",
+        "previous_command_arguments_equal": true,
+        "previous_parsed_values_equal": true,
+        "run_tag_unchanged": true,
+        "source_sha256": "75a10230bb001ba5eae164c3e53a652b14bd94a650a9b5a1479b6ce6c8f1bdd7"
+      },
+      {
+        "config": "experiment_config/P1_WeightProbe/train_config_NCEP_CBBT_24h_dual_ex5_tail005.sh",
+        "previous_command_arguments_equal": true,
+        "previous_parsed_values_equal": true,
+        "run_tag_unchanged": true,
+        "source_sha256": "f49e44ce6c5f123e990104f7e78bffc0960aae7967fe34f62eebd0f2ea3ec8d8"
+      },
+      {
+        "config": "experiment_config/P1_WeightProbe/train_config_NCEP_CBBT_24h_dual_ex5_tail010.sh",
+        "previous_command_arguments_equal": true,
+        "previous_parsed_values_equal": true,
+        "run_tag_unchanged": true,
+        "source_sha256": "b49f3eb7a52f66b739a4801ced841752cbaa48cabd99d1f8690d86ed976129fd"
+      },
+      {
+        "config": "experiment_config/P1_WeightProbe/train_config_NCEP_Lewes_24h_dual_ex10_notail.sh",
+        "previous_command_arguments_equal": true,
+        "previous_parsed_values_equal": true,
+        "run_tag_unchanged": true,
+        "source_sha256": "c10f67ceb881c5be762dfe25e3ced4b6d65b022b3759e0a4141e0d429074c2ce"
+      },
+      {
+        "config": "experiment_config/P1_WeightProbe/train_config_NCEP_Lewes_24h_dual_ex10_tail005.sh",
+        "previous_command_arguments_equal": true,
+        "previous_parsed_values_equal": true,
+        "run_tag_unchanged": true,
+        "source_sha256": "7858f629f4bcf640735f3d5867096458197e1c1879a0826aace596af492faa8f"
+      },
+      {
+        "config": "experiment_config/P1_WeightProbe/train_config_NCEP_Lewes_24h_dual_ex10_tail010.sh",
+        "previous_command_arguments_equal": true,
+        "previous_parsed_values_equal": true,
+        "run_tag_unchanged": true,
+        "source_sha256": "b0847c1612a7d63907fa3755291c3fb27c271c82e5bc5f6ed69c81a3f78418a9"
+      },
+      {
+        "config": "experiment_config/P1_WeightProbe/train_config_NCEP_Lewes_24h_dual_ex2_tail005.sh",
+        "previous_command_arguments_equal": true,
+        "previous_parsed_values_equal": true,
+        "run_tag_unchanged": true,
+        "source_sha256": "3855f4872489ad61bae208a66dc2e3c153d7042188685ed576ef9adf25d53c28"
+      },
+      {
+        "config": "experiment_config/P1_WeightProbe/train_config_NCEP_Lewes_24h_dual_ex2_tail010.sh",
+        "previous_command_arguments_equal": true,
+        "previous_parsed_values_equal": true,
+        "run_tag_unchanged": true,
+        "source_sha256": "6f5f3f4b9c100168303e85a26edf5700676bcb34221366024a3b83dbdce5cd79"
+      },
+      {
+        "config": "experiment_config/P1_WeightProbe/train_config_NCEP_Lewes_24h_dual_ex5_notail.sh",
+        "previous_command_arguments_equal": true,
+        "previous_parsed_values_equal": true,
+        "run_tag_unchanged": true,
+        "source_sha256": "de942b7b63fd9846dd61c8774db3cddf2e80f2140125722cc9567133b01a4d16"
+      },
+      {
+        "config": "experiment_config/P1_WeightProbe/train_config_NCEP_Lewes_24h_dual_ex5_tail005.sh",
+        "previous_command_arguments_equal": true,
+        "previous_parsed_values_equal": true,
+        "run_tag_unchanged": true,
+        "source_sha256": "5366f57e11a192becc98c24040cacbc53274b67063d38e6def0325290417b835"
+      },
+      {
+        "config": "experiment_config/P1_WeightProbe/train_config_NCEP_Lewes_24h_dual_ex5_tail010.sh",
+        "previous_command_arguments_equal": true,
+        "previous_parsed_values_equal": true,
+        "run_tag_unchanged": true,
+        "source_sha256": "80e6c75bc7838a09060035505f87594f356a69ed4c734350b9143faaa4cefb1e"
+      }
+    ]
+  },
+  "scientific_weights_chosen": false,
+  "experiment_configs_generated": false,
+  "experiments_started": false,
+  "real_data_training_started": false,
+  "val_or_test_tuning": false,
+  "additional_objectives_implemented": []
+}

@@ -83,6 +83,9 @@ def run_epoch(model, loader, device, stats, *, station_feat=None, optimizer=None
                 dual_arrays["gate_probability"].append(output.gate_probability.float().reshape(-1).cpu())
                 dual_arrays["body_phys"].append((output.body.float() * stats["y_std"] + stats["y_mean"]).cpu())
                 dual_arrays["excess_phys"].append((output.excess.float() * stats["y_std"]).cpu())
+                if output.severity_phys is not None:
+                    dual_arrays.setdefault("severity_phys", []).append(output.severity_phys.float().reshape(-1).cpu())
+                    dual_arrays.setdefault("excess_shape", []).append(output.excess_shape.float().cpu())
     records = torch.cat(windows).cpu().numpy() if windows else np.empty((0, 4))
     if distributed:
         gathered = [None] * dist.get_world_size()
@@ -98,7 +101,7 @@ def run_epoch(model, loader, device, stats, *, station_feat=None, optimizer=None
                   "tags": np.asarray(tags, dtype=str)}
         if save_dual_diagnostics:
             arrays.update({name: torch.cat(values).numpy() if values else
-                           np.empty((0,) if name == "gate_probability" else (0, width), np.float32)
+                           np.empty((0,) if name in ("gate_probability", "severity_phys") else (0, width), np.float32)
                            for name, values in dual_arrays.items()})
     # Val All includes sampler padding; Peak reuses the unique predictions.
     metrics = summarize_windows(records, validation=not training)

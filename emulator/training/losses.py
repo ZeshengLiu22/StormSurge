@@ -9,8 +9,21 @@ from torch import nn
 import torch.nn.functional as F
 
 from emulator.common.runtime import log_message
-from emulator.common.dual import DUAL_ABLATIONS, dual_excess_target
+from emulator.common.dual import DUAL_ABLATIONS, dual_excess_target, validate_excess_formulation
 from .excess_amplitude import excess_amplitude_terms, validate_event_prior
+from .excess_shape import excess_shape_loss
+
+
+def validate_shape_config(config):
+    formulation = getattr(config, "excess_formulation", "direct")
+    validate_excess_formulation(formulation, getattr(config, "severity_shape_eps", 1e-6),
+                               getattr(config, "head_type", "dual"), getattr(config, "model", "pact"))
+    weight = getattr(config, "shape_loss_weight", 0.0)
+    if not math.isfinite(weight) or weight < 0:
+        raise ValueError("--shape_loss_weight must be finite and nonnegative.")
+    if weight > 0 and formulation != "severity_shape":
+        raise ValueError("Positive --shape_loss_weight requires --excess_formulation severity_shape.")
+    return 0.0 if "shape_loss_weight" in DUAL_ABLATIONS.get(config.dual_ablation, ()) else weight
 
 
 def validate_excess_amp_config(config):
@@ -92,6 +105,9 @@ class LossConfig:
     excess_amp_loss_weight: float = 0.0
     excess_amp_pool: str = "max"
     excess_amp_beta: float = 20.0
+    excess_formulation: str = "direct"
+    shape_loss_weight: float = 0.0
+    severity_shape_eps: float = 1e-6
 
 
 class ForecastLoss(nn.Module):
@@ -102,7 +118,9 @@ class ForecastLoss(nn.Module):
         self.register_buffer("y_std", stats["y_std"])
         self.peak_threshold = peak_threshold
         self.wmse_threshold = wmse_threshold
-        if validate_excess_amp_config(config) > 0:
+        amp_weight = validate_excess_amp_config(config)
+        shape_weight = validate_shape_config(config)
+        if amp_weight > 0 or shape_weight > 0:
             validate_event_prior(event_prior)
         self.event_prior = event_prior
 
@@ -110,6 +128,8 @@ class ForecastLoss(nn.Module):
         c = self.config
         if output.body is None and getattr(c, "excess_amp_loss_weight", 0.0) > 0:
             raise ValueError("Excess-amplitude supervision requires the supervised dual exceedance head.")
+        if output.body is None and getattr(c, "shape_loss_weight", 0.0) > 0:
+            raise ValueError("Shape supervision requires the severity_shape dual head.")
         error = (prediction - target).square()
         core = c.loss_mode.removesuffix("_slope")
         if core in ("wmse", "wmse_tail", "mse_wtail"):
@@ -148,4 +168,10 @@ class ForecastLoss(nn.Module):
                 amplitude = excess_amplitude_terms(output.excess, target_norm, output.threshold, self.y_std,
                     self.event_prior, getattr(c, "excess_amp_pool", "max"), getattr(c, "excess_amp_beta", 20.0))
                 loss = loss + c.excess_amp_loss_weight * amplitude.loss
+            if getattr(c, "shape_loss_weight", 0.0) > 0:
+                if output.excess_shape is None:
+                    raise ValueError("Shape supervision requires the severity_shape dual head.")
+                shape_loss = excess_shape_loss(output.excess_shape, target_norm, output.threshold,
+                    self.y_std, self.event_prior, getattr(c, "severity_shape_eps", 1e-6))
+                loss = loss + c.shape_loss_weight * shape_loss
         return loss

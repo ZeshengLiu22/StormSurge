@@ -1,5 +1,10 @@
 # Optional physical excess peak-amplitude supervision
 
+The later [severity-shape upgrade](SEVERITY_SHAPE.md) reuses this exact amplitude
+objective through reconstructed `output.excess`. Its shape targets share the
+physical target helper; it adds no separate severity-loss weight. Direct remains
+the default. Both excess-removing ablations now also disable optional shape loss.
+
 This training-only objective directly supervises the maximum physical excess
 inside a true event window. It adds no parameters and leaves `ForecastOutput`,
 checkpoint model reconstruction, and `prediction = body + p * excess` unchanged.

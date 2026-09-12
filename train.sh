@@ -142,6 +142,9 @@ fi
 : "${DUAL_ABLATION:=none}"
 : "${BODY_LOSS_WEIGHT:=1}"
 : "${EXCESS_LOSS_WEIGHT:=1}"
+: "${EXCESS_FORMULATION:=direct}"
+: "${SHAPE_LOSS_WEIGHT:=0}"
+: "${SEVERITY_SHAPE_EPS:=1e-6}"
 : "${EXCESS_AMP_LOSS_WEIGHT:=0}"
 : "${EXCESS_AMP_POOL:=max}"
 : "${EXCESS_AMP_BETA:=20.0}"  # inverse meters; unused by max pooling
@@ -376,6 +379,7 @@ write_resolved_config() {
     DETERMINISTIC DUAL_MODE DUAL_LOSS EXCEEDANCE_PERCENTILE DUAL_ABLATION
     BODY_LOSS_WEIGHT EXCESS_LOSS_WEIGHT GATE_LOSS_WEIGHT
     EXCESS_AMP_LOSS_WEIGHT EXCESS_AMP_POOL EXCESS_AMP_BETA
+    EXCESS_FORMULATION SHAPE_LOSS_WEIGHT SEVERITY_SHAPE_EPS
     X_NORM X_P_LO X_P_HI X_NODES_PER_GRAPH X_CLIP X_AUG X_AUG_PROB
     X_AUG_SCALE X_AUG_BIAS DISABLE_OOD USE_AMP AMP_DTYPE USE_TF32
     TORCH_THREADS NUM_WORKERS PIN_MEMORY PERSISTENT_WORKERS PREFETCH_FACTOR
@@ -494,6 +498,9 @@ case "${MODEL}" in
     EXTRA_TAG+="_stable1v3_${DUAL_MODE}"
     if [[ "${HEAD_TYPE}" == "dual" ]]; then
       EXTRA_TAG+="_gm${GATE_MODE}_eq${EXCEEDANCE_PERCENTILE}_da${DUAL_ABLATION}"
+      if [[ "${EXCESS_FORMULATION}" != "direct" ]]; then
+        EXTRA_TAG+="_ef${EXCESS_FORMULATION}"
+      fi
     else
       EXTRA_TAG+="_hsingle"
     fi
@@ -612,6 +619,9 @@ for LOSS_MODE in "${LOSS_MODE_LIST[@]}"; do
                 --excess_amp_loss_weight "${EXCESS_AMP_LOSS_WEIGHT}"
                 --excess_amp_pool "${EXCESS_AMP_POOL}"
                 --excess_amp_beta "${EXCESS_AMP_BETA}"
+                --excess_formulation "${EXCESS_FORMULATION}"
+                --shape_loss_weight "${SHAPE_LOSS_WEIGHT}"
+                --severity_shape_eps "${SEVERITY_SHAPE_EPS}"
                 --encoder_type "${ENCODER_TYPE}"
                 --cnn_intermediate_channel "${CNN_INTERMEDIATE_CHANNEL}"
                 --batch_size "${BATCH_SIZE}"
