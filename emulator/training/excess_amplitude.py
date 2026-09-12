@@ -19,7 +19,7 @@ class ExcessAmplitudeTerms(NamedTuple):
 
 def validate_event_prior(event_prior):
     if event_prior is None or not math.isfinite(event_prior) or event_prior <= 0:
-        raise ValueError("Event-only excess supervision requires a finite, positive TRAIN event_prior "
+        raise ValueError("Event-only supervision requires a finite, positive TRAIN event_prior "
                          "from fit_loss_thresholds (event_count / train_windows).")
 
 

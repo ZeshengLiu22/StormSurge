@@ -53,7 +53,12 @@ class TrainingTests(unittest.TestCase):
         for batch_size in (1, 11, 41):
             other = run_epoch(CountingModel(), self.loader(batch_size=batch_size), torch.device("cpu"), self.stats)
             # Original All uses FP32 batch means, so reduction rounding can vary.
-            np.testing.assert_allclose(list(other.metrics.values()), list(result.metrics.values()), rtol=2e-7)
+            self.assertEqual(other.metrics.keys(), result.metrics.keys())
+            for name, value in result.metrics.items():
+                if value is None:
+                    self.assertIsNone(other.metrics[name])
+                else:
+                    np.testing.assert_allclose(other.metrics[name], value, rtol=2e-7)
 
     def test_padding_dedup_and_ties_are_independent_of_batching(self):
         rows = np.array([[i, 1., i * i, i] for i in range(41)], dtype=float)

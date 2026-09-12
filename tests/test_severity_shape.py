@@ -545,7 +545,7 @@ class SeverityShapeTests(unittest.TestCase):
                         '--shape_loss_weight', shape_weight, '--severity_shape_eps', '2e-6', '--tail_frac', '.4',
                         '--exceedance_percentile', '75', '--epochs', '1', '--device', 'cpu', '--num_workers', '0',
                         '--hidden_channels', '16', '--history_hours', '12'])
-                self.assertEqual(constructor.call_args.kwargs, dict(event_prior=fitted['event_prior']))
+                self.assertEqual(constructor.call_args.kwargs, dict(event_prior=fitted['event_prior'], event_threshold=fitted['tau_phys']))
                 ckpt = next(destination.glob('best_*.pth'))
                 saved = torch.load(ckpt, weights_only=False)
                 self.assertEqual(saved['loss_thresholds'], fitted)

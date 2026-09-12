@@ -436,7 +436,7 @@ class ExcessAmplitudeTests(unittest.TestCase):
                     '--exceedance_percentile', '75', '--tail_frac', '.4', '--epochs', '2', '--device', 'cpu',
                     '--num_workers', '0', '--hidden_channels', '16', '--history_hours', '12',
                     '--excess_amp_loss_weight', '.7', '--excess_amp_pool', 'smoothmax', '--excess_amp_beta', '3.5'])
-            self.assertEqual(constructor.call_args.kwargs, dict(event_prior=fitted['event_prior']))
+            self.assertEqual(constructor.call_args.kwargs, dict(event_prior=fitted['event_prior'], event_threshold=fitted['tau_phys']))
             checkpoint = torch.load(next(output.glob('best_*.pth')), weights_only=False)
             self.assertEqual(checkpoint['loss_thresholds'], fitted)
             self.assertEqual(checkpoint['epoch'], 1)  # Production selection remains val rmse_all.

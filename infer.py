@@ -20,7 +20,7 @@ from emulator.models import ModelConfig, build_model
 from emulator.inference import classify_past_future, infer_dataset_tag, parse_year_tag
 from emulator.inference.dual_diagnostics import summarize_dual
 from emulator.training import format_metrics, run_epoch
-from emulator.training.metrics import summarize_windows
+from emulator.training.metrics import physical_peak_columns, summarize_windows
 
 
 def parse_args(argv=None):
@@ -141,6 +141,12 @@ def main(argv=None):
     checkpoint = torch.load(args.ckpt, map_location="cpu", weights_only=False)
     config = ModelConfig(**checkpoint["model_config"])
     dual_metadata = checkpoint.get("dual_metadata")
+    event_threshold = (dual_metadata or {}).get("tau_phys")
+    event_threshold_source = "dual_metadata.tau_phys" if event_threshold is not None else None
+    if event_threshold is None:
+        event_threshold = (checkpoint.get("loss_thresholds") or {}).get("tau_phys")
+        if event_threshold is not None:
+            event_threshold_source = "loss_thresholds.tau_phys"
     if args.dual_diagnostics and (config.head_type != "dual" or dual_metadata is None):
         raise ValueError("--dual_diagnostics requires a dual checkpoint with TRAIN event metadata.")
     training = checkpoint["training_config"]
@@ -219,12 +225,13 @@ def main(argv=None):
         result = run_epoch(model, loader, device, stats, station_feat=station_feat, x_clip=training["x_clip"],
                            use_amp=args.amp and cuda,
                            amp_dtype={"bf16": torch.bfloat16, "fp16": torch.float16}[args.amp_dtype],
-                           save_predictions=True, save_dual_diagnostics=args.dual_diagnostics)
+                           save_predictions=True, save_dual_diagnostics=args.dual_diagnostics,
+                           event_threshold=event_threshold)
         if cuda and args.gpu_sync_timing:
             torch.cuda.synchronize()
         seconds = time.perf_counter() - start
         results[year] = dict(samples=len(dataset), rmse=result.metrics["rmse_all"],
-                             mae=result.metrics["mae_all"], seconds=seconds, unit="physical")
+                             mae=result.metrics["mae_all"], seconds=seconds, unit="physical", **result.metrics)
         log_message(f'[Year {year} | physical] samples={len(dataset)} '
                     f'rmse={result.metrics["rmse_all"]:.6e} mae={result.metrics["mae_all"]:.6e} time={seconds:.2f}s')
         if parse_year_tag(year) != (2014, 2015):
@@ -237,7 +244,11 @@ def main(argv=None):
     error = arrays["y_pred"].astype(np.float64) - arrays["y_true"].astype(np.float64)
     records = np.column_stack((np.arange(len(indices)), arrays["y_true"].max(axis=1),
                                np.mean(error ** 2, axis=1), np.mean(np.abs(error), axis=1)))
-    metrics = summarize_windows(records)
+    # Keep the established NumPy trajectory reductions above; reuse the exact
+    # hard-peak feature/metric path used during each validation epoch.
+    peaks = physical_peak_columns(torch.from_numpy(arrays["y_pred"]), torch.from_numpy(arrays["y_true"]))
+    records = np.column_stack((records, peaks.numpy()[:, 1:]))
+    metrics = summarize_windows(records, event_threshold=event_threshold)
     groups = np.array([classify_past_future(parse_year_tag(tag)[0]) for tag in arrays["tags"]])
     for key, mask, years_label in (
         ("_overall", np.ones(len(indices), dtype=bool), None),
@@ -291,7 +302,8 @@ def main(argv=None):
     wall_seconds = time.perf_counter() - wall_start
     metadata = {"metrics": metrics, "runtime_seconds": elapsed, "wall_seconds": wall_seconds,
                 "samples": len(indices), "scope": "external_all_years" if external else "held_out_years",
-                "years": sorted(year_to_indices), "results": results, "dual_metadata": dual_metadata}
+                "years": sorted(year_to_indices), "results": results, "dual_metadata": dual_metadata,
+                "event_threshold_phys": event_threshold, "event_threshold_source": event_threshold_source}
     (out_dir / "metrics.json").write_text(json.dumps(metadata, indent=2))
     report = dict(timestamp=datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S UTC"),
                   test_tag=test_tag, source_tag=source, target_tag=target, station=station_tag,
@@ -309,7 +321,11 @@ def main(argv=None):
                                         future_year_threshold=training["future_year_threshold"], split_seed=training["seed"])
                   if not external else None,
                   years_evaluated=metadata["years"], inference_args=vars(args).copy(), checkpoint_args=training,
-                  results=results, metric_space="physical", metric_note="RMSE/MAE on denormalized predictions in original y units.",
+                  results=results, metrics=metrics, event_threshold_phys=event_threshold,
+                  event_threshold_source=event_threshold_source,
+                  metric_space="physical", metric_note="RMSE/MAE on denormalized predictions in original y units. "
+                      "Direct peak metrics use hard maxima, first-occurrence argmax ties, and timing in forecast steps. "
+                      "Event metrics use saved TRAIN tau_phys, or null if unavailable.",
                   x_clip=training["x_clip"], dual_metadata=dual_metadata, dual_ablation=config.dual_ablation)
     (out_dir / f"metrics_per_year_{report_stem}.json").write_text(json.dumps(report, indent=2, default=str))
     log_message(format_metrics("External" if external else "Test", metrics))

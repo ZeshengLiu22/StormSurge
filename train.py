@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Train fresh v2 models. Epoch logs contain only eight physical-unit errors."""
+"""Train fresh v2 models with concise logs and full physical metrics in JSONL."""
 
 from dataclasses import asdict, fields
 import json
@@ -127,7 +127,7 @@ def train(args, device, distributed, rank, wall_start):
         model = DistributedDataParallel(model, device_ids=[device.index] if device.type == "cuda" else None)
     loss_config = LossConfig(**{field.name: getattr(args, field.name) for field in fields(LossConfig)})
     criterion = ForecastLoss(loss_config, stats, fitted["tail_threshold"], fitted["wmse_threshold"],
-                             event_prior=fitted["event_prior"]).to(device)
+                             event_prior=fitted["event_prior"], event_threshold=fitted["tau_phys"]).to(device)
     optimizer = torch.optim.Adam(model.parameters(), lr=args.lr, weight_decay=1e-5)
     def lr_multiplier(epoch):
         if epoch < args.warmup_epochs:
@@ -152,7 +152,8 @@ def train(args, device, distributed, rank, wall_start):
     train_loader = build_loader(train_data, train_sampler, shuffle=True, **loader_options)
     val_loader = build_loader(val_data, val_sampler, **loader_options)
     epoch_options = dict(device=device, stats=stats, station_feat=station_feat, use_amp=use_amp,
-                         amp_dtype=amp_dtype, x_clip=args.x_clip, distributed=distributed)
+                         amp_dtype=amp_dtype, x_clip=args.x_clip, distributed=distributed,
+                         event_threshold=fitted["tau_phys"])
     best_rmse, best_epoch = float("inf"), 0
     start = time.perf_counter()
     for epoch in range(1, args.epochs + 1):
@@ -200,7 +201,7 @@ def train(args, device, distributed, rank, wall_start):
         test_data = ForcingGraphView(test_store, test_indices, history_steps)
         result = run_epoch(network, build_loader(test_data, None, **loader_options), device, stats,
                            station_feat=station_feat, use_amp=use_amp, amp_dtype=amp_dtype,
-                           x_clip=args.x_clip, save_predictions=True)
+                           x_clip=args.x_clip, save_predictions=True, event_threshold=fitted["tau_phys"])
         np.savez_compressed(output_dir / f"test_preds_{stem}.npz", **result.predictions)
         summary = {"best_epoch": best_epoch, "best_val_rmse": best_rmse, "training_seconds": elapsed,
                    "loss_thresholds": fitted, "dual_metadata": dual_metadata,

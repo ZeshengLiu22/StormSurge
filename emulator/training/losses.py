@@ -12,6 +12,7 @@ from emulator.common.runtime import log_message
 from emulator.common.dual import DUAL_ABLATIONS, dual_excess_target, validate_excess_formulation
 from .excess_amplitude import excess_amplitude_terms, validate_event_prior
 from .excess_shape import excess_shape_loss
+from .final_peak import final_peak_terms, validate_event_threshold, validate_peak_config
 
 
 def validate_shape_config(config):
@@ -108,10 +109,13 @@ class LossConfig:
     excess_formulation: str = "direct"
     shape_loss_weight: float = 0.0
     severity_shape_eps: float = 1e-6
+    peak_loss_weight: float = 0.0
+    peak_pool: str = "max"
+    peak_pool_beta: float = 20.0
 
 
 class ForecastLoss(nn.Module):
-    def __init__(self, config, stats, peak_threshold, wmse_threshold, event_prior=None):
+    def __init__(self, config, stats, peak_threshold, wmse_threshold, event_prior=None, event_threshold=None):
         super().__init__()
         self.config = config
         self.register_buffer("y_mean", stats["y_mean"])
@@ -120,9 +124,13 @@ class ForecastLoss(nn.Module):
         self.wmse_threshold = wmse_threshold
         amp_weight = validate_excess_amp_config(config)
         shape_weight = validate_shape_config(config)
-        if amp_weight > 0 or shape_weight > 0:
+        peak_weight = validate_peak_config(config)
+        if amp_weight > 0 or shape_weight > 0 or peak_weight > 0:
             validate_event_prior(event_prior)
+        if peak_weight > 0:
+            validate_event_threshold(event_threshold)
         self.event_prior = event_prior
+        self.event_threshold_phys = event_threshold
 
     def forward(self, output, prediction, target):
         c = self.config
@@ -152,6 +160,12 @@ class ForecastLoss(nn.Module):
                 penalty = (slope_error.square() + max(c.slope_charb_eps, 1e-12) ** 2).sqrt()
             mask = torch.sigmoid((self.wmse_threshold - target.abs().amax(dim=1)) / max(c.slope_mask_s, 1e-6))
             loss = loss + c.slope_lambda * (penalty * mask[:, None]).mean()
+        # Final-output supervision is independent of all dual branch ablations,
+        # including the no_branch_supervision early return below. Skip at zero.
+        if getattr(c, "peak_loss_weight", 0.0) > 0:
+            peak = final_peak_terms(prediction, target, self.event_threshold_phys, self.event_prior,
+                                    getattr(c, "peak_pool", "max"), getattr(c, "peak_pool_beta", 20.0))
+            loss = loss + c.peak_loss_weight * peak.loss
         if output.body is not None:
             if (output.gate_logits is None) != (c.dual_ablation == "fixed_gate"):
                 raise ValueError("The loss and model must select the same fixed_gate ablation.")

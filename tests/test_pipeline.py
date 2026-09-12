@@ -18,7 +18,7 @@ from torch_geometric.data import Data
 import infer
 import train
 from emulator.data import ForcingGraphStore, ForcingGraphView
-from emulator.training.metrics import METRIC_NAMES
+from emulator.training.metrics import METRIC_NAMES, PEAK_METRIC_NAMES
 
 
 def make_fixture(root, years=5):
@@ -202,7 +202,7 @@ class PipelineTests(unittest.TestCase):
                 for record in logs:
                     self.assertEqual(set(record), {"epoch", "train", "val"})
                     for part in ("train", "val"):
-                        self.assertEqual(tuple(record[part]), METRIC_NAMES)
+                        self.assertEqual(tuple(record[part]), METRIC_NAMES + PEAK_METRIC_NAMES)
                     if record['val']['rmse_all'] < running_best:
                         running_best = record['val']['rmse_all']
                         expected_best_lines.append(f"[Best] Epoch {record['epoch']:03d}/2 | "
@@ -214,7 +214,7 @@ class PipelineTests(unittest.TestCase):
                 self.assertEqual(summary["val"], logs[checkpoint["epoch"] - 1]["val"])
                 self.assertEqual(summary["best_val_rmse"], summary["val"]["rmse_all"])
                 self.assertEqual(summary["best_epoch"], checkpoint["epoch"])
-                self.assertEqual(tuple(summary["test"]), METRIC_NAMES)
+                self.assertEqual(tuple(summary["test"]), METRIC_NAMES + PEAK_METRIC_NAMES)
                 final_metrics = console.getvalue().splitlines()[-2]
                 self.assertIn(f'Best epoch {checkpoint["epoch"]:03d}', final_metrics)
                 self.assertIn(train.format_metrics("Val", summary["val"]), final_metrics)

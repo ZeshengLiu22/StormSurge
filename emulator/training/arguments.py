@@ -7,6 +7,7 @@ from pathlib import Path
 from emulator.common.cli import head_type_name, parse_bool_int, temporal_block_name
 from emulator.common.dual import DUAL_ABLATIONS, EXCESS_FORMULATIONS
 from .losses import enforce_dual_loss, validate_excess_amp_config, validate_shape_config
+from .final_peak import validate_peak_config
 
 
 def parse_args(argv=None):
@@ -186,6 +187,12 @@ def parse_args(argv=None):
                         help="Peak pooling after horizon-wise physical conversion; max is the primary objective.")
     parser.add_argument("--excess_amp_beta", type=float, default=20.0,
                         help="Smoothmax sharpness in inverse meters; unused by max or a zero amplitude weight.")
+    parser.add_argument("--peak_loss_weight", type=float, default=0.0,
+                        help="Optional final physical peak loss on strict TRAIN events; supports single and dual heads.")
+    parser.add_argument("--peak_pool", choices=["max", "smoothmax"], default="max",
+                        help="Final-output training peak pool; evaluation always uses exact hard maxima.")
+    parser.add_argument("--peak_pool_beta", type=float, default=20.0,
+                        help="Shared bounded smoothmax sharpness in inverse meters; unused by max or zero weight.")
     parser.add_argument("--gate_loss_weight", type=float, default=1.0)
     parser.add_argument("--max_grad_norm", type=float, default=0.0, help="0 disables optional gradient clipping.")
     parser.add_argument("--deterministic", type=parse_bool_int, choices=[0, 1], default=0,
@@ -250,6 +257,7 @@ def parse_args(argv=None):
     try:
         validate_excess_amp_config(args)
         validate_shape_config(args)
+        validate_peak_config(args)
     except ValueError as error:
         parser.error(str(error))
     if args.head_type == "dual":

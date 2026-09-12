@@ -1,0 +1,490 @@
+{
+  "instruction": 6,
+  "generated_at": "2026-09-12T23:19:10.782698+00:00",
+  "base_revision": "50ec23fc23866cb225c594bb403e1505704cda79",
+  "repository": "/home/exouser/media/volume/PACT-Data/StormSurge",
+  "repository_realpath": "/media/volume/PACT-Data/StormSurge",
+  "new_project_checkout_created": false,
+  "entry_working_tree": "Tracked files clean; pre-existing untracked experiment_config/P1_WeightProbe/ preserved.",
+  "concurrent_changes_preserved_and_excluded_from_commit": [
+    "DUAL_HEAD_EXPLAINED.md moved to docs/DUAL_HEAD_EXPLAINED.md (identical bytes)",
+    "STABILITY_AND_DUAL_HEAD.md moved to docs/STABILITY_AND_DUAL_HEAD.md (identical bytes)"
+  ],
+  "files_modified": [
+    "README.md",
+    "docs/FINAL_PEAK.md",
+    "docs/audit/evidence/final_peak_validation.json",
+    "docs/audit/evidence/final_peak_tests.txt",
+    "emulator/training/final_peak.py",
+    "emulator/training/excess_amplitude.py",
+    "emulator/training/losses.py",
+    "emulator/training/arguments.py",
+    "emulator/training/metrics.py",
+    "emulator/training/engine.py",
+    "train.py",
+    "train.sh",
+    "infer.py",
+    "tests/test_final_peak.py",
+    "tests/test_peak_metrics.py",
+    "tests/test_peak_reporting.py",
+    "tests/fixtures/post3_peak_metrics.json",
+    "tests/test_training.py",
+    "tests/test_pipeline.py",
+    "tests/test_excess_amplitude.py",
+    "tests/test_severity_shape.py"
+  ],
+  "source_sha256": {
+    "README.md": "0fc066feecb699a570f3b1d6a55ae262c482cc5cae35787e32d3b0fc7b8c507e",
+    "docs/FINAL_PEAK.md": "4fd2ff201d6ff5ba978567e6923d324da3c6af0edb0b7302256912beea106d17",
+    "docs/audit/evidence/final_peak_tests.txt": "b4c476476aaac710d68aa60841e628cedf83d6009802693d1eb79f1ab7f041b1",
+    "emulator/training/final_peak.py": "4b683f1e49d5e03b0f3fbae8be91445b94c863f594e60cb291d34808e1a8dd6d",
+    "emulator/training/excess_amplitude.py": "44e70109591ca5d7d5bd667657cec239f6af41c7c7ba65678ae65d627715227d",
+    "emulator/training/losses.py": "a0c3b76139c31774fa36b7b30840e5a57e9bbffc2ab5c164dfa547099271a247",
+    "emulator/training/arguments.py": "7f4e99067125f1aa7abc96007813f29a96b478fe75b245951538ff6954ddae76",
+    "emulator/training/metrics.py": "72c77ed8e57c15bdaf06ce8e20a3b694df8a1792953a84e5a2dc04d1d5c5d5e2",
+    "emulator/training/engine.py": "e59e62d799e436b5d5ae74eca5365ad55576be55d337dee3f6aa05104f994268",
+    "train.py": "7e85a7052ac797b95aab74bf6bb8200bf72b62812edf62a8800e95b7a3b57a53",
+    "train.sh": "b45fdb42d5ed927bfbf05a75935d565ed124db6751e1915c68a8cfe21fe73160",
+    "infer.py": "2d94e091c22a86b557bbd48b3d42d891a08393af0a3c04e0cb795a252a8100f3",
+    "tests/test_final_peak.py": "049e2f1b424af357367e7dca864bbcd4ff007169423e0bb1cdc3555bcd86794f",
+    "tests/test_peak_metrics.py": "8c0e1b52e7899c205e20505e071eb8c509e7f746d2a6ed320e22b07ba23f85ae",
+    "tests/test_peak_reporting.py": "c2f74f6960bd819a7220d9977fbc2c12d7e7f2b2a6d46da35e23877dcc3d5bd1",
+    "tests/fixtures/post3_peak_metrics.json": "5584bc0b2cf7d7ae59d3f340e743566617e6861552e10af3e92e16540c4de74f",
+    "tests/test_training.py": "9a202b8d6e664c2e24cb34439eabaad8e4dd62d1c569160502b72e07d21d17d4",
+    "tests/test_pipeline.py": "67dbe0990fb1717fd0eaea967482650d6f54ebbf97ae4ee14fe7a3e037b519c6",
+    "tests/test_excess_amplitude.py": "bb6aca5f581bafbc029f13fc35f244182de4ac544b3f9356829ccf960c25a2a3",
+    "tests/test_severity_shape.py": "c241b44bf7c0b926291e0b41d9b3f5a9150c6bba8a59adc1d37d46d50e2f18b3"
+  },
+  "objective": "L_peak = mean_i[1[max_h target_phys_i,h > tau_train] * (pool(prediction_phys_i,:) - pool(target_phys_i,:))^2] / q_E",
+  "units": "square meters",
+  "threshold": "fit_loss_thresholds(TRAIN)[tau_phys]; distinct from existing tail peak_threshold",
+  "event_prior": "fit_loss_thresholds(TRAIN)[event_prior] = event_count / train_windows; unchanged and unclipped",
+  "shared_helpers": [
+    "emulator.training.excess_amplitude.peak_pool",
+    "emulator.training.excess_amplitude.validate_event_prior"
+  ],
+  "smoothmax": "Existing centered bounded softmax-weighted mean; same operator for prediction and truth; inverse-meter beta.",
+  "strict_event": "Hard physical truth maximum cast to FP64 > original fitted TRAIN tau_phys; equality is excluded.",
+  "supported_heads": [
+    "baseline/single",
+    "pact/single",
+    "dual/direct",
+    "dual/severity_shape"
+  ],
+  "all_dual_ablations_preserve_peak_loss": true,
+  "diagnostic_keys": [
+    "peak_loss",
+    "pred_peak_mean",
+    "true_peak_mean",
+    "peak_bias",
+    "event_count",
+    "event_fraction"
+  ],
+  "diagnostic_api": "final_peak_terms(...).diagnostics(); stateless tensor reductions; no automatic extra inference pass",
+  "defaults": {
+    "peak_loss_weight": 0.0,
+    "peak_pool": "max",
+    "peak_pool_beta": 20.0
+  },
+  "metric_keys_added": [
+    "peak_magnitude_rmse_all",
+    "peak_magnitude_mae_all",
+    "peak_bias_all",
+    "peak_underprediction_fraction_all",
+    "peak_underprediction_mean_all",
+    "peak_overprediction_fraction_all",
+    "peak_overprediction_mean_all",
+    "true_peak_point_rmse_all",
+    "true_peak_point_mae_all",
+    "true_peak_point_bias_all",
+    "peak_timing_mae_steps_all",
+    "peak_magnitude_rmse_top5",
+    "peak_magnitude_mae_top5",
+    "peak_bias_top5",
+    "peak_underprediction_fraction_top5",
+    "peak_underprediction_mean_top5",
+    "peak_overprediction_fraction_top5",
+    "peak_overprediction_mean_top5",
+    "true_peak_point_rmse_top5",
+    "true_peak_point_mae_top5",
+    "true_peak_point_bias_top5",
+    "peak_timing_mae_steps_top5",
+    "peak_magnitude_rmse_event",
+    "peak_magnitude_mae_event",
+    "peak_bias_event",
+    "peak_underprediction_fraction_event",
+    "peak_underprediction_mean_event",
+    "peak_overprediction_fraction_event",
+    "peak_overprediction_mean_event",
+    "true_peak_point_rmse_event",
+    "true_peak_point_mae_event",
+    "true_peak_point_bias_event",
+    "peak_timing_mae_steps_event"
+  ],
+  "metric_units": "meters; fractions unitless; timing in forecast steps",
+  "metric_definitions": {
+    "peak_error": "max(y_pred_phys)-max(y_true_phys)",
+    "point_error": "y_pred_phys[argmax(y_true_phys)]-max(y_true_phys)",
+    "timing": "abs(argmax(y_pred_phys)-argmax(y_true_phys))",
+    "ties": "first occurrence",
+    "populations": [
+      "unique all",
+      "exact legacy top5 indices",
+      "strict saved TRAIN-threshold events"
+    ],
+    "empty_or_undefined": "None / JSON null"
+  },
+  "top5_compatibility": "One shared selector: unique sample-ID order, legacy FP32/quicksort for evaluation; existing stable ordering for training/overall inference.",
+  "ddp_duplicates": "New all/top5/event metrics deduplicate IDs. Legacy evaluation rmse_all/mae_all keep sampler padding and prior FP32-batch/FP64 accumulation.",
+  "per_window_storage": {
+    "previous_scalars": 4,
+    "current_scalars": 7,
+    "full_val_predictions_stored": false,
+    "extra_forward_pass": false
+  },
+  "console": "All four historical metrics plus peak_magnitude_rmse_top5; explicit extended=True available.",
+  "reporting": "Full dictionaries in per-epoch JSONL, best checkpoint val, summary val/test, ordinary inference overall and yearly reports.",
+  "inference_threshold_fallback": [
+    "dual_metadata.tau_phys",
+    "loss_thresholds.tau_phys",
+    "unavailable/null"
+  ],
+  "checkpoint_selection": "unchanged: minimum validation rmse_all; conflicting peak-vs-rmse rankings explicitly tested",
+  "baseline_tests": {
+    "count": 120,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "seconds": 34.494
+  },
+  "targeted_new_loss_tests": {
+    "count": 22,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "seconds": 4.456
+  },
+  "full_tests": {
+    "count": 156,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "seconds": 42.388,
+    "modules": {
+      "test_config_interfaces": 8,
+      "test_dual_experiments": 9,
+      "test_dual_loss": 6,
+      "test_excess_amplitude": 23,
+      "test_final_peak": 22,
+      "test_forcing": 1,
+      "test_inference_reporting": 3,
+      "test_models": 9,
+      "test_peak_metrics": 12,
+      "test_peak_reporting": 2,
+      "test_pipeline": 8,
+      "test_preprocessing_pipeline": 4,
+      "test_severity_shape": 25,
+      "test_station_metadata": 9,
+      "test_tail_loss": 7,
+      "test_time_alignment": 4,
+      "test_training": 4
+    },
+    "command": "GLOO_SOCKET_IFNAME=lo PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=/tmp/pact-validation-deps /media/volume/PACT-Data/conda_envs/torchpyg-cu124/bin/python -m unittest discover -s tests -v",
+    "log": "docs/audit/evidence/final_peak_tests.txt"
+  },
+  "checks": {
+    "pyflakes": "passed on changed Python files",
+    "bash_n_train_sh": "passed",
+    "git_diff_check": "passed"
+  },
+  "environment": {
+    "python": "3.11.16",
+    "torch": "2.6.0+cu124",
+    "torch_cuda": "12.4",
+    "cuda_available": true,
+    "gpu": "NVIDIA H100 80GB HBM3",
+    "precision_tested": [
+      "CPU FP32/FP64 and BF16",
+      "CUDA FP16 and BF16"
+    ],
+    "distributed_tested": "two-rank CPU Gloo"
+  },
+  "legacy_compatibility": {
+    "base": "50ec23fc23866cb225c594bb403e1505704cda79",
+    "unchanged_configs": [
+      {
+        "path": "experiment_config/P0_QuickRun/train_config_NCEP_Battery_24h_dual_mse.sh",
+        "sha256": "ee8bfab773ccd2b22763e72b0d6c7ec3d70430dcda65aee47628c4805888a1c5"
+      },
+      {
+        "path": "experiment_config/P0_QuickRun/train_config_NCEP_Battery_24h_dual_slope.sh",
+        "sha256": "510293e0aad2315b87fe5a78b41f484e557c74c8605563d3204394d67107f9fe"
+      },
+      {
+        "path": "experiment_config/P0_QuickRun/train_config_NCEP_Battery_24h_dual_tail.sh",
+        "sha256": "01659b93c50a01c078f91b60526acdd1adf6ba0c9a7672246ca6de2209947bcc"
+      },
+      {
+        "path": "experiment_config/P0_QuickRun/train_config_NCEP_Battery_24h_dual_tail_slope.sh",
+        "sha256": "70cd18c661ce12b850a9a19dca4b41f02517824d7838723e7e1aaeacf98f2a4b"
+      },
+      {
+        "path": "experiment_config/P0_QuickRun/train_config_NCEP_Battery_24h_single_mse.sh",
+        "sha256": "6ffdb837e0119e7871b66d4992e10cdc1ad67be5e2754e0189cfbdd089e46b49"
+      },
+      {
+        "path": "experiment_config/P0_QuickRun/train_config_NCEP_Battery_24h_single_slope.sh",
+        "sha256": "10a594e78d0720d1d20090403099e33f642dcc51d80c5c49a574baee38a6f8f9"
+      },
+      {
+        "path": "experiment_config/P0_QuickRun/train_config_NCEP_Battery_24h_single_tail.sh",
+        "sha256": "e46ef9c068372d4b7e6071e44f70a8df67556f6ec6278cbc5c21a45a29a1352d"
+      },
+      {
+        "path": "experiment_config/P0_QuickRun/train_config_NCEP_Battery_24h_single_tail_slope.sh",
+        "sha256": "6290b7da6ba1d2429dc4d53060588b1944e4f0bb604b4b3d9ed8b3579463e5ca"
+      },
+      {
+        "path": "experiment_config/P0_QuickRun/train_config_NCEP_Boston_24h_dual_mse.sh",
+        "sha256": "df0057909c8b67fd93c8eff14484805eda6cdbcae62283613f73020515bf9c59"
+      },
+      {
+        "path": "experiment_config/P0_QuickRun/train_config_NCEP_Boston_24h_dual_slope.sh",
+        "sha256": "850516fef6c07582550e83a7392b8c0f82a0b70a89ece4a7021c93fbb50647a7"
+      },
+      {
+        "path": "experiment_config/P0_QuickRun/train_config_NCEP_Boston_24h_dual_tail.sh",
+        "sha256": "1c7f0bd0210aea6e7d6b24162e68cad52276fa672054100372a90f7d359fe52b"
+      },
+      {
+        "path": "experiment_config/P0_QuickRun/train_config_NCEP_Boston_24h_dual_tail_slope.sh",
+        "sha256": "d0d14eddc598de92fff4e86b2aa9b756c16f0a982d8d08475473f42f35a07fdf"
+      },
+      {
+        "path": "experiment_config/P0_QuickRun/train_config_NCEP_Boston_24h_single_mse.sh",
+        "sha256": "59ebd72959005902db319bae6826d2b690aa1e6a8c561721db1505f4c051c01c"
+      },
+      {
+        "path": "experiment_config/P0_QuickRun/train_config_NCEP_Boston_24h_single_slope.sh",
+        "sha256": "b6ef1baaa922eeb1c736bcb68ddb9ff66c624da5c137a76bc46fc3fa7e0dacf5"
+      },
+      {
+        "path": "experiment_config/P0_QuickRun/train_config_NCEP_Boston_24h_single_tail.sh",
+        "sha256": "de17c7b3826a3e33edf1eb0d03d6f519e727d3a4d398f39da7682dfce2ddb833"
+      },
+      {
+        "path": "experiment_config/P0_QuickRun/train_config_NCEP_Boston_24h_single_tail_slope.sh",
+        "sha256": "658bae75b1a0a1541eb241409e5d5c8bf877daa7a29e7e798db3c77d89365dd8"
+      },
+      {
+        "path": "experiment_config/P0_QuickRun/train_config_NCEP_CBBT_24h_dual_mse.sh",
+        "sha256": "8364505e18ec2d1a5f291d7aa8013e30bc5c81280c13f946a3946a697a74112c"
+      },
+      {
+        "path": "experiment_config/P0_QuickRun/train_config_NCEP_CBBT_24h_dual_slope.sh",
+        "sha256": "e016c7ac21a091de3e820527658767916e002a497c2b1bf188b5ee5947833a30"
+      },
+      {
+        "path": "experiment_config/P0_QuickRun/train_config_NCEP_CBBT_24h_dual_tail.sh",
+        "sha256": "d4bd0870c682fa5b7f74ea0565cd2a77b51f333aed929385d49574e7613004c3"
+      },
+      {
+        "path": "experiment_config/P0_QuickRun/train_config_NCEP_CBBT_24h_dual_tail_slope.sh",
+        "sha256": "721e0292b7cb39dd89f69cd2346d078ce23aa1d622179674a5f388c24ac62fac"
+      },
+      {
+        "path": "experiment_config/P0_QuickRun/train_config_NCEP_CBBT_24h_single_mse.sh",
+        "sha256": "8d191abac09be3b1f0867371672dfcc4bb2efa0866cbc3f31e4e821a03460042"
+      },
+      {
+        "path": "experiment_config/P0_QuickRun/train_config_NCEP_CBBT_24h_single_slope.sh",
+        "sha256": "c8a20053ac98218b9a7a573b6f189a051d5a400bcdc53df0b4bc2fe92c241f3c"
+      },
+      {
+        "path": "experiment_config/P0_QuickRun/train_config_NCEP_CBBT_24h_single_tail.sh",
+        "sha256": "3b0ecc7ed6e0793a5b7c1840810b399974300b419ebe8f53ddc32be778cf9c1b"
+      },
+      {
+        "path": "experiment_config/P0_QuickRun/train_config_NCEP_CBBT_24h_single_tail_slope.sh",
+        "sha256": "d78a02b400d6edd9654a40c18749b6fd67dc31f915ad22f73461a2d0f4ebf7ca"
+      },
+      {
+        "path": "experiment_config/P0_QuickRun/train_config_NCEP_Lewes_24h_dual_mse.sh",
+        "sha256": "0f15fce43e9be30046c297281829e83414edec4f3321ae7e67edea51165d8188"
+      },
+      {
+        "path": "experiment_config/P0_QuickRun/train_config_NCEP_Lewes_24h_dual_slope.sh",
+        "sha256": "d503a33840f1eb27555b392ebbd049656d56c4cc4574ecc238f4eb0c47a0280d"
+      },
+      {
+        "path": "experiment_config/P0_QuickRun/train_config_NCEP_Lewes_24h_dual_tail.sh",
+        "sha256": "31e7f4cf05e729cc2a0f695c66b7d878cf7b4071843966e3f5f3236bc44c9924"
+      },
+      {
+        "path": "experiment_config/P0_QuickRun/train_config_NCEP_Lewes_24h_dual_tail_slope.sh",
+        "sha256": "a9047023e1b1ce7562de9f3364c7344c29800f4940f4b717176b1212fb85f712"
+      },
+      {
+        "path": "experiment_config/P0_QuickRun/train_config_NCEP_Lewes_24h_single_mse.sh",
+        "sha256": "87ad6c9e14e1ff2225c35a223fdb54b0c84c192b0a00e795055fe6d02c603ec5"
+      },
+      {
+        "path": "experiment_config/P0_QuickRun/train_config_NCEP_Lewes_24h_single_slope.sh",
+        "sha256": "217f1ce43fe3fabcc3db00c7dafbd0e913d03bf354178af6478ceb82fc258691"
+      },
+      {
+        "path": "experiment_config/P0_QuickRun/train_config_NCEP_Lewes_24h_single_tail.sh",
+        "sha256": "c1c15aa83201f33f55350ed78e3886b32932d8884ac6caae73d3a66877996b8c"
+      },
+      {
+        "path": "experiment_config/P0_QuickRun/train_config_NCEP_Lewes_24h_single_tail_slope.sh",
+        "sha256": "eadb5eeaf60a8983845a10476536c6c25175758cce2f3d6d33c7e80e93808546"
+      },
+      {
+        "path": "experiment_config/P1_WeightProbe/train_config_NCEP_Battery_24h_dual_ex10_notail.sh",
+        "sha256": "71f44086d2b0c7aa23b34b695a5d3757468d851dd85b35a380911ba7f3e35d2a"
+      },
+      {
+        "path": "experiment_config/P1_WeightProbe/train_config_NCEP_Battery_24h_dual_ex10_tail005.sh",
+        "sha256": "35a317e258be079d32f64a360f28d65534af510ff0fcec7b3478a14597f9f677"
+      },
+      {
+        "path": "experiment_config/P1_WeightProbe/train_config_NCEP_Battery_24h_dual_ex10_tail010.sh",
+        "sha256": "a6d2d18c85803d5c5a0e221b0f071e7cde66fee04724a81fc29debdc5498052d"
+      },
+      {
+        "path": "experiment_config/P1_WeightProbe/train_config_NCEP_Battery_24h_dual_ex2_tail005.sh",
+        "sha256": "1d71c510f67054b16f5cd60f836af415f17e6b1f715159f73dcffbb0a8bbffd7"
+      },
+      {
+        "path": "experiment_config/P1_WeightProbe/train_config_NCEP_Battery_24h_dual_ex2_tail010.sh",
+        "sha256": "a12ef2c1e63cd4c27a9af677c0ec6b7a7d7fae6f97a3b823970bf11d746ddf3c"
+      },
+      {
+        "path": "experiment_config/P1_WeightProbe/train_config_NCEP_Battery_24h_dual_ex5_notail.sh",
+        "sha256": "84e308f0d2f0057422ef490f2ee4e043b72d1df33b5816bf0484370882b36727"
+      },
+      {
+        "path": "experiment_config/P1_WeightProbe/train_config_NCEP_Battery_24h_dual_ex5_tail005.sh",
+        "sha256": "bd9e43aba90032982150d84eb6d06791e57c68e2cf68b4c770c239a94f2354c2"
+      },
+      {
+        "path": "experiment_config/P1_WeightProbe/train_config_NCEP_Battery_24h_dual_ex5_tail010.sh",
+        "sha256": "81ed9e563e574f10fa5eed6aa7f750d70dcde92664a2aa01b6af79a7c5021a77"
+      },
+      {
+        "path": "experiment_config/P1_WeightProbe/train_config_NCEP_Boston_24h_dual_ex10_notail.sh",
+        "sha256": "c77661d0006712764dd62b814e4f374bef44027bc29ff6f772e18cf096fcb9f6"
+      },
+      {
+        "path": "experiment_config/P1_WeightProbe/train_config_NCEP_Boston_24h_dual_ex10_tail005.sh",
+        "sha256": "cb150a18a41bb69acc7c34fbed405692b4d21b78493315d470b4a1a1977b2e86"
+      },
+      {
+        "path": "experiment_config/P1_WeightProbe/train_config_NCEP_Boston_24h_dual_ex10_tail010.sh",
+        "sha256": "dd404b8dd3b080432ba5d7de97514f8ebc2271f1c6f3a3ba9008dd26b31d9fb8"
+      },
+      {
+        "path": "experiment_config/P1_WeightProbe/train_config_NCEP_Boston_24h_dual_ex2_tail005.sh",
+        "sha256": "2fefedc907db6675fc35cf360d6ceaebb2f38dda5afb7b85b5405f71e7f99d89"
+      },
+      {
+        "path": "experiment_config/P1_WeightProbe/train_config_NCEP_Boston_24h_dual_ex2_tail010.sh",
+        "sha256": "0bcf7028aa448072b9a02547c1cc058b9e46be05b4ad155ea11bb9a222f8e130"
+      },
+      {
+        "path": "experiment_config/P1_WeightProbe/train_config_NCEP_Boston_24h_dual_ex5_notail.sh",
+        "sha256": "c5520d25935e8d220ebc4ea7dd84cd27447a7a85e2b4f1f0d92230e1621a0427"
+      },
+      {
+        "path": "experiment_config/P1_WeightProbe/train_config_NCEP_Boston_24h_dual_ex5_tail005.sh",
+        "sha256": "52a6f292ac8ea588cc70330f477c02f3fc6060aa38a6560fe2bfcd15ff0af3ea"
+      },
+      {
+        "path": "experiment_config/P1_WeightProbe/train_config_NCEP_Boston_24h_dual_ex5_tail010.sh",
+        "sha256": "6ac33b61246e1cd06ad9883195543c6825949a936c0209cc22ee5b5a6cfbc354"
+      },
+      {
+        "path": "experiment_config/P1_WeightProbe/train_config_NCEP_CBBT_24h_dual_ex10_notail.sh",
+        "sha256": "27619a8114225dde02725346d08b389f317cb689482cc9f5c45e38c9878625c5"
+      },
+      {
+        "path": "experiment_config/P1_WeightProbe/train_config_NCEP_CBBT_24h_dual_ex10_tail005.sh",
+        "sha256": "b65e87504981ea5e4f1cbae133c481908fea2f0b8ede555252e46fb4774477b2"
+      },
+      {
+        "path": "experiment_config/P1_WeightProbe/train_config_NCEP_CBBT_24h_dual_ex10_tail010.sh",
+        "sha256": "0f05205e803f03737d755180e93536f61045ce9980e24d654e09ab41919c1515"
+      },
+      {
+        "path": "experiment_config/P1_WeightProbe/train_config_NCEP_CBBT_24h_dual_ex2_tail005.sh",
+        "sha256": "163b49029e7cb736c98e92c8ea20eb2d27a3a6d796982c521f2cb7c00c2305ec"
+      },
+      {
+        "path": "experiment_config/P1_WeightProbe/train_config_NCEP_CBBT_24h_dual_ex2_tail010.sh",
+        "sha256": "e80eb102f48115053d658945428092a55a75545c2d95c699ef371e1509a9af06"
+      },
+      {
+        "path": "experiment_config/P1_WeightProbe/train_config_NCEP_CBBT_24h_dual_ex5_notail.sh",
+        "sha256": "75a10230bb001ba5eae164c3e53a652b14bd94a650a9b5a1479b6ce6c8f1bdd7"
+      },
+      {
+        "path": "experiment_config/P1_WeightProbe/train_config_NCEP_CBBT_24h_dual_ex5_tail005.sh",
+        "sha256": "f49e44ce6c5f123e990104f7e78bffc0960aae7967fe34f62eebd0f2ea3ec8d8"
+      },
+      {
+        "path": "experiment_config/P1_WeightProbe/train_config_NCEP_CBBT_24h_dual_ex5_tail010.sh",
+        "sha256": "b49f3eb7a52f66b739a4801ced841752cbaa48cabd99d1f8690d86ed976129fd"
+      },
+      {
+        "path": "experiment_config/P1_WeightProbe/train_config_NCEP_Lewes_24h_dual_ex10_notail.sh",
+        "sha256": "c10f67ceb881c5be762dfe25e3ced4b6d65b022b3759e0a4141e0d429074c2ce"
+      },
+      {
+        "path": "experiment_config/P1_WeightProbe/train_config_NCEP_Lewes_24h_dual_ex10_tail005.sh",
+        "sha256": "7858f629f4bcf640735f3d5867096458197e1c1879a0826aace596af492faa8f"
+      },
+      {
+        "path": "experiment_config/P1_WeightProbe/train_config_NCEP_Lewes_24h_dual_ex10_tail010.sh",
+        "sha256": "b0847c1612a7d63907fa3755291c3fb27c271c82e5bc5f6ed69c81a3f78418a9"
+      },
+      {
+        "path": "experiment_config/P1_WeightProbe/train_config_NCEP_Lewes_24h_dual_ex2_tail005.sh",
+        "sha256": "3855f4872489ad61bae208a66dc2e3c153d7042188685ed576ef9adf25d53c28"
+      },
+      {
+        "path": "experiment_config/P1_WeightProbe/train_config_NCEP_Lewes_24h_dual_ex2_tail010.sh",
+        "sha256": "6f5f3f4b9c100168303e85a26edf5700676bcb34221366024a3b83dbdce5cd79"
+      },
+      {
+        "path": "experiment_config/P1_WeightProbe/train_config_NCEP_Lewes_24h_dual_ex5_notail.sh",
+        "sha256": "de942b7b63fd9846dd61c8774db3cddf2e80f2140125722cc9567133b01a4d16"
+      },
+      {
+        "path": "experiment_config/P1_WeightProbe/train_config_NCEP_Lewes_24h_dual_ex5_tail005.sh",
+        "sha256": "5366f57e11a192becc98c24040cacbc53274b67063d38e6def0325290417b835"
+      },
+      {
+        "path": "experiment_config/P1_WeightProbe/train_config_NCEP_Lewes_24h_dual_ex5_tail010.sh",
+        "sha256": "80e6c75bc7838a09060035505f87594f356a69ed4c734350b9143faaa4cefb1e"
+      }
+    ],
+    "old_command_arguments_parsed_values_and_run_tags_exact": true,
+    "model_state_outputs_rng_and_100_loss_gradient_references_exact": true,
+    "model_reference_count": 10,
+    "legacy_engine_metrics_bitwise_equal_batch_sizes": [
+      1,
+      7,
+      41
+    ]
+  },
+  "legacy_metric_fixture": "tests/fixtures/post3_peak_metrics.json; frozen post-#3 values, identical NPZ-compatible format",
+  "unchanged_model_and_train_threshold_source": true,
+  "experiment_configs_generated": false,
+  "real_data_training_started": false,
+  "experiments_started": false,
+  "scientific_peak_weight_chosen": false,
+  "val_or_test_tuning": false,
+  "instruction_7_or_8_implemented": false,
+  "test_scope": "Synthetic loss/backward and existing temporary fixture training only; new checkpoint/report tests mock epochs and optimizer execution."
+}

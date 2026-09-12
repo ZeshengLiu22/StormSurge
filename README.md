@@ -89,7 +89,7 @@ Use a named experiment to disable supervision deliberately:
 | `none` | body, excess, BCE | learned |
 | `no_gate_bce` | body, excess | learned through prediction loss |
 | `no_excess_loss` | body, BCE | learned |
-| `no_branch_supervision` | none; prediction loss only | learned |
+| `no_branch_supervision` | none; final-output objectives remain available | learned |
 | `fixed_gate` | body, excess | constant empirical TRAIN prevalence |
 
 Inactive weights are set to 0; active zero weights among the original body/excess/gate terms are restored to 1. These modes require a PACT dual head. Matched ready-to-run profiles are in [`configs/dual_ablations`](configs/dual_ablations), each sourcing Stable Dual. For example: `bash train.sh configs/dual_ablations/train_config_NCEP_Battery_Fixed_Gate.sh`.
@@ -97,6 +97,8 @@ Inactive weights are set to 0; active zero weights among the original body/exces
 Optional [physical excess peak-amplitude supervision](docs/EXCESS_AMPLITUDE.md) adds `EXCESS_AMP_LOSS_WEIGHT` (default `0`), `EXCESS_AMP_POOL` (default `max`) and `EXCESS_AMP_BETA` (default `20.0`, inverse meters for active smoothmax only). It converts each horizon to meters before pooling and uses the exact saved strict-event TRAIN `event_prior` as a fixed normalization. Zero weight skips the new computation; the optional weight is never forced to one. `no_excess_loss` and `no_branch_supervision` disable amplitude supervision too; `no_gate_bce` and `fixed_gate` can retain it. Architecture, inference and checkpoint selection remain unchanged. Dual diagnostic exports also report true-event excess-amplitude RMSE, MAE, bias, and predicted/target amplitude means.
 
 Optional [severity-shape excess decomposition](docs/SEVERITY_SHAPE.md) is selected with `EXCESS_FORMULATION="severity_shape"`; the default `direct` keeps the post-#2 head, state dict and predictions. The new head predicts physical severity in meters and a nonnegative temporal shape with per-window maximum one, then divides their product by each horizon's saved TRAIN `y_std`. It reuses #2 amplitude supervision and adds only `SHAPE_LOSS_WEIGHT` (default `0`, dimensionless loss normalized by the fixed TRAIN event prior) and `SEVERITY_SHAPE_EPS` (default `1e-6`). Original trajectory supervision remains available. Both excess-removing ablations also disable shape supervision. New checkpoints record the formulation/scale/epsilon, old checkpoints load as direct, and optional diagnostics export severity and shape only when present.
+
+Optional [final-output extreme peak supervision](docs/FINAL_PEAK.md) adds `PEAK_LOSS_WEIGHT` (default `0`), `PEAK_POOL` (default `max`) and `PEAK_POOL_BETA` (default `20.0`, inverse meters). It supervises the peak of the reconstructed final physical prediction on strict TRAIN events, normalized by the exact TRAIN event prior. It works for single, direct dual and severity-shape dual heads and remains active under every branch ablation. Its pool reuses the #2 helper on both truth and prediction. Weight zero skips the loss entirely; exact hard-peak metrics are reported regardless of weight.
 
 Normalization (`zscore`, `robust`, `mag`), augmentation, year splits/shuffling/future filtering, external test roots and station feature switches are retained. `mag` only checks its used upper percentile (`0 < x_p_hi <= 100`) and ignores `x_p_lo`; `robust` still requires `0 <= x_p_lo < x_p_hi <= 100`. The statistics formulas are unchanged. Training and inference strip surrounding whitespace from head and temporal names before recognizing their existing values and the `attn` alias. Forcing inputs use the five-channel `[u,v,p',lon,lat]` layout, with spatial-mean pressure removal during preprocessing.
 
@@ -110,7 +112,7 @@ Cosine with linear warmup remains the configured scheduler. The original `rop` o
 
 ## Metrics and artifacts
 
-Each epoch prints `[YYYY-MM-DD|HH:MM:SS]`, followed by exactly eight errors in the target's physical units (surge **meters**):
+Each epoch prints `[YYYY-MM-DD|HH:MM:SS]`, followed by the four historical trajectory errors below for Train and Val in physical units (surge **meters**), plus `peak_magnitude_rmse_top5` for each split:
 
 | Split | All windows | Top 5% peak windows |
 |---|---|---|
@@ -121,11 +123,13 @@ Top 5% means the `ceil(0.05 × N)` windows with the largest true maximum over th
 
 Train metrics reuse online training predictions, including dropout/augmentation and changing weights; Val uses eval mode. There is no second diagnostic validation pass. DDP validation restores DistributedSampler padding: Val All includes duplicate padding samples, as in the original trainer; Val Peak counts each sample once. Val All also retains the original FP32 batch means and FP64 weighted accumulation. Training uses padding for synchronized updates, but its reported metrics count each sample once.
 
-After training, rank 0 prints the best epoch's complete **Val and Test** metrics together. Val is read from that checkpoint, using the same metrics and sampler-padding convention that selected it; it is not the last epoch's Val. Test evaluates the reloaded best weights once over each actual test sample and exports those predictions. Reporting Val adds no forward pass or diagnostics.
+Direct peak metrics add 33 keys: eleven measures for `_all`, `_top5` and `_event` populations. They cover peak magnitude RMSE/MAE/bias, underprediction and overprediction fractions/conditional magnitudes, true-peak-point RMSE/MAE/bias, and timing MAE in forecast steps. They always use hard physical maxima and first-occurrence argmax ties. All new metrics deduplicate sample IDs, and share exactly the legacy top5 membership. Event metrics use the strict fixed TRAIN threshold. Empty or undefined populations are JSON `null`. Only seven scalars per window are retained; no full VAL prediction archive is added.
+
+After training, rank 0 prints the best epoch's concise **Val and Test** metrics together; full dictionaries are saved in JSON. Val is read from that checkpoint, using the same metrics and sampler-padding convention that selected it; it is not the last epoch's Val. Test evaluates the reloaded best weights once over each actual test sample and exports those predictions. Reporting Val adds no forward pass or diagnostics.
 
 A launcher run can contain many combinations. Each has a unique stem in its artifact filenames:
 
-- `metrics_<stem>.jsonl`: epoch plus eight errors; best model selection uses **Val All RMSE**.
+- `metrics_<stem>.jsonl`: epoch plus full Train/Val trajectory and peak metric dictionaries; best model selection uses **Val All RMSE**.
 - `best_<stem>.pth`: model config/weights, normalization, station features, exact split tags and training config.
 - `config_<stem>.json`: resolved Python arguments; `config_used.sh` retains the resolved shell sweep.
 - `summary_<stem>.json`: best epoch, training/validation-loop seconds, total `wall_seconds`, complete best-checkpoint `val` and `test` errors, and test scope.
@@ -146,6 +150,8 @@ python infer.py --ckpt /path/to/best_<stem>.pth \
 Set `CKPT_PATH` in the inference config to a newly trained checkpoint or glob. Inference loads only the current checkpoint format. The original model/head/temporal/feature arguments validate the saved architecture; they do not silently change it. Omitted station features are read from the checkpoint.
 
 The default evaluates exact held-out test tags saved during training. `--test_root_dir` evaluates all years in an external directory. `--scope all` is an explicit alternative for evaluating the supplied root, and `--years` filters the selected scope. The scope is recorded in `metrics.json`. `--save_npz` controls prediction export. Loader, AMP and TF32 options use their inference CLI settings.
+
+Ordinary inference reports all direct peak metrics in `metrics.json` and the per-year report for single and dual heads, including when `--save_npz` is absent. Fixed-event metrics use saved `dual_metadata.tau_phys`, falling back to `loss_thresholds.tau_phys` for old single checkpoints. If neither is saved, event metrics are `null`; no TEST threshold is fitted. The threshold and its source are included in reports.
 
 For dual checkpoints with TRAIN event metadata, `--dual_diagnostics` (shell: `DUAL_DIAGNOSTICS=1`) additionally writes `dual_diagnostics.npz` and `dual_diagnostics.json`. Arrays contain aligned `y_true`, `y_pred`, `tags`, `gate_probability`, `body_phys`, `excess_phys`, `contribution_phys`, `event`, and the TRAIN threshold/prior. JSON reports overall/per-year Brier, stepwise average precision, trapezoidal PR-AUC, reliability bins, event/non-event gate histograms and conditional errors. Undefined metrics and empty bins are `null`; no threshold is fitted on evaluation data. This explicit export also works without `--save_npz`; regular prediction files retain their original three fields, and epoch training/validation logs do not collect these diagnostics.
 
