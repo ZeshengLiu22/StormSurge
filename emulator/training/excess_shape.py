@@ -19,12 +19,17 @@ def excess_shape_target(target_norm, threshold, y_std, eps=1e-6):
     """Targets depend only on the existing TRAIN-threshold excess, never the body.
 
     a_target is always the hard maximum in meters, even when optional amplitude
-    supervision uses smoothmax. Shape is unitless; tiny amplitudes use eps meters.
+    supervision uses smoothmax. Every event is normalized by its positive
+    physical amplitude, giving a unit peak even below eps. Non-events stay zero.
+    The shared eps setting is validated but does not floor target amplitudes.
     """
     validate_excess_formulation("severity_shape", eps)
     event, physical = physical_excess_target(target_norm, threshold, y_std)
     amplitude = peak_pool(physical, "max")
-    shape = physical / amplitude[:, None].clamp_min(eps)
+    # Strict events have positive physical amplitude. A unit denominator for
+    # non-events avoids 0/0 while retaining their exactly zero physical target.
+    denominator = torch.where(event.squeeze(1), amplitude, torch.ones_like(amplitude))
+    shape = physical / denominator[:, None]
     return ExcessShapeTarget(event, physical, amplitude, shape)
 
 

@@ -320,14 +320,90 @@ class SeverityShapeTests(unittest.TestCase):
         repeated = excess_shape_target(z, output.threshold, stats['y_std'])
         torch.testing.assert_close(repeated.shape_target, target.shape_target, rtol=0, atol=0)
 
-    def test_near_zero_true_event_uses_safe_target_epsilon(self):
+    def test_near_zero_true_event_retains_unit_peak_target(self):
         z = torch.tensor([[1. + 1e-10, 1.]], dtype=torch.float64)
         target = excess_shape_target(z, torch.ones(1, 2, dtype=torch.float64), torch.tensor([.5, 4.]), eps=1e-6)
         self.assertTrue(target.event.item())
         self.assertGreater(target.a_target.item(), 0)
         self.assertLess(target.a_target.item(), 1e-6)
         self.assertTrue(torch.isfinite(target.shape_target).all())
-        torch.testing.assert_close(target.shape_target, target.r_target_phys / 1e-6)
+        torch.testing.assert_close(target.shape_target, torch.tensor([[1., 0.]], dtype=torch.float64), rtol=0, atol=0)
+        torch.testing.assert_close(target.a_target[:, None] * target.shape_target, target.r_target_phys, rtol=0, atol=0)
+
+    def test_tiny_target_shape_is_unit_peak_for_each_strict_event_independent_of_epsilon(self):
+        for dtype in (torch.float32, torch.float64):
+            z = torch.tensor([[.5, 2., 0.], [0., 0., 0.], [-1., -2., -3.], [8., 2., -1.]], dtype=dtype)
+            threshold = torch.zeros(1, 3, dtype=dtype)
+            scales = torch.tensor([2. ** -30, 2. ** -31, 2. ** -29], dtype=dtype)
+            expected = torch.tensor([[.5, 1., 0.], [0., 0., 0.], [0., 0., 0.], [1., .125, 0.]], dtype=dtype)
+            for eps in (1e-12, 1e-6, 1.):
+                with self.subTest(dtype=dtype, eps=eps):
+                    target = excess_shape_target(z, threshold, scales, eps=eps)
+                    self.assertEqual(target.event.flatten().tolist(), [True, False, False, True])
+                    torch.testing.assert_close(target.shape_target, expected, rtol=0, atol=0)
+                    torch.testing.assert_close(target.shape_target.max(dim=1).values,
+                                               target.event.flatten().to(dtype), rtol=0, atol=0)
+                    torch.testing.assert_close(target.a_target[:, None] * target.shape_target,
+                                               target.r_target_phys, rtol=0, atol=0)
+                    self.assertTrue(torch.isfinite(target.shape_target).all())
+
+    def test_tiny_target_shape_loss_and_gradients_match_rescaled_event_and_fixed_prior(self):
+        z = torch.tensor([[.5, 2., 0.], [0., -1., 0.]], dtype=torch.float64)
+        threshold = torch.zeros(1, 3, dtype=torch.float64)
+        results = []
+        for scale_factor in (2. ** -30, 1.):
+            prediction = torch.tensor([[.25, .5, .25], [100., 100., 100.]], dtype=torch.float64, requires_grad=True)
+            scale = torch.tensor([1., .5, 2.], dtype=torch.float64) * scale_factor
+            loss = excess_shape_loss(prediction, z, threshold, scale, event_prior=.25)
+            loss.backward()
+            self.assertTrue(torch.isfinite(loss))
+            self.assertTrue(torch.isfinite(prediction.grad).all())
+            torch.testing.assert_close(loss, torch.tensor(.25, dtype=torch.float64), rtol=0, atol=0)
+            torch.testing.assert_close(prediction.grad,
+                torch.tensor([[-1. / 3, -2. / 3, 1. / 3], [0., 0., 0.]], dtype=torch.float64))
+            results.append((loss.detach(), prediction.grad.clone()))
+            exact_target = torch.tensor([[.5, 1., 0.], [100., 100., 100.]], dtype=torch.float64, requires_grad=True)
+            zero_loss = excess_shape_loss(exact_target, z, threshold, scale, event_prior=.25)
+            self.assertEqual(zero_loss.item(), 0.)
+            zero_loss.backward()
+            torch.testing.assert_close(exact_target.grad, torch.zeros_like(exact_target), rtol=0, atol=0)
+        for tiny, regular in zip(*results):
+            torch.testing.assert_close(tiny, regular, rtol=0, atol=0)
+
+    def test_regular_target_shape_remains_exactly_equal_to_previous_normalization(self):
+        z = torch.tensor([[3., 1., 0.], [0., 2., 1.], [0., 0., 0.], [-1., -1., -1.]])
+        scale = torch.tensor([.25, 2., 5.])
+        threshold = torch.zeros(1, 3)
+        target = excess_shape_target(z, threshold, scale)
+        previous = target.r_target_phys / target.a_target[:, None].clamp_min(1e-6)
+        torch.testing.assert_close(target.shape_target, previous, rtol=0, atol=0)
+
+    def check_tiny_target_autocast(self, device, dtype):
+        z = torch.tensor([[.5, 2., 0.], [0., -1., 0.]], dtype=dtype, device=device)
+        threshold = torch.zeros(1, 3, dtype=dtype, device=device)
+        scales = torch.tensor([2. ** -30, 2. ** -31, 2. ** -29], device=device)
+        prediction = torch.tensor([[.25, .5, .25], [100., 100., 100.]], device=device, requires_grad=True)
+        with torch.autocast(device_type=device.type, dtype=dtype):
+            target = excess_shape_target(z, threshold, scales)
+            loss = excess_shape_loss(prediction, z, threshold, scales, event_prior=.25)
+        self.assertEqual(target.shape_target.dtype, torch.float32)
+        torch.testing.assert_close(target.shape_target,
+            torch.tensor([[.5, 1., 0.], [0., 0., 0.]], device=device), rtol=0, atol=0)
+        torch.testing.assert_close(target.a_target[:, None] * target.shape_target, target.r_target_phys, rtol=0, atol=0)
+        self.assertEqual(loss.item(), .25)
+        loss.backward()
+        self.assertTrue(torch.isfinite(prediction.grad).all())
+        torch.testing.assert_close(prediction.grad[1], torch.zeros(3, device=device), rtol=0, atol=0)
+
+    def test_tiny_target_shape_cpu_bfloat16_autocast(self):
+        self.check_tiny_target_autocast(torch.device('cpu'), torch.bfloat16)
+
+    @unittest.skipUnless(torch.cuda.is_available(), 'CUDA is unavailable')
+    def test_tiny_target_shape_cuda_fp16_bfloat16_autocast(self):
+        self.check_tiny_target_autocast(torch.device('cuda'), torch.float16)
+        if torch.cuda.is_bf16_supported():
+            self.check_tiny_target_autocast(torch.device('cuda'), torch.bfloat16)
+
 
     def test_shape_loss_uses_empirical_train_prior_not_tail_or_batch_frequency(self):
         store = SimpleNamespace(graphs=[SimpleNamespace(y=torch.tensor([float(y), -1.]))

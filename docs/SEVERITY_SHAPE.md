@@ -120,17 +120,31 @@ z            = (y_phys - y_mean) / y_std
 E_i          = any_h(z_i,h > threshold_h)         # strict TRAIN event
 r_target     = clamp_min(z - threshold, 0) * y_std
 a_target     = max_h(r_target)                   # meters; always hard max
-shape_target = r_target / clamp_min(a_target[:,None], eps)
+denominator  = where(E_i, a_target, 1)
+shape_target = r_target / denominator[:,None]
 L_shape      = mean_i[E_i * mean_h((shape_i,h - shape_target_i,h)^2)] / q_E
 ```
 
 The physical target is the same as `clamp_min(y_phys - tau_train, 0)` within
 floating-point tolerance. It never uses the predicted body. A valid event has
-positive amplitude; amplitudes below epsilon remain safe and their target
-shape maximum may be below one. Target construction retains its existing
-amplitude denominator floor in meters. The predicted dimensionless shape uses
-additive epsilon before max normalization; this correction does not change
-the target, strict event definition, or any loss weight/reduction.
+positive physical amplitude, so every event target is divided by its exact
+amplitude and has maximum one, including when `0 < a_target < eps`.
+Non-events use a denominator of one and retain an exactly zero target, avoiding
+`0/0`. Multiplying the unit-peak target by its amplitude reconstructs the
+physical excess. The predicted dimensionless shape continues to use additive
+epsilon before max normalization.
+
+This target-side correction follows the review of `be8a851`. It removes the
+previous target amplitude floor, which could force a tiny event's target peak
+below the prediction's unit peak. Ordinary events above the old floor and
+non-events retain their prior values. The shared `eps` argument remains
+validated, but does not set a minimum target amplitude. The strict event
+helper, physical target, event prior, loss weights and reduction are unchanged.
+Checkpoint selection continues to default to `overall` with auxiliary saving
+disabled; no transfer protocol or experiment configuration is changed.
+The [target normalization validation](audit/evidence/target_shape_validation.json)
+records **198 passing tests**, including CPU/CUDA autocast and DDP; the
+[complete test output](audit/evidence/target_shape_tests.txt) is retained.
 
 `q_E` remains exactly `fit_loss_thresholds(...)["event_prior"]`, the strict
 TRAIN `event_count / train_windows`, passed by `train.py` to `ForecastLoss`.

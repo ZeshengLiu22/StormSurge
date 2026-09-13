@@ -1,0 +1,52 @@
+{
+  "base_revision": "be8a85144d790e6fb848f3c82f2d6a2ea400319f",
+  "repository": "/home/exouser/media/volume/PACT-Data/StormSurge",
+  "change": "Normalize strict-event shape targets by their exact positive physical amplitude; use denominator one for non-events.",
+  "defect_reproduced_before_fix": true,
+  "regression_test": "test_near_zero_true_event_retains_unit_peak_target",
+  "full_suite": {
+    "tests": 198,
+    "seconds": 55.766,
+    "failures": 0,
+    "errors": 0,
+    "skips": 0,
+    "command": "GLOO_SOCKET_IFNAME=lo PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=/tmp/pact-validation-deps /media/volume/PACT-Data/conda_envs/torchpyg-cu124/bin/python -m unittest discover -s tests -v"
+  },
+  "focused_suite": {
+    "tests": 33,
+    "seconds": 4.99
+  },
+  "coverage": {
+    "tiny_fp64_event": true,
+    "fp32_and_fp64_unit_peaks": true,
+    "heterogeneous_horizon_scales": true,
+    "equality_and_below_threshold_non_events_zero": true,
+    "physical_target_reconstruction": true,
+    "exact_tiny_and_rescaled_shape_loss_and_gradients": true,
+    "exact_zero_loss_for_matching_unit_peak_target": true,
+    "event_free_gradients_zero": true,
+    "ordinary_target_values_exactly_unchanged": true,
+    "cpu_bfloat16": true,
+    "cuda_float16": true,
+    "cuda_bfloat16": true,
+    "existing_two_rank_gloo_passed": true
+  },
+  "defaults": {
+    "checkpoint_selection": "overall",
+    "save_aux_checkpoints": 0
+  },
+  "unchanged": {
+    "model_training_inference_and_experiment_file_count": 130,
+    "model_forward_and_parameter_reporting": true,
+    "checkpoint_selection_algorithm": true,
+    "strict_event_and_physical_target_helpers": true,
+    "loss_weights_and_reduction": true,
+    "config_files": true
+  },
+  "changed_source_and_tests_sha256": {
+    "emulator/training/excess_shape.py": "48daa170d972592aa6b583e7cb19f1381d03492b5a8944fb99e858ffbf50a78b",
+    "tests/test_severity_shape.py": "0002b19ffa517d7fc526e648f99f1d5a81ac3e24f43e72d934b9c8d4b0846485"
+  },
+  "new_experiment_configs": 0,
+  "real_training_experiments": 0
+}
