@@ -131,9 +131,9 @@ Tail loss 保持 `max(y) >= tail_threshold`；dual 的事件定义保持严格 `
 | `fixed_gate` | L_b、L_r | `p(X) ≡ q_E` |
 
 消融只将指定项的有效权重置0；仍启用的项不能通过权重0意外关闭。`no_branch_supervision` 将 `dual_loss` 置0。
-新增可选的[物理 excess 峰值幅度监督](docs/EXCESS_AMPLITUDE.md)默认权重为0，独立于上述三项，且不会被自动恢复为1。
+新增可选的[物理 excess 峰值幅度监督](EXCESS_AMPLITUDE.md)默认权重为0，独立于上述三项，且不会被自动恢复为1。
 `no_excess_loss` 和 `no_branch_supervision` 同时关闭轨迹 excess 与峰值幅度监督；`no_gate_bce`、`fixed_gate` 可保留正的幅度权重。
-可选的 [severity-shape 分解](docs/SEVERITY_SHAPE.md)用物理幅度 severity 与窗口内最大值为1的 shape 重建 excess，逐 horizon 除以 TRAIN `y_std` 后仍写入 `output.excess`。默认 `EXCESS_FORMULATION=direct` 完整保留现有头和旧 checkpoint 加载；新增 `SHAPE_LOSS_WEIGHT=0` 独立控制无量纲 shape 监督，两个 excess 消融也将其关闭。幅度监督继续复用 #2 的权重和目标。
+可选的 [severity-shape 分解](SEVERITY_SHAPE.md)用物理幅度 severity 与窗口内最大值为1的 shape 重建 excess，逐 horizon 除以 TRAIN `y_std` 后仍写入 `output.excess`。默认 `EXCESS_FORMULATION=direct` 完整保留现有头和旧 checkpoint 加载；新增 `SHAPE_LOSS_WEIGHT=0` 独立控制无量纲 shape 监督，两个 excess 消融也将其关闭。幅度监督继续复用 #2 的权重和目标。
 固定 gate 不建立可学习 gate MLP，原始 q_E 作为 buffer 保存，允许精确取0或1；没有 BCE 项。
 其参数预算少一个 gate MLP，应在结果中注明。其他消融保留相同 decoder 参数量和最终预测 loss。
 固定 gate 输出 `gate_logits=None`、`gate_probability=q_E`，其余模式返回有限 logits 和 sigmoid 概率。
@@ -206,8 +206,8 @@ TRAIN 阈值随 checkpoint 保存；推理只需要 X，完全不需要未来真
 因此，新 backbone 的 gamma 与本说明取消的旧 dual-head 整体系数 alpha 是不同位置的参数。
 单头和新双头共用同一套 backbone，比较时必须采用相同的稳定结构、确定性设置和训练预算。
 
-实现位置：[`heads.py`](emulator/models/heads.py) 负责前向，[`losses.py`](emulator/training/losses.py) 负责监督，
-[`stats.py`](emulator/data/stats.py) 拟合 TRAIN 阈值和事件比例。
+实现位置：[`heads.py`](../emulator/models/heads.py) 负责前向，[`losses.py`](../emulator/training/losses.py) 负责监督，
+[`stats.py`](../emulator/data/stats.py) 拟合 TRAIN 阈值和事件比例。
 
 推理增加 `--dual_diagnostics`（两个 shell launcher 使用 `DUAL_DIAGNOSTICS=1`）时，输出：
 

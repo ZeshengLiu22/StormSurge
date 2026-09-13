@@ -1,0 +1,1311 @@
+### experiment_config/P1_WeightProbe/train_config_NCEP_Battery_24h_dual_ex10_notail.sh
+=========================================
+Config file:   experiment_config/P1_WeightProbe/train_config_NCEP_Battery_24h_dual_ex10_notail.sh
+Host:          js2-h100-1
+Workdir:       /media/volume/PACT-Data/StormSurge
+Run name:      NCEP_Battery_24h_dual_ex10_notail
+Run dir:       /media/volume/PACT-Data/StormSurge/./All_Results/P1_WeightProbe/NCEP_Battery_24h_dual_ex10_notail__20000101_000000
+Run dir style: runname_timestamp
+Results root:  /media/volume/PACT-Data/StormSurge/./All_Results/P1_WeightProbe
+Python:        /media/volume/PACT-Data/conda_envs/torchpyg-cu124/bin/python (DO_CONDA=0)
+tmux:          USE_TMUX=1 SESSION_NAME=P1_Validation DRY_RUN=1
+LAUNCHER:      /media/volume/PACT-Data/conda_envs/torchpyg-cu124/bin/python -u
+Train script:  train.py
+Model:         perceiver3
+Encoder:       GraphSAGE
+CNN width:     29 (intermediate channels)
+Temporal:      Transformer
+Head:          dual
+Station feats: site_elevation=0 bathymetry=0 (PACT)
+Grad accum:    4 (nominal effective batch=1024)
+ROOT_DIR:      /media/share/PACT/Data/Grid4_New/NCEP/graphs
+TEST_ROOT_DIR: <none>
+TRAIN_DATA_TAG:NCEP
+TEST_DATA_TAG: NCEP
+LR_LIST:       5e-3
+Loss modes:    mse
+Loss weights:  body=1 excess=10 gate=0.5 tail=0 slope=0 (terms enabled by head/loss mode)
+H_LIST:        24
+Split:         train=0.6 val=0.2 shuffle_years=0 future_only=0 future_year_threshold=2030 seed=42
+MASTER_ADDR:   127.0.0.1
+MASTER_PORT:   29575
+SLURM_JOB_ID:  <none>
+CUDA_VISIBLE_DEVICES:  0
+num_gpus:      1
+Scheduler:     cosine (ROP_METRIC=val_rmse_phys)
+DISABLE_OOD:   1 (x_norm=zscore, x_clip=0, x_aug=0)
+DL:            workers=0 pin=0 pers=0 prefetch=0 mp=fork
+Precision:     AMP=1 AMP_DTYPE=bf16 TF32=1
+=========================================
+CMD: train.py --root_dir /media/share/PACT/Data/Grid4_New/NCEP/graphs --model perceiver3 --exceedance_percentile 95 --dual_ablation none --encoder_type GraphSAGE --cnn_intermediate_channel 29 --batch_size 256 --lr 5e-3 --epochs 300 --hidden_channels 128 --num_layers 2 --dropout 0.05 --head_dropout 0.05 --max_grad_norm 0 --deterministic 0 --history_hours 24 --seed 42 --train_ratio 0.6 --val_ratio 0.2 --shuffle_years 0 --future_only 0 --future_year_threshold 2030 --run_tag Battery_NCEPtoNCEP_perceiver3_ga4_nrh8_trh8_L2_ff4.0_td0.0_stable1v3_exceedance_gmwindow_eq95_danone_lossmse_hist24h_hid128_L2_bs256_lr5e-3_ep300_schcosine_xnzscore_20000101_000000 --output_dir /media/volume/PACT-Data/StormSurge/./All_Results/P1_WeightProbe/NCEP_Battery_24h_dual_ex10_notail__20000101_000000 --torch_threads 1 --num_workers 0 --prefetch_factor 0 --mp_context fork --x_norm zscore --x_p_lo 1.0 --x_p_hi 99.0 --x_nodes_per_graph 256 --x_clip 0 --x_aug 0 --x_aug_prob 0 --x_aug_scale 0 --x_aug_bias 0 --station_json_dir /media/volume/PACT-Data/StormSurge/station_json --use_site_elevation 0 --use_bathymetry 0 --station Battery --grad_accum_steps 4 --amp --amp_dtype bf16 --tf32 --head_type dual --dual_mode exceedance --tail_frac 0.05 --temporal_block Transformer --node_read_heads 8 --time_read_heads 8 --transformer_layers 2 --transformer_ff_mult 4.0 --transformer_dropout 0.0 --max_time_steps 32 --gate_mode window --dual_loss 1 --body_loss_weight 1 --excess_loss_weight 10 --gate_loss_weight 0.5 --scheduler cosine --warmup_epochs 5 --warmup_start_factor 0.1 --min_lr 1e-6 --loss_mode mse --wmse_q 95 --wmse_alpha 4.0 --wmse_s 0.10 --wmse_use_abs 1
+
+### experiment_config/P1_WeightProbe/train_config_NCEP_Battery_24h_dual_ex10_tail005.sh
+=========================================
+Config file:   experiment_config/P1_WeightProbe/train_config_NCEP_Battery_24h_dual_ex10_tail005.sh
+Host:          js2-h100-1
+Workdir:       /media/volume/PACT-Data/StormSurge
+Run name:      NCEP_Battery_24h_dual_ex10_tail005
+Run dir:       /media/volume/PACT-Data/StormSurge/./All_Results/P1_WeightProbe/NCEP_Battery_24h_dual_ex10_tail005__20000101_000000
+Run dir style: runname_timestamp
+Results root:  /media/volume/PACT-Data/StormSurge/./All_Results/P1_WeightProbe
+Python:        /media/volume/PACT-Data/conda_envs/torchpyg-cu124/bin/python (DO_CONDA=0)
+tmux:          USE_TMUX=1 SESSION_NAME=P1_Validation DRY_RUN=1
+LAUNCHER:      /media/volume/PACT-Data/conda_envs/torchpyg-cu124/bin/python -u
+Train script:  train.py
+Model:         perceiver3
+Encoder:       GraphSAGE
+CNN width:     29 (intermediate channels)
+Temporal:      Transformer
+Head:          dual
+Station feats: site_elevation=0 bathymetry=0 (PACT)
+Grad accum:    4 (nominal effective batch=1024)
+ROOT_DIR:      /media/share/PACT/Data/Grid4_New/NCEP/graphs
+TEST_ROOT_DIR: <none>
+TRAIN_DATA_TAG:NCEP
+TEST_DATA_TAG: NCEP
+LR_LIST:       5e-3
+Loss modes:    mse_tail
+Loss weights:  body=1 excess=10 gate=0.5 tail=0.05 slope=0 (terms enabled by head/loss mode)
+H_LIST:        24
+Split:         train=0.6 val=0.2 shuffle_years=0 future_only=0 future_year_threshold=2030 seed=42
+MASTER_ADDR:   127.0.0.1
+MASTER_PORT:   30098
+SLURM_JOB_ID:  <none>
+CUDA_VISIBLE_DEVICES:  0
+num_gpus:      1
+Scheduler:     cosine (ROP_METRIC=val_rmse_phys)
+DISABLE_OOD:   1 (x_norm=zscore, x_clip=0, x_aug=0)
+DL:            workers=0 pin=0 pers=0 prefetch=0 mp=fork
+Precision:     AMP=1 AMP_DTYPE=bf16 TF32=1
+=========================================
+CMD: train.py --root_dir /media/share/PACT/Data/Grid4_New/NCEP/graphs --model perceiver3 --exceedance_percentile 95 --dual_ablation none --encoder_type GraphSAGE --cnn_intermediate_channel 29 --batch_size 256 --lr 5e-3 --epochs 300 --hidden_channels 128 --num_layers 2 --dropout 0.05 --head_dropout 0.05 --max_grad_norm 0 --deterministic 0 --history_hours 24 --seed 42 --train_ratio 0.6 --val_ratio 0.2 --shuffle_years 0 --future_only 0 --future_year_threshold 2030 --run_tag Battery_NCEPtoNCEP_perceiver3_ga4_nrh8_trh8_L2_ff4.0_td0.0_stable1v3_exceedance_gmwindow_eq95_danone_lossmse_tail_tf0.05_tl0.05_hist24h_hid128_L2_bs256_lr5e-3_ep300_schcosine_xnzscore_20000101_000000 --output_dir /media/volume/PACT-Data/StormSurge/./All_Results/P1_WeightProbe/NCEP_Battery_24h_dual_ex10_tail005__20000101_000000 --torch_threads 1 --num_workers 0 --prefetch_factor 0 --mp_context fork --x_norm zscore --x_p_lo 1.0 --x_p_hi 99.0 --x_nodes_per_graph 256 --x_clip 0 --x_aug 0 --x_aug_prob 0 --x_aug_scale 0 --x_aug_bias 0 --station_json_dir /media/volume/PACT-Data/StormSurge/station_json --use_site_elevation 0 --use_bathymetry 0 --station Battery --grad_accum_steps 4 --amp --amp_dtype bf16 --tf32 --head_type dual --dual_mode exceedance --tail_frac 0.05 --temporal_block Transformer --node_read_heads 8 --time_read_heads 8 --transformer_layers 2 --transformer_ff_mult 4.0 --transformer_dropout 0.0 --max_time_steps 32 --gate_mode window --dual_loss 1 --body_loss_weight 1 --excess_loss_weight 10 --gate_loss_weight 0.5 --scheduler cosine --warmup_epochs 5 --warmup_start_factor 0.1 --min_lr 1e-6 --loss_mode mse_tail --wmse_q 95 --wmse_alpha 4.0 --wmse_s 0.10 --wmse_use_abs 1 --tail_frac 0.05 --tail_lambda 0.05
+
+### experiment_config/P1_WeightProbe/train_config_NCEP_Battery_24h_dual_ex10_tail010.sh
+=========================================
+Config file:   experiment_config/P1_WeightProbe/train_config_NCEP_Battery_24h_dual_ex10_tail010.sh
+Host:          js2-h100-1
+Workdir:       /media/volume/PACT-Data/StormSurge
+Run name:      NCEP_Battery_24h_dual_ex10_tail010
+Run dir:       /media/volume/PACT-Data/StormSurge/./All_Results/P1_WeightProbe/NCEP_Battery_24h_dual_ex10_tail010__20000101_000000
+Run dir style: runname_timestamp
+Results root:  /media/volume/PACT-Data/StormSurge/./All_Results/P1_WeightProbe
+Python:        /media/volume/PACT-Data/conda_envs/torchpyg-cu124/bin/python (DO_CONDA=0)
+tmux:          USE_TMUX=1 SESSION_NAME=P1_Validation DRY_RUN=1
+LAUNCHER:      /media/volume/PACT-Data/conda_envs/torchpyg-cu124/bin/python -u
+Train script:  train.py
+Model:         perceiver3
+Encoder:       GraphSAGE
+CNN width:     29 (intermediate channels)
+Temporal:      Transformer
+Head:          dual
+Station feats: site_elevation=0 bathymetry=0 (PACT)
+Grad accum:    4 (nominal effective batch=1024)
+ROOT_DIR:      /media/share/PACT/Data/Grid4_New/NCEP/graphs
+TEST_ROOT_DIR: <none>
+TRAIN_DATA_TAG:NCEP
+TEST_DATA_TAG: NCEP
+LR_LIST:       5e-3
+Loss modes:    mse_tail
+Loss weights:  body=1 excess=10 gate=0.5 tail=0.10 slope=0 (terms enabled by head/loss mode)
+H_LIST:        24
+Split:         train=0.6 val=0.2 shuffle_years=0 future_only=0 future_year_threshold=2030 seed=42
+MASTER_ADDR:   127.0.0.1
+MASTER_PORT:   29638
+SLURM_JOB_ID:  <none>
+CUDA_VISIBLE_DEVICES:  0
+num_gpus:      1
+Scheduler:     cosine (ROP_METRIC=val_rmse_phys)
+DISABLE_OOD:   1 (x_norm=zscore, x_clip=0, x_aug=0)
+DL:            workers=0 pin=0 pers=0 prefetch=0 mp=fork
+Precision:     AMP=1 AMP_DTYPE=bf16 TF32=1
+=========================================
+CMD: train.py --root_dir /media/share/PACT/Data/Grid4_New/NCEP/graphs --model perceiver3 --exceedance_percentile 95 --dual_ablation none --encoder_type GraphSAGE --cnn_intermediate_channel 29 --batch_size 256 --lr 5e-3 --epochs 300 --hidden_channels 128 --num_layers 2 --dropout 0.05 --head_dropout 0.05 --max_grad_norm 0 --deterministic 0 --history_hours 24 --seed 42 --train_ratio 0.6 --val_ratio 0.2 --shuffle_years 0 --future_only 0 --future_year_threshold 2030 --run_tag Battery_NCEPtoNCEP_perceiver3_ga4_nrh8_trh8_L2_ff4.0_td0.0_stable1v3_exceedance_gmwindow_eq95_danone_lossmse_tail_tf0.05_tl0.10_hist24h_hid128_L2_bs256_lr5e-3_ep300_schcosine_xnzscore_20000101_000000 --output_dir /media/volume/PACT-Data/StormSurge/./All_Results/P1_WeightProbe/NCEP_Battery_24h_dual_ex10_tail010__20000101_000000 --torch_threads 1 --num_workers 0 --prefetch_factor 0 --mp_context fork --x_norm zscore --x_p_lo 1.0 --x_p_hi 99.0 --x_nodes_per_graph 256 --x_clip 0 --x_aug 0 --x_aug_prob 0 --x_aug_scale 0 --x_aug_bias 0 --station_json_dir /media/volume/PACT-Data/StormSurge/station_json --use_site_elevation 0 --use_bathymetry 0 --station Battery --grad_accum_steps 4 --amp --amp_dtype bf16 --tf32 --head_type dual --dual_mode exceedance --tail_frac 0.05 --temporal_block Transformer --node_read_heads 8 --time_read_heads 8 --transformer_layers 2 --transformer_ff_mult 4.0 --transformer_dropout 0.0 --max_time_steps 32 --gate_mode window --dual_loss 1 --body_loss_weight 1 --excess_loss_weight 10 --gate_loss_weight 0.5 --scheduler cosine --warmup_epochs 5 --warmup_start_factor 0.1 --min_lr 1e-6 --loss_mode mse_tail --wmse_q 95 --wmse_alpha 4.0 --wmse_s 0.10 --wmse_use_abs 1 --tail_frac 0.05 --tail_lambda 0.10
+
+### experiment_config/P1_WeightProbe/train_config_NCEP_Battery_24h_dual_ex2_tail005.sh
+=========================================
+Config file:   experiment_config/P1_WeightProbe/train_config_NCEP_Battery_24h_dual_ex2_tail005.sh
+Host:          js2-h100-1
+Workdir:       /media/volume/PACT-Data/StormSurge
+Run name:      NCEP_Battery_24h_dual_ex2_tail005
+Run dir:       /media/volume/PACT-Data/StormSurge/./All_Results/P1_WeightProbe/NCEP_Battery_24h_dual_ex2_tail005__20000101_000000
+Run dir style: runname_timestamp
+Results root:  /media/volume/PACT-Data/StormSurge/./All_Results/P1_WeightProbe
+Python:        /media/volume/PACT-Data/conda_envs/torchpyg-cu124/bin/python (DO_CONDA=0)
+tmux:          USE_TMUX=1 SESSION_NAME=P1_Validation DRY_RUN=1
+LAUNCHER:      /media/volume/PACT-Data/conda_envs/torchpyg-cu124/bin/python -u
+Train script:  train.py
+Model:         perceiver3
+Encoder:       GraphSAGE
+CNN width:     29 (intermediate channels)
+Temporal:      Transformer
+Head:          dual
+Station feats: site_elevation=0 bathymetry=0 (PACT)
+Grad accum:    4 (nominal effective batch=1024)
+ROOT_DIR:      /media/share/PACT/Data/Grid4_New/NCEP/graphs
+TEST_ROOT_DIR: <none>
+TRAIN_DATA_TAG:NCEP
+TEST_DATA_TAG: NCEP
+LR_LIST:       5e-3
+Loss modes:    mse_tail
+Loss weights:  body=1 excess=2 gate=0.5 tail=0.05 slope=0 (terms enabled by head/loss mode)
+H_LIST:        24
+Split:         train=0.6 val=0.2 shuffle_years=0 future_only=0 future_year_threshold=2030 seed=42
+MASTER_ADDR:   127.0.0.1
+MASTER_PORT:   29727
+SLURM_JOB_ID:  <none>
+CUDA_VISIBLE_DEVICES:  0
+num_gpus:      1
+Scheduler:     cosine (ROP_METRIC=val_rmse_phys)
+DISABLE_OOD:   1 (x_norm=zscore, x_clip=0, x_aug=0)
+DL:            workers=0 pin=0 pers=0 prefetch=0 mp=fork
+Precision:     AMP=1 AMP_DTYPE=bf16 TF32=1
+=========================================
+CMD: train.py --root_dir /media/share/PACT/Data/Grid4_New/NCEP/graphs --model perceiver3 --exceedance_percentile 95 --dual_ablation none --encoder_type GraphSAGE --cnn_intermediate_channel 29 --batch_size 256 --lr 5e-3 --epochs 300 --hidden_channels 128 --num_layers 2 --dropout 0.05 --head_dropout 0.05 --max_grad_norm 0 --deterministic 0 --history_hours 24 --seed 42 --train_ratio 0.6 --val_ratio 0.2 --shuffle_years 0 --future_only 0 --future_year_threshold 2030 --run_tag Battery_NCEPtoNCEP_perceiver3_ga4_nrh8_trh8_L2_ff4.0_td0.0_stable1v3_exceedance_gmwindow_eq95_danone_lossmse_tail_tf0.05_tl0.05_hist24h_hid128_L2_bs256_lr5e-3_ep300_schcosine_xnzscore_20000101_000000 --output_dir /media/volume/PACT-Data/StormSurge/./All_Results/P1_WeightProbe/NCEP_Battery_24h_dual_ex2_tail005__20000101_000000 --torch_threads 1 --num_workers 0 --prefetch_factor 0 --mp_context fork --x_norm zscore --x_p_lo 1.0 --x_p_hi 99.0 --x_nodes_per_graph 256 --x_clip 0 --x_aug 0 --x_aug_prob 0 --x_aug_scale 0 --x_aug_bias 0 --station_json_dir /media/volume/PACT-Data/StormSurge/station_json --use_site_elevation 0 --use_bathymetry 0 --station Battery --grad_accum_steps 4 --amp --amp_dtype bf16 --tf32 --head_type dual --dual_mode exceedance --tail_frac 0.05 --temporal_block Transformer --node_read_heads 8 --time_read_heads 8 --transformer_layers 2 --transformer_ff_mult 4.0 --transformer_dropout 0.0 --max_time_steps 32 --gate_mode window --dual_loss 1 --body_loss_weight 1 --excess_loss_weight 2 --gate_loss_weight 0.5 --scheduler cosine --warmup_epochs 5 --warmup_start_factor 0.1 --min_lr 1e-6 --loss_mode mse_tail --wmse_q 95 --wmse_alpha 4.0 --wmse_s 0.10 --wmse_use_abs 1 --tail_frac 0.05 --tail_lambda 0.05
+
+### experiment_config/P1_WeightProbe/train_config_NCEP_Battery_24h_dual_ex2_tail010.sh
+=========================================
+Config file:   experiment_config/P1_WeightProbe/train_config_NCEP_Battery_24h_dual_ex2_tail010.sh
+Host:          js2-h100-1
+Workdir:       /media/volume/PACT-Data/StormSurge
+Run name:      NCEP_Battery_24h_dual_ex2_tail010
+Run dir:       /media/volume/PACT-Data/StormSurge/./All_Results/P1_WeightProbe/NCEP_Battery_24h_dual_ex2_tail010__20000101_000000
+Run dir style: runname_timestamp
+Results root:  /media/volume/PACT-Data/StormSurge/./All_Results/P1_WeightProbe
+Python:        /media/volume/PACT-Data/conda_envs/torchpyg-cu124/bin/python (DO_CONDA=0)
+tmux:          USE_TMUX=1 SESSION_NAME=P1_Validation DRY_RUN=1
+LAUNCHER:      /media/volume/PACT-Data/conda_envs/torchpyg-cu124/bin/python -u
+Train script:  train.py
+Model:         perceiver3
+Encoder:       GraphSAGE
+CNN width:     29 (intermediate channels)
+Temporal:      Transformer
+Head:          dual
+Station feats: site_elevation=0 bathymetry=0 (PACT)
+Grad accum:    4 (nominal effective batch=1024)
+ROOT_DIR:      /media/share/PACT/Data/Grid4_New/NCEP/graphs
+TEST_ROOT_DIR: <none>
+TRAIN_DATA_TAG:NCEP
+TEST_DATA_TAG: NCEP
+LR_LIST:       5e-3
+Loss modes:    mse_tail
+Loss weights:  body=1 excess=2 gate=0.5 tail=0.10 slope=0 (terms enabled by head/loss mode)
+H_LIST:        24
+Split:         train=0.6 val=0.2 shuffle_years=0 future_only=0 future_year_threshold=2030 seed=42
+MASTER_ADDR:   127.0.0.1
+MASTER_PORT:   30452
+SLURM_JOB_ID:  <none>
+CUDA_VISIBLE_DEVICES:  0
+num_gpus:      1
+Scheduler:     cosine (ROP_METRIC=val_rmse_phys)
+DISABLE_OOD:   1 (x_norm=zscore, x_clip=0, x_aug=0)
+DL:            workers=0 pin=0 pers=0 prefetch=0 mp=fork
+Precision:     AMP=1 AMP_DTYPE=bf16 TF32=1
+=========================================
+CMD: train.py --root_dir /media/share/PACT/Data/Grid4_New/NCEP/graphs --model perceiver3 --exceedance_percentile 95 --dual_ablation none --encoder_type GraphSAGE --cnn_intermediate_channel 29 --batch_size 256 --lr 5e-3 --epochs 300 --hidden_channels 128 --num_layers 2 --dropout 0.05 --head_dropout 0.05 --max_grad_norm 0 --deterministic 0 --history_hours 24 --seed 42 --train_ratio 0.6 --val_ratio 0.2 --shuffle_years 0 --future_only 0 --future_year_threshold 2030 --run_tag Battery_NCEPtoNCEP_perceiver3_ga4_nrh8_trh8_L2_ff4.0_td0.0_stable1v3_exceedance_gmwindow_eq95_danone_lossmse_tail_tf0.05_tl0.10_hist24h_hid128_L2_bs256_lr5e-3_ep300_schcosine_xnzscore_20000101_000000 --output_dir /media/volume/PACT-Data/StormSurge/./All_Results/P1_WeightProbe/NCEP_Battery_24h_dual_ex2_tail010__20000101_000000 --torch_threads 1 --num_workers 0 --prefetch_factor 0 --mp_context fork --x_norm zscore --x_p_lo 1.0 --x_p_hi 99.0 --x_nodes_per_graph 256 --x_clip 0 --x_aug 0 --x_aug_prob 0 --x_aug_scale 0 --x_aug_bias 0 --station_json_dir /media/volume/PACT-Data/StormSurge/station_json --use_site_elevation 0 --use_bathymetry 0 --station Battery --grad_accum_steps 4 --amp --amp_dtype bf16 --tf32 --head_type dual --dual_mode exceedance --tail_frac 0.05 --temporal_block Transformer --node_read_heads 8 --time_read_heads 8 --transformer_layers 2 --transformer_ff_mult 4.0 --transformer_dropout 0.0 --max_time_steps 32 --gate_mode window --dual_loss 1 --body_loss_weight 1 --excess_loss_weight 2 --gate_loss_weight 0.5 --scheduler cosine --warmup_epochs 5 --warmup_start_factor 0.1 --min_lr 1e-6 --loss_mode mse_tail --wmse_q 95 --wmse_alpha 4.0 --wmse_s 0.10 --wmse_use_abs 1 --tail_frac 0.05 --tail_lambda 0.10
+
+### experiment_config/P1_WeightProbe/train_config_NCEP_Battery_24h_dual_ex5_notail.sh
+=========================================
+Config file:   experiment_config/P1_WeightProbe/train_config_NCEP_Battery_24h_dual_ex5_notail.sh
+Host:          js2-h100-1
+Workdir:       /media/volume/PACT-Data/StormSurge
+Run name:      NCEP_Battery_24h_dual_ex5_notail
+Run dir:       /media/volume/PACT-Data/StormSurge/./All_Results/P1_WeightProbe/NCEP_Battery_24h_dual_ex5_notail__20000101_000000
+Run dir style: runname_timestamp
+Results root:  /media/volume/PACT-Data/StormSurge/./All_Results/P1_WeightProbe
+Python:        /media/volume/PACT-Data/conda_envs/torchpyg-cu124/bin/python (DO_CONDA=0)
+tmux:          USE_TMUX=1 SESSION_NAME=P1_Validation DRY_RUN=1
+LAUNCHER:      /media/volume/PACT-Data/conda_envs/torchpyg-cu124/bin/python -u
+Train script:  train.py
+Model:         perceiver3
+Encoder:       GraphSAGE
+CNN width:     29 (intermediate channels)
+Temporal:      Transformer
+Head:          dual
+Station feats: site_elevation=0 bathymetry=0 (PACT)
+Grad accum:    4 (nominal effective batch=1024)
+ROOT_DIR:      /media/share/PACT/Data/Grid4_New/NCEP/graphs
+TEST_ROOT_DIR: <none>
+TRAIN_DATA_TAG:NCEP
+TEST_DATA_TAG: NCEP
+LR_LIST:       5e-3
+Loss modes:    mse
+Loss weights:  body=1 excess=5 gate=0.5 tail=0 slope=0 (terms enabled by head/loss mode)
+H_LIST:        24
+Split:         train=0.6 val=0.2 shuffle_years=0 future_only=0 future_year_threshold=2030 seed=42
+MASTER_ADDR:   127.0.0.1
+MASTER_PORT:   29653
+SLURM_JOB_ID:  <none>
+CUDA_VISIBLE_DEVICES:  0
+num_gpus:      1
+Scheduler:     cosine (ROP_METRIC=val_rmse_phys)
+DISABLE_OOD:   1 (x_norm=zscore, x_clip=0, x_aug=0)
+DL:            workers=0 pin=0 pers=0 prefetch=0 mp=fork
+Precision:     AMP=1 AMP_DTYPE=bf16 TF32=1
+=========================================
+CMD: train.py --root_dir /media/share/PACT/Data/Grid4_New/NCEP/graphs --model perceiver3 --exceedance_percentile 95 --dual_ablation none --encoder_type GraphSAGE --cnn_intermediate_channel 29 --batch_size 256 --lr 5e-3 --epochs 300 --hidden_channels 128 --num_layers 2 --dropout 0.05 --head_dropout 0.05 --max_grad_norm 0 --deterministic 0 --history_hours 24 --seed 42 --train_ratio 0.6 --val_ratio 0.2 --shuffle_years 0 --future_only 0 --future_year_threshold 2030 --run_tag Battery_NCEPtoNCEP_perceiver3_ga4_nrh8_trh8_L2_ff4.0_td0.0_stable1v3_exceedance_gmwindow_eq95_danone_lossmse_hist24h_hid128_L2_bs256_lr5e-3_ep300_schcosine_xnzscore_20000101_000000 --output_dir /media/volume/PACT-Data/StormSurge/./All_Results/P1_WeightProbe/NCEP_Battery_24h_dual_ex5_notail__20000101_000000 --torch_threads 1 --num_workers 0 --prefetch_factor 0 --mp_context fork --x_norm zscore --x_p_lo 1.0 --x_p_hi 99.0 --x_nodes_per_graph 256 --x_clip 0 --x_aug 0 --x_aug_prob 0 --x_aug_scale 0 --x_aug_bias 0 --station_json_dir /media/volume/PACT-Data/StormSurge/station_json --use_site_elevation 0 --use_bathymetry 0 --station Battery --grad_accum_steps 4 --amp --amp_dtype bf16 --tf32 --head_type dual --dual_mode exceedance --tail_frac 0.05 --temporal_block Transformer --node_read_heads 8 --time_read_heads 8 --transformer_layers 2 --transformer_ff_mult 4.0 --transformer_dropout 0.0 --max_time_steps 32 --gate_mode window --dual_loss 1 --body_loss_weight 1 --excess_loss_weight 5 --gate_loss_weight 0.5 --scheduler cosine --warmup_epochs 5 --warmup_start_factor 0.1 --min_lr 1e-6 --loss_mode mse --wmse_q 95 --wmse_alpha 4.0 --wmse_s 0.10 --wmse_use_abs 1
+
+### experiment_config/P1_WeightProbe/train_config_NCEP_Battery_24h_dual_ex5_tail005.sh
+=========================================
+Config file:   experiment_config/P1_WeightProbe/train_config_NCEP_Battery_24h_dual_ex5_tail005.sh
+Host:          js2-h100-1
+Workdir:       /media/volume/PACT-Data/StormSurge
+Run name:      NCEP_Battery_24h_dual_ex5_tail005
+Run dir:       /media/volume/PACT-Data/StormSurge/./All_Results/P1_WeightProbe/NCEP_Battery_24h_dual_ex5_tail005__20000101_000000
+Run dir style: runname_timestamp
+Results root:  /media/volume/PACT-Data/StormSurge/./All_Results/P1_WeightProbe
+Python:        /media/volume/PACT-Data/conda_envs/torchpyg-cu124/bin/python (DO_CONDA=0)
+tmux:          USE_TMUX=1 SESSION_NAME=P1_Validation DRY_RUN=1
+LAUNCHER:      /media/volume/PACT-Data/conda_envs/torchpyg-cu124/bin/python -u
+Train script:  train.py
+Model:         perceiver3
+Encoder:       GraphSAGE
+CNN width:     29 (intermediate channels)
+Temporal:      Transformer
+Head:          dual
+Station feats: site_elevation=0 bathymetry=0 (PACT)
+Grad accum:    4 (nominal effective batch=1024)
+ROOT_DIR:      /media/share/PACT/Data/Grid4_New/NCEP/graphs
+TEST_ROOT_DIR: <none>
+TRAIN_DATA_TAG:NCEP
+TEST_DATA_TAG: NCEP
+LR_LIST:       5e-3
+Loss modes:    mse_tail
+Loss weights:  body=1 excess=5 gate=0.5 tail=0.05 slope=0 (terms enabled by head/loss mode)
+H_LIST:        24
+Split:         train=0.6 val=0.2 shuffle_years=0 future_only=0 future_year_threshold=2030 seed=42
+MASTER_ADDR:   127.0.0.1
+MASTER_PORT:   30109
+SLURM_JOB_ID:  <none>
+CUDA_VISIBLE_DEVICES:  0
+num_gpus:      1
+Scheduler:     cosine (ROP_METRIC=val_rmse_phys)
+DISABLE_OOD:   1 (x_norm=zscore, x_clip=0, x_aug=0)
+DL:            workers=0 pin=0 pers=0 prefetch=0 mp=fork
+Precision:     AMP=1 AMP_DTYPE=bf16 TF32=1
+=========================================
+CMD: train.py --root_dir /media/share/PACT/Data/Grid4_New/NCEP/graphs --model perceiver3 --exceedance_percentile 95 --dual_ablation none --encoder_type GraphSAGE --cnn_intermediate_channel 29 --batch_size 256 --lr 5e-3 --epochs 300 --hidden_channels 128 --num_layers 2 --dropout 0.05 --head_dropout 0.05 --max_grad_norm 0 --deterministic 0 --history_hours 24 --seed 42 --train_ratio 0.6 --val_ratio 0.2 --shuffle_years 0 --future_only 0 --future_year_threshold 2030 --run_tag Battery_NCEPtoNCEP_perceiver3_ga4_nrh8_trh8_L2_ff4.0_td0.0_stable1v3_exceedance_gmwindow_eq95_danone_lossmse_tail_tf0.05_tl0.05_hist24h_hid128_L2_bs256_lr5e-3_ep300_schcosine_xnzscore_20000101_000000 --output_dir /media/volume/PACT-Data/StormSurge/./All_Results/P1_WeightProbe/NCEP_Battery_24h_dual_ex5_tail005__20000101_000000 --torch_threads 1 --num_workers 0 --prefetch_factor 0 --mp_context fork --x_norm zscore --x_p_lo 1.0 --x_p_hi 99.0 --x_nodes_per_graph 256 --x_clip 0 --x_aug 0 --x_aug_prob 0 --x_aug_scale 0 --x_aug_bias 0 --station_json_dir /media/volume/PACT-Data/StormSurge/station_json --use_site_elevation 0 --use_bathymetry 0 --station Battery --grad_accum_steps 4 --amp --amp_dtype bf16 --tf32 --head_type dual --dual_mode exceedance --tail_frac 0.05 --temporal_block Transformer --node_read_heads 8 --time_read_heads 8 --transformer_layers 2 --transformer_ff_mult 4.0 --transformer_dropout 0.0 --max_time_steps 32 --gate_mode window --dual_loss 1 --body_loss_weight 1 --excess_loss_weight 5 --gate_loss_weight 0.5 --scheduler cosine --warmup_epochs 5 --warmup_start_factor 0.1 --min_lr 1e-6 --loss_mode mse_tail --wmse_q 95 --wmse_alpha 4.0 --wmse_s 0.10 --wmse_use_abs 1 --tail_frac 0.05 --tail_lambda 0.05
+
+### experiment_config/P1_WeightProbe/train_config_NCEP_Battery_24h_dual_ex5_tail010.sh
+=========================================
+Config file:   experiment_config/P1_WeightProbe/train_config_NCEP_Battery_24h_dual_ex5_tail010.sh
+Host:          js2-h100-1
+Workdir:       /media/volume/PACT-Data/StormSurge
+Run name:      NCEP_Battery_24h_dual_ex5_tail010
+Run dir:       /media/volume/PACT-Data/StormSurge/./All_Results/P1_WeightProbe/NCEP_Battery_24h_dual_ex5_tail010__20000101_000000
+Run dir style: runname_timestamp
+Results root:  /media/volume/PACT-Data/StormSurge/./All_Results/P1_WeightProbe
+Python:        /media/volume/PACT-Data/conda_envs/torchpyg-cu124/bin/python (DO_CONDA=0)
+tmux:          USE_TMUX=1 SESSION_NAME=P1_Validation DRY_RUN=1
+LAUNCHER:      /media/volume/PACT-Data/conda_envs/torchpyg-cu124/bin/python -u
+Train script:  train.py
+Model:         perceiver3
+Encoder:       GraphSAGE
+CNN width:     29 (intermediate channels)
+Temporal:      Transformer
+Head:          dual
+Station feats: site_elevation=0 bathymetry=0 (PACT)
+Grad accum:    4 (nominal effective batch=1024)
+ROOT_DIR:      /media/share/PACT/Data/Grid4_New/NCEP/graphs
+TEST_ROOT_DIR: <none>
+TRAIN_DATA_TAG:NCEP
+TEST_DATA_TAG: NCEP
+LR_LIST:       5e-3
+Loss modes:    mse_tail
+Loss weights:  body=1 excess=5 gate=0.5 tail=0.10 slope=0 (terms enabled by head/loss mode)
+H_LIST:        24
+Split:         train=0.6 val=0.2 shuffle_years=0 future_only=0 future_year_threshold=2030 seed=42
+MASTER_ADDR:   127.0.0.1
+MASTER_PORT:   30074
+SLURM_JOB_ID:  <none>
+CUDA_VISIBLE_DEVICES:  0
+num_gpus:      1
+Scheduler:     cosine (ROP_METRIC=val_rmse_phys)
+DISABLE_OOD:   1 (x_norm=zscore, x_clip=0, x_aug=0)
+DL:            workers=0 pin=0 pers=0 prefetch=0 mp=fork
+Precision:     AMP=1 AMP_DTYPE=bf16 TF32=1
+=========================================
+CMD: train.py --root_dir /media/share/PACT/Data/Grid4_New/NCEP/graphs --model perceiver3 --exceedance_percentile 95 --dual_ablation none --encoder_type GraphSAGE --cnn_intermediate_channel 29 --batch_size 256 --lr 5e-3 --epochs 300 --hidden_channels 128 --num_layers 2 --dropout 0.05 --head_dropout 0.05 --max_grad_norm 0 --deterministic 0 --history_hours 24 --seed 42 --train_ratio 0.6 --val_ratio 0.2 --shuffle_years 0 --future_only 0 --future_year_threshold 2030 --run_tag Battery_NCEPtoNCEP_perceiver3_ga4_nrh8_trh8_L2_ff4.0_td0.0_stable1v3_exceedance_gmwindow_eq95_danone_lossmse_tail_tf0.05_tl0.10_hist24h_hid128_L2_bs256_lr5e-3_ep300_schcosine_xnzscore_20000101_000000 --output_dir /media/volume/PACT-Data/StormSurge/./All_Results/P1_WeightProbe/NCEP_Battery_24h_dual_ex5_tail010__20000101_000000 --torch_threads 1 --num_workers 0 --prefetch_factor 0 --mp_context fork --x_norm zscore --x_p_lo 1.0 --x_p_hi 99.0 --x_nodes_per_graph 256 --x_clip 0 --x_aug 0 --x_aug_prob 0 --x_aug_scale 0 --x_aug_bias 0 --station_json_dir /media/volume/PACT-Data/StormSurge/station_json --use_site_elevation 0 --use_bathymetry 0 --station Battery --grad_accum_steps 4 --amp --amp_dtype bf16 --tf32 --head_type dual --dual_mode exceedance --tail_frac 0.05 --temporal_block Transformer --node_read_heads 8 --time_read_heads 8 --transformer_layers 2 --transformer_ff_mult 4.0 --transformer_dropout 0.0 --max_time_steps 32 --gate_mode window --dual_loss 1 --body_loss_weight 1 --excess_loss_weight 5 --gate_loss_weight 0.5 --scheduler cosine --warmup_epochs 5 --warmup_start_factor 0.1 --min_lr 1e-6 --loss_mode mse_tail --wmse_q 95 --wmse_alpha 4.0 --wmse_s 0.10 --wmse_use_abs 1 --tail_frac 0.05 --tail_lambda 0.10
+
+### experiment_config/P1_WeightProbe/train_config_NCEP_Boston_24h_dual_ex10_notail.sh
+=========================================
+Config file:   experiment_config/P1_WeightProbe/train_config_NCEP_Boston_24h_dual_ex10_notail.sh
+Host:          js2-h100-1
+Workdir:       /media/volume/PACT-Data/StormSurge
+Run name:      NCEP_Boston_24h_dual_ex10_notail
+Run dir:       /media/volume/PACT-Data/StormSurge/./All_Results/P1_WeightProbe/NCEP_Boston_24h_dual_ex10_notail__20000101_000000
+Run dir style: runname_timestamp
+Results root:  /media/volume/PACT-Data/StormSurge/./All_Results/P1_WeightProbe
+Python:        /media/volume/PACT-Data/conda_envs/torchpyg-cu124/bin/python (DO_CONDA=0)
+tmux:          USE_TMUX=1 SESSION_NAME=P1_Validation DRY_RUN=1
+LAUNCHER:      /media/volume/PACT-Data/conda_envs/torchpyg-cu124/bin/python -u
+Train script:  train.py
+Model:         perceiver3
+Encoder:       GraphSAGE
+CNN width:     29 (intermediate channels)
+Temporal:      Transformer
+Head:          dual
+Station feats: site_elevation=0 bathymetry=0 (PACT)
+Grad accum:    4 (nominal effective batch=1024)
+ROOT_DIR:      /media/share/PACT/Data/Grid4_New/NCEP/graphs
+TEST_ROOT_DIR: <none>
+TRAIN_DATA_TAG:NCEP
+TEST_DATA_TAG: NCEP
+LR_LIST:       5e-3
+Loss modes:    mse
+Loss weights:  body=1 excess=10 gate=0.5 tail=0 slope=0 (terms enabled by head/loss mode)
+H_LIST:        24
+Split:         train=0.6 val=0.2 shuffle_years=0 future_only=0 future_year_threshold=2030 seed=42
+MASTER_ADDR:   127.0.0.1
+MASTER_PORT:   30024
+SLURM_JOB_ID:  <none>
+CUDA_VISIBLE_DEVICES:  0
+num_gpus:      1
+Scheduler:     cosine (ROP_METRIC=val_rmse_phys)
+DISABLE_OOD:   1 (x_norm=zscore, x_clip=0, x_aug=0)
+DL:            workers=0 pin=0 pers=0 prefetch=0 mp=fork
+Precision:     AMP=1 AMP_DTYPE=bf16 TF32=1
+=========================================
+CMD: train.py --root_dir /media/share/PACT/Data/Grid4_New/NCEP/graphs --model perceiver3 --exceedance_percentile 95 --dual_ablation none --encoder_type GraphSAGE --cnn_intermediate_channel 29 --batch_size 256 --lr 5e-3 --epochs 300 --hidden_channels 128 --num_layers 2 --dropout 0.05 --head_dropout 0.05 --max_grad_norm 0 --deterministic 0 --history_hours 24 --seed 42 --train_ratio 0.6 --val_ratio 0.2 --shuffle_years 0 --future_only 0 --future_year_threshold 2030 --run_tag Boston_NCEPtoNCEP_perceiver3_ga4_nrh8_trh8_L2_ff4.0_td0.0_stable1v3_exceedance_gmwindow_eq95_danone_lossmse_hist24h_hid128_L2_bs256_lr5e-3_ep300_schcosine_xnzscore_20000101_000000 --output_dir /media/volume/PACT-Data/StormSurge/./All_Results/P1_WeightProbe/NCEP_Boston_24h_dual_ex10_notail__20000101_000000 --torch_threads 1 --num_workers 0 --prefetch_factor 0 --mp_context fork --x_norm zscore --x_p_lo 1.0 --x_p_hi 99.0 --x_nodes_per_graph 256 --x_clip 0 --x_aug 0 --x_aug_prob 0 --x_aug_scale 0 --x_aug_bias 0 --station_json_dir /media/volume/PACT-Data/StormSurge/station_json --use_site_elevation 0 --use_bathymetry 0 --station Boston --grad_accum_steps 4 --amp --amp_dtype bf16 --tf32 --head_type dual --dual_mode exceedance --tail_frac 0.05 --temporal_block Transformer --node_read_heads 8 --time_read_heads 8 --transformer_layers 2 --transformer_ff_mult 4.0 --transformer_dropout 0.0 --max_time_steps 32 --gate_mode window --dual_loss 1 --body_loss_weight 1 --excess_loss_weight 10 --gate_loss_weight 0.5 --scheduler cosine --warmup_epochs 5 --warmup_start_factor 0.1 --min_lr 1e-6 --loss_mode mse --wmse_q 95 --wmse_alpha 4.0 --wmse_s 0.10 --wmse_use_abs 1
+
+### experiment_config/P1_WeightProbe/train_config_NCEP_Boston_24h_dual_ex10_tail005.sh
+=========================================
+Config file:   experiment_config/P1_WeightProbe/train_config_NCEP_Boston_24h_dual_ex10_tail005.sh
+Host:          js2-h100-1
+Workdir:       /media/volume/PACT-Data/StormSurge
+Run name:      NCEP_Boston_24h_dual_ex10_tail005
+Run dir:       /media/volume/PACT-Data/StormSurge/./All_Results/P1_WeightProbe/NCEP_Boston_24h_dual_ex10_tail005__20000101_000000
+Run dir style: runname_timestamp
+Results root:  /media/volume/PACT-Data/StormSurge/./All_Results/P1_WeightProbe
+Python:        /media/volume/PACT-Data/conda_envs/torchpyg-cu124/bin/python (DO_CONDA=0)
+tmux:          USE_TMUX=1 SESSION_NAME=P1_Validation DRY_RUN=1
+LAUNCHER:      /media/volume/PACT-Data/conda_envs/torchpyg-cu124/bin/python -u
+Train script:  train.py
+Model:         perceiver3
+Encoder:       GraphSAGE
+CNN width:     29 (intermediate channels)
+Temporal:      Transformer
+Head:          dual
+Station feats: site_elevation=0 bathymetry=0 (PACT)
+Grad accum:    4 (nominal effective batch=1024)
+ROOT_DIR:      /media/share/PACT/Data/Grid4_New/NCEP/graphs
+TEST_ROOT_DIR: <none>
+TRAIN_DATA_TAG:NCEP
+TEST_DATA_TAG: NCEP
+LR_LIST:       5e-3
+Loss modes:    mse_tail
+Loss weights:  body=1 excess=10 gate=0.5 tail=0.05 slope=0 (terms enabled by head/loss mode)
+H_LIST:        24
+Split:         train=0.6 val=0.2 shuffle_years=0 future_only=0 future_year_threshold=2030 seed=42
+MASTER_ADDR:   127.0.0.1
+MASTER_PORT:   30002
+SLURM_JOB_ID:  <none>
+CUDA_VISIBLE_DEVICES:  0
+num_gpus:      1
+Scheduler:     cosine (ROP_METRIC=val_rmse_phys)
+DISABLE_OOD:   1 (x_norm=zscore, x_clip=0, x_aug=0)
+DL:            workers=0 pin=0 pers=0 prefetch=0 mp=fork
+Precision:     AMP=1 AMP_DTYPE=bf16 TF32=1
+=========================================
+CMD: train.py --root_dir /media/share/PACT/Data/Grid4_New/NCEP/graphs --model perceiver3 --exceedance_percentile 95 --dual_ablation none --encoder_type GraphSAGE --cnn_intermediate_channel 29 --batch_size 256 --lr 5e-3 --epochs 300 --hidden_channels 128 --num_layers 2 --dropout 0.05 --head_dropout 0.05 --max_grad_norm 0 --deterministic 0 --history_hours 24 --seed 42 --train_ratio 0.6 --val_ratio 0.2 --shuffle_years 0 --future_only 0 --future_year_threshold 2030 --run_tag Boston_NCEPtoNCEP_perceiver3_ga4_nrh8_trh8_L2_ff4.0_td0.0_stable1v3_exceedance_gmwindow_eq95_danone_lossmse_tail_tf0.05_tl0.05_hist24h_hid128_L2_bs256_lr5e-3_ep300_schcosine_xnzscore_20000101_000000 --output_dir /media/volume/PACT-Data/StormSurge/./All_Results/P1_WeightProbe/NCEP_Boston_24h_dual_ex10_tail005__20000101_000000 --torch_threads 1 --num_workers 0 --prefetch_factor 0 --mp_context fork --x_norm zscore --x_p_lo 1.0 --x_p_hi 99.0 --x_nodes_per_graph 256 --x_clip 0 --x_aug 0 --x_aug_prob 0 --x_aug_scale 0 --x_aug_bias 0 --station_json_dir /media/volume/PACT-Data/StormSurge/station_json --use_site_elevation 0 --use_bathymetry 0 --station Boston --grad_accum_steps 4 --amp --amp_dtype bf16 --tf32 --head_type dual --dual_mode exceedance --tail_frac 0.05 --temporal_block Transformer --node_read_heads 8 --time_read_heads 8 --transformer_layers 2 --transformer_ff_mult 4.0 --transformer_dropout 0.0 --max_time_steps 32 --gate_mode window --dual_loss 1 --body_loss_weight 1 --excess_loss_weight 10 --gate_loss_weight 0.5 --scheduler cosine --warmup_epochs 5 --warmup_start_factor 0.1 --min_lr 1e-6 --loss_mode mse_tail --wmse_q 95 --wmse_alpha 4.0 --wmse_s 0.10 --wmse_use_abs 1 --tail_frac 0.05 --tail_lambda 0.05
+
+### experiment_config/P1_WeightProbe/train_config_NCEP_Boston_24h_dual_ex10_tail010.sh
+=========================================
+Config file:   experiment_config/P1_WeightProbe/train_config_NCEP_Boston_24h_dual_ex10_tail010.sh
+Host:          js2-h100-1
+Workdir:       /media/volume/PACT-Data/StormSurge
+Run name:      NCEP_Boston_24h_dual_ex10_tail010
+Run dir:       /media/volume/PACT-Data/StormSurge/./All_Results/P1_WeightProbe/NCEP_Boston_24h_dual_ex10_tail010__20000101_000000
+Run dir style: runname_timestamp
+Results root:  /media/volume/PACT-Data/StormSurge/./All_Results/P1_WeightProbe
+Python:        /media/volume/PACT-Data/conda_envs/torchpyg-cu124/bin/python (DO_CONDA=0)
+tmux:          USE_TMUX=1 SESSION_NAME=P1_Validation DRY_RUN=1
+LAUNCHER:      /media/volume/PACT-Data/conda_envs/torchpyg-cu124/bin/python -u
+Train script:  train.py
+Model:         perceiver3
+Encoder:       GraphSAGE
+CNN width:     29 (intermediate channels)
+Temporal:      Transformer
+Head:          dual
+Station feats: site_elevation=0 bathymetry=0 (PACT)
+Grad accum:    4 (nominal effective batch=1024)
+ROOT_DIR:      /media/share/PACT/Data/Grid4_New/NCEP/graphs
+TEST_ROOT_DIR: <none>
+TRAIN_DATA_TAG:NCEP
+TEST_DATA_TAG: NCEP
+LR_LIST:       5e-3
+Loss modes:    mse_tail
+Loss weights:  body=1 excess=10 gate=0.5 tail=0.10 slope=0 (terms enabled by head/loss mode)
+H_LIST:        24
+Split:         train=0.6 val=0.2 shuffle_years=0 future_only=0 future_year_threshold=2030 seed=42
+MASTER_ADDR:   127.0.0.1
+MASTER_PORT:   29959
+SLURM_JOB_ID:  <none>
+CUDA_VISIBLE_DEVICES:  0
+num_gpus:      1
+Scheduler:     cosine (ROP_METRIC=val_rmse_phys)
+DISABLE_OOD:   1 (x_norm=zscore, x_clip=0, x_aug=0)
+DL:            workers=0 pin=0 pers=0 prefetch=0 mp=fork
+Precision:     AMP=1 AMP_DTYPE=bf16 TF32=1
+=========================================
+CMD: train.py --root_dir /media/share/PACT/Data/Grid4_New/NCEP/graphs --model perceiver3 --exceedance_percentile 95 --dual_ablation none --encoder_type GraphSAGE --cnn_intermediate_channel 29 --batch_size 256 --lr 5e-3 --epochs 300 --hidden_channels 128 --num_layers 2 --dropout 0.05 --head_dropout 0.05 --max_grad_norm 0 --deterministic 0 --history_hours 24 --seed 42 --train_ratio 0.6 --val_ratio 0.2 --shuffle_years 0 --future_only 0 --future_year_threshold 2030 --run_tag Boston_NCEPtoNCEP_perceiver3_ga4_nrh8_trh8_L2_ff4.0_td0.0_stable1v3_exceedance_gmwindow_eq95_danone_lossmse_tail_tf0.05_tl0.10_hist24h_hid128_L2_bs256_lr5e-3_ep300_schcosine_xnzscore_20000101_000000 --output_dir /media/volume/PACT-Data/StormSurge/./All_Results/P1_WeightProbe/NCEP_Boston_24h_dual_ex10_tail010__20000101_000000 --torch_threads 1 --num_workers 0 --prefetch_factor 0 --mp_context fork --x_norm zscore --x_p_lo 1.0 --x_p_hi 99.0 --x_nodes_per_graph 256 --x_clip 0 --x_aug 0 --x_aug_prob 0 --x_aug_scale 0 --x_aug_bias 0 --station_json_dir /media/volume/PACT-Data/StormSurge/station_json --use_site_elevation 0 --use_bathymetry 0 --station Boston --grad_accum_steps 4 --amp --amp_dtype bf16 --tf32 --head_type dual --dual_mode exceedance --tail_frac 0.05 --temporal_block Transformer --node_read_heads 8 --time_read_heads 8 --transformer_layers 2 --transformer_ff_mult 4.0 --transformer_dropout 0.0 --max_time_steps 32 --gate_mode window --dual_loss 1 --body_loss_weight 1 --excess_loss_weight 10 --gate_loss_weight 0.5 --scheduler cosine --warmup_epochs 5 --warmup_start_factor 0.1 --min_lr 1e-6 --loss_mode mse_tail --wmse_q 95 --wmse_alpha 4.0 --wmse_s 0.10 --wmse_use_abs 1 --tail_frac 0.05 --tail_lambda 0.10
+
+### experiment_config/P1_WeightProbe/train_config_NCEP_Boston_24h_dual_ex2_tail005.sh
+=========================================
+Config file:   experiment_config/P1_WeightProbe/train_config_NCEP_Boston_24h_dual_ex2_tail005.sh
+Host:          js2-h100-1
+Workdir:       /media/volume/PACT-Data/StormSurge
+Run name:      NCEP_Boston_24h_dual_ex2_tail005
+Run dir:       /media/volume/PACT-Data/StormSurge/./All_Results/P1_WeightProbe/NCEP_Boston_24h_dual_ex2_tail005__20000101_000000
+Run dir style: runname_timestamp
+Results root:  /media/volume/PACT-Data/StormSurge/./All_Results/P1_WeightProbe
+Python:        /media/volume/PACT-Data/conda_envs/torchpyg-cu124/bin/python (DO_CONDA=0)
+tmux:          USE_TMUX=1 SESSION_NAME=P1_Validation DRY_RUN=1
+LAUNCHER:      /media/volume/PACT-Data/conda_envs/torchpyg-cu124/bin/python -u
+Train script:  train.py
+Model:         perceiver3
+Encoder:       GraphSAGE
+CNN width:     29 (intermediate channels)
+Temporal:      Transformer
+Head:          dual
+Station feats: site_elevation=0 bathymetry=0 (PACT)
+Grad accum:    4 (nominal effective batch=1024)
+ROOT_DIR:      /media/share/PACT/Data/Grid4_New/NCEP/graphs
+TEST_ROOT_DIR: <none>
+TRAIN_DATA_TAG:NCEP
+TEST_DATA_TAG: NCEP
+LR_LIST:       5e-3
+Loss modes:    mse_tail
+Loss weights:  body=1 excess=2 gate=0.5 tail=0.05 slope=0 (terms enabled by head/loss mode)
+H_LIST:        24
+Split:         train=0.6 val=0.2 shuffle_years=0 future_only=0 future_year_threshold=2030 seed=42
+MASTER_ADDR:   127.0.0.1
+MASTER_PORT:   30135
+SLURM_JOB_ID:  <none>
+CUDA_VISIBLE_DEVICES:  0
+num_gpus:      1
+Scheduler:     cosine (ROP_METRIC=val_rmse_phys)
+DISABLE_OOD:   1 (x_norm=zscore, x_clip=0, x_aug=0)
+DL:            workers=0 pin=0 pers=0 prefetch=0 mp=fork
+Precision:     AMP=1 AMP_DTYPE=bf16 TF32=1
+=========================================
+CMD: train.py --root_dir /media/share/PACT/Data/Grid4_New/NCEP/graphs --model perceiver3 --exceedance_percentile 95 --dual_ablation none --encoder_type GraphSAGE --cnn_intermediate_channel 29 --batch_size 256 --lr 5e-3 --epochs 300 --hidden_channels 128 --num_layers 2 --dropout 0.05 --head_dropout 0.05 --max_grad_norm 0 --deterministic 0 --history_hours 24 --seed 42 --train_ratio 0.6 --val_ratio 0.2 --shuffle_years 0 --future_only 0 --future_year_threshold 2030 --run_tag Boston_NCEPtoNCEP_perceiver3_ga4_nrh8_trh8_L2_ff4.0_td0.0_stable1v3_exceedance_gmwindow_eq95_danone_lossmse_tail_tf0.05_tl0.05_hist24h_hid128_L2_bs256_lr5e-3_ep300_schcosine_xnzscore_20000101_000000 --output_dir /media/volume/PACT-Data/StormSurge/./All_Results/P1_WeightProbe/NCEP_Boston_24h_dual_ex2_tail005__20000101_000000 --torch_threads 1 --num_workers 0 --prefetch_factor 0 --mp_context fork --x_norm zscore --x_p_lo 1.0 --x_p_hi 99.0 --x_nodes_per_graph 256 --x_clip 0 --x_aug 0 --x_aug_prob 0 --x_aug_scale 0 --x_aug_bias 0 --station_json_dir /media/volume/PACT-Data/StormSurge/station_json --use_site_elevation 0 --use_bathymetry 0 --station Boston --grad_accum_steps 4 --amp --amp_dtype bf16 --tf32 --head_type dual --dual_mode exceedance --tail_frac 0.05 --temporal_block Transformer --node_read_heads 8 --time_read_heads 8 --transformer_layers 2 --transformer_ff_mult 4.0 --transformer_dropout 0.0 --max_time_steps 32 --gate_mode window --dual_loss 1 --body_loss_weight 1 --excess_loss_weight 2 --gate_loss_weight 0.5 --scheduler cosine --warmup_epochs 5 --warmup_start_factor 0.1 --min_lr 1e-6 --loss_mode mse_tail --wmse_q 95 --wmse_alpha 4.0 --wmse_s 0.10 --wmse_use_abs 1 --tail_frac 0.05 --tail_lambda 0.05
+
+### experiment_config/P1_WeightProbe/train_config_NCEP_Boston_24h_dual_ex2_tail010.sh
+=========================================
+Config file:   experiment_config/P1_WeightProbe/train_config_NCEP_Boston_24h_dual_ex2_tail010.sh
+Host:          js2-h100-1
+Workdir:       /media/volume/PACT-Data/StormSurge
+Run name:      NCEP_Boston_24h_dual_ex2_tail010
+Run dir:       /media/volume/PACT-Data/StormSurge/./All_Results/P1_WeightProbe/NCEP_Boston_24h_dual_ex2_tail010__20000101_000000
+Run dir style: runname_timestamp
+Results root:  /media/volume/PACT-Data/StormSurge/./All_Results/P1_WeightProbe
+Python:        /media/volume/PACT-Data/conda_envs/torchpyg-cu124/bin/python (DO_CONDA=0)
+tmux:          USE_TMUX=1 SESSION_NAME=P1_Validation DRY_RUN=1
+LAUNCHER:      /media/volume/PACT-Data/conda_envs/torchpyg-cu124/bin/python -u
+Train script:  train.py
+Model:         perceiver3
+Encoder:       GraphSAGE
+CNN width:     29 (intermediate channels)
+Temporal:      Transformer
+Head:          dual
+Station feats: site_elevation=0 bathymetry=0 (PACT)
+Grad accum:    4 (nominal effective batch=1024)
+ROOT_DIR:      /media/share/PACT/Data/Grid4_New/NCEP/graphs
+TEST_ROOT_DIR: <none>
+TRAIN_DATA_TAG:NCEP
+TEST_DATA_TAG: NCEP
+LR_LIST:       5e-3
+Loss modes:    mse_tail
+Loss weights:  body=1 excess=2 gate=0.5 tail=0.10 slope=0 (terms enabled by head/loss mode)
+H_LIST:        24
+Split:         train=0.6 val=0.2 shuffle_years=0 future_only=0 future_year_threshold=2030 seed=42
+MASTER_ADDR:   127.0.0.1
+MASTER_PORT:   30168
+SLURM_JOB_ID:  <none>
+CUDA_VISIBLE_DEVICES:  0
+num_gpus:      1
+Scheduler:     cosine (ROP_METRIC=val_rmse_phys)
+DISABLE_OOD:   1 (x_norm=zscore, x_clip=0, x_aug=0)
+DL:            workers=0 pin=0 pers=0 prefetch=0 mp=fork
+Precision:     AMP=1 AMP_DTYPE=bf16 TF32=1
+=========================================
+CMD: train.py --root_dir /media/share/PACT/Data/Grid4_New/NCEP/graphs --model perceiver3 --exceedance_percentile 95 --dual_ablation none --encoder_type GraphSAGE --cnn_intermediate_channel 29 --batch_size 256 --lr 5e-3 --epochs 300 --hidden_channels 128 --num_layers 2 --dropout 0.05 --head_dropout 0.05 --max_grad_norm 0 --deterministic 0 --history_hours 24 --seed 42 --train_ratio 0.6 --val_ratio 0.2 --shuffle_years 0 --future_only 0 --future_year_threshold 2030 --run_tag Boston_NCEPtoNCEP_perceiver3_ga4_nrh8_trh8_L2_ff4.0_td0.0_stable1v3_exceedance_gmwindow_eq95_danone_lossmse_tail_tf0.05_tl0.10_hist24h_hid128_L2_bs256_lr5e-3_ep300_schcosine_xnzscore_20000101_000000 --output_dir /media/volume/PACT-Data/StormSurge/./All_Results/P1_WeightProbe/NCEP_Boston_24h_dual_ex2_tail010__20000101_000000 --torch_threads 1 --num_workers 0 --prefetch_factor 0 --mp_context fork --x_norm zscore --x_p_lo 1.0 --x_p_hi 99.0 --x_nodes_per_graph 256 --x_clip 0 --x_aug 0 --x_aug_prob 0 --x_aug_scale 0 --x_aug_bias 0 --station_json_dir /media/volume/PACT-Data/StormSurge/station_json --use_site_elevation 0 --use_bathymetry 0 --station Boston --grad_accum_steps 4 --amp --amp_dtype bf16 --tf32 --head_type dual --dual_mode exceedance --tail_frac 0.05 --temporal_block Transformer --node_read_heads 8 --time_read_heads 8 --transformer_layers 2 --transformer_ff_mult 4.0 --transformer_dropout 0.0 --max_time_steps 32 --gate_mode window --dual_loss 1 --body_loss_weight 1 --excess_loss_weight 2 --gate_loss_weight 0.5 --scheduler cosine --warmup_epochs 5 --warmup_start_factor 0.1 --min_lr 1e-6 --loss_mode mse_tail --wmse_q 95 --wmse_alpha 4.0 --wmse_s 0.10 --wmse_use_abs 1 --tail_frac 0.05 --tail_lambda 0.10
+
+### experiment_config/P1_WeightProbe/train_config_NCEP_Boston_24h_dual_ex5_notail.sh
+=========================================
+Config file:   experiment_config/P1_WeightProbe/train_config_NCEP_Boston_24h_dual_ex5_notail.sh
+Host:          js2-h100-1
+Workdir:       /media/volume/PACT-Data/StormSurge
+Run name:      NCEP_Boston_24h_dual_ex5_notail
+Run dir:       /media/volume/PACT-Data/StormSurge/./All_Results/P1_WeightProbe/NCEP_Boston_24h_dual_ex5_notail__20000101_000000
+Run dir style: runname_timestamp
+Results root:  /media/volume/PACT-Data/StormSurge/./All_Results/P1_WeightProbe
+Python:        /media/volume/PACT-Data/conda_envs/torchpyg-cu124/bin/python (DO_CONDA=0)
+tmux:          USE_TMUX=1 SESSION_NAME=P1_Validation DRY_RUN=1
+LAUNCHER:      /media/volume/PACT-Data/conda_envs/torchpyg-cu124/bin/python -u
+Train script:  train.py
+Model:         perceiver3
+Encoder:       GraphSAGE
+CNN width:     29 (intermediate channels)
+Temporal:      Transformer
+Head:          dual
+Station feats: site_elevation=0 bathymetry=0 (PACT)
+Grad accum:    4 (nominal effective batch=1024)
+ROOT_DIR:      /media/share/PACT/Data/Grid4_New/NCEP/graphs
+TEST_ROOT_DIR: <none>
+TRAIN_DATA_TAG:NCEP
+TEST_DATA_TAG: NCEP
+LR_LIST:       5e-3
+Loss modes:    mse
+Loss weights:  body=1 excess=5 gate=0.5 tail=0 slope=0 (terms enabled by head/loss mode)
+H_LIST:        24
+Split:         train=0.6 val=0.2 shuffle_years=0 future_only=0 future_year_threshold=2030 seed=42
+MASTER_ADDR:   127.0.0.1
+MASTER_PORT:   29982
+SLURM_JOB_ID:  <none>
+CUDA_VISIBLE_DEVICES:  0
+num_gpus:      1
+Scheduler:     cosine (ROP_METRIC=val_rmse_phys)
+DISABLE_OOD:   1 (x_norm=zscore, x_clip=0, x_aug=0)
+DL:            workers=0 pin=0 pers=0 prefetch=0 mp=fork
+Precision:     AMP=1 AMP_DTYPE=bf16 TF32=1
+=========================================
+CMD: train.py --root_dir /media/share/PACT/Data/Grid4_New/NCEP/graphs --model perceiver3 --exceedance_percentile 95 --dual_ablation none --encoder_type GraphSAGE --cnn_intermediate_channel 29 --batch_size 256 --lr 5e-3 --epochs 300 --hidden_channels 128 --num_layers 2 --dropout 0.05 --head_dropout 0.05 --max_grad_norm 0 --deterministic 0 --history_hours 24 --seed 42 --train_ratio 0.6 --val_ratio 0.2 --shuffle_years 0 --future_only 0 --future_year_threshold 2030 --run_tag Boston_NCEPtoNCEP_perceiver3_ga4_nrh8_trh8_L2_ff4.0_td0.0_stable1v3_exceedance_gmwindow_eq95_danone_lossmse_hist24h_hid128_L2_bs256_lr5e-3_ep300_schcosine_xnzscore_20000101_000000 --output_dir /media/volume/PACT-Data/StormSurge/./All_Results/P1_WeightProbe/NCEP_Boston_24h_dual_ex5_notail__20000101_000000 --torch_threads 1 --num_workers 0 --prefetch_factor 0 --mp_context fork --x_norm zscore --x_p_lo 1.0 --x_p_hi 99.0 --x_nodes_per_graph 256 --x_clip 0 --x_aug 0 --x_aug_prob 0 --x_aug_scale 0 --x_aug_bias 0 --station_json_dir /media/volume/PACT-Data/StormSurge/station_json --use_site_elevation 0 --use_bathymetry 0 --station Boston --grad_accum_steps 4 --amp --amp_dtype bf16 --tf32 --head_type dual --dual_mode exceedance --tail_frac 0.05 --temporal_block Transformer --node_read_heads 8 --time_read_heads 8 --transformer_layers 2 --transformer_ff_mult 4.0 --transformer_dropout 0.0 --max_time_steps 32 --gate_mode window --dual_loss 1 --body_loss_weight 1 --excess_loss_weight 5 --gate_loss_weight 0.5 --scheduler cosine --warmup_epochs 5 --warmup_start_factor 0.1 --min_lr 1e-6 --loss_mode mse --wmse_q 95 --wmse_alpha 4.0 --wmse_s 0.10 --wmse_use_abs 1
+
+### experiment_config/P1_WeightProbe/train_config_NCEP_Boston_24h_dual_ex5_tail005.sh
+=========================================
+Config file:   experiment_config/P1_WeightProbe/train_config_NCEP_Boston_24h_dual_ex5_tail005.sh
+Host:          js2-h100-1
+Workdir:       /media/volume/PACT-Data/StormSurge
+Run name:      NCEP_Boston_24h_dual_ex5_tail005
+Run dir:       /media/volume/PACT-Data/StormSurge/./All_Results/P1_WeightProbe/NCEP_Boston_24h_dual_ex5_tail005__20000101_000000
+Run dir style: runname_timestamp
+Results root:  /media/volume/PACT-Data/StormSurge/./All_Results/P1_WeightProbe
+Python:        /media/volume/PACT-Data/conda_envs/torchpyg-cu124/bin/python (DO_CONDA=0)
+tmux:          USE_TMUX=1 SESSION_NAME=P1_Validation DRY_RUN=1
+LAUNCHER:      /media/volume/PACT-Data/conda_envs/torchpyg-cu124/bin/python -u
+Train script:  train.py
+Model:         perceiver3
+Encoder:       GraphSAGE
+CNN width:     29 (intermediate channels)
+Temporal:      Transformer
+Head:          dual
+Station feats: site_elevation=0 bathymetry=0 (PACT)
+Grad accum:    4 (nominal effective batch=1024)
+ROOT_DIR:      /media/share/PACT/Data/Grid4_New/NCEP/graphs
+TEST_ROOT_DIR: <none>
+TRAIN_DATA_TAG:NCEP
+TEST_DATA_TAG: NCEP
+LR_LIST:       5e-3
+Loss modes:    mse_tail
+Loss weights:  body=1 excess=5 gate=0.5 tail=0.05 slope=0 (terms enabled by head/loss mode)
+H_LIST:        24
+Split:         train=0.6 val=0.2 shuffle_years=0 future_only=0 future_year_threshold=2030 seed=42
+MASTER_ADDR:   127.0.0.1
+MASTER_PORT:   29987
+SLURM_JOB_ID:  <none>
+CUDA_VISIBLE_DEVICES:  0
+num_gpus:      1
+Scheduler:     cosine (ROP_METRIC=val_rmse_phys)
+DISABLE_OOD:   1 (x_norm=zscore, x_clip=0, x_aug=0)
+DL:            workers=0 pin=0 pers=0 prefetch=0 mp=fork
+Precision:     AMP=1 AMP_DTYPE=bf16 TF32=1
+=========================================
+CMD: train.py --root_dir /media/share/PACT/Data/Grid4_New/NCEP/graphs --model perceiver3 --exceedance_percentile 95 --dual_ablation none --encoder_type GraphSAGE --cnn_intermediate_channel 29 --batch_size 256 --lr 5e-3 --epochs 300 --hidden_channels 128 --num_layers 2 --dropout 0.05 --head_dropout 0.05 --max_grad_norm 0 --deterministic 0 --history_hours 24 --seed 42 --train_ratio 0.6 --val_ratio 0.2 --shuffle_years 0 --future_only 0 --future_year_threshold 2030 --run_tag Boston_NCEPtoNCEP_perceiver3_ga4_nrh8_trh8_L2_ff4.0_td0.0_stable1v3_exceedance_gmwindow_eq95_danone_lossmse_tail_tf0.05_tl0.05_hist24h_hid128_L2_bs256_lr5e-3_ep300_schcosine_xnzscore_20000101_000000 --output_dir /media/volume/PACT-Data/StormSurge/./All_Results/P1_WeightProbe/NCEP_Boston_24h_dual_ex5_tail005__20000101_000000 --torch_threads 1 --num_workers 0 --prefetch_factor 0 --mp_context fork --x_norm zscore --x_p_lo 1.0 --x_p_hi 99.0 --x_nodes_per_graph 256 --x_clip 0 --x_aug 0 --x_aug_prob 0 --x_aug_scale 0 --x_aug_bias 0 --station_json_dir /media/volume/PACT-Data/StormSurge/station_json --use_site_elevation 0 --use_bathymetry 0 --station Boston --grad_accum_steps 4 --amp --amp_dtype bf16 --tf32 --head_type dual --dual_mode exceedance --tail_frac 0.05 --temporal_block Transformer --node_read_heads 8 --time_read_heads 8 --transformer_layers 2 --transformer_ff_mult 4.0 --transformer_dropout 0.0 --max_time_steps 32 --gate_mode window --dual_loss 1 --body_loss_weight 1 --excess_loss_weight 5 --gate_loss_weight 0.5 --scheduler cosine --warmup_epochs 5 --warmup_start_factor 0.1 --min_lr 1e-6 --loss_mode mse_tail --wmse_q 95 --wmse_alpha 4.0 --wmse_s 0.10 --wmse_use_abs 1 --tail_frac 0.05 --tail_lambda 0.05
+
+### experiment_config/P1_WeightProbe/train_config_NCEP_Boston_24h_dual_ex5_tail010.sh
+=========================================
+Config file:   experiment_config/P1_WeightProbe/train_config_NCEP_Boston_24h_dual_ex5_tail010.sh
+Host:          js2-h100-1
+Workdir:       /media/volume/PACT-Data/StormSurge
+Run name:      NCEP_Boston_24h_dual_ex5_tail010
+Run dir:       /media/volume/PACT-Data/StormSurge/./All_Results/P1_WeightProbe/NCEP_Boston_24h_dual_ex5_tail010__20000101_000000
+Run dir style: runname_timestamp
+Results root:  /media/volume/PACT-Data/StormSurge/./All_Results/P1_WeightProbe
+Python:        /media/volume/PACT-Data/conda_envs/torchpyg-cu124/bin/python (DO_CONDA=0)
+tmux:          USE_TMUX=1 SESSION_NAME=P1_Validation DRY_RUN=1
+LAUNCHER:      /media/volume/PACT-Data/conda_envs/torchpyg-cu124/bin/python -u
+Train script:  train.py
+Model:         perceiver3
+Encoder:       GraphSAGE
+CNN width:     29 (intermediate channels)
+Temporal:      Transformer
+Head:          dual
+Station feats: site_elevation=0 bathymetry=0 (PACT)
+Grad accum:    4 (nominal effective batch=1024)
+ROOT_DIR:      /media/share/PACT/Data/Grid4_New/NCEP/graphs
+TEST_ROOT_DIR: <none>
+TRAIN_DATA_TAG:NCEP
+TEST_DATA_TAG: NCEP
+LR_LIST:       5e-3
+Loss modes:    mse_tail
+Loss weights:  body=1 excess=5 gate=0.5 tail=0.10 slope=0 (terms enabled by head/loss mode)
+H_LIST:        24
+Split:         train=0.6 val=0.2 shuffle_years=0 future_only=0 future_year_threshold=2030 seed=42
+MASTER_ADDR:   127.0.0.1
+MASTER_PORT:   30461
+SLURM_JOB_ID:  <none>
+CUDA_VISIBLE_DEVICES:  0
+num_gpus:      1
+Scheduler:     cosine (ROP_METRIC=val_rmse_phys)
+DISABLE_OOD:   1 (x_norm=zscore, x_clip=0, x_aug=0)
+DL:            workers=0 pin=0 pers=0 prefetch=0 mp=fork
+Precision:     AMP=1 AMP_DTYPE=bf16 TF32=1
+=========================================
+CMD: train.py --root_dir /media/share/PACT/Data/Grid4_New/NCEP/graphs --model perceiver3 --exceedance_percentile 95 --dual_ablation none --encoder_type GraphSAGE --cnn_intermediate_channel 29 --batch_size 256 --lr 5e-3 --epochs 300 --hidden_channels 128 --num_layers 2 --dropout 0.05 --head_dropout 0.05 --max_grad_norm 0 --deterministic 0 --history_hours 24 --seed 42 --train_ratio 0.6 --val_ratio 0.2 --shuffle_years 0 --future_only 0 --future_year_threshold 2030 --run_tag Boston_NCEPtoNCEP_perceiver3_ga4_nrh8_trh8_L2_ff4.0_td0.0_stable1v3_exceedance_gmwindow_eq95_danone_lossmse_tail_tf0.05_tl0.10_hist24h_hid128_L2_bs256_lr5e-3_ep300_schcosine_xnzscore_20000101_000000 --output_dir /media/volume/PACT-Data/StormSurge/./All_Results/P1_WeightProbe/NCEP_Boston_24h_dual_ex5_tail010__20000101_000000 --torch_threads 1 --num_workers 0 --prefetch_factor 0 --mp_context fork --x_norm zscore --x_p_lo 1.0 --x_p_hi 99.0 --x_nodes_per_graph 256 --x_clip 0 --x_aug 0 --x_aug_prob 0 --x_aug_scale 0 --x_aug_bias 0 --station_json_dir /media/volume/PACT-Data/StormSurge/station_json --use_site_elevation 0 --use_bathymetry 0 --station Boston --grad_accum_steps 4 --amp --amp_dtype bf16 --tf32 --head_type dual --dual_mode exceedance --tail_frac 0.05 --temporal_block Transformer --node_read_heads 8 --time_read_heads 8 --transformer_layers 2 --transformer_ff_mult 4.0 --transformer_dropout 0.0 --max_time_steps 32 --gate_mode window --dual_loss 1 --body_loss_weight 1 --excess_loss_weight 5 --gate_loss_weight 0.5 --scheduler cosine --warmup_epochs 5 --warmup_start_factor 0.1 --min_lr 1e-6 --loss_mode mse_tail --wmse_q 95 --wmse_alpha 4.0 --wmse_s 0.10 --wmse_use_abs 1 --tail_frac 0.05 --tail_lambda 0.10
+
+### experiment_config/P1_WeightProbe/train_config_NCEP_CBBT_24h_dual_ex10_notail.sh
+=========================================
+Config file:   experiment_config/P1_WeightProbe/train_config_NCEP_CBBT_24h_dual_ex10_notail.sh
+Host:          js2-h100-1
+Workdir:       /media/volume/PACT-Data/StormSurge
+Run name:      NCEP_CBBT_24h_dual_ex10_notail
+Run dir:       /media/volume/PACT-Data/StormSurge/./All_Results/P1_WeightProbe/NCEP_CBBT_24h_dual_ex10_notail__20000101_000000
+Run dir style: runname_timestamp
+Results root:  /media/volume/PACT-Data/StormSurge/./All_Results/P1_WeightProbe
+Python:        /media/volume/PACT-Data/conda_envs/torchpyg-cu124/bin/python (DO_CONDA=0)
+tmux:          USE_TMUX=1 SESSION_NAME=P1_Validation DRY_RUN=1
+LAUNCHER:      /media/volume/PACT-Data/conda_envs/torchpyg-cu124/bin/python -u
+Train script:  train.py
+Model:         perceiver3
+Encoder:       GraphSAGE
+CNN width:     29 (intermediate channels)
+Temporal:      Transformer
+Head:          dual
+Station feats: site_elevation=0 bathymetry=0 (PACT)
+Grad accum:    4 (nominal effective batch=1024)
+ROOT_DIR:      /media/share/PACT/Data/Grid4_New/NCEP/graphs
+TEST_ROOT_DIR: <none>
+TRAIN_DATA_TAG:NCEP
+TEST_DATA_TAG: NCEP
+LR_LIST:       5e-3
+Loss modes:    mse
+Loss weights:  body=1 excess=10 gate=0.5 tail=0 slope=0 (terms enabled by head/loss mode)
+H_LIST:        24
+Split:         train=0.6 val=0.2 shuffle_years=0 future_only=0 future_year_threshold=2030 seed=42
+MASTER_ADDR:   127.0.0.1
+MASTER_PORT:   30138
+SLURM_JOB_ID:  <none>
+CUDA_VISIBLE_DEVICES:  0
+num_gpus:      1
+Scheduler:     cosine (ROP_METRIC=val_rmse_phys)
+DISABLE_OOD:   1 (x_norm=zscore, x_clip=0, x_aug=0)
+DL:            workers=0 pin=0 pers=0 prefetch=0 mp=fork
+Precision:     AMP=1 AMP_DTYPE=bf16 TF32=1
+=========================================
+CMD: train.py --root_dir /media/share/PACT/Data/Grid4_New/NCEP/graphs --model perceiver3 --exceedance_percentile 95 --dual_ablation none --encoder_type GraphSAGE --cnn_intermediate_channel 29 --batch_size 256 --lr 5e-3 --epochs 300 --hidden_channels 128 --num_layers 2 --dropout 0.05 --head_dropout 0.05 --max_grad_norm 0 --deterministic 0 --history_hours 24 --seed 42 --train_ratio 0.6 --val_ratio 0.2 --shuffle_years 0 --future_only 0 --future_year_threshold 2030 --run_tag CBBT_NCEPtoNCEP_perceiver3_ga4_nrh8_trh8_L2_ff4.0_td0.0_stable1v3_exceedance_gmwindow_eq95_danone_lossmse_hist24h_hid128_L2_bs256_lr5e-3_ep300_schcosine_xnzscore_20000101_000000 --output_dir /media/volume/PACT-Data/StormSurge/./All_Results/P1_WeightProbe/NCEP_CBBT_24h_dual_ex10_notail__20000101_000000 --torch_threads 1 --num_workers 0 --prefetch_factor 0 --mp_context fork --x_norm zscore --x_p_lo 1.0 --x_p_hi 99.0 --x_nodes_per_graph 256 --x_clip 0 --x_aug 0 --x_aug_prob 0 --x_aug_scale 0 --x_aug_bias 0 --station_json_dir /media/volume/PACT-Data/StormSurge/station_json --use_site_elevation 0 --use_bathymetry 0 --station CBBT --grad_accum_steps 4 --amp --amp_dtype bf16 --tf32 --head_type dual --dual_mode exceedance --tail_frac 0.05 --temporal_block Transformer --node_read_heads 8 --time_read_heads 8 --transformer_layers 2 --transformer_ff_mult 4.0 --transformer_dropout 0.0 --max_time_steps 32 --gate_mode window --dual_loss 1 --body_loss_weight 1 --excess_loss_weight 10 --gate_loss_weight 0.5 --scheduler cosine --warmup_epochs 5 --warmup_start_factor 0.1 --min_lr 1e-6 --loss_mode mse --wmse_q 95 --wmse_alpha 4.0 --wmse_s 0.10 --wmse_use_abs 1
+
+### experiment_config/P1_WeightProbe/train_config_NCEP_CBBT_24h_dual_ex10_tail005.sh
+=========================================
+Config file:   experiment_config/P1_WeightProbe/train_config_NCEP_CBBT_24h_dual_ex10_tail005.sh
+Host:          js2-h100-1
+Workdir:       /media/volume/PACT-Data/StormSurge
+Run name:      NCEP_CBBT_24h_dual_ex10_tail005
+Run dir:       /media/volume/PACT-Data/StormSurge/./All_Results/P1_WeightProbe/NCEP_CBBT_24h_dual_ex10_tail005__20000101_000000
+Run dir style: runname_timestamp
+Results root:  /media/volume/PACT-Data/StormSurge/./All_Results/P1_WeightProbe
+Python:        /media/volume/PACT-Data/conda_envs/torchpyg-cu124/bin/python (DO_CONDA=0)
+tmux:          USE_TMUX=1 SESSION_NAME=P1_Validation DRY_RUN=1
+LAUNCHER:      /media/volume/PACT-Data/conda_envs/torchpyg-cu124/bin/python -u
+Train script:  train.py
+Model:         perceiver3
+Encoder:       GraphSAGE
+CNN width:     29 (intermediate channels)
+Temporal:      Transformer
+Head:          dual
+Station feats: site_elevation=0 bathymetry=0 (PACT)
+Grad accum:    4 (nominal effective batch=1024)
+ROOT_DIR:      /media/share/PACT/Data/Grid4_New/NCEP/graphs
+TEST_ROOT_DIR: <none>
+TRAIN_DATA_TAG:NCEP
+TEST_DATA_TAG: NCEP
+LR_LIST:       5e-3
+Loss modes:    mse_tail
+Loss weights:  body=1 excess=10 gate=0.5 tail=0.05 slope=0 (terms enabled by head/loss mode)
+H_LIST:        24
+Split:         train=0.6 val=0.2 shuffle_years=0 future_only=0 future_year_threshold=2030 seed=42
+MASTER_ADDR:   127.0.0.1
+MASTER_PORT:   30106
+SLURM_JOB_ID:  <none>
+CUDA_VISIBLE_DEVICES:  0
+num_gpus:      1
+Scheduler:     cosine (ROP_METRIC=val_rmse_phys)
+DISABLE_OOD:   1 (x_norm=zscore, x_clip=0, x_aug=0)
+DL:            workers=0 pin=0 pers=0 prefetch=0 mp=fork
+Precision:     AMP=1 AMP_DTYPE=bf16 TF32=1
+=========================================
+CMD: train.py --root_dir /media/share/PACT/Data/Grid4_New/NCEP/graphs --model perceiver3 --exceedance_percentile 95 --dual_ablation none --encoder_type GraphSAGE --cnn_intermediate_channel 29 --batch_size 256 --lr 5e-3 --epochs 300 --hidden_channels 128 --num_layers 2 --dropout 0.05 --head_dropout 0.05 --max_grad_norm 0 --deterministic 0 --history_hours 24 --seed 42 --train_ratio 0.6 --val_ratio 0.2 --shuffle_years 0 --future_only 0 --future_year_threshold 2030 --run_tag CBBT_NCEPtoNCEP_perceiver3_ga4_nrh8_trh8_L2_ff4.0_td0.0_stable1v3_exceedance_gmwindow_eq95_danone_lossmse_tail_tf0.05_tl0.05_hist24h_hid128_L2_bs256_lr5e-3_ep300_schcosine_xnzscore_20000101_000000 --output_dir /media/volume/PACT-Data/StormSurge/./All_Results/P1_WeightProbe/NCEP_CBBT_24h_dual_ex10_tail005__20000101_000000 --torch_threads 1 --num_workers 0 --prefetch_factor 0 --mp_context fork --x_norm zscore --x_p_lo 1.0 --x_p_hi 99.0 --x_nodes_per_graph 256 --x_clip 0 --x_aug 0 --x_aug_prob 0 --x_aug_scale 0 --x_aug_bias 0 --station_json_dir /media/volume/PACT-Data/StormSurge/station_json --use_site_elevation 0 --use_bathymetry 0 --station CBBT --grad_accum_steps 4 --amp --amp_dtype bf16 --tf32 --head_type dual --dual_mode exceedance --tail_frac 0.05 --temporal_block Transformer --node_read_heads 8 --time_read_heads 8 --transformer_layers 2 --transformer_ff_mult 4.0 --transformer_dropout 0.0 --max_time_steps 32 --gate_mode window --dual_loss 1 --body_loss_weight 1 --excess_loss_weight 10 --gate_loss_weight 0.5 --scheduler cosine --warmup_epochs 5 --warmup_start_factor 0.1 --min_lr 1e-6 --loss_mode mse_tail --wmse_q 95 --wmse_alpha 4.0 --wmse_s 0.10 --wmse_use_abs 1 --tail_frac 0.05 --tail_lambda 0.05
+
+### experiment_config/P1_WeightProbe/train_config_NCEP_CBBT_24h_dual_ex10_tail010.sh
+=========================================
+Config file:   experiment_config/P1_WeightProbe/train_config_NCEP_CBBT_24h_dual_ex10_tail010.sh
+Host:          js2-h100-1
+Workdir:       /media/volume/PACT-Data/StormSurge
+Run name:      NCEP_CBBT_24h_dual_ex10_tail010
+Run dir:       /media/volume/PACT-Data/StormSurge/./All_Results/P1_WeightProbe/NCEP_CBBT_24h_dual_ex10_tail010__20000101_000000
+Run dir style: runname_timestamp
+Results root:  /media/volume/PACT-Data/StormSurge/./All_Results/P1_WeightProbe
+Python:        /media/volume/PACT-Data/conda_envs/torchpyg-cu124/bin/python (DO_CONDA=0)
+tmux:          USE_TMUX=1 SESSION_NAME=P1_Validation DRY_RUN=1
+LAUNCHER:      /media/volume/PACT-Data/conda_envs/torchpyg-cu124/bin/python -u
+Train script:  train.py
+Model:         perceiver3
+Encoder:       GraphSAGE
+CNN width:     29 (intermediate channels)
+Temporal:      Transformer
+Head:          dual
+Station feats: site_elevation=0 bathymetry=0 (PACT)
+Grad accum:    4 (nominal effective batch=1024)
+ROOT_DIR:      /media/share/PACT/Data/Grid4_New/NCEP/graphs
+TEST_ROOT_DIR: <none>
+TRAIN_DATA_TAG:NCEP
+TEST_DATA_TAG: NCEP
+LR_LIST:       5e-3
+Loss modes:    mse_tail
+Loss weights:  body=1 excess=10 gate=0.5 tail=0.10 slope=0 (terms enabled by head/loss mode)
+H_LIST:        24
+Split:         train=0.6 val=0.2 shuffle_years=0 future_only=0 future_year_threshold=2030 seed=42
+MASTER_ADDR:   127.0.0.1
+MASTER_PORT:   29816
+SLURM_JOB_ID:  <none>
+CUDA_VISIBLE_DEVICES:  0
+num_gpus:      1
+Scheduler:     cosine (ROP_METRIC=val_rmse_phys)
+DISABLE_OOD:   1 (x_norm=zscore, x_clip=0, x_aug=0)
+DL:            workers=0 pin=0 pers=0 prefetch=0 mp=fork
+Precision:     AMP=1 AMP_DTYPE=bf16 TF32=1
+=========================================
+CMD: train.py --root_dir /media/share/PACT/Data/Grid4_New/NCEP/graphs --model perceiver3 --exceedance_percentile 95 --dual_ablation none --encoder_type GraphSAGE --cnn_intermediate_channel 29 --batch_size 256 --lr 5e-3 --epochs 300 --hidden_channels 128 --num_layers 2 --dropout 0.05 --head_dropout 0.05 --max_grad_norm 0 --deterministic 0 --history_hours 24 --seed 42 --train_ratio 0.6 --val_ratio 0.2 --shuffle_years 0 --future_only 0 --future_year_threshold 2030 --run_tag CBBT_NCEPtoNCEP_perceiver3_ga4_nrh8_trh8_L2_ff4.0_td0.0_stable1v3_exceedance_gmwindow_eq95_danone_lossmse_tail_tf0.05_tl0.10_hist24h_hid128_L2_bs256_lr5e-3_ep300_schcosine_xnzscore_20000101_000000 --output_dir /media/volume/PACT-Data/StormSurge/./All_Results/P1_WeightProbe/NCEP_CBBT_24h_dual_ex10_tail010__20000101_000000 --torch_threads 1 --num_workers 0 --prefetch_factor 0 --mp_context fork --x_norm zscore --x_p_lo 1.0 --x_p_hi 99.0 --x_nodes_per_graph 256 --x_clip 0 --x_aug 0 --x_aug_prob 0 --x_aug_scale 0 --x_aug_bias 0 --station_json_dir /media/volume/PACT-Data/StormSurge/station_json --use_site_elevation 0 --use_bathymetry 0 --station CBBT --grad_accum_steps 4 --amp --amp_dtype bf16 --tf32 --head_type dual --dual_mode exceedance --tail_frac 0.05 --temporal_block Transformer --node_read_heads 8 --time_read_heads 8 --transformer_layers 2 --transformer_ff_mult 4.0 --transformer_dropout 0.0 --max_time_steps 32 --gate_mode window --dual_loss 1 --body_loss_weight 1 --excess_loss_weight 10 --gate_loss_weight 0.5 --scheduler cosine --warmup_epochs 5 --warmup_start_factor 0.1 --min_lr 1e-6 --loss_mode mse_tail --wmse_q 95 --wmse_alpha 4.0 --wmse_s 0.10 --wmse_use_abs 1 --tail_frac 0.05 --tail_lambda 0.10
+
+### experiment_config/P1_WeightProbe/train_config_NCEP_CBBT_24h_dual_ex2_tail005.sh
+=========================================
+Config file:   experiment_config/P1_WeightProbe/train_config_NCEP_CBBT_24h_dual_ex2_tail005.sh
+Host:          js2-h100-1
+Workdir:       /media/volume/PACT-Data/StormSurge
+Run name:      NCEP_CBBT_24h_dual_ex2_tail005
+Run dir:       /media/volume/PACT-Data/StormSurge/./All_Results/P1_WeightProbe/NCEP_CBBT_24h_dual_ex2_tail005__20000101_000000
+Run dir style: runname_timestamp
+Results root:  /media/volume/PACT-Data/StormSurge/./All_Results/P1_WeightProbe
+Python:        /media/volume/PACT-Data/conda_envs/torchpyg-cu124/bin/python (DO_CONDA=0)
+tmux:          USE_TMUX=1 SESSION_NAME=P1_Validation DRY_RUN=1
+LAUNCHER:      /media/volume/PACT-Data/conda_envs/torchpyg-cu124/bin/python -u
+Train script:  train.py
+Model:         perceiver3
+Encoder:       GraphSAGE
+CNN width:     29 (intermediate channels)
+Temporal:      Transformer
+Head:          dual
+Station feats: site_elevation=0 bathymetry=0 (PACT)
+Grad accum:    4 (nominal effective batch=1024)
+ROOT_DIR:      /media/share/PACT/Data/Grid4_New/NCEP/graphs
+TEST_ROOT_DIR: <none>
+TRAIN_DATA_TAG:NCEP
+TEST_DATA_TAG: NCEP
+LR_LIST:       5e-3
+Loss modes:    mse_tail
+Loss weights:  body=1 excess=2 gate=0.5 tail=0.05 slope=0 (terms enabled by head/loss mode)
+H_LIST:        24
+Split:         train=0.6 val=0.2 shuffle_years=0 future_only=0 future_year_threshold=2030 seed=42
+MASTER_ADDR:   127.0.0.1
+MASTER_PORT:   30387
+SLURM_JOB_ID:  <none>
+CUDA_VISIBLE_DEVICES:  0
+num_gpus:      1
+Scheduler:     cosine (ROP_METRIC=val_rmse_phys)
+DISABLE_OOD:   1 (x_norm=zscore, x_clip=0, x_aug=0)
+DL:            workers=0 pin=0 pers=0 prefetch=0 mp=fork
+Precision:     AMP=1 AMP_DTYPE=bf16 TF32=1
+=========================================
+CMD: train.py --root_dir /media/share/PACT/Data/Grid4_New/NCEP/graphs --model perceiver3 --exceedance_percentile 95 --dual_ablation none --encoder_type GraphSAGE --cnn_intermediate_channel 29 --batch_size 256 --lr 5e-3 --epochs 300 --hidden_channels 128 --num_layers 2 --dropout 0.05 --head_dropout 0.05 --max_grad_norm 0 --deterministic 0 --history_hours 24 --seed 42 --train_ratio 0.6 --val_ratio 0.2 --shuffle_years 0 --future_only 0 --future_year_threshold 2030 --run_tag CBBT_NCEPtoNCEP_perceiver3_ga4_nrh8_trh8_L2_ff4.0_td0.0_stable1v3_exceedance_gmwindow_eq95_danone_lossmse_tail_tf0.05_tl0.05_hist24h_hid128_L2_bs256_lr5e-3_ep300_schcosine_xnzscore_20000101_000000 --output_dir /media/volume/PACT-Data/StormSurge/./All_Results/P1_WeightProbe/NCEP_CBBT_24h_dual_ex2_tail005__20000101_000000 --torch_threads 1 --num_workers 0 --prefetch_factor 0 --mp_context fork --x_norm zscore --x_p_lo 1.0 --x_p_hi 99.0 --x_nodes_per_graph 256 --x_clip 0 --x_aug 0 --x_aug_prob 0 --x_aug_scale 0 --x_aug_bias 0 --station_json_dir /media/volume/PACT-Data/StormSurge/station_json --use_site_elevation 0 --use_bathymetry 0 --station CBBT --grad_accum_steps 4 --amp --amp_dtype bf16 --tf32 --head_type dual --dual_mode exceedance --tail_frac 0.05 --temporal_block Transformer --node_read_heads 8 --time_read_heads 8 --transformer_layers 2 --transformer_ff_mult 4.0 --transformer_dropout 0.0 --max_time_steps 32 --gate_mode window --dual_loss 1 --body_loss_weight 1 --excess_loss_weight 2 --gate_loss_weight 0.5 --scheduler cosine --warmup_epochs 5 --warmup_start_factor 0.1 --min_lr 1e-6 --loss_mode mse_tail --wmse_q 95 --wmse_alpha 4.0 --wmse_s 0.10 --wmse_use_abs 1 --tail_frac 0.05 --tail_lambda 0.05
+
+### experiment_config/P1_WeightProbe/train_config_NCEP_CBBT_24h_dual_ex2_tail010.sh
+=========================================
+Config file:   experiment_config/P1_WeightProbe/train_config_NCEP_CBBT_24h_dual_ex2_tail010.sh
+Host:          js2-h100-1
+Workdir:       /media/volume/PACT-Data/StormSurge
+Run name:      NCEP_CBBT_24h_dual_ex2_tail010
+Run dir:       /media/volume/PACT-Data/StormSurge/./All_Results/P1_WeightProbe/NCEP_CBBT_24h_dual_ex2_tail010__20000101_000000
+Run dir style: runname_timestamp
+Results root:  /media/volume/PACT-Data/StormSurge/./All_Results/P1_WeightProbe
+Python:        /media/volume/PACT-Data/conda_envs/torchpyg-cu124/bin/python (DO_CONDA=0)
+tmux:          USE_TMUX=1 SESSION_NAME=P1_Validation DRY_RUN=1
+LAUNCHER:      /media/volume/PACT-Data/conda_envs/torchpyg-cu124/bin/python -u
+Train script:  train.py
+Model:         perceiver3
+Encoder:       GraphSAGE
+CNN width:     29 (intermediate channels)
+Temporal:      Transformer
+Head:          dual
+Station feats: site_elevation=0 bathymetry=0 (PACT)
+Grad accum:    4 (nominal effective batch=1024)
+ROOT_DIR:      /media/share/PACT/Data/Grid4_New/NCEP/graphs
+TEST_ROOT_DIR: <none>
+TRAIN_DATA_TAG:NCEP
+TEST_DATA_TAG: NCEP
+LR_LIST:       5e-3
+Loss modes:    mse_tail
+Loss weights:  body=1 excess=2 gate=0.5 tail=0.10 slope=0 (terms enabled by head/loss mode)
+H_LIST:        24
+Split:         train=0.6 val=0.2 shuffle_years=0 future_only=0 future_year_threshold=2030 seed=42
+MASTER_ADDR:   127.0.0.1
+MASTER_PORT:   29681
+SLURM_JOB_ID:  <none>
+CUDA_VISIBLE_DEVICES:  0
+num_gpus:      1
+Scheduler:     cosine (ROP_METRIC=val_rmse_phys)
+DISABLE_OOD:   1 (x_norm=zscore, x_clip=0, x_aug=0)
+DL:            workers=0 pin=0 pers=0 prefetch=0 mp=fork
+Precision:     AMP=1 AMP_DTYPE=bf16 TF32=1
+=========================================
+CMD: train.py --root_dir /media/share/PACT/Data/Grid4_New/NCEP/graphs --model perceiver3 --exceedance_percentile 95 --dual_ablation none --encoder_type GraphSAGE --cnn_intermediate_channel 29 --batch_size 256 --lr 5e-3 --epochs 300 --hidden_channels 128 --num_layers 2 --dropout 0.05 --head_dropout 0.05 --max_grad_norm 0 --deterministic 0 --history_hours 24 --seed 42 --train_ratio 0.6 --val_ratio 0.2 --shuffle_years 0 --future_only 0 --future_year_threshold 2030 --run_tag CBBT_NCEPtoNCEP_perceiver3_ga4_nrh8_trh8_L2_ff4.0_td0.0_stable1v3_exceedance_gmwindow_eq95_danone_lossmse_tail_tf0.05_tl0.10_hist24h_hid128_L2_bs256_lr5e-3_ep300_schcosine_xnzscore_20000101_000000 --output_dir /media/volume/PACT-Data/StormSurge/./All_Results/P1_WeightProbe/NCEP_CBBT_24h_dual_ex2_tail010__20000101_000000 --torch_threads 1 --num_workers 0 --prefetch_factor 0 --mp_context fork --x_norm zscore --x_p_lo 1.0 --x_p_hi 99.0 --x_nodes_per_graph 256 --x_clip 0 --x_aug 0 --x_aug_prob 0 --x_aug_scale 0 --x_aug_bias 0 --station_json_dir /media/volume/PACT-Data/StormSurge/station_json --use_site_elevation 0 --use_bathymetry 0 --station CBBT --grad_accum_steps 4 --amp --amp_dtype bf16 --tf32 --head_type dual --dual_mode exceedance --tail_frac 0.05 --temporal_block Transformer --node_read_heads 8 --time_read_heads 8 --transformer_layers 2 --transformer_ff_mult 4.0 --transformer_dropout 0.0 --max_time_steps 32 --gate_mode window --dual_loss 1 --body_loss_weight 1 --excess_loss_weight 2 --gate_loss_weight 0.5 --scheduler cosine --warmup_epochs 5 --warmup_start_factor 0.1 --min_lr 1e-6 --loss_mode mse_tail --wmse_q 95 --wmse_alpha 4.0 --wmse_s 0.10 --wmse_use_abs 1 --tail_frac 0.05 --tail_lambda 0.10
+
+### experiment_config/P1_WeightProbe/train_config_NCEP_CBBT_24h_dual_ex5_notail.sh
+=========================================
+Config file:   experiment_config/P1_WeightProbe/train_config_NCEP_CBBT_24h_dual_ex5_notail.sh
+Host:          js2-h100-1
+Workdir:       /media/volume/PACT-Data/StormSurge
+Run name:      NCEP_CBBT_24h_dual_ex5_notail
+Run dir:       /media/volume/PACT-Data/StormSurge/./All_Results/P1_WeightProbe/NCEP_CBBT_24h_dual_ex5_notail__20000101_000000
+Run dir style: runname_timestamp
+Results root:  /media/volume/PACT-Data/StormSurge/./All_Results/P1_WeightProbe
+Python:        /media/volume/PACT-Data/conda_envs/torchpyg-cu124/bin/python (DO_CONDA=0)
+tmux:          USE_TMUX=1 SESSION_NAME=P1_Validation DRY_RUN=1
+LAUNCHER:      /media/volume/PACT-Data/conda_envs/torchpyg-cu124/bin/python -u
+Train script:  train.py
+Model:         perceiver3
+Encoder:       GraphSAGE
+CNN width:     29 (intermediate channels)
+Temporal:      Transformer
+Head:          dual
+Station feats: site_elevation=0 bathymetry=0 (PACT)
+Grad accum:    4 (nominal effective batch=1024)
+ROOT_DIR:      /media/share/PACT/Data/Grid4_New/NCEP/graphs
+TEST_ROOT_DIR: <none>
+TRAIN_DATA_TAG:NCEP
+TEST_DATA_TAG: NCEP
+LR_LIST:       5e-3
+Loss modes:    mse
+Loss weights:  body=1 excess=5 gate=0.5 tail=0 slope=0 (terms enabled by head/loss mode)
+H_LIST:        24
+Split:         train=0.6 val=0.2 shuffle_years=0 future_only=0 future_year_threshold=2030 seed=42
+MASTER_ADDR:   127.0.0.1
+MASTER_PORT:   29714
+SLURM_JOB_ID:  <none>
+CUDA_VISIBLE_DEVICES:  0
+num_gpus:      1
+Scheduler:     cosine (ROP_METRIC=val_rmse_phys)
+DISABLE_OOD:   1 (x_norm=zscore, x_clip=0, x_aug=0)
+DL:            workers=0 pin=0 pers=0 prefetch=0 mp=fork
+Precision:     AMP=1 AMP_DTYPE=bf16 TF32=1
+=========================================
+CMD: train.py --root_dir /media/share/PACT/Data/Grid4_New/NCEP/graphs --model perceiver3 --exceedance_percentile 95 --dual_ablation none --encoder_type GraphSAGE --cnn_intermediate_channel 29 --batch_size 256 --lr 5e-3 --epochs 300 --hidden_channels 128 --num_layers 2 --dropout 0.05 --head_dropout 0.05 --max_grad_norm 0 --deterministic 0 --history_hours 24 --seed 42 --train_ratio 0.6 --val_ratio 0.2 --shuffle_years 0 --future_only 0 --future_year_threshold 2030 --run_tag CBBT_NCEPtoNCEP_perceiver3_ga4_nrh8_trh8_L2_ff4.0_td0.0_stable1v3_exceedance_gmwindow_eq95_danone_lossmse_hist24h_hid128_L2_bs256_lr5e-3_ep300_schcosine_xnzscore_20000101_000000 --output_dir /media/volume/PACT-Data/StormSurge/./All_Results/P1_WeightProbe/NCEP_CBBT_24h_dual_ex5_notail__20000101_000000 --torch_threads 1 --num_workers 0 --prefetch_factor 0 --mp_context fork --x_norm zscore --x_p_lo 1.0 --x_p_hi 99.0 --x_nodes_per_graph 256 --x_clip 0 --x_aug 0 --x_aug_prob 0 --x_aug_scale 0 --x_aug_bias 0 --station_json_dir /media/volume/PACT-Data/StormSurge/station_json --use_site_elevation 0 --use_bathymetry 0 --station CBBT --grad_accum_steps 4 --amp --amp_dtype bf16 --tf32 --head_type dual --dual_mode exceedance --tail_frac 0.05 --temporal_block Transformer --node_read_heads 8 --time_read_heads 8 --transformer_layers 2 --transformer_ff_mult 4.0 --transformer_dropout 0.0 --max_time_steps 32 --gate_mode window --dual_loss 1 --body_loss_weight 1 --excess_loss_weight 5 --gate_loss_weight 0.5 --scheduler cosine --warmup_epochs 5 --warmup_start_factor 0.1 --min_lr 1e-6 --loss_mode mse --wmse_q 95 --wmse_alpha 4.0 --wmse_s 0.10 --wmse_use_abs 1
+
+### experiment_config/P1_WeightProbe/train_config_NCEP_CBBT_24h_dual_ex5_tail005.sh
+=========================================
+Config file:   experiment_config/P1_WeightProbe/train_config_NCEP_CBBT_24h_dual_ex5_tail005.sh
+Host:          js2-h100-1
+Workdir:       /media/volume/PACT-Data/StormSurge
+Run name:      NCEP_CBBT_24h_dual_ex5_tail005
+Run dir:       /media/volume/PACT-Data/StormSurge/./All_Results/P1_WeightProbe/NCEP_CBBT_24h_dual_ex5_tail005__20000101_000000
+Run dir style: runname_timestamp
+Results root:  /media/volume/PACT-Data/StormSurge/./All_Results/P1_WeightProbe
+Python:        /media/volume/PACT-Data/conda_envs/torchpyg-cu124/bin/python (DO_CONDA=0)
+tmux:          USE_TMUX=1 SESSION_NAME=P1_Validation DRY_RUN=1
+LAUNCHER:      /media/volume/PACT-Data/conda_envs/torchpyg-cu124/bin/python -u
+Train script:  train.py
+Model:         perceiver3
+Encoder:       GraphSAGE
+CNN width:     29 (intermediate channels)
+Temporal:      Transformer
+Head:          dual
+Station feats: site_elevation=0 bathymetry=0 (PACT)
+Grad accum:    4 (nominal effective batch=1024)
+ROOT_DIR:      /media/share/PACT/Data/Grid4_New/NCEP/graphs
+TEST_ROOT_DIR: <none>
+TRAIN_DATA_TAG:NCEP
+TEST_DATA_TAG: NCEP
+LR_LIST:       5e-3
+Loss modes:    mse_tail
+Loss weights:  body=1 excess=5 gate=0.5 tail=0.05 slope=0 (terms enabled by head/loss mode)
+H_LIST:        24
+Split:         train=0.6 val=0.2 shuffle_years=0 future_only=0 future_year_threshold=2030 seed=42
+MASTER_ADDR:   127.0.0.1
+MASTER_PORT:   30431
+SLURM_JOB_ID:  <none>
+CUDA_VISIBLE_DEVICES:  0
+num_gpus:      1
+Scheduler:     cosine (ROP_METRIC=val_rmse_phys)
+DISABLE_OOD:   1 (x_norm=zscore, x_clip=0, x_aug=0)
+DL:            workers=0 pin=0 pers=0 prefetch=0 mp=fork
+Precision:     AMP=1 AMP_DTYPE=bf16 TF32=1
+=========================================
+CMD: train.py --root_dir /media/share/PACT/Data/Grid4_New/NCEP/graphs --model perceiver3 --exceedance_percentile 95 --dual_ablation none --encoder_type GraphSAGE --cnn_intermediate_channel 29 --batch_size 256 --lr 5e-3 --epochs 300 --hidden_channels 128 --num_layers 2 --dropout 0.05 --head_dropout 0.05 --max_grad_norm 0 --deterministic 0 --history_hours 24 --seed 42 --train_ratio 0.6 --val_ratio 0.2 --shuffle_years 0 --future_only 0 --future_year_threshold 2030 --run_tag CBBT_NCEPtoNCEP_perceiver3_ga4_nrh8_trh8_L2_ff4.0_td0.0_stable1v3_exceedance_gmwindow_eq95_danone_lossmse_tail_tf0.05_tl0.05_hist24h_hid128_L2_bs256_lr5e-3_ep300_schcosine_xnzscore_20000101_000000 --output_dir /media/volume/PACT-Data/StormSurge/./All_Results/P1_WeightProbe/NCEP_CBBT_24h_dual_ex5_tail005__20000101_000000 --torch_threads 1 --num_workers 0 --prefetch_factor 0 --mp_context fork --x_norm zscore --x_p_lo 1.0 --x_p_hi 99.0 --x_nodes_per_graph 256 --x_clip 0 --x_aug 0 --x_aug_prob 0 --x_aug_scale 0 --x_aug_bias 0 --station_json_dir /media/volume/PACT-Data/StormSurge/station_json --use_site_elevation 0 --use_bathymetry 0 --station CBBT --grad_accum_steps 4 --amp --amp_dtype bf16 --tf32 --head_type dual --dual_mode exceedance --tail_frac 0.05 --temporal_block Transformer --node_read_heads 8 --time_read_heads 8 --transformer_layers 2 --transformer_ff_mult 4.0 --transformer_dropout 0.0 --max_time_steps 32 --gate_mode window --dual_loss 1 --body_loss_weight 1 --excess_loss_weight 5 --gate_loss_weight 0.5 --scheduler cosine --warmup_epochs 5 --warmup_start_factor 0.1 --min_lr 1e-6 --loss_mode mse_tail --wmse_q 95 --wmse_alpha 4.0 --wmse_s 0.10 --wmse_use_abs 1 --tail_frac 0.05 --tail_lambda 0.05
+
+### experiment_config/P1_WeightProbe/train_config_NCEP_CBBT_24h_dual_ex5_tail010.sh
+=========================================
+Config file:   experiment_config/P1_WeightProbe/train_config_NCEP_CBBT_24h_dual_ex5_tail010.sh
+Host:          js2-h100-1
+Workdir:       /media/volume/PACT-Data/StormSurge
+Run name:      NCEP_CBBT_24h_dual_ex5_tail010
+Run dir:       /media/volume/PACT-Data/StormSurge/./All_Results/P1_WeightProbe/NCEP_CBBT_24h_dual_ex5_tail010__20000101_000000
+Run dir style: runname_timestamp
+Results root:  /media/volume/PACT-Data/StormSurge/./All_Results/P1_WeightProbe
+Python:        /media/volume/PACT-Data/conda_envs/torchpyg-cu124/bin/python (DO_CONDA=0)
+tmux:          USE_TMUX=1 SESSION_NAME=P1_Validation DRY_RUN=1
+LAUNCHER:      /media/volume/PACT-Data/conda_envs/torchpyg-cu124/bin/python -u
+Train script:  train.py
+Model:         perceiver3
+Encoder:       GraphSAGE
+CNN width:     29 (intermediate channels)
+Temporal:      Transformer
+Head:          dual
+Station feats: site_elevation=0 bathymetry=0 (PACT)
+Grad accum:    4 (nominal effective batch=1024)
+ROOT_DIR:      /media/share/PACT/Data/Grid4_New/NCEP/graphs
+TEST_ROOT_DIR: <none>
+TRAIN_DATA_TAG:NCEP
+TEST_DATA_TAG: NCEP
+LR_LIST:       5e-3
+Loss modes:    mse_tail
+Loss weights:  body=1 excess=5 gate=0.5 tail=0.10 slope=0 (terms enabled by head/loss mode)
+H_LIST:        24
+Split:         train=0.6 val=0.2 shuffle_years=0 future_only=0 future_year_threshold=2030 seed=42
+MASTER_ADDR:   127.0.0.1
+MASTER_PORT:   29734
+SLURM_JOB_ID:  <none>
+CUDA_VISIBLE_DEVICES:  0
+num_gpus:      1
+Scheduler:     cosine (ROP_METRIC=val_rmse_phys)
+DISABLE_OOD:   1 (x_norm=zscore, x_clip=0, x_aug=0)
+DL:            workers=0 pin=0 pers=0 prefetch=0 mp=fork
+Precision:     AMP=1 AMP_DTYPE=bf16 TF32=1
+=========================================
+CMD: train.py --root_dir /media/share/PACT/Data/Grid4_New/NCEP/graphs --model perceiver3 --exceedance_percentile 95 --dual_ablation none --encoder_type GraphSAGE --cnn_intermediate_channel 29 --batch_size 256 --lr 5e-3 --epochs 300 --hidden_channels 128 --num_layers 2 --dropout 0.05 --head_dropout 0.05 --max_grad_norm 0 --deterministic 0 --history_hours 24 --seed 42 --train_ratio 0.6 --val_ratio 0.2 --shuffle_years 0 --future_only 0 --future_year_threshold 2030 --run_tag CBBT_NCEPtoNCEP_perceiver3_ga4_nrh8_trh8_L2_ff4.0_td0.0_stable1v3_exceedance_gmwindow_eq95_danone_lossmse_tail_tf0.05_tl0.10_hist24h_hid128_L2_bs256_lr5e-3_ep300_schcosine_xnzscore_20000101_000000 --output_dir /media/volume/PACT-Data/StormSurge/./All_Results/P1_WeightProbe/NCEP_CBBT_24h_dual_ex5_tail010__20000101_000000 --torch_threads 1 --num_workers 0 --prefetch_factor 0 --mp_context fork --x_norm zscore --x_p_lo 1.0 --x_p_hi 99.0 --x_nodes_per_graph 256 --x_clip 0 --x_aug 0 --x_aug_prob 0 --x_aug_scale 0 --x_aug_bias 0 --station_json_dir /media/volume/PACT-Data/StormSurge/station_json --use_site_elevation 0 --use_bathymetry 0 --station CBBT --grad_accum_steps 4 --amp --amp_dtype bf16 --tf32 --head_type dual --dual_mode exceedance --tail_frac 0.05 --temporal_block Transformer --node_read_heads 8 --time_read_heads 8 --transformer_layers 2 --transformer_ff_mult 4.0 --transformer_dropout 0.0 --max_time_steps 32 --gate_mode window --dual_loss 1 --body_loss_weight 1 --excess_loss_weight 5 --gate_loss_weight 0.5 --scheduler cosine --warmup_epochs 5 --warmup_start_factor 0.1 --min_lr 1e-6 --loss_mode mse_tail --wmse_q 95 --wmse_alpha 4.0 --wmse_s 0.10 --wmse_use_abs 1 --tail_frac 0.05 --tail_lambda 0.10
+
+### experiment_config/P1_WeightProbe/train_config_NCEP_Lewes_24h_dual_ex10_notail.sh
+=========================================
+Config file:   experiment_config/P1_WeightProbe/train_config_NCEP_Lewes_24h_dual_ex10_notail.sh
+Host:          js2-h100-1
+Workdir:       /media/volume/PACT-Data/StormSurge
+Run name:      NCEP_Lewes_24h_dual_ex10_notail
+Run dir:       /media/volume/PACT-Data/StormSurge/./All_Results/P1_WeightProbe/NCEP_Lewes_24h_dual_ex10_notail__20000101_000000
+Run dir style: runname_timestamp
+Results root:  /media/volume/PACT-Data/StormSurge/./All_Results/P1_WeightProbe
+Python:        /media/volume/PACT-Data/conda_envs/torchpyg-cu124/bin/python (DO_CONDA=0)
+tmux:          USE_TMUX=1 SESSION_NAME=P1_Validation DRY_RUN=1
+LAUNCHER:      /media/volume/PACT-Data/conda_envs/torchpyg-cu124/bin/python -u
+Train script:  train.py
+Model:         perceiver3
+Encoder:       GraphSAGE
+CNN width:     29 (intermediate channels)
+Temporal:      Transformer
+Head:          dual
+Station feats: site_elevation=0 bathymetry=0 (PACT)
+Grad accum:    4 (nominal effective batch=1024)
+ROOT_DIR:      /media/share/PACT/Data/Grid4_New/NCEP/graphs
+TEST_ROOT_DIR: <none>
+TRAIN_DATA_TAG:NCEP
+TEST_DATA_TAG: NCEP
+LR_LIST:       5e-3
+Loss modes:    mse
+Loss weights:  body=1 excess=10 gate=0.5 tail=0 slope=0 (terms enabled by head/loss mode)
+H_LIST:        24
+Split:         train=0.6 val=0.2 shuffle_years=0 future_only=0 future_year_threshold=2030 seed=42
+MASTER_ADDR:   127.0.0.1
+MASTER_PORT:   29659
+SLURM_JOB_ID:  <none>
+CUDA_VISIBLE_DEVICES:  0
+num_gpus:      1
+Scheduler:     cosine (ROP_METRIC=val_rmse_phys)
+DISABLE_OOD:   1 (x_norm=zscore, x_clip=0, x_aug=0)
+DL:            workers=0 pin=0 pers=0 prefetch=0 mp=fork
+Precision:     AMP=1 AMP_DTYPE=bf16 TF32=1
+=========================================
+CMD: train.py --root_dir /media/share/PACT/Data/Grid4_New/NCEP/graphs --model perceiver3 --exceedance_percentile 95 --dual_ablation none --encoder_type GraphSAGE --cnn_intermediate_channel 29 --batch_size 256 --lr 5e-3 --epochs 300 --hidden_channels 128 --num_layers 2 --dropout 0.05 --head_dropout 0.05 --max_grad_norm 0 --deterministic 0 --history_hours 24 --seed 42 --train_ratio 0.6 --val_ratio 0.2 --shuffle_years 0 --future_only 0 --future_year_threshold 2030 --run_tag Lewes_NCEPtoNCEP_perceiver3_ga4_nrh8_trh8_L2_ff4.0_td0.0_stable1v3_exceedance_gmwindow_eq95_danone_lossmse_hist24h_hid128_L2_bs256_lr5e-3_ep300_schcosine_xnzscore_20000101_000000 --output_dir /media/volume/PACT-Data/StormSurge/./All_Results/P1_WeightProbe/NCEP_Lewes_24h_dual_ex10_notail__20000101_000000 --torch_threads 1 --num_workers 0 --prefetch_factor 0 --mp_context fork --x_norm zscore --x_p_lo 1.0 --x_p_hi 99.0 --x_nodes_per_graph 256 --x_clip 0 --x_aug 0 --x_aug_prob 0 --x_aug_scale 0 --x_aug_bias 0 --station_json_dir /media/volume/PACT-Data/StormSurge/station_json --use_site_elevation 0 --use_bathymetry 0 --station Lewes --grad_accum_steps 4 --amp --amp_dtype bf16 --tf32 --head_type dual --dual_mode exceedance --tail_frac 0.05 --temporal_block Transformer --node_read_heads 8 --time_read_heads 8 --transformer_layers 2 --transformer_ff_mult 4.0 --transformer_dropout 0.0 --max_time_steps 32 --gate_mode window --dual_loss 1 --body_loss_weight 1 --excess_loss_weight 10 --gate_loss_weight 0.5 --scheduler cosine --warmup_epochs 5 --warmup_start_factor 0.1 --min_lr 1e-6 --loss_mode mse --wmse_q 95 --wmse_alpha 4.0 --wmse_s 0.10 --wmse_use_abs 1
+
+### experiment_config/P1_WeightProbe/train_config_NCEP_Lewes_24h_dual_ex10_tail005.sh
+=========================================
+Config file:   experiment_config/P1_WeightProbe/train_config_NCEP_Lewes_24h_dual_ex10_tail005.sh
+Host:          js2-h100-1
+Workdir:       /media/volume/PACT-Data/StormSurge
+Run name:      NCEP_Lewes_24h_dual_ex10_tail005
+Run dir:       /media/volume/PACT-Data/StormSurge/./All_Results/P1_WeightProbe/NCEP_Lewes_24h_dual_ex10_tail005__20000101_000000
+Run dir style: runname_timestamp
+Results root:  /media/volume/PACT-Data/StormSurge/./All_Results/P1_WeightProbe
+Python:        /media/volume/PACT-Data/conda_envs/torchpyg-cu124/bin/python (DO_CONDA=0)
+tmux:          USE_TMUX=1 SESSION_NAME=P1_Validation DRY_RUN=1
+LAUNCHER:      /media/volume/PACT-Data/conda_envs/torchpyg-cu124/bin/python -u
+Train script:  train.py
+Model:         perceiver3
+Encoder:       GraphSAGE
+CNN width:     29 (intermediate channels)
+Temporal:      Transformer
+Head:          dual
+Station feats: site_elevation=0 bathymetry=0 (PACT)
+Grad accum:    4 (nominal effective batch=1024)
+ROOT_DIR:      /media/share/PACT/Data/Grid4_New/NCEP/graphs
+TEST_ROOT_DIR: <none>
+TRAIN_DATA_TAG:NCEP
+TEST_DATA_TAG: NCEP
+LR_LIST:       5e-3
+Loss modes:    mse_tail
+Loss weights:  body=1 excess=10 gate=0.5 tail=0.05 slope=0 (terms enabled by head/loss mode)
+H_LIST:        24
+Split:         train=0.6 val=0.2 shuffle_years=0 future_only=0 future_year_threshold=2030 seed=42
+MASTER_ADDR:   127.0.0.1
+MASTER_PORT:   30070
+SLURM_JOB_ID:  <none>
+CUDA_VISIBLE_DEVICES:  0
+num_gpus:      1
+Scheduler:     cosine (ROP_METRIC=val_rmse_phys)
+DISABLE_OOD:   1 (x_norm=zscore, x_clip=0, x_aug=0)
+DL:            workers=0 pin=0 pers=0 prefetch=0 mp=fork
+Precision:     AMP=1 AMP_DTYPE=bf16 TF32=1
+=========================================
+CMD: train.py --root_dir /media/share/PACT/Data/Grid4_New/NCEP/graphs --model perceiver3 --exceedance_percentile 95 --dual_ablation none --encoder_type GraphSAGE --cnn_intermediate_channel 29 --batch_size 256 --lr 5e-3 --epochs 300 --hidden_channels 128 --num_layers 2 --dropout 0.05 --head_dropout 0.05 --max_grad_norm 0 --deterministic 0 --history_hours 24 --seed 42 --train_ratio 0.6 --val_ratio 0.2 --shuffle_years 0 --future_only 0 --future_year_threshold 2030 --run_tag Lewes_NCEPtoNCEP_perceiver3_ga4_nrh8_trh8_L2_ff4.0_td0.0_stable1v3_exceedance_gmwindow_eq95_danone_lossmse_tail_tf0.05_tl0.05_hist24h_hid128_L2_bs256_lr5e-3_ep300_schcosine_xnzscore_20000101_000000 --output_dir /media/volume/PACT-Data/StormSurge/./All_Results/P1_WeightProbe/NCEP_Lewes_24h_dual_ex10_tail005__20000101_000000 --torch_threads 1 --num_workers 0 --prefetch_factor 0 --mp_context fork --x_norm zscore --x_p_lo 1.0 --x_p_hi 99.0 --x_nodes_per_graph 256 --x_clip 0 --x_aug 0 --x_aug_prob 0 --x_aug_scale 0 --x_aug_bias 0 --station_json_dir /media/volume/PACT-Data/StormSurge/station_json --use_site_elevation 0 --use_bathymetry 0 --station Lewes --grad_accum_steps 4 --amp --amp_dtype bf16 --tf32 --head_type dual --dual_mode exceedance --tail_frac 0.05 --temporal_block Transformer --node_read_heads 8 --time_read_heads 8 --transformer_layers 2 --transformer_ff_mult 4.0 --transformer_dropout 0.0 --max_time_steps 32 --gate_mode window --dual_loss 1 --body_loss_weight 1 --excess_loss_weight 10 --gate_loss_weight 0.5 --scheduler cosine --warmup_epochs 5 --warmup_start_factor 0.1 --min_lr 1e-6 --loss_mode mse_tail --wmse_q 95 --wmse_alpha 4.0 --wmse_s 0.10 --wmse_use_abs 1 --tail_frac 0.05 --tail_lambda 0.05
+
+### experiment_config/P1_WeightProbe/train_config_NCEP_Lewes_24h_dual_ex10_tail010.sh
+=========================================
+Config file:   experiment_config/P1_WeightProbe/train_config_NCEP_Lewes_24h_dual_ex10_tail010.sh
+Host:          js2-h100-1
+Workdir:       /media/volume/PACT-Data/StormSurge
+Run name:      NCEP_Lewes_24h_dual_ex10_tail010
+Run dir:       /media/volume/PACT-Data/StormSurge/./All_Results/P1_WeightProbe/NCEP_Lewes_24h_dual_ex10_tail010__20000101_000000
+Run dir style: runname_timestamp
+Results root:  /media/volume/PACT-Data/StormSurge/./All_Results/P1_WeightProbe
+Python:        /media/volume/PACT-Data/conda_envs/torchpyg-cu124/bin/python (DO_CONDA=0)
+tmux:          USE_TMUX=1 SESSION_NAME=P1_Validation DRY_RUN=1
+LAUNCHER:      /media/volume/PACT-Data/conda_envs/torchpyg-cu124/bin/python -u
+Train script:  train.py
+Model:         perceiver3
+Encoder:       GraphSAGE
+CNN width:     29 (intermediate channels)
+Temporal:      Transformer
+Head:          dual
+Station feats: site_elevation=0 bathymetry=0 (PACT)
+Grad accum:    4 (nominal effective batch=1024)
+ROOT_DIR:      /media/share/PACT/Data/Grid4_New/NCEP/graphs
+TEST_ROOT_DIR: <none>
+TRAIN_DATA_TAG:NCEP
+TEST_DATA_TAG: NCEP
+LR_LIST:       5e-3
+Loss modes:    mse_tail
+Loss weights:  body=1 excess=10 gate=0.5 tail=0.10 slope=0 (terms enabled by head/loss mode)
+H_LIST:        24
+Split:         train=0.6 val=0.2 shuffle_years=0 future_only=0 future_year_threshold=2030 seed=42
+MASTER_ADDR:   127.0.0.1
+MASTER_PORT:   30219
+SLURM_JOB_ID:  <none>
+CUDA_VISIBLE_DEVICES:  0
+num_gpus:      1
+Scheduler:     cosine (ROP_METRIC=val_rmse_phys)
+DISABLE_OOD:   1 (x_norm=zscore, x_clip=0, x_aug=0)
+DL:            workers=0 pin=0 pers=0 prefetch=0 mp=fork
+Precision:     AMP=1 AMP_DTYPE=bf16 TF32=1
+=========================================
+CMD: train.py --root_dir /media/share/PACT/Data/Grid4_New/NCEP/graphs --model perceiver3 --exceedance_percentile 95 --dual_ablation none --encoder_type GraphSAGE --cnn_intermediate_channel 29 --batch_size 256 --lr 5e-3 --epochs 300 --hidden_channels 128 --num_layers 2 --dropout 0.05 --head_dropout 0.05 --max_grad_norm 0 --deterministic 0 --history_hours 24 --seed 42 --train_ratio 0.6 --val_ratio 0.2 --shuffle_years 0 --future_only 0 --future_year_threshold 2030 --run_tag Lewes_NCEPtoNCEP_perceiver3_ga4_nrh8_trh8_L2_ff4.0_td0.0_stable1v3_exceedance_gmwindow_eq95_danone_lossmse_tail_tf0.05_tl0.10_hist24h_hid128_L2_bs256_lr5e-3_ep300_schcosine_xnzscore_20000101_000000 --output_dir /media/volume/PACT-Data/StormSurge/./All_Results/P1_WeightProbe/NCEP_Lewes_24h_dual_ex10_tail010__20000101_000000 --torch_threads 1 --num_workers 0 --prefetch_factor 0 --mp_context fork --x_norm zscore --x_p_lo 1.0 --x_p_hi 99.0 --x_nodes_per_graph 256 --x_clip 0 --x_aug 0 --x_aug_prob 0 --x_aug_scale 0 --x_aug_bias 0 --station_json_dir /media/volume/PACT-Data/StormSurge/station_json --use_site_elevation 0 --use_bathymetry 0 --station Lewes --grad_accum_steps 4 --amp --amp_dtype bf16 --tf32 --head_type dual --dual_mode exceedance --tail_frac 0.05 --temporal_block Transformer --node_read_heads 8 --time_read_heads 8 --transformer_layers 2 --transformer_ff_mult 4.0 --transformer_dropout 0.0 --max_time_steps 32 --gate_mode window --dual_loss 1 --body_loss_weight 1 --excess_loss_weight 10 --gate_loss_weight 0.5 --scheduler cosine --warmup_epochs 5 --warmup_start_factor 0.1 --min_lr 1e-6 --loss_mode mse_tail --wmse_q 95 --wmse_alpha 4.0 --wmse_s 0.10 --wmse_use_abs 1 --tail_frac 0.05 --tail_lambda 0.10
+
+### experiment_config/P1_WeightProbe/train_config_NCEP_Lewes_24h_dual_ex2_tail005.sh
+=========================================
+Config file:   experiment_config/P1_WeightProbe/train_config_NCEP_Lewes_24h_dual_ex2_tail005.sh
+Host:          js2-h100-1
+Workdir:       /media/volume/PACT-Data/StormSurge
+Run name:      NCEP_Lewes_24h_dual_ex2_tail005
+Run dir:       /media/volume/PACT-Data/StormSurge/./All_Results/P1_WeightProbe/NCEP_Lewes_24h_dual_ex2_tail005__20000101_000000
+Run dir style: runname_timestamp
+Results root:  /media/volume/PACT-Data/StormSurge/./All_Results/P1_WeightProbe
+Python:        /media/volume/PACT-Data/conda_envs/torchpyg-cu124/bin/python (DO_CONDA=0)
+tmux:          USE_TMUX=1 SESSION_NAME=P1_Validation DRY_RUN=1
+LAUNCHER:      /media/volume/PACT-Data/conda_envs/torchpyg-cu124/bin/python -u
+Train script:  train.py
+Model:         perceiver3
+Encoder:       GraphSAGE
+CNN width:     29 (intermediate channels)
+Temporal:      Transformer
+Head:          dual
+Station feats: site_elevation=0 bathymetry=0 (PACT)
+Grad accum:    4 (nominal effective batch=1024)
+ROOT_DIR:      /media/share/PACT/Data/Grid4_New/NCEP/graphs
+TEST_ROOT_DIR: <none>
+TRAIN_DATA_TAG:NCEP
+TEST_DATA_TAG: NCEP
+LR_LIST:       5e-3
+Loss modes:    mse_tail
+Loss weights:  body=1 excess=2 gate=0.5 tail=0.05 slope=0 (terms enabled by head/loss mode)
+H_LIST:        24
+Split:         train=0.6 val=0.2 shuffle_years=0 future_only=0 future_year_threshold=2030 seed=42
+MASTER_ADDR:   127.0.0.1
+MASTER_PORT:   30380
+SLURM_JOB_ID:  <none>
+CUDA_VISIBLE_DEVICES:  0
+num_gpus:      1
+Scheduler:     cosine (ROP_METRIC=val_rmse_phys)
+DISABLE_OOD:   1 (x_norm=zscore, x_clip=0, x_aug=0)
+DL:            workers=0 pin=0 pers=0 prefetch=0 mp=fork
+Precision:     AMP=1 AMP_DTYPE=bf16 TF32=1
+=========================================
+CMD: train.py --root_dir /media/share/PACT/Data/Grid4_New/NCEP/graphs --model perceiver3 --exceedance_percentile 95 --dual_ablation none --encoder_type GraphSAGE --cnn_intermediate_channel 29 --batch_size 256 --lr 5e-3 --epochs 300 --hidden_channels 128 --num_layers 2 --dropout 0.05 --head_dropout 0.05 --max_grad_norm 0 --deterministic 0 --history_hours 24 --seed 42 --train_ratio 0.6 --val_ratio 0.2 --shuffle_years 0 --future_only 0 --future_year_threshold 2030 --run_tag Lewes_NCEPtoNCEP_perceiver3_ga4_nrh8_trh8_L2_ff4.0_td0.0_stable1v3_exceedance_gmwindow_eq95_danone_lossmse_tail_tf0.05_tl0.05_hist24h_hid128_L2_bs256_lr5e-3_ep300_schcosine_xnzscore_20000101_000000 --output_dir /media/volume/PACT-Data/StormSurge/./All_Results/P1_WeightProbe/NCEP_Lewes_24h_dual_ex2_tail005__20000101_000000 --torch_threads 1 --num_workers 0 --prefetch_factor 0 --mp_context fork --x_norm zscore --x_p_lo 1.0 --x_p_hi 99.0 --x_nodes_per_graph 256 --x_clip 0 --x_aug 0 --x_aug_prob 0 --x_aug_scale 0 --x_aug_bias 0 --station_json_dir /media/volume/PACT-Data/StormSurge/station_json --use_site_elevation 0 --use_bathymetry 0 --station Lewes --grad_accum_steps 4 --amp --amp_dtype bf16 --tf32 --head_type dual --dual_mode exceedance --tail_frac 0.05 --temporal_block Transformer --node_read_heads 8 --time_read_heads 8 --transformer_layers 2 --transformer_ff_mult 4.0 --transformer_dropout 0.0 --max_time_steps 32 --gate_mode window --dual_loss 1 --body_loss_weight 1 --excess_loss_weight 2 --gate_loss_weight 0.5 --scheduler cosine --warmup_epochs 5 --warmup_start_factor 0.1 --min_lr 1e-6 --loss_mode mse_tail --wmse_q 95 --wmse_alpha 4.0 --wmse_s 0.10 --wmse_use_abs 1 --tail_frac 0.05 --tail_lambda 0.05
+
+### experiment_config/P1_WeightProbe/train_config_NCEP_Lewes_24h_dual_ex2_tail010.sh
+=========================================
+Config file:   experiment_config/P1_WeightProbe/train_config_NCEP_Lewes_24h_dual_ex2_tail010.sh
+Host:          js2-h100-1
+Workdir:       /media/volume/PACT-Data/StormSurge
+Run name:      NCEP_Lewes_24h_dual_ex2_tail010
+Run dir:       /media/volume/PACT-Data/StormSurge/./All_Results/P1_WeightProbe/NCEP_Lewes_24h_dual_ex2_tail010__20000101_000000
+Run dir style: runname_timestamp
+Results root:  /media/volume/PACT-Data/StormSurge/./All_Results/P1_WeightProbe
+Python:        /media/volume/PACT-Data/conda_envs/torchpyg-cu124/bin/python (DO_CONDA=0)
+tmux:          USE_TMUX=1 SESSION_NAME=P1_Validation DRY_RUN=1
+LAUNCHER:      /media/volume/PACT-Data/conda_envs/torchpyg-cu124/bin/python -u
+Train script:  train.py
+Model:         perceiver3
+Encoder:       GraphSAGE
+CNN width:     29 (intermediate channels)
+Temporal:      Transformer
+Head:          dual
+Station feats: site_elevation=0 bathymetry=0 (PACT)
+Grad accum:    4 (nominal effective batch=1024)
+ROOT_DIR:      /media/share/PACT/Data/Grid4_New/NCEP/graphs
+TEST_ROOT_DIR: <none>
+TRAIN_DATA_TAG:NCEP
+TEST_DATA_TAG: NCEP
+LR_LIST:       5e-3
+Loss modes:    mse_tail
+Loss weights:  body=1 excess=2 gate=0.5 tail=0.10 slope=0 (terms enabled by head/loss mode)
+H_LIST:        24
+Split:         train=0.6 val=0.2 shuffle_years=0 future_only=0 future_year_threshold=2030 seed=42
+MASTER_ADDR:   127.0.0.1
+MASTER_PORT:   29733
+SLURM_JOB_ID:  <none>
+CUDA_VISIBLE_DEVICES:  0
+num_gpus:      1
+Scheduler:     cosine (ROP_METRIC=val_rmse_phys)
+DISABLE_OOD:   1 (x_norm=zscore, x_clip=0, x_aug=0)
+DL:            workers=0 pin=0 pers=0 prefetch=0 mp=fork
+Precision:     AMP=1 AMP_DTYPE=bf16 TF32=1
+=========================================
+CMD: train.py --root_dir /media/share/PACT/Data/Grid4_New/NCEP/graphs --model perceiver3 --exceedance_percentile 95 --dual_ablation none --encoder_type GraphSAGE --cnn_intermediate_channel 29 --batch_size 256 --lr 5e-3 --epochs 300 --hidden_channels 128 --num_layers 2 --dropout 0.05 --head_dropout 0.05 --max_grad_norm 0 --deterministic 0 --history_hours 24 --seed 42 --train_ratio 0.6 --val_ratio 0.2 --shuffle_years 0 --future_only 0 --future_year_threshold 2030 --run_tag Lewes_NCEPtoNCEP_perceiver3_ga4_nrh8_trh8_L2_ff4.0_td0.0_stable1v3_exceedance_gmwindow_eq95_danone_lossmse_tail_tf0.05_tl0.10_hist24h_hid128_L2_bs256_lr5e-3_ep300_schcosine_xnzscore_20000101_000000 --output_dir /media/volume/PACT-Data/StormSurge/./All_Results/P1_WeightProbe/NCEP_Lewes_24h_dual_ex2_tail010__20000101_000000 --torch_threads 1 --num_workers 0 --prefetch_factor 0 --mp_context fork --x_norm zscore --x_p_lo 1.0 --x_p_hi 99.0 --x_nodes_per_graph 256 --x_clip 0 --x_aug 0 --x_aug_prob 0 --x_aug_scale 0 --x_aug_bias 0 --station_json_dir /media/volume/PACT-Data/StormSurge/station_json --use_site_elevation 0 --use_bathymetry 0 --station Lewes --grad_accum_steps 4 --amp --amp_dtype bf16 --tf32 --head_type dual --dual_mode exceedance --tail_frac 0.05 --temporal_block Transformer --node_read_heads 8 --time_read_heads 8 --transformer_layers 2 --transformer_ff_mult 4.0 --transformer_dropout 0.0 --max_time_steps 32 --gate_mode window --dual_loss 1 --body_loss_weight 1 --excess_loss_weight 2 --gate_loss_weight 0.5 --scheduler cosine --warmup_epochs 5 --warmup_start_factor 0.1 --min_lr 1e-6 --loss_mode mse_tail --wmse_q 95 --wmse_alpha 4.0 --wmse_s 0.10 --wmse_use_abs 1 --tail_frac 0.05 --tail_lambda 0.10
+
+### experiment_config/P1_WeightProbe/train_config_NCEP_Lewes_24h_dual_ex5_notail.sh
+=========================================
+Config file:   experiment_config/P1_WeightProbe/train_config_NCEP_Lewes_24h_dual_ex5_notail.sh
+Host:          js2-h100-1
+Workdir:       /media/volume/PACT-Data/StormSurge
+Run name:      NCEP_Lewes_24h_dual_ex5_notail
+Run dir:       /media/volume/PACT-Data/StormSurge/./All_Results/P1_WeightProbe/NCEP_Lewes_24h_dual_ex5_notail__20000101_000000
+Run dir style: runname_timestamp
+Results root:  /media/volume/PACT-Data/StormSurge/./All_Results/P1_WeightProbe
+Python:        /media/volume/PACT-Data/conda_envs/torchpyg-cu124/bin/python (DO_CONDA=0)
+tmux:          USE_TMUX=1 SESSION_NAME=P1_Validation DRY_RUN=1
+LAUNCHER:      /media/volume/PACT-Data/conda_envs/torchpyg-cu124/bin/python -u
+Train script:  train.py
+Model:         perceiver3
+Encoder:       GraphSAGE
+CNN width:     29 (intermediate channels)
+Temporal:      Transformer
+Head:          dual
+Station feats: site_elevation=0 bathymetry=0 (PACT)
+Grad accum:    4 (nominal effective batch=1024)
+ROOT_DIR:      /media/share/PACT/Data/Grid4_New/NCEP/graphs
+TEST_ROOT_DIR: <none>
+TRAIN_DATA_TAG:NCEP
+TEST_DATA_TAG: NCEP
+LR_LIST:       5e-3
+Loss modes:    mse
+Loss weights:  body=1 excess=5 gate=0.5 tail=0 slope=0 (terms enabled by head/loss mode)
+H_LIST:        24
+Split:         train=0.6 val=0.2 shuffle_years=0 future_only=0 future_year_threshold=2030 seed=42
+MASTER_ADDR:   127.0.0.1
+MASTER_PORT:   30260
+SLURM_JOB_ID:  <none>
+CUDA_VISIBLE_DEVICES:  0
+num_gpus:      1
+Scheduler:     cosine (ROP_METRIC=val_rmse_phys)
+DISABLE_OOD:   1 (x_norm=zscore, x_clip=0, x_aug=0)
+DL:            workers=0 pin=0 pers=0 prefetch=0 mp=fork
+Precision:     AMP=1 AMP_DTYPE=bf16 TF32=1
+=========================================
+CMD: train.py --root_dir /media/share/PACT/Data/Grid4_New/NCEP/graphs --model perceiver3 --exceedance_percentile 95 --dual_ablation none --encoder_type GraphSAGE --cnn_intermediate_channel 29 --batch_size 256 --lr 5e-3 --epochs 300 --hidden_channels 128 --num_layers 2 --dropout 0.05 --head_dropout 0.05 --max_grad_norm 0 --deterministic 0 --history_hours 24 --seed 42 --train_ratio 0.6 --val_ratio 0.2 --shuffle_years 0 --future_only 0 --future_year_threshold 2030 --run_tag Lewes_NCEPtoNCEP_perceiver3_ga4_nrh8_trh8_L2_ff4.0_td0.0_stable1v3_exceedance_gmwindow_eq95_danone_lossmse_hist24h_hid128_L2_bs256_lr5e-3_ep300_schcosine_xnzscore_20000101_000000 --output_dir /media/volume/PACT-Data/StormSurge/./All_Results/P1_WeightProbe/NCEP_Lewes_24h_dual_ex5_notail__20000101_000000 --torch_threads 1 --num_workers 0 --prefetch_factor 0 --mp_context fork --x_norm zscore --x_p_lo 1.0 --x_p_hi 99.0 --x_nodes_per_graph 256 --x_clip 0 --x_aug 0 --x_aug_prob 0 --x_aug_scale 0 --x_aug_bias 0 --station_json_dir /media/volume/PACT-Data/StormSurge/station_json --use_site_elevation 0 --use_bathymetry 0 --station Lewes --grad_accum_steps 4 --amp --amp_dtype bf16 --tf32 --head_type dual --dual_mode exceedance --tail_frac 0.05 --temporal_block Transformer --node_read_heads 8 --time_read_heads 8 --transformer_layers 2 --transformer_ff_mult 4.0 --transformer_dropout 0.0 --max_time_steps 32 --gate_mode window --dual_loss 1 --body_loss_weight 1 --excess_loss_weight 5 --gate_loss_weight 0.5 --scheduler cosine --warmup_epochs 5 --warmup_start_factor 0.1 --min_lr 1e-6 --loss_mode mse --wmse_q 95 --wmse_alpha 4.0 --wmse_s 0.10 --wmse_use_abs 1
+
+### experiment_config/P1_WeightProbe/train_config_NCEP_Lewes_24h_dual_ex5_tail005.sh
+=========================================
+Config file:   experiment_config/P1_WeightProbe/train_config_NCEP_Lewes_24h_dual_ex5_tail005.sh
+Host:          js2-h100-1
+Workdir:       /media/volume/PACT-Data/StormSurge
+Run name:      NCEP_Lewes_24h_dual_ex5_tail005
+Run dir:       /media/volume/PACT-Data/StormSurge/./All_Results/P1_WeightProbe/NCEP_Lewes_24h_dual_ex5_tail005__20000101_000000
+Run dir style: runname_timestamp
+Results root:  /media/volume/PACT-Data/StormSurge/./All_Results/P1_WeightProbe
+Python:        /media/volume/PACT-Data/conda_envs/torchpyg-cu124/bin/python (DO_CONDA=0)
+tmux:          USE_TMUX=1 SESSION_NAME=P1_Validation DRY_RUN=1
+LAUNCHER:      /media/volume/PACT-Data/conda_envs/torchpyg-cu124/bin/python -u
+Train script:  train.py
+Model:         perceiver3
+Encoder:       GraphSAGE
+CNN width:     29 (intermediate channels)
+Temporal:      Transformer
+Head:          dual
+Station feats: site_elevation=0 bathymetry=0 (PACT)
+Grad accum:    4 (nominal effective batch=1024)
+ROOT_DIR:      /media/share/PACT/Data/Grid4_New/NCEP/graphs
+TEST_ROOT_DIR: <none>
+TRAIN_DATA_TAG:NCEP
+TEST_DATA_TAG: NCEP
+LR_LIST:       5e-3
+Loss modes:    mse_tail
+Loss weights:  body=1 excess=5 gate=0.5 tail=0.05 slope=0 (terms enabled by head/loss mode)
+H_LIST:        24
+Split:         train=0.6 val=0.2 shuffle_years=0 future_only=0 future_year_threshold=2030 seed=42
+MASTER_ADDR:   127.0.0.1
+MASTER_PORT:   29871
+SLURM_JOB_ID:  <none>
+CUDA_VISIBLE_DEVICES:  0
+num_gpus:      1
+Scheduler:     cosine (ROP_METRIC=val_rmse_phys)
+DISABLE_OOD:   1 (x_norm=zscore, x_clip=0, x_aug=0)
+DL:            workers=0 pin=0 pers=0 prefetch=0 mp=fork
+Precision:     AMP=1 AMP_DTYPE=bf16 TF32=1
+=========================================
+CMD: train.py --root_dir /media/share/PACT/Data/Grid4_New/NCEP/graphs --model perceiver3 --exceedance_percentile 95 --dual_ablation none --encoder_type GraphSAGE --cnn_intermediate_channel 29 --batch_size 256 --lr 5e-3 --epochs 300 --hidden_channels 128 --num_layers 2 --dropout 0.05 --head_dropout 0.05 --max_grad_norm 0 --deterministic 0 --history_hours 24 --seed 42 --train_ratio 0.6 --val_ratio 0.2 --shuffle_years 0 --future_only 0 --future_year_threshold 2030 --run_tag Lewes_NCEPtoNCEP_perceiver3_ga4_nrh8_trh8_L2_ff4.0_td0.0_stable1v3_exceedance_gmwindow_eq95_danone_lossmse_tail_tf0.05_tl0.05_hist24h_hid128_L2_bs256_lr5e-3_ep300_schcosine_xnzscore_20000101_000000 --output_dir /media/volume/PACT-Data/StormSurge/./All_Results/P1_WeightProbe/NCEP_Lewes_24h_dual_ex5_tail005__20000101_000000 --torch_threads 1 --num_workers 0 --prefetch_factor 0 --mp_context fork --x_norm zscore --x_p_lo 1.0 --x_p_hi 99.0 --x_nodes_per_graph 256 --x_clip 0 --x_aug 0 --x_aug_prob 0 --x_aug_scale 0 --x_aug_bias 0 --station_json_dir /media/volume/PACT-Data/StormSurge/station_json --use_site_elevation 0 --use_bathymetry 0 --station Lewes --grad_accum_steps 4 --amp --amp_dtype bf16 --tf32 --head_type dual --dual_mode exceedance --tail_frac 0.05 --temporal_block Transformer --node_read_heads 8 --time_read_heads 8 --transformer_layers 2 --transformer_ff_mult 4.0 --transformer_dropout 0.0 --max_time_steps 32 --gate_mode window --dual_loss 1 --body_loss_weight 1 --excess_loss_weight 5 --gate_loss_weight 0.5 --scheduler cosine --warmup_epochs 5 --warmup_start_factor 0.1 --min_lr 1e-6 --loss_mode mse_tail --wmse_q 95 --wmse_alpha 4.0 --wmse_s 0.10 --wmse_use_abs 1 --tail_frac 0.05 --tail_lambda 0.05
+
+### experiment_config/P1_WeightProbe/train_config_NCEP_Lewes_24h_dual_ex5_tail010.sh
+=========================================
+Config file:   experiment_config/P1_WeightProbe/train_config_NCEP_Lewes_24h_dual_ex5_tail010.sh
+Host:          js2-h100-1
+Workdir:       /media/volume/PACT-Data/StormSurge
+Run name:      NCEP_Lewes_24h_dual_ex5_tail010
+Run dir:       /media/volume/PACT-Data/StormSurge/./All_Results/P1_WeightProbe/NCEP_Lewes_24h_dual_ex5_tail010__20000101_000000
+Run dir style: runname_timestamp
+Results root:  /media/volume/PACT-Data/StormSurge/./All_Results/P1_WeightProbe
+Python:        /media/volume/PACT-Data/conda_envs/torchpyg-cu124/bin/python (DO_CONDA=0)
+tmux:          USE_TMUX=1 SESSION_NAME=P1_Validation DRY_RUN=1
+LAUNCHER:      /media/volume/PACT-Data/conda_envs/torchpyg-cu124/bin/python -u
+Train script:  train.py
+Model:         perceiver3
+Encoder:       GraphSAGE
+CNN width:     29 (intermediate channels)
+Temporal:      Transformer
+Head:          dual
+Station feats: site_elevation=0 bathymetry=0 (PACT)
+Grad accum:    4 (nominal effective batch=1024)
+ROOT_DIR:      /media/share/PACT/Data/Grid4_New/NCEP/graphs
+TEST_ROOT_DIR: <none>
+TRAIN_DATA_TAG:NCEP
+TEST_DATA_TAG: NCEP
+LR_LIST:       5e-3
+Loss modes:    mse_tail
+Loss weights:  body=1 excess=5 gate=0.5 tail=0.10 slope=0 (terms enabled by head/loss mode)
+H_LIST:        24
+Split:         train=0.6 val=0.2 shuffle_years=0 future_only=0 future_year_threshold=2030 seed=42
+MASTER_ADDR:   127.0.0.1
+MASTER_PORT:   29870
+SLURM_JOB_ID:  <none>
+CUDA_VISIBLE_DEVICES:  0
+num_gpus:      1
+Scheduler:     cosine (ROP_METRIC=val_rmse_phys)
+DISABLE_OOD:   1 (x_norm=zscore, x_clip=0, x_aug=0)
+DL:            workers=0 pin=0 pers=0 prefetch=0 mp=fork
+Precision:     AMP=1 AMP_DTYPE=bf16 TF32=1
+=========================================
+CMD: train.py --root_dir /media/share/PACT/Data/Grid4_New/NCEP/graphs --model perceiver3 --exceedance_percentile 95 --dual_ablation none --encoder_type GraphSAGE --cnn_intermediate_channel 29 --batch_size 256 --lr 5e-3 --epochs 300 --hidden_channels 128 --num_layers 2 --dropout 0.05 --head_dropout 0.05 --max_grad_norm 0 --deterministic 0 --history_hours 24 --seed 42 --train_ratio 0.6 --val_ratio 0.2 --shuffle_years 0 --future_only 0 --future_year_threshold 2030 --run_tag Lewes_NCEPtoNCEP_perceiver3_ga4_nrh8_trh8_L2_ff4.0_td0.0_stable1v3_exceedance_gmwindow_eq95_danone_lossmse_tail_tf0.05_tl0.10_hist24h_hid128_L2_bs256_lr5e-3_ep300_schcosine_xnzscore_20000101_000000 --output_dir /media/volume/PACT-Data/StormSurge/./All_Results/P1_WeightProbe/NCEP_Lewes_24h_dual_ex5_tail010__20000101_000000 --torch_threads 1 --num_workers 0 --prefetch_factor 0 --mp_context fork --x_norm zscore --x_p_lo 1.0 --x_p_hi 99.0 --x_nodes_per_graph 256 --x_clip 0 --x_aug 0 --x_aug_prob 0 --x_aug_scale 0 --x_aug_bias 0 --station_json_dir /media/volume/PACT-Data/StormSurge/station_json --use_site_elevation 0 --use_bathymetry 0 --station Lewes --grad_accum_steps 4 --amp --amp_dtype bf16 --tf32 --head_type dual --dual_mode exceedance --tail_frac 0.05 --temporal_block Transformer --node_read_heads 8 --time_read_heads 8 --transformer_layers 2 --transformer_ff_mult 4.0 --transformer_dropout 0.0 --max_time_steps 32 --gate_mode window --dual_loss 1 --body_loss_weight 1 --excess_loss_weight 5 --gate_loss_weight 0.5 --scheduler cosine --warmup_epochs 5 --warmup_start_factor 0.1 --min_lr 1e-6 --loss_mode mse_tail --wmse_q 95 --wmse_alpha 4.0 --wmse_s 0.10 --wmse_use_abs 1 --tail_frac 0.05 --tail_lambda 0.10

@@ -23,9 +23,9 @@ v2 只实现当前结构。版本号分支、旧 bypass 原型、旧 residual du
 
 三项统一称为 **dual loss**。正式模型使用默认 `--dual_ablation none`，强制启用完整监督，独立于 `loss_mode`。`--dual_loss 0` 或上述三项任一辅助权重为0时恢复对应默认值1，并输出带时间戳的 warning；已有正权重保留。显式消融可选 `no_gate_bce`、`no_excess_loss`、`no_branch_supervision`、`fixed_gate`，只关闭该模式指定的项。有效设置写入运行配置和 checkpoint。Single／baseline 不接受这些消融。
 
-可选的[物理 excess 峰值幅度监督](docs/EXCESS_AMPLITUDE.md)使用独立 `EXCESS_AMP_LOSS_WEIGHT`，默认0且不自动恢复为1。它按 horizon 转换为米后取峰值，用已拟合的精确 TRAIN `event_prior` 归一化，不改变上述轨迹 excess loss。`no_excess_loss`、`no_branch_supervision` 也关闭此新项；模型结构和推理不变。
+可选的[物理 excess 峰值幅度监督](EXCESS_AMPLITUDE.md)使用独立 `EXCESS_AMP_LOSS_WEIGHT`，默认0且不自动恢复为1。它按 horizon 转换为米后取峰值，用已拟合的精确 TRAIN `event_prior` 归一化，不改变上述轨迹 excess loss。`no_excess_loss`、`no_branch_supervision` 也关闭此新项；模型结构和推理不变。
 
-[severity-shape 模式](docs/SEVERITY_SHAPE.md)是另一项独立的可选架构：`EXCESS_FORMULATION=severity_shape`，默认仍为 `direct`。severity 以米预测，shape 按窗口最大值归一化，重建 excess 使用每个 horizon 的 TRAIN `y_std`。初始 severity 约0.1米、raw shape为1；两分支末层权重为0。复用幅度监督并新增默认0的 `SHAPE_LOSS_WEIGHT`；两个 excess 消融同时关闭 shape loss。direct 的模块、初始化和 state dict 不增加新 buffer。
+[severity-shape 模式](SEVERITY_SHAPE.md)是另一项独立的可选架构：`EXCESS_FORMULATION=severity_shape`，默认仍为 `direct`。severity 以米预测，shape 按窗口最大值归一化，重建 excess 使用每个 horizon 的 TRAIN `y_std`。初始 severity 约0.1米、raw shape为1；两分支末层权重为0。复用幅度监督并新增默认0的 `SHAPE_LOSS_WEIGHT`；两个 excess 消融同时关闭 shape loss。direct 的模块、初始化和 state dict 不增加新 buffer。
 
 `--exceedance_percentile 95` 从 TRAIN 窗口峰值拟合 dual 阈值，独立于 tail-loss 的 `--tail_frac`。Gate 初始化使用严格超阈的实际 TRAIN 比例 q_E，物理 τ、q_E、事件数和有效初始化概率都保存。可学习 logit 的初始化将 q_E 夹到[1e-6,1−1e-6]；固定 gate 使用原始 q_E，作为无可学习参数的 buffer。
 

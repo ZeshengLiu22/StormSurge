@@ -21,7 +21,7 @@ This folder is the experimental training implementation for **fresh runs**. It h
 
 The forward pass consumes inputs and station features only. `ForecastOutput.prediction` is normalized; body, excess, gate logits and threshold are returned only by the dual head because its loss needs them. Attention weights and diagnostic statistics are never constructed.
 
-See [the dual-head derivation](DUAL_HEAD_EXPLAINED.md) and [the stability changes](STABILITY_AND_DUAL_HEAD.md).
+See [the dual-head derivation](docs/DUAL_HEAD_EXPLAINED.md) and [the stability changes](docs/STABILITY_AND_DUAL_HEAD.md).
 
 ## Train
 

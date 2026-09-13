@@ -34,7 +34,7 @@
 | 分支监督消融 | 旧head无这三项独立监督，也没有对应命名接口 | no_gate_bce关闭L_g；no_excess_loss关闭L_r；no_branch_supervision关闭L_b/L_r/L_g，仅保留所选最终预测loss | 可区分监督分解与额外MLP带来的收益；无BCE的gate不能直接宣称已校准；其余启用项仍受防误关约束 | **保留显式消融**，不取消正式模型的防误关规则 |
 | 固定gate对照 | 无当前p=q_E的命名对照 | fixed_gate使用原始TRAIN比例作buffer，不建gate MLP，gate_logits=None；保留body/excess监督 | p与输入无关，可检验学习gate的贡献；允许q_E精确为0/1，参数预算少一个gate MLP | **保留消融**；比较时说明参数差异，不能临时在推理时切换模式 |
 
-新dual阈值τ由TRAIN窗口峰值的 `exceedance_percentile` 分位确定，默认95；事件为窗口内至少一个时刻严格超过τ。body目标为 `min(Y,τ)`，excess目标为 `(Y−τ)+`，gate目标为事件0/1。μ/σ也仅由TRAIN拟合，`τ′=(τ−μ)/σ`。模型保持 `b′=τ′−softplus(τ′−a)`、`r′=softplus(d)`、`ŷ′=b′+p·r′`；物理body为 `μ+σb′`，物理excess为 `σr′`，excess不加μ。Excess辅助项mask非事件窗口后仍按整个 `B×K` 平均，不除事件数或q_E；事件窗口内未超阈的horizon仍监督为0。Gate BCE乘TRAIN的 `mean(σ²)`。推理forward不读取未来标签。完整定义和局限见 [dual head说明](../DUAL_HEAD_EXPLAINED.md)。
+新dual阈值τ由TRAIN窗口峰值的 `exceedance_percentile` 分位确定，默认95；事件为窗口内至少一个时刻严格超过τ。body目标为 `min(Y,τ)`，excess目标为 `(Y−τ)+`，gate目标为事件0/1。μ/σ也仅由TRAIN拟合，`τ′=(τ−μ)/σ`。模型保持 `b′=τ′−softplus(τ′−a)`、`r′=softplus(d)`、`ŷ′=b′+p·r′`；物理body为 `μ+σb′`，物理excess为 `σr′`，excess不加μ。Excess辅助项mask非事件窗口后仍按整个 `B×K` 平均，不除事件数或q_E；事件窗口内未超阈的horizon仍监督为0。Gate BCE乘TRAIN的 `mean(σ²)`。推理forward不读取未来标签。完整定义和局限见 [dual head说明](DUAL_HEAD_EXPLAINED.md)。
 
 tail loss仍约束**最终预测在峰值窗口的误差**，使用独立tail_threshold及 `max(Y)>=tail_threshold`，上一轮仅改变归约分母，公式见第二节；slope loss约束**最终预测相邻horizon的一阶差分误差**，保留软mask和Charbonnier/Huber惩罚，至少需要两个horizon。二者没有被三项dual loss代数替代。`head_type=dual`、`dual_ablation=none`、`loss_mode=mse_tail_slope` 且tail/slope权重为正时，实际是 **MSE＋dual＋tail＋slope**；默认dual配置的mse仅启用MSE＋dual。保留原扫描组合，通过消融决定最终采用哪些项，不能预先断定新head一定更好。
 
@@ -248,9 +248,9 @@ python docs/audit/compare_original.py --original /path/to/Emulator
 | 状态/行数 | 文件 | 原来 → 现在 | 影响 | 建议 |
 |---|---|---|---|---|
 | 修改 52→49 | [.gitignore](../.gitignore) | 原版已提交的experiment_configs忽略项 → 未继承该项 | 版本管理范围不同，无训练影响；原版当前工作树干净 | 不自动还原该忽略项 |
-| 新增 0→217 | [DUAL_HEAD_EXPLAINED.md](../DUAL_HEAD_EXPLAINED.md) | 无独立说明 → 新dual公式、真实先验、独立阈值、消融与诊断 | 明确分支语义、物理单位和证据局限 | 保留 |
+| 新增 0→217 | [DUAL_HEAD_EXPLAINED.md](DUAL_HEAD_EXPLAINED.md) | 无独立说明 → 新dual公式、真实先验、独立阈值、消融与诊断 | 明确分支语义、物理单位和证据局限 | 保留 |
 | 修改 483→166 | [README.md](../README.md) | 原综合README → 当前使用说明、独立仓库来源与本报告入口 | 运行说明与当前实现对应，历史细节减少 | 保留；旧changelog已归档 |
-| 新增 0→42 | [STABILITY_AND_DUAL_HEAD.md](../STABILITY_AND_DUAL_HEAD.md) | 无 → 当前stability/dual及显式推理诊断边界 | 区分默认完整监督、消融与常规训练日志 | 保留 |
+| 新增 0→42 | [STABILITY_AND_DUAL_HEAD.md](STABILITY_AND_DUAL_HEAD.md) | 无 → 当前stability/dual及显式推理诊断边界 | 区分默认完整监督、消融与常规训练日志 | 保留 |
 | 删除 108→0 | [changelog.md](https://github.com/BinaLab/PACT_Storm_Surge_Emulator/blob/bb62a2297a0d37a35db5bff352ee815e05676c93/changelog.md) | 旧根目录文件 → 原文归档至docs/history/Emulator_changelog.md | 本地保留完整原版历史，原路径删除由下方新增归档路径对应 | 已归档 |
 | 修改 40→41 | [configs/configs_infer/infer_config_common.sh](../configs/configs_infer/infer_config_common.sh) | 原推理common → 加默认关闭的DUAL_DIAGNOSTICS | 显式开关独立诊断，不改变默认推理导出 | 保留可选开关 |
 | 修改 94→92 | [configs/configs_train/train_config_common.sh](../configs/configs_train/train_config_common.sh) | 旧head/p_mean配置 → 新dual、独立百分位及命名消融，删除均值接口 | 原扫描超参数保持；dual方法和可选机制改变 | 保留当前dual与退役决定 |

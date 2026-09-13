@@ -1,0 +1,11 @@
+{
+  "status": "PASS",
+  "protected_existing_files": 221,
+  "protected_existing_files_unchanged": true,
+  "tracked_files_changed": [],
+  "result_root": "/media/volume/PACT-Data/StormSurge/All_Results/P1_WeightProbe",
+  "result_root_created": true,
+  "result_root_empty": true,
+  "training_started": false,
+  "queue_submissions": 0
+}
