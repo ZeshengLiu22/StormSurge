@@ -8,6 +8,7 @@ from emulator.common.cli import head_type_name, parse_bool_int, temporal_block_n
 from emulator.common.dual import DUAL_ABLATIONS, EXCESS_FORMULATIONS
 from .losses import enforce_dual_loss, validate_excess_amp_config, validate_shape_config
 from .final_peak import validate_peak_config
+from .checkpoints import SELECTION_METRICS, validate_checkpoint_settings
 
 
 def parse_args(argv=None):
@@ -211,6 +212,12 @@ def parse_args(argv=None):
     parser.add_argument("--transformer_dropout", type=float, default=0.05)
     parser.add_argument("--max_time_steps", type=int, default=32,
                         help="PACT lag-embedding capacity, including the current step; ignored by baseline.")
+    parser.add_argument("--checkpoint_selection", choices=tuple(SELECTION_METRICS), default="overall",
+                        help="VAL-only primary checkpoint rule; independent of losses and the LR scheduler.")
+    parser.add_argument("--checkpoint_overall_tol", type=float, default=.01,
+                        help="Relative overall RMSE tolerance for exact constrained peak selection.")
+    parser.add_argument("--save_aux_checkpoints", type=parse_bool_int, choices=[0, 1], default=0,
+                        help="Retain all five VAL-only checkpoint roles from the same training run.")
     parser.add_argument("--run_tag", type=str, default=None)
     parser.add_argument(
         "--output_dir",
@@ -258,6 +265,7 @@ def parse_args(argv=None):
         validate_excess_amp_config(args, head_type=args.head_type)
         validate_shape_config(args, head_type=args.head_type, model=args.model)
         validate_peak_config(args)
+        validate_checkpoint_settings(args.checkpoint_selection, args.checkpoint_overall_tol, args.save_aux_checkpoints)
     except ValueError as error:
         parser.error(str(error))
     if args.head_type == "dual":

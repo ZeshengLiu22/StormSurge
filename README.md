@@ -132,16 +132,20 @@ Train metrics reuse online training predictions, including dropout/augmentation 
 
 Direct peak metrics add 33 keys: eleven measures for `_all`, `_top5` and `_event` populations. They cover peak magnitude RMSE/MAE/bias, underprediction and overprediction fractions/conditional magnitudes, true-peak-point RMSE/MAE/bias, and timing MAE in forecast steps. They always use hard physical maxima and first-occurrence argmax ties. All new metrics deduplicate sample IDs, and share exactly the legacy top5 membership. Event metrics use the strict fixed TRAIN threshold. Empty or undefined populations are JSON `null`. Only seven scalars per window are retained; no full VAL prediction archive is added.
 
+[Checkpoint selection](docs/CHECKPOINT_SELECTION.md) is configured independently through `CHECKPOINT_SELECTION` / `--checkpoint_selection`: `overall` (default), `peak5`, `peak_magnitude`, `constrained_peak5`, or `constrained_peak_magnitude`. The direct peak modes use exactly `peak_magnitude_rmse_top5`. Constrained modes minimize their peak metric subject to `rmse_all <= (1 + CHECKPOINT_OVERALL_TOL) * final_best_rmse_all`; the tolerance defaults to `0.01` and is a relative fraction. Separate Pareto frontiers retain the exact candidates until final resolution. `SAVE_AUX_CHECKPOINTS=1` retains all five VAL-selected roles from the same run with shared files for shared epochs. Default `overall` with auxiliary saving disabled preserves the strict-`<` online canonical save and creates no candidate or auxiliary directory. Scheduler settings remain independent.
+
 After training, rank 0 prints the best epoch's concise **Val and Test** metrics together; full dictionaries are saved in JSON. Val is read from that checkpoint, using the same metrics and sampler-padding convention that selected it; it is not the last epoch's Val. Test evaluates the reloaded best weights once over each actual test sample and exports those predictions. Reporting Val adds no forward pass or diagnostics.
 
 A launcher run can contain many combinations. Each has a unique stem in its artifact filenames:
 
-- `metrics_<stem>.jsonl`: epoch plus full Train/Val trajectory and peak metric dictionaries; best model selection uses **Val All RMSE**.
+- `metrics_<stem>.jsonl`: epoch plus full Train/Val trajectory and peak metric dictionaries; the default selection uses **Val All RMSE**.
 - `best_<stem>.pth`: model config/weights, normalization, station features, exact split tags and training config.
 - `config_<stem>.json`: resolved Python arguments; `config_used.sh` retains the resolved shell sweep.
-- `summary_<stem>.json`: best epoch, training/validation-loop seconds, total `wall_seconds`, complete best-checkpoint `val` and `test` errors, and test scope.
+- `summary_<stem>.json`: primary selected epoch/overall RMSE, training/validation-loop seconds, total `wall_seconds`, complete selected-checkpoint `val` and `test` errors, test scope, and checkpoint-selection metadata with all three scalar bests.
 - `test_preds_<stem>.npz`: physical `y_true`, `y_pred` and tags for the best checkpoint.
 - `train_<tag>.log`: launcher command, timestamped epoch metrics, best-checkpoint Val/Test metrics and final wall time. Long log names are shortened with a hash; the complete tag remains inside the log.
+
+Non-default selection or auxiliary saving also writes `checkpoint_selection_<stem>.json` with primary/role paths, epochs, VAL metrics, constrained counts/limit and shared-role aliases. Distinct auxiliary winners live at `aux_checkpoints/<stem>/epoch_<NNNN>.pth`; temporary Pareto files under `checkpoint_candidates/<stem>/` are removed after successful artifact and manifest publication. Exactly one file per run matches `best_*.pth`. TEST runs once after the finalized primary is reloaded; auxiliary evaluation requires a separate explicit `infer.py --ckpt <path>` command. Historical `best_epoch` and `best_val_rmse` describe the primary selection, and retain their old meaning under the default rule.
 
 `training_seconds` includes epoch metrics/checkpoint overhead. `wall_seconds` also includes data preparation and the final test. Each training process prints its final wall time; the launcher ends with wall time for the whole sweep.
 

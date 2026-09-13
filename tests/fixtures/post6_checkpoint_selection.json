@@ -1,0 +1,133 @@
+{
+  "base_revision": "d8734bcc66f5bb4cb0b75b908becd7d0c988c1d4",
+  "fixture_seed": 824,
+  "epoch_metrics": [
+    {
+      "rmse_all": 1.04,
+      "mae_all": 0.52,
+      "rmse_peak5": 0.5,
+      "mae_peak5": 0.25,
+      "peak_magnitude_rmse_top5": 0.9
+    },
+    {
+      "rmse_all": 1.02,
+      "mae_all": 0.51,
+      "rmse_peak5": 0.6,
+      "mae_peak5": 0.3,
+      "peak_magnitude_rmse_top5": 0.4
+    },
+    {
+      "rmse_all": 1.0,
+      "mae_all": 0.5,
+      "rmse_peak5": 0.8,
+      "mae_peak5": 0.4,
+      "peak_magnitude_rmse_top5": 0.8
+    },
+    {
+      "rmse_all": 1.005,
+      "mae_all": 0.5025,
+      "rmse_peak5": 0.7,
+      "mae_peak5": 0.35,
+      "peak_magnitude_rmse_top5": 0.6
+    },
+    {
+      "rmse_all": 1.008,
+      "mae_all": 0.504,
+      "rmse_peak5": 0.9,
+      "mae_peak5": 0.45,
+      "peak_magnitude_rmse_top5": 0.5
+    },
+    {
+      "rmse_all": 1.0,
+      "mae_all": 0.5,
+      "rmse_peak5": 0.85,
+      "mae_peak5": 0.425,
+      "peak_magnitude_rmse_top5": 0.75
+    }
+  ],
+  "best_epoch": 3,
+  "best_val_rmse": 1.0,
+  "test_marker": 0.029999999329447746,
+  "test_calls": 1,
+  "val": {
+    "rmse_all": 1.0,
+    "mae_all": 0.5,
+    "rmse_peak5": 0.8,
+    "mae_peak5": 0.4,
+    "peak_magnitude_rmse_top5": 0.8
+  },
+  "test": {
+    "rmse_all": 0.83920142872346,
+    "mae_all": 0.7140344381332397,
+    "rmse_peak5": 0.7516137957572937,
+    "mae_peak5": 0.567602813243866,
+    "peak_magnitude_rmse_all": 0.7768045601633072,
+    "peak_magnitude_mae_all": 0.6017078906297684,
+    "peak_bias_all": 0.4912972003221512,
+    "peak_underprediction_fraction_all": 0.5,
+    "peak_underprediction_mean_all": 0.11041069030761719,
+    "peak_overprediction_fraction_all": 0.5,
+    "peak_overprediction_mean_all": 1.0930050909519196,
+    "true_peak_point_rmse_all": 0.7768045601633072,
+    "true_peak_point_mae_all": 0.6017078906297684,
+    "true_peak_point_bias_all": 0.4912972003221512,
+    "peak_timing_mae_steps_all": 0.0,
+    "peak_magnitude_rmse_top5": 0.11041069030761719,
+    "peak_magnitude_mae_top5": 0.11041069030761719,
+    "peak_bias_top5": -0.11041069030761719,
+    "peak_underprediction_fraction_top5": 1.0,
+    "peak_underprediction_mean_top5": 0.11041069030761719,
+    "peak_overprediction_fraction_top5": 0.0,
+    "peak_overprediction_mean_top5": null,
+    "true_peak_point_rmse_top5": 0.11041069030761719,
+    "true_peak_point_mae_top5": 0.11041069030761719,
+    "true_peak_point_bias_top5": -0.11041069030761719,
+    "peak_timing_mae_steps_top5": 0.0,
+    "peak_magnitude_rmse_event": null,
+    "peak_magnitude_mae_event": null,
+    "peak_bias_event": null,
+    "peak_underprediction_fraction_event": null,
+    "peak_underprediction_mean_event": null,
+    "peak_overprediction_fraction_event": null,
+    "peak_overprediction_mean_event": null,
+    "true_peak_point_rmse_event": null,
+    "true_peak_point_mae_event": null,
+    "true_peak_point_bias_event": null,
+    "peak_timing_mae_steps_event": null
+  },
+  "predictions": {
+    "y_true": [
+      [
+        0.591319739818573,
+        0.2870635986328125,
+        1.2599517107009888,
+        -1.1458449363708496
+      ],
+      [
+        -0.1797264814376831,
+        -0.19667214155197144,
+        0.056535929441452026,
+        -0.07992136478424072
+      ]
+    ],
+    "y_pred": [
+      [
+        0.9649730920791626,
+        0.6740911602973938,
+        1.1495410203933716,
+        0.25347471237182617
+      ],
+      [
+        0.9649730920791626,
+        0.6740911602973938,
+        1.1495410203933716,
+        0.25347471237182617
+      ]
+    ],
+    "tags": [
+      "2004_2005_Battery_fixture_0",
+      "2004_2005_Battery_fixture_1"
+    ]
+  },
+  "canonical_pattern": "best_perceiver3_mse_<resolved-config-hash>_selection_fixture.pth"
+}

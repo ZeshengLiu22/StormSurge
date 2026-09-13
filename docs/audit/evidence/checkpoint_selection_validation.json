@@ -1,0 +1,960 @@
+{
+  "base_revision": "d8734bcc66f5bb4cb0b75b908becd7d0c988c1d4",
+  "source_config_count": 64,
+  "total_commands": 64,
+  "default_controls": {
+    "checkpoint_selection": "overall",
+    "checkpoint_overall_tol": 0.01,
+    "save_aux_checkpoints": 0
+  },
+  "source_configs": [
+    {
+      "path": "experiment_config/P0_QuickRun/train_config_NCEP_Battery_24h_dual_mse.sh",
+      "sha256": "ee8bfab773ccd2b22763e72b0d6c7ec3d70430dcda65aee47628c4805888a1c5",
+      "commands": 1,
+      "source_unchanged": true,
+      "old_command_and_args_exact": true,
+      "new_defaults": {
+        "checkpoint_selection": "overall",
+        "checkpoint_overall_tol": 0.01,
+        "save_aux_checkpoints": 0
+      }
+    },
+    {
+      "path": "experiment_config/P0_QuickRun/train_config_NCEP_Battery_24h_dual_slope.sh",
+      "sha256": "510293e0aad2315b87fe5a78b41f484e557c74c8605563d3204394d67107f9fe",
+      "commands": 1,
+      "source_unchanged": true,
+      "old_command_and_args_exact": true,
+      "new_defaults": {
+        "checkpoint_selection": "overall",
+        "checkpoint_overall_tol": 0.01,
+        "save_aux_checkpoints": 0
+      }
+    },
+    {
+      "path": "experiment_config/P0_QuickRun/train_config_NCEP_Battery_24h_dual_tail.sh",
+      "sha256": "01659b93c50a01c078f91b60526acdd1adf6ba0c9a7672246ca6de2209947bcc",
+      "commands": 1,
+      "source_unchanged": true,
+      "old_command_and_args_exact": true,
+      "new_defaults": {
+        "checkpoint_selection": "overall",
+        "checkpoint_overall_tol": 0.01,
+        "save_aux_checkpoints": 0
+      }
+    },
+    {
+      "path": "experiment_config/P0_QuickRun/train_config_NCEP_Battery_24h_dual_tail_slope.sh",
+      "sha256": "70cd18c661ce12b850a9a19dca4b41f02517824d7838723e7e1aaeacf98f2a4b",
+      "commands": 1,
+      "source_unchanged": true,
+      "old_command_and_args_exact": true,
+      "new_defaults": {
+        "checkpoint_selection": "overall",
+        "checkpoint_overall_tol": 0.01,
+        "save_aux_checkpoints": 0
+      }
+    },
+    {
+      "path": "experiment_config/P0_QuickRun/train_config_NCEP_Battery_24h_single_mse.sh",
+      "sha256": "6ffdb837e0119e7871b66d4992e10cdc1ad67be5e2754e0189cfbdd089e46b49",
+      "commands": 1,
+      "source_unchanged": true,
+      "old_command_and_args_exact": true,
+      "new_defaults": {
+        "checkpoint_selection": "overall",
+        "checkpoint_overall_tol": 0.01,
+        "save_aux_checkpoints": 0
+      }
+    },
+    {
+      "path": "experiment_config/P0_QuickRun/train_config_NCEP_Battery_24h_single_slope.sh",
+      "sha256": "10a594e78d0720d1d20090403099e33f642dcc51d80c5c49a574baee38a6f8f9",
+      "commands": 1,
+      "source_unchanged": true,
+      "old_command_and_args_exact": true,
+      "new_defaults": {
+        "checkpoint_selection": "overall",
+        "checkpoint_overall_tol": 0.01,
+        "save_aux_checkpoints": 0
+      }
+    },
+    {
+      "path": "experiment_config/P0_QuickRun/train_config_NCEP_Battery_24h_single_tail.sh",
+      "sha256": "e46ef9c068372d4b7e6071e44f70a8df67556f6ec6278cbc5c21a45a29a1352d",
+      "commands": 1,
+      "source_unchanged": true,
+      "old_command_and_args_exact": true,
+      "new_defaults": {
+        "checkpoint_selection": "overall",
+        "checkpoint_overall_tol": 0.01,
+        "save_aux_checkpoints": 0
+      }
+    },
+    {
+      "path": "experiment_config/P0_QuickRun/train_config_NCEP_Battery_24h_single_tail_slope.sh",
+      "sha256": "6290b7da6ba1d2429dc4d53060588b1944e4f0bb604b4b3d9ed8b3579463e5ca",
+      "commands": 1,
+      "source_unchanged": true,
+      "old_command_and_args_exact": true,
+      "new_defaults": {
+        "checkpoint_selection": "overall",
+        "checkpoint_overall_tol": 0.01,
+        "save_aux_checkpoints": 0
+      }
+    },
+    {
+      "path": "experiment_config/P0_QuickRun/train_config_NCEP_Boston_24h_dual_mse.sh",
+      "sha256": "df0057909c8b67fd93c8eff14484805eda6cdbcae62283613f73020515bf9c59",
+      "commands": 1,
+      "source_unchanged": true,
+      "old_command_and_args_exact": true,
+      "new_defaults": {
+        "checkpoint_selection": "overall",
+        "checkpoint_overall_tol": 0.01,
+        "save_aux_checkpoints": 0
+      }
+    },
+    {
+      "path": "experiment_config/P0_QuickRun/train_config_NCEP_Boston_24h_dual_slope.sh",
+      "sha256": "850516fef6c07582550e83a7392b8c0f82a0b70a89ece4a7021c93fbb50647a7",
+      "commands": 1,
+      "source_unchanged": true,
+      "old_command_and_args_exact": true,
+      "new_defaults": {
+        "checkpoint_selection": "overall",
+        "checkpoint_overall_tol": 0.01,
+        "save_aux_checkpoints": 0
+      }
+    },
+    {
+      "path": "experiment_config/P0_QuickRun/train_config_NCEP_Boston_24h_dual_tail.sh",
+      "sha256": "1c7f0bd0210aea6e7d6b24162e68cad52276fa672054100372a90f7d359fe52b",
+      "commands": 1,
+      "source_unchanged": true,
+      "old_command_and_args_exact": true,
+      "new_defaults": {
+        "checkpoint_selection": "overall",
+        "checkpoint_overall_tol": 0.01,
+        "save_aux_checkpoints": 0
+      }
+    },
+    {
+      "path": "experiment_config/P0_QuickRun/train_config_NCEP_Boston_24h_dual_tail_slope.sh",
+      "sha256": "d0d14eddc598de92fff4e86b2aa9b756c16f0a982d8d08475473f42f35a07fdf",
+      "commands": 1,
+      "source_unchanged": true,
+      "old_command_and_args_exact": true,
+      "new_defaults": {
+        "checkpoint_selection": "overall",
+        "checkpoint_overall_tol": 0.01,
+        "save_aux_checkpoints": 0
+      }
+    },
+    {
+      "path": "experiment_config/P0_QuickRun/train_config_NCEP_Boston_24h_single_mse.sh",
+      "sha256": "59ebd72959005902db319bae6826d2b690aa1e6a8c561721db1505f4c051c01c",
+      "commands": 1,
+      "source_unchanged": true,
+      "old_command_and_args_exact": true,
+      "new_defaults": {
+        "checkpoint_selection": "overall",
+        "checkpoint_overall_tol": 0.01,
+        "save_aux_checkpoints": 0
+      }
+    },
+    {
+      "path": "experiment_config/P0_QuickRun/train_config_NCEP_Boston_24h_single_slope.sh",
+      "sha256": "b6ef1baaa922eeb1c736bcb68ddb9ff66c624da5c137a76bc46fc3fa7e0dacf5",
+      "commands": 1,
+      "source_unchanged": true,
+      "old_command_and_args_exact": true,
+      "new_defaults": {
+        "checkpoint_selection": "overall",
+        "checkpoint_overall_tol": 0.01,
+        "save_aux_checkpoints": 0
+      }
+    },
+    {
+      "path": "experiment_config/P0_QuickRun/train_config_NCEP_Boston_24h_single_tail.sh",
+      "sha256": "de17c7b3826a3e33edf1eb0d03d6f519e727d3a4d398f39da7682dfce2ddb833",
+      "commands": 1,
+      "source_unchanged": true,
+      "old_command_and_args_exact": true,
+      "new_defaults": {
+        "checkpoint_selection": "overall",
+        "checkpoint_overall_tol": 0.01,
+        "save_aux_checkpoints": 0
+      }
+    },
+    {
+      "path": "experiment_config/P0_QuickRun/train_config_NCEP_Boston_24h_single_tail_slope.sh",
+      "sha256": "658bae75b1a0a1541eb241409e5d5c8bf877daa7a29e7e798db3c77d89365dd8",
+      "commands": 1,
+      "source_unchanged": true,
+      "old_command_and_args_exact": true,
+      "new_defaults": {
+        "checkpoint_selection": "overall",
+        "checkpoint_overall_tol": 0.01,
+        "save_aux_checkpoints": 0
+      }
+    },
+    {
+      "path": "experiment_config/P0_QuickRun/train_config_NCEP_CBBT_24h_dual_mse.sh",
+      "sha256": "8364505e18ec2d1a5f291d7aa8013e30bc5c81280c13f946a3946a697a74112c",
+      "commands": 1,
+      "source_unchanged": true,
+      "old_command_and_args_exact": true,
+      "new_defaults": {
+        "checkpoint_selection": "overall",
+        "checkpoint_overall_tol": 0.01,
+        "save_aux_checkpoints": 0
+      }
+    },
+    {
+      "path": "experiment_config/P0_QuickRun/train_config_NCEP_CBBT_24h_dual_slope.sh",
+      "sha256": "e016c7ac21a091de3e820527658767916e002a497c2b1bf188b5ee5947833a30",
+      "commands": 1,
+      "source_unchanged": true,
+      "old_command_and_args_exact": true,
+      "new_defaults": {
+        "checkpoint_selection": "overall",
+        "checkpoint_overall_tol": 0.01,
+        "save_aux_checkpoints": 0
+      }
+    },
+    {
+      "path": "experiment_config/P0_QuickRun/train_config_NCEP_CBBT_24h_dual_tail.sh",
+      "sha256": "d4bd0870c682fa5b7f74ea0565cd2a77b51f333aed929385d49574e7613004c3",
+      "commands": 1,
+      "source_unchanged": true,
+      "old_command_and_args_exact": true,
+      "new_defaults": {
+        "checkpoint_selection": "overall",
+        "checkpoint_overall_tol": 0.01,
+        "save_aux_checkpoints": 0
+      }
+    },
+    {
+      "path": "experiment_config/P0_QuickRun/train_config_NCEP_CBBT_24h_dual_tail_slope.sh",
+      "sha256": "721e0292b7cb39dd89f69cd2346d078ce23aa1d622179674a5f388c24ac62fac",
+      "commands": 1,
+      "source_unchanged": true,
+      "old_command_and_args_exact": true,
+      "new_defaults": {
+        "checkpoint_selection": "overall",
+        "checkpoint_overall_tol": 0.01,
+        "save_aux_checkpoints": 0
+      }
+    },
+    {
+      "path": "experiment_config/P0_QuickRun/train_config_NCEP_CBBT_24h_single_mse.sh",
+      "sha256": "8d191abac09be3b1f0867371672dfcc4bb2efa0866cbc3f31e4e821a03460042",
+      "commands": 1,
+      "source_unchanged": true,
+      "old_command_and_args_exact": true,
+      "new_defaults": {
+        "checkpoint_selection": "overall",
+        "checkpoint_overall_tol": 0.01,
+        "save_aux_checkpoints": 0
+      }
+    },
+    {
+      "path": "experiment_config/P0_QuickRun/train_config_NCEP_CBBT_24h_single_slope.sh",
+      "sha256": "c8a20053ac98218b9a7a573b6f189a051d5a400bcdc53df0b4bc2fe92c241f3c",
+      "commands": 1,
+      "source_unchanged": true,
+      "old_command_and_args_exact": true,
+      "new_defaults": {
+        "checkpoint_selection": "overall",
+        "checkpoint_overall_tol": 0.01,
+        "save_aux_checkpoints": 0
+      }
+    },
+    {
+      "path": "experiment_config/P0_QuickRun/train_config_NCEP_CBBT_24h_single_tail.sh",
+      "sha256": "3b0ecc7ed6e0793a5b7c1840810b399974300b419ebe8f53ddc32be778cf9c1b",
+      "commands": 1,
+      "source_unchanged": true,
+      "old_command_and_args_exact": true,
+      "new_defaults": {
+        "checkpoint_selection": "overall",
+        "checkpoint_overall_tol": 0.01,
+        "save_aux_checkpoints": 0
+      }
+    },
+    {
+      "path": "experiment_config/P0_QuickRun/train_config_NCEP_CBBT_24h_single_tail_slope.sh",
+      "sha256": "d78a02b400d6edd9654a40c18749b6fd67dc31f915ad22f73461a2d0f4ebf7ca",
+      "commands": 1,
+      "source_unchanged": true,
+      "old_command_and_args_exact": true,
+      "new_defaults": {
+        "checkpoint_selection": "overall",
+        "checkpoint_overall_tol": 0.01,
+        "save_aux_checkpoints": 0
+      }
+    },
+    {
+      "path": "experiment_config/P0_QuickRun/train_config_NCEP_Lewes_24h_dual_mse.sh",
+      "sha256": "0f15fce43e9be30046c297281829e83414edec4f3321ae7e67edea51165d8188",
+      "commands": 1,
+      "source_unchanged": true,
+      "old_command_and_args_exact": true,
+      "new_defaults": {
+        "checkpoint_selection": "overall",
+        "checkpoint_overall_tol": 0.01,
+        "save_aux_checkpoints": 0
+      }
+    },
+    {
+      "path": "experiment_config/P0_QuickRun/train_config_NCEP_Lewes_24h_dual_slope.sh",
+      "sha256": "d503a33840f1eb27555b392ebbd049656d56c4cc4574ecc238f4eb0c47a0280d",
+      "commands": 1,
+      "source_unchanged": true,
+      "old_command_and_args_exact": true,
+      "new_defaults": {
+        "checkpoint_selection": "overall",
+        "checkpoint_overall_tol": 0.01,
+        "save_aux_checkpoints": 0
+      }
+    },
+    {
+      "path": "experiment_config/P0_QuickRun/train_config_NCEP_Lewes_24h_dual_tail.sh",
+      "sha256": "31e7f4cf05e729cc2a0f695c66b7d878cf7b4071843966e3f5f3236bc44c9924",
+      "commands": 1,
+      "source_unchanged": true,
+      "old_command_and_args_exact": true,
+      "new_defaults": {
+        "checkpoint_selection": "overall",
+        "checkpoint_overall_tol": 0.01,
+        "save_aux_checkpoints": 0
+      }
+    },
+    {
+      "path": "experiment_config/P0_QuickRun/train_config_NCEP_Lewes_24h_dual_tail_slope.sh",
+      "sha256": "a9047023e1b1ce7562de9f3364c7344c29800f4940f4b717176b1212fb85f712",
+      "commands": 1,
+      "source_unchanged": true,
+      "old_command_and_args_exact": true,
+      "new_defaults": {
+        "checkpoint_selection": "overall",
+        "checkpoint_overall_tol": 0.01,
+        "save_aux_checkpoints": 0
+      }
+    },
+    {
+      "path": "experiment_config/P0_QuickRun/train_config_NCEP_Lewes_24h_single_mse.sh",
+      "sha256": "87ad6c9e14e1ff2225c35a223fdb54b0c84c192b0a00e795055fe6d02c603ec5",
+      "commands": 1,
+      "source_unchanged": true,
+      "old_command_and_args_exact": true,
+      "new_defaults": {
+        "checkpoint_selection": "overall",
+        "checkpoint_overall_tol": 0.01,
+        "save_aux_checkpoints": 0
+      }
+    },
+    {
+      "path": "experiment_config/P0_QuickRun/train_config_NCEP_Lewes_24h_single_slope.sh",
+      "sha256": "217f1ce43fe3fabcc3db00c7dafbd0e913d03bf354178af6478ceb82fc258691",
+      "commands": 1,
+      "source_unchanged": true,
+      "old_command_and_args_exact": true,
+      "new_defaults": {
+        "checkpoint_selection": "overall",
+        "checkpoint_overall_tol": 0.01,
+        "save_aux_checkpoints": 0
+      }
+    },
+    {
+      "path": "experiment_config/P0_QuickRun/train_config_NCEP_Lewes_24h_single_tail.sh",
+      "sha256": "c1c15aa83201f33f55350ed78e3886b32932d8884ac6caae73d3a66877996b8c",
+      "commands": 1,
+      "source_unchanged": true,
+      "old_command_and_args_exact": true,
+      "new_defaults": {
+        "checkpoint_selection": "overall",
+        "checkpoint_overall_tol": 0.01,
+        "save_aux_checkpoints": 0
+      }
+    },
+    {
+      "path": "experiment_config/P0_QuickRun/train_config_NCEP_Lewes_24h_single_tail_slope.sh",
+      "sha256": "eadb5eeaf60a8983845a10476536c6c25175758cce2f3d6d33c7e80e93808546",
+      "commands": 1,
+      "source_unchanged": true,
+      "old_command_and_args_exact": true,
+      "new_defaults": {
+        "checkpoint_selection": "overall",
+        "checkpoint_overall_tol": 0.01,
+        "save_aux_checkpoints": 0
+      }
+    },
+    {
+      "path": "experiment_config/P1_WeightProbe/train_config_NCEP_Battery_24h_dual_ex10_notail.sh",
+      "sha256": "71f44086d2b0c7aa23b34b695a5d3757468d851dd85b35a380911ba7f3e35d2a",
+      "commands": 1,
+      "source_unchanged": true,
+      "old_command_and_args_exact": true,
+      "new_defaults": {
+        "checkpoint_selection": "overall",
+        "checkpoint_overall_tol": 0.01,
+        "save_aux_checkpoints": 0
+      }
+    },
+    {
+      "path": "experiment_config/P1_WeightProbe/train_config_NCEP_Battery_24h_dual_ex10_tail005.sh",
+      "sha256": "35a317e258be079d32f64a360f28d65534af510ff0fcec7b3478a14597f9f677",
+      "commands": 1,
+      "source_unchanged": true,
+      "old_command_and_args_exact": true,
+      "new_defaults": {
+        "checkpoint_selection": "overall",
+        "checkpoint_overall_tol": 0.01,
+        "save_aux_checkpoints": 0
+      }
+    },
+    {
+      "path": "experiment_config/P1_WeightProbe/train_config_NCEP_Battery_24h_dual_ex10_tail010.sh",
+      "sha256": "a6d2d18c85803d5c5a0e221b0f071e7cde66fee04724a81fc29debdc5498052d",
+      "commands": 1,
+      "source_unchanged": true,
+      "old_command_and_args_exact": true,
+      "new_defaults": {
+        "checkpoint_selection": "overall",
+        "checkpoint_overall_tol": 0.01,
+        "save_aux_checkpoints": 0
+      }
+    },
+    {
+      "path": "experiment_config/P1_WeightProbe/train_config_NCEP_Battery_24h_dual_ex2_tail005.sh",
+      "sha256": "1d71c510f67054b16f5cd60f836af415f17e6b1f715159f73dcffbb0a8bbffd7",
+      "commands": 1,
+      "source_unchanged": true,
+      "old_command_and_args_exact": true,
+      "new_defaults": {
+        "checkpoint_selection": "overall",
+        "checkpoint_overall_tol": 0.01,
+        "save_aux_checkpoints": 0
+      }
+    },
+    {
+      "path": "experiment_config/P1_WeightProbe/train_config_NCEP_Battery_24h_dual_ex2_tail010.sh",
+      "sha256": "a12ef2c1e63cd4c27a9af677c0ec6b7a7d7fae6f97a3b823970bf11d746ddf3c",
+      "commands": 1,
+      "source_unchanged": true,
+      "old_command_and_args_exact": true,
+      "new_defaults": {
+        "checkpoint_selection": "overall",
+        "checkpoint_overall_tol": 0.01,
+        "save_aux_checkpoints": 0
+      }
+    },
+    {
+      "path": "experiment_config/P1_WeightProbe/train_config_NCEP_Battery_24h_dual_ex5_notail.sh",
+      "sha256": "84e308f0d2f0057422ef490f2ee4e043b72d1df33b5816bf0484370882b36727",
+      "commands": 1,
+      "source_unchanged": true,
+      "old_command_and_args_exact": true,
+      "new_defaults": {
+        "checkpoint_selection": "overall",
+        "checkpoint_overall_tol": 0.01,
+        "save_aux_checkpoints": 0
+      }
+    },
+    {
+      "path": "experiment_config/P1_WeightProbe/train_config_NCEP_Battery_24h_dual_ex5_tail005.sh",
+      "sha256": "bd9e43aba90032982150d84eb6d06791e57c68e2cf68b4c770c239a94f2354c2",
+      "commands": 1,
+      "source_unchanged": true,
+      "old_command_and_args_exact": true,
+      "new_defaults": {
+        "checkpoint_selection": "overall",
+        "checkpoint_overall_tol": 0.01,
+        "save_aux_checkpoints": 0
+      }
+    },
+    {
+      "path": "experiment_config/P1_WeightProbe/train_config_NCEP_Battery_24h_dual_ex5_tail010.sh",
+      "sha256": "81ed9e563e574f10fa5eed6aa7f750d70dcde92664a2aa01b6af79a7c5021a77",
+      "commands": 1,
+      "source_unchanged": true,
+      "old_command_and_args_exact": true,
+      "new_defaults": {
+        "checkpoint_selection": "overall",
+        "checkpoint_overall_tol": 0.01,
+        "save_aux_checkpoints": 0
+      }
+    },
+    {
+      "path": "experiment_config/P1_WeightProbe/train_config_NCEP_Boston_24h_dual_ex10_notail.sh",
+      "sha256": "c77661d0006712764dd62b814e4f374bef44027bc29ff6f772e18cf096fcb9f6",
+      "commands": 1,
+      "source_unchanged": true,
+      "old_command_and_args_exact": true,
+      "new_defaults": {
+        "checkpoint_selection": "overall",
+        "checkpoint_overall_tol": 0.01,
+        "save_aux_checkpoints": 0
+      }
+    },
+    {
+      "path": "experiment_config/P1_WeightProbe/train_config_NCEP_Boston_24h_dual_ex10_tail005.sh",
+      "sha256": "cb150a18a41bb69acc7c34fbed405692b4d21b78493315d470b4a1a1977b2e86",
+      "commands": 1,
+      "source_unchanged": true,
+      "old_command_and_args_exact": true,
+      "new_defaults": {
+        "checkpoint_selection": "overall",
+        "checkpoint_overall_tol": 0.01,
+        "save_aux_checkpoints": 0
+      }
+    },
+    {
+      "path": "experiment_config/P1_WeightProbe/train_config_NCEP_Boston_24h_dual_ex10_tail010.sh",
+      "sha256": "dd404b8dd3b080432ba5d7de97514f8ebc2271f1c6f3a3ba9008dd26b31d9fb8",
+      "commands": 1,
+      "source_unchanged": true,
+      "old_command_and_args_exact": true,
+      "new_defaults": {
+        "checkpoint_selection": "overall",
+        "checkpoint_overall_tol": 0.01,
+        "save_aux_checkpoints": 0
+      }
+    },
+    {
+      "path": "experiment_config/P1_WeightProbe/train_config_NCEP_Boston_24h_dual_ex2_tail005.sh",
+      "sha256": "2fefedc907db6675fc35cf360d6ceaebb2f38dda5afb7b85b5405f71e7f99d89",
+      "commands": 1,
+      "source_unchanged": true,
+      "old_command_and_args_exact": true,
+      "new_defaults": {
+        "checkpoint_selection": "overall",
+        "checkpoint_overall_tol": 0.01,
+        "save_aux_checkpoints": 0
+      }
+    },
+    {
+      "path": "experiment_config/P1_WeightProbe/train_config_NCEP_Boston_24h_dual_ex2_tail010.sh",
+      "sha256": "0bcf7028aa448072b9a02547c1cc058b9e46be05b4ad155ea11bb9a222f8e130",
+      "commands": 1,
+      "source_unchanged": true,
+      "old_command_and_args_exact": true,
+      "new_defaults": {
+        "checkpoint_selection": "overall",
+        "checkpoint_overall_tol": 0.01,
+        "save_aux_checkpoints": 0
+      }
+    },
+    {
+      "path": "experiment_config/P1_WeightProbe/train_config_NCEP_Boston_24h_dual_ex5_notail.sh",
+      "sha256": "c5520d25935e8d220ebc4ea7dd84cd27447a7a85e2b4f1f0d92230e1621a0427",
+      "commands": 1,
+      "source_unchanged": true,
+      "old_command_and_args_exact": true,
+      "new_defaults": {
+        "checkpoint_selection": "overall",
+        "checkpoint_overall_tol": 0.01,
+        "save_aux_checkpoints": 0
+      }
+    },
+    {
+      "path": "experiment_config/P1_WeightProbe/train_config_NCEP_Boston_24h_dual_ex5_tail005.sh",
+      "sha256": "52a6f292ac8ea588cc70330f477c02f3fc6060aa38a6560fe2bfcd15ff0af3ea",
+      "commands": 1,
+      "source_unchanged": true,
+      "old_command_and_args_exact": true,
+      "new_defaults": {
+        "checkpoint_selection": "overall",
+        "checkpoint_overall_tol": 0.01,
+        "save_aux_checkpoints": 0
+      }
+    },
+    {
+      "path": "experiment_config/P1_WeightProbe/train_config_NCEP_Boston_24h_dual_ex5_tail010.sh",
+      "sha256": "6ac33b61246e1cd06ad9883195543c6825949a936c0209cc22ee5b5a6cfbc354",
+      "commands": 1,
+      "source_unchanged": true,
+      "old_command_and_args_exact": true,
+      "new_defaults": {
+        "checkpoint_selection": "overall",
+        "checkpoint_overall_tol": 0.01,
+        "save_aux_checkpoints": 0
+      }
+    },
+    {
+      "path": "experiment_config/P1_WeightProbe/train_config_NCEP_CBBT_24h_dual_ex10_notail.sh",
+      "sha256": "27619a8114225dde02725346d08b389f317cb689482cc9f5c45e38c9878625c5",
+      "commands": 1,
+      "source_unchanged": true,
+      "old_command_and_args_exact": true,
+      "new_defaults": {
+        "checkpoint_selection": "overall",
+        "checkpoint_overall_tol": 0.01,
+        "save_aux_checkpoints": 0
+      }
+    },
+    {
+      "path": "experiment_config/P1_WeightProbe/train_config_NCEP_CBBT_24h_dual_ex10_tail005.sh",
+      "sha256": "b65e87504981ea5e4f1cbae133c481908fea2f0b8ede555252e46fb4774477b2",
+      "commands": 1,
+      "source_unchanged": true,
+      "old_command_and_args_exact": true,
+      "new_defaults": {
+        "checkpoint_selection": "overall",
+        "checkpoint_overall_tol": 0.01,
+        "save_aux_checkpoints": 0
+      }
+    },
+    {
+      "path": "experiment_config/P1_WeightProbe/train_config_NCEP_CBBT_24h_dual_ex10_tail010.sh",
+      "sha256": "0f05205e803f03737d755180e93536f61045ce9980e24d654e09ab41919c1515",
+      "commands": 1,
+      "source_unchanged": true,
+      "old_command_and_args_exact": true,
+      "new_defaults": {
+        "checkpoint_selection": "overall",
+        "checkpoint_overall_tol": 0.01,
+        "save_aux_checkpoints": 0
+      }
+    },
+    {
+      "path": "experiment_config/P1_WeightProbe/train_config_NCEP_CBBT_24h_dual_ex2_tail005.sh",
+      "sha256": "163b49029e7cb736c98e92c8ea20eb2d27a3a6d796982c521f2cb7c00c2305ec",
+      "commands": 1,
+      "source_unchanged": true,
+      "old_command_and_args_exact": true,
+      "new_defaults": {
+        "checkpoint_selection": "overall",
+        "checkpoint_overall_tol": 0.01,
+        "save_aux_checkpoints": 0
+      }
+    },
+    {
+      "path": "experiment_config/P1_WeightProbe/train_config_NCEP_CBBT_24h_dual_ex2_tail010.sh",
+      "sha256": "e80eb102f48115053d658945428092a55a75545c2d95c699ef371e1509a9af06",
+      "commands": 1,
+      "source_unchanged": true,
+      "old_command_and_args_exact": true,
+      "new_defaults": {
+        "checkpoint_selection": "overall",
+        "checkpoint_overall_tol": 0.01,
+        "save_aux_checkpoints": 0
+      }
+    },
+    {
+      "path": "experiment_config/P1_WeightProbe/train_config_NCEP_CBBT_24h_dual_ex5_notail.sh",
+      "sha256": "75a10230bb001ba5eae164c3e53a652b14bd94a650a9b5a1479b6ce6c8f1bdd7",
+      "commands": 1,
+      "source_unchanged": true,
+      "old_command_and_args_exact": true,
+      "new_defaults": {
+        "checkpoint_selection": "overall",
+        "checkpoint_overall_tol": 0.01,
+        "save_aux_checkpoints": 0
+      }
+    },
+    {
+      "path": "experiment_config/P1_WeightProbe/train_config_NCEP_CBBT_24h_dual_ex5_tail005.sh",
+      "sha256": "f49e44ce6c5f123e990104f7e78bffc0960aae7967fe34f62eebd0f2ea3ec8d8",
+      "commands": 1,
+      "source_unchanged": true,
+      "old_command_and_args_exact": true,
+      "new_defaults": {
+        "checkpoint_selection": "overall",
+        "checkpoint_overall_tol": 0.01,
+        "save_aux_checkpoints": 0
+      }
+    },
+    {
+      "path": "experiment_config/P1_WeightProbe/train_config_NCEP_CBBT_24h_dual_ex5_tail010.sh",
+      "sha256": "b49f3eb7a52f66b739a4801ced841752cbaa48cabd99d1f8690d86ed976129fd",
+      "commands": 1,
+      "source_unchanged": true,
+      "old_command_and_args_exact": true,
+      "new_defaults": {
+        "checkpoint_selection": "overall",
+        "checkpoint_overall_tol": 0.01,
+        "save_aux_checkpoints": 0
+      }
+    },
+    {
+      "path": "experiment_config/P1_WeightProbe/train_config_NCEP_Lewes_24h_dual_ex10_notail.sh",
+      "sha256": "c10f67ceb881c5be762dfe25e3ced4b6d65b022b3759e0a4141e0d429074c2ce",
+      "commands": 1,
+      "source_unchanged": true,
+      "old_command_and_args_exact": true,
+      "new_defaults": {
+        "checkpoint_selection": "overall",
+        "checkpoint_overall_tol": 0.01,
+        "save_aux_checkpoints": 0
+      }
+    },
+    {
+      "path": "experiment_config/P1_WeightProbe/train_config_NCEP_Lewes_24h_dual_ex10_tail005.sh",
+      "sha256": "7858f629f4bcf640735f3d5867096458197e1c1879a0826aace596af492faa8f",
+      "commands": 1,
+      "source_unchanged": true,
+      "old_command_and_args_exact": true,
+      "new_defaults": {
+        "checkpoint_selection": "overall",
+        "checkpoint_overall_tol": 0.01,
+        "save_aux_checkpoints": 0
+      }
+    },
+    {
+      "path": "experiment_config/P1_WeightProbe/train_config_NCEP_Lewes_24h_dual_ex10_tail010.sh",
+      "sha256": "b0847c1612a7d63907fa3755291c3fb27c271c82e5bc5f6ed69c81a3f78418a9",
+      "commands": 1,
+      "source_unchanged": true,
+      "old_command_and_args_exact": true,
+      "new_defaults": {
+        "checkpoint_selection": "overall",
+        "checkpoint_overall_tol": 0.01,
+        "save_aux_checkpoints": 0
+      }
+    },
+    {
+      "path": "experiment_config/P1_WeightProbe/train_config_NCEP_Lewes_24h_dual_ex2_tail005.sh",
+      "sha256": "3855f4872489ad61bae208a66dc2e3c153d7042188685ed576ef9adf25d53c28",
+      "commands": 1,
+      "source_unchanged": true,
+      "old_command_and_args_exact": true,
+      "new_defaults": {
+        "checkpoint_selection": "overall",
+        "checkpoint_overall_tol": 0.01,
+        "save_aux_checkpoints": 0
+      }
+    },
+    {
+      "path": "experiment_config/P1_WeightProbe/train_config_NCEP_Lewes_24h_dual_ex2_tail010.sh",
+      "sha256": "6f5f3f4b9c100168303e85a26edf5700676bcb34221366024a3b83dbdce5cd79",
+      "commands": 1,
+      "source_unchanged": true,
+      "old_command_and_args_exact": true,
+      "new_defaults": {
+        "checkpoint_selection": "overall",
+        "checkpoint_overall_tol": 0.01,
+        "save_aux_checkpoints": 0
+      }
+    },
+    {
+      "path": "experiment_config/P1_WeightProbe/train_config_NCEP_Lewes_24h_dual_ex5_notail.sh",
+      "sha256": "de942b7b63fd9846dd61c8774db3cddf2e80f2140125722cc9567133b01a4d16",
+      "commands": 1,
+      "source_unchanged": true,
+      "old_command_and_args_exact": true,
+      "new_defaults": {
+        "checkpoint_selection": "overall",
+        "checkpoint_overall_tol": 0.01,
+        "save_aux_checkpoints": 0
+      }
+    },
+    {
+      "path": "experiment_config/P1_WeightProbe/train_config_NCEP_Lewes_24h_dual_ex5_tail005.sh",
+      "sha256": "5366f57e11a192becc98c24040cacbc53274b67063d38e6def0325290417b835",
+      "commands": 1,
+      "source_unchanged": true,
+      "old_command_and_args_exact": true,
+      "new_defaults": {
+        "checkpoint_selection": "overall",
+        "checkpoint_overall_tol": 0.01,
+        "save_aux_checkpoints": 0
+      }
+    },
+    {
+      "path": "experiment_config/P1_WeightProbe/train_config_NCEP_Lewes_24h_dual_ex5_tail010.sh",
+      "sha256": "80e6c75bc7838a09060035505f87594f356a69ed4c734350b9143faaa4cefb1e",
+      "commands": 1,
+      "source_unchanged": true,
+      "old_command_and_args_exact": true,
+      "new_defaults": {
+        "checkpoint_selection": "overall",
+        "checkpoint_overall_tol": 0.01,
+        "save_aux_checkpoints": 0
+      }
+    }
+  ],
+  "unchanged_model_loss_data_engine_metrics_inference": {
+    "emulator/__init__.py": "51e67819dff8dab4aa9c6fb6137bdaa752418efe515577eb1bc6ca92f75cbaaa",
+    "emulator/common/__init__.py": "e085d6d57ddcd94a9f3c4fa2256b2be70a2de95acca98ca1f37b97855c282687",
+    "emulator/common/cli.py": "230beba27a518d88cdf62213dbe525fe248c29dba15c62d192a533aea8ea184c",
+    "emulator/common/dual.py": "d83334dd49d683d17298ab4d2a4e9a6f71383add9be85060a857aac02141a41d",
+    "emulator/common/inference_artifacts.sh": "20203bac2af9713915fadc9ae89385ec379abd2c3a992bbe690f2d073e8ee3eb",
+    "emulator/common/runtime.py": "6197b9cd163e95f9afc419d42f9932403eb6c980ef072012d53aff2f56e5ad41",
+    "emulator/data/__init__.py": "cd3194da20868cc554ac207a96fd32a76c3e18a3cd4e0b3b7de1c67be8669ff0",
+    "emulator/data/graph_store.py": "ea032027cc1d8f533cbae47667565b42225f2b1234a576174d8cc7fb08a0b2ce",
+    "emulator/data/loaders.py": "1d28870c8808f0250f39b993265098459fb5b5d6186a7089a8fdcd9df6c38d98",
+    "emulator/data/normalization.py": "54a0a78ed9568dec92713f726d9c6ed9c14fb47903879e51efc629ee0d3c4251",
+    "emulator/data/station_metadata.py": "54d874bd5c7952fa3bae62034869dc0de1ae42c6b8e87a434aa565269557eeb6",
+    "emulator/data/stats.py": "77634ae907216a07469e860f52e48e72d30beaa88714c1c75257fa8d0caeac82",
+    "emulator/inference/__init__.py": "a4a17f727e269fea79f9974d8f06c75e7959f12ea85fb72c938d63d0982345fa",
+    "emulator/inference/dual_diagnostics.py": "f758a0eba2b63bd248303649fec798223cd20e0c3eab31a735eaba70aa5cbecd",
+    "emulator/inference/grouping.py": "a2a1aabec95bde2780e688ef91129a62fb5e4c44d47b4a222cfe3cc358c89902",
+    "emulator/models/__init__.py": "26e8b89607c8966329baffb8d0ea11228d41a38ee86c1c1057623aea319f4308",
+    "emulator/models/architectures.py": "0b815e45804612b29ce137724e0c38e946bf11f15adc6a5253a20a002cd51468",
+    "emulator/models/heads.py": "65d770d77655be706c395d8ff26c5778f47458ab9b5b42193680b2cf4f8da249",
+    "emulator/models/spatial.py": "0e357c954206bf574284d2f9b916a93e3171aaaa916e12e11a08926cb8b4eff9",
+    "emulator/models/temporal.py": "e44e63e5e4fc1d42dec167a6c3d0a472c7b3de8a696b1711812d48be30758085",
+    "emulator/training/__init__.py": "f28c24f7090dbeee9aa5c978ef974a24d90d653067a4300f9a9a3084cc555de0",
+    "emulator/training/engine.py": "e59e62d799e436b5d5ae74eca5365ad55576be55d337dee3f6aa05104f994268",
+    "emulator/training/excess_amplitude.py": "44e70109591ca5d7d5bd667657cec239f6af41c7c7ba65678ae65d627715227d",
+    "emulator/training/excess_shape.py": "b2196ec5507ddeab7963e0c6656e88cc2f1a49335d8651268ce649176bea8bfd",
+    "emulator/training/final_peak.py": "e5aef099cee04fd92cafa0c6957c8341e0561be8cc7f09de46a04014fd567f4f",
+    "emulator/training/losses.py": "fa0eb15dc8830cb5b19f071c182431ab0385c034af28b0df633a7e5f06a74e2f",
+    "emulator/training/metrics.py": "72c77ed8e57c15bdaf06ce8e20a3b694df8a1792953a84e5a2dc04d1d5c5d5e2",
+    "infer.py": "2d94e091c22a86b557bbd48b3d42d891a08393af0a3c04e0cb795a252a8100f3",
+    "infer.sh": "6059ada60a4ce9d5957d61d8fce371ebe5f8fe3df55626e960ba0af56ef6de64"
+  },
+  "config_hash_includes_new_fields": true,
+  "generated_experiment_configs": 0,
+  "real_training_experiments": 0,
+  "full_suite": {
+    "tests": 184,
+    "seconds": 54.81,
+    "failures": 0,
+    "errors": 0,
+    "skips": 0,
+    "command": "GLOO_SOCKET_IFNAME=lo PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=/tmp/pact-validation-deps /media/volume/PACT-Data/conda_envs/torchpyg-cu124/bin/python -m unittest discover -s tests -v",
+    "previous_tests": 158,
+    "new_tests": 26,
+    "existing_cuda_fp16_bf16_tests_passed": true,
+    "warning": "Existing CUDA discovery emitted a non-fatal NVML initialization warning; CUDA tests ran and passed."
+  },
+  "selector_tests": {
+    "deterministic_winners": {
+      "overall": 3,
+      "peak5": 1,
+      "peak_magnitude": 2,
+      "constrained_peak5": 4,
+      "constrained_peak_magnitude": 5
+    },
+    "default_strict_first_minimum": true,
+    "random_histories": 250,
+    "random_seed": 7036,
+    "targets": [
+      "rmse_peak5",
+      "peak_magnitude_rmse_top5"
+    ],
+    "tolerances": [
+      0.0,
+      0.001,
+      0.01,
+      0.1,
+      1.0,
+      1000000.0
+    ],
+    "insertion_orders": [
+      "forward",
+      "reverse",
+      "shuffled"
+    ],
+    "exact_brute_force_comparisons": 9000,
+    "storage_and_recovery_tests_passed": true
+  },
+  "pipeline_tests": {
+    "head_variants": [
+      "single",
+      "direct",
+      "severity_shape"
+    ],
+    "modes": 5,
+    "auxiliary_settings": [
+      0,
+      1
+    ],
+    "artifact_combinations": 30,
+    "train_epochs_per_fixture": 6,
+    "one_canonical_per_run": true,
+    "stored_weight_tensors_epoch_and_val_verified": true,
+    "test_loader_created_only_after_final_selection": true,
+    "test_calls_per_run": 1,
+    "auxiliary_test_calls": 0,
+    "shared_epoch_artifacts_deduplicated": true,
+    "nondefault_primary_metadata_verified": true,
+    "explicit_auxiliary_infer_ckpt_passed": true
+  },
+  "frozen_regression": {
+    "base_revision": "d8734bcc66f5bb4cb0b75b908becd7d0c988c1d4",
+    "default_fixture": "tests/fixtures/post6_checkpoint_selection.json",
+    "trajectory_fixture": "tests/fixtures/post6_checkpoint_trajectories.json",
+    "trajectory_reference": "Exact git-show d8734bc:train.py loaded for temporary synthetic CPU fixtures; all model/loss/data/engine files independently verified unchanged.",
+    "same_default_selected_epoch": 3,
+    "same_default_test_metrics_and_prediction_arrays": true,
+    "same_canonical_pattern": "best_perceiver3_mse_<resolved-config-hash>_selection_fixture.pth",
+    "default_requires_no_candidate_store_or_aux_directory": true,
+    "exact_six_epoch_trajectory_comparisons": 15,
+    "compared": [
+      "loss_scalars",
+      "training_forward_hashes",
+      "model_state_hashes",
+      "train_metrics",
+      "actual_val_metrics",
+      "torch_rng",
+      "python_rng",
+      "numpy_rng",
+      "learning_rates"
+    ],
+    "positive_peak_loss_weight": 0.4,
+    "positive_dual_excess_amp_weight": 0.3,
+    "positive_severity_shape_weight": 0.2,
+    "accumulation_and_dropout_exercised": true
+  },
+  "scheduler": {
+    "production_scheduler_code_unchanged": true,
+    "cosine_and_warmup_exact_against_frozen_reference": true,
+    "rop_metrics": {
+      "val_rmse_phys": "rmse_all",
+      "val_rmse_peak": "rmse_peak5"
+    },
+    "rop_exact_trajectory_comparisons": 10,
+    "selection_never_changes_scheduler_metric": true
+  },
+  "ddp": {
+    "backend": "gloo",
+    "ranks": 2,
+    "real_temporary_fixture_training_epochs": 3,
+    "selection_mode": "constrained_peak_magnitude",
+    "save_aux_checkpoints": 1,
+    "per_rank_validation_dictionaries_equal": true,
+    "selector_receives_global_metrics": true,
+    "checkpoint_and_manifest_writer_ranks": [
+      0
+    ],
+    "selector_ranks": [
+      0
+    ],
+    "test_calls_by_rank": [
+      1,
+      0
+    ]
+  },
+  "scope": {
+    "canonical_repository": "/home/exouser/media/volume/PACT-Data/StormSurge",
+    "extra_project_copies_created": 0,
+    "generated_experiment_configs": 0,
+    "real_training_experiments": 0,
+    "instruction_8_implemented": false,
+    "scientific_selection_mode_chosen": false,
+    "test_used_for_tolerance": false,
+    "preserved_unrelated_paths": [
+      "DUAL_HEAD_EXPLAINED.md -> docs/DUAL_HEAD_EXPLAINED.md",
+      "STABILITY_AND_DUAL_HEAD.md -> docs/STABILITY_AND_DUAL_HEAD.md",
+      "experiment_config/P1_WeightProbe/"
+    ]
+  },
+  "changed_source_and_test_sha256": {
+    "emulator/training/checkpoints.py": "2b3c241363163a3819d30203cb92f4b9694231912131f7fb3a5d3c77a6a9e609",
+    "emulator/training/arguments.py": "8caa66e1a6098ef64f97cbed38fe746b0b6c0c9f0230e94d4155bb5ee57991bb",
+    "train.py": "4f9d83229a74d83803e1b87295c3d81d6bce556e0c8825da87dfb6c107cb9364",
+    "train.sh": "ad11d81aa4eca4218d24d6f8edaa6eb2f97c71113877511d5dd899884efa2c42",
+    "tests/test_checkpoints.py": "5c5b4359446c92939dff0d2eb07294de482bca869b450d019530ff00281d93da",
+    "tests/test_checkpoint_pipeline.py": "f4f4aa58e4982634042a32b5a45cd945f261822446d19953e5a4e5c1a309c08c",
+    "tests/test_excess_amplitude.py": "7b4eea3593cf65388e88fbb1e51f821f1d93c49e35b44cd4e1b2b40009dc8a61",
+    "tests/test_severity_shape.py": "6615f70f346bebdb4df0f9b0fb63938ee02ee987f8ba7b3dbc98936a548a0443",
+    "tests/fixtures/post6_checkpoint_selection.json": "1fc829dcb9222a43e7f4b03abddd213eeefccb34c569ed36267b23fb0633c2f1",
+    "tests/fixtures/post6_checkpoint_trajectories.json": "1a709d65e6ae4929e93888a6393f366009d5073e5b8db71f271199a815a6622b"
+  }
+}

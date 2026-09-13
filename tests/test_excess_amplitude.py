@@ -421,7 +421,7 @@ class ExcessAmplitudeTests(unittest.TestCase):
             store = ForcingGraphStore(graphs, 'Battery')
             fitted = fit_loss_thresholds(store, store.split()['train'], tail_frac=.4, exceedance_percentile=75)
             output = root / 'run'
-            metrics = dict(rmse_all=1., mae_all=1., rmse_peak5=1., mae_peak5=1.)
+            metrics = dict(rmse_all=1., mae_all=1., rmse_peak5=1., mae_peak5=1., peak_magnitude_rmse_top5=1.)
             val1 = dict(metrics, rmse_all=.5, rmse_peak5=2.)
             val2 = dict(metrics, rmse_all=.7, rmse_peak5=.1)
             # Exercise setup and checkpoint saving without any optimizer/model training.

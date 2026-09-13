@@ -26,6 +26,8 @@ from emulator.data import (ForcingGraphStore, ForcingGraphView, build_loader,
 from emulator.models import ModelConfig, build_model
 from emulator.training import ForecastLoss, LossConfig, format_metrics, run_epoch
 from emulator.training.arguments import parse_args
+from emulator.training.checkpoints import (CheckpointSelector, CandidateCheckpointStore, SIMPLE_ROLES,
+                                           write_selection_manifest)
 
 
 def main(argv=None):
@@ -154,6 +156,10 @@ def train(args, device, distributed, rank, wall_start):
     epoch_options = dict(device=device, stats=stats, station_feat=station_feat, use_amp=use_amp,
                          amp_dtype=amp_dtype, x_clip=args.x_clip, distributed=distributed,
                          event_threshold=fitted["tau_phys"])
+    selection = CheckpointSelector(args.checkpoint_selection, args.checkpoint_overall_tol,
+                                   args.save_aux_checkpoints) if rank == 0 else None
+    candidate_store = (CandidateCheckpointStore(checkpoint_path, stem)
+                       if rank == 0 and selection.needs_candidates else None)
     best_rmse, best_epoch = float("inf"), 0
     start = time.perf_counter()
     for epoch in range(1, args.epochs + 1):
@@ -174,15 +180,31 @@ def train(args, device, distributed, rank, wall_start):
                         f'{format_metrics("Val", validation.metrics)}')
             with metrics_path.open("a") as handle:
                 handle.write(json.dumps({"epoch": epoch, "train": training.metrics, "val": validation.metrics}) + "\n")
-            if validation.metrics["rmse_all"] < best_rmse:
-                best_rmse, best_epoch = validation.metrics["rmse_all"], epoch
+            candidate = selection.observe(epoch, validation.metrics)
+
+            def checkpoint_snapshot():
                 network = model.module if distributed else model
-                checkpoint = {"model_config": asdict(model_config), "model_state": network.state_dict(),
+                return {"model_config": asdict(model_config), "model_state": network.state_dict(),
                               "normalization": stats_cpu, "station_feat": station_feat.cpu() if station_feat is not None else None,
                               "station": args.station, "split_config": split_config,
                               "split_tags": {key: [store.graph_tags[i] for i in indices] for key, indices in splits.items()},
                               "training_config": vars(args), "loss_thresholds": fitted, "dual_metadata": dual_metadata,
                               "epoch": epoch, "val": validation.metrics}
+
+            if candidate_store is not None:
+                candidate_store.retain(selection, candidate, checkpoint_snapshot)
+            # Explicit selection mode, never config age or model/loss formulation.
+            # The default keeps the original strict-< online canonical save.
+            if args.checkpoint_selection == "overall":
+                primary_improved = validation.metrics["rmse_all"] < best_rmse
+            elif args.checkpoint_selection in SIMPLE_ROLES:
+                primary_improved = selection.best[args.checkpoint_selection].epoch == epoch
+            else:
+                primary_improved = False  # Constrained primary is resolved after the final epoch.
+            if primary_improved:
+                best_rmse, best_epoch = validation.metrics["rmse_all"], epoch
+                checkpoint = checkpoint_snapshot()
+                checkpoint.update(selection.checkpoint_metadata(candidate, [args.checkpoint_selection]))
                 torch.save(checkpoint, checkpoint_path)
                 log_message(f'[Best] Epoch {epoch:03d}/{args.epochs} | '
                             f'{format_metrics("Val", validation.metrics)}')
@@ -190,6 +212,15 @@ def train(args, device, distributed, rank, wall_start):
         dist.barrier()
     elapsed = time.perf_counter() - start
     if rank == 0:
+        manifest_path = None
+        if candidate_store is not None:
+            manifest_path = candidate_store.finalize(selection)
+        elif args.checkpoint_selection != "overall":
+            manifest_path = write_selection_manifest(selection, checkpoint_path, stem,
+                                                     {args.checkpoint_selection: checkpoint_path})
+        selected, _ = selection.resolve()
+        best_epoch, best_rmse = selected.epoch, selected.val["rmse_all"]
+        # Only finalized primary weights reach TEST. Auxiliary roles add no evaluation pass.
         checkpoint = torch.load(checkpoint_path, map_location=device, weights_only=False)
         network = model.module if distributed else model
         network.load_state_dict(checkpoint["model_state"], strict=True)
@@ -205,7 +236,7 @@ def train(args, device, distributed, rank, wall_start):
         np.savez_compressed(output_dir / f"test_preds_{stem}.npz", **result.predictions)
         summary = {"best_epoch": best_epoch, "best_val_rmse": best_rmse, "training_seconds": elapsed,
                    "loss_thresholds": fitted, "dual_metadata": dual_metadata,
-                   "val": checkpoint["val"],
+                   "val": checkpoint["val"], "checkpoint_selection": selection.summary(manifest_path),
                    "test": result.metrics, "test_scope": "external_all_years" if args.test_root_dir else "held_out_years"}
         if device.type == "cuda":
             torch.cuda.synchronize(device)

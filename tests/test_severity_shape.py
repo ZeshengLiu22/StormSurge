@@ -528,7 +528,7 @@ class SeverityShapeTests(unittest.TestCase):
             graphs, stations = make_fixture(root)
             store = ForcingGraphStore(graphs, 'Battery')
             fitted = fit_loss_thresholds(store, store.split()['train'], tail_frac=.4, exceedance_percentile=75)
-            metrics = dict(rmse_all=1., mae_all=1., rmse_peak5=1., mae_peak5=1.)
+            metrics = dict(rmse_all=1., mae_all=1., rmse_peak5=1., mae_peak5=1., peak_magnitude_rmse_top5=1.)
             for formulation, ablation in [('direct', 'none'), ('severity_shape', 'none'), ('severity_shape', 'fixed_gate')]:
                 destination = root / f'{formulation}_{ablation}'
                 shape_weight = '.3' if formulation == 'severity_shape' else '0'

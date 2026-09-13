@@ -151,6 +151,9 @@ fi
 : "${PEAK_LOSS_WEIGHT:=0}"
 : "${PEAK_POOL:=max}"
 : "${PEAK_POOL_BETA:=20.0}"  # inverse meters; training pool only
+: "${CHECKPOINT_SELECTION:=overall}"
+: "${CHECKPOINT_OVERALL_TOL:=0.01}"
+: "${SAVE_AUX_CHECKPOINTS:=0}"
 : "${GATE_LOSS_WEIGHT:=1}"
 : "${ROP_METRIC:=val_rmse_phys}"   # val_rmse_phys | val_rmse_peak
 
@@ -384,6 +387,7 @@ write_resolved_config() {
     EXCESS_AMP_LOSS_WEIGHT EXCESS_AMP_POOL EXCESS_AMP_BETA
     EXCESS_FORMULATION SHAPE_LOSS_WEIGHT SEVERITY_SHAPE_EPS
     PEAK_LOSS_WEIGHT PEAK_POOL PEAK_POOL_BETA
+    CHECKPOINT_SELECTION CHECKPOINT_OVERALL_TOL SAVE_AUX_CHECKPOINTS
     X_NORM X_P_LO X_P_HI X_NODES_PER_GRAPH X_CLIP X_AUG X_AUG_PROB
     X_AUG_SCALE X_AUG_BIAS DISABLE_OOD USE_AMP AMP_DTYPE USE_TF32
     TORCH_THREADS NUM_WORKERS PIN_MEMORY PERSISTENT_WORKERS PREFETCH_FACTOR
@@ -629,6 +633,9 @@ for LOSS_MODE in "${LOSS_MODE_LIST[@]}"; do
                 --peak_loss_weight "${PEAK_LOSS_WEIGHT}"
                 --peak_pool "${PEAK_POOL}"
                 --peak_pool_beta "${PEAK_POOL_BETA}"
+                --checkpoint_selection "${CHECKPOINT_SELECTION}"
+                --checkpoint_overall_tol "${CHECKPOINT_OVERALL_TOL}"
+                --save_aux_checkpoints "${SAVE_AUX_CHECKPOINTS}"
                 --encoder_type "${ENCODER_TYPE}"
                 --cnn_intermediate_channel "${CNN_INTERMEDIATE_CHANNEL}"
                 --batch_size "${BATCH_SIZE}"
