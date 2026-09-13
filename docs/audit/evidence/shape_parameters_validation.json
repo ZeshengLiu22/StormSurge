@@ -1,0 +1,135 @@
+{
+  "base_revision": "f673555a9ca4023c8c1bb0907c242d6b05e4541f",
+  "repository": "/home/exouser/media/volume/PACT-Data/StormSurge",
+  "full_suite": {
+    "tests": 193,
+    "seconds": 55.937,
+    "failures": 0,
+    "errors": 0,
+    "skips": 0,
+    "command": "GLOO_SOCKET_IFNAME=lo PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=/tmp/pact-validation-deps /media/volume/PACT-Data/conda_envs/torchpyg-cu124/bin/python -m unittest discover -s tests -v"
+  },
+  "focused_suite": {
+    "tests": 51,
+    "seconds": 18.873
+  },
+  "normalization": {
+    "previous": "softplus(logits.float()) / max(softplus(logits.float())).clamp_min(eps)",
+    "corrected": "raw = softplus(logits.float()) + eps; shape = raw / max_h(raw)",
+    "reproduced_before_fix": {
+      "shape_bias": -1000,
+      "shape_maxima": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "severity_phys": [
+        0.10000000149011612,
+        0.10000000149011612,
+        0.10000000149011612,
+        0.10000000149011612
+      ],
+      "physical_excess_maxima": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    "small_logits_tested": [
+      -18.0,
+      -25.0,
+      -30.0,
+      -80.0,
+      -85.0,
+      -1000.0,
+      -1001.0
+    ],
+    "exact_unit_shape_peak": true,
+    "physical_severity_reconstruction": true,
+    "below_epsilon_gradients_preserved": true,
+    "all_underflow_gradients_finite": true,
+    "cpu_bfloat16": true,
+    "cuda_float16": true,
+    "cuda_bfloat16": true,
+    "old_severity_shape_outputs_intentionally_changed": true,
+    "unchanged_single_and_direct_frozen_references": true,
+    "original_frozen_json_not_overwritten": true,
+    "corrected_severity_shape_exact_trajectory_across_five_selection_modes": true
+  },
+  "parameter_reporting": {
+    "always_enabled": true,
+    "architecture_combinations": 48,
+    "training_inference_roundtrips": 6,
+    "console_fields": [
+      "total",
+      "trainable",
+      "non_trainable",
+      "head"
+    ],
+    "saved_key": "model_parameters",
+    "saved_details": [
+      "head",
+      "backbone",
+      "head_branches"
+    ],
+    "destinations": [
+      "checkpoint",
+      "training_summary",
+      "inference_metrics",
+      "inference_per_year_report"
+    ],
+    "counts_unique_registered_parameters": true,
+    "excludes_buffers": true,
+    "frozen_parameter_test": true,
+    "counts_one_logical_replica": true,
+    "ddp_rank_zero_logs_only": true,
+    "inference_recomputes_counts": true,
+    "no_extra_forward_or_reference_model": true,
+    "rng_weights_grad_flags_and_model_mode_unchanged": true,
+    "matched_128_by_256_head_extra_parameters": 33281
+  },
+  "unchanged_source_sha256": {
+    "emulator/common/__init__.py": "e085d6d57ddcd94a9f3c4fa2256b2be70a2de95acca98ca1f37b97855c282687",
+    "emulator/common/cli.py": "230beba27a518d88cdf62213dbe525fe248c29dba15c62d192a533aea8ea184c",
+    "emulator/common/dual.py": "d83334dd49d683d17298ab4d2a4e9a6f71383add9be85060a857aac02141a41d",
+    "emulator/common/inference_artifacts.sh": "20203bac2af9713915fadc9ae89385ec379abd2c3a992bbe690f2d073e8ee3eb",
+    "emulator/common/runtime.py": "6197b9cd163e95f9afc419d42f9932403eb6c980ef072012d53aff2f56e5ad41",
+    "emulator/data/__init__.py": "cd3194da20868cc554ac207a96fd32a76c3e18a3cd4e0b3b7de1c67be8669ff0",
+    "emulator/data/graph_store.py": "ea032027cc1d8f533cbae47667565b42225f2b1234a576174d8cc7fb08a0b2ce",
+    "emulator/data/loaders.py": "1d28870c8808f0250f39b993265098459fb5b5d6186a7089a8fdcd9df6c38d98",
+    "emulator/data/normalization.py": "54a0a78ed9568dec92713f726d9c6ed9c14fb47903879e51efc629ee0d3c4251",
+    "emulator/data/station_metadata.py": "54d874bd5c7952fa3bae62034869dc0de1ae42c6b8e87a434aa565269557eeb6",
+    "emulator/data/stats.py": "77634ae907216a07469e860f52e48e72d30beaa88714c1c75257fa8d0caeac82",
+    "emulator/models/architectures.py": "0b815e45804612b29ce137724e0c38e946bf11f15adc6a5253a20a002cd51468",
+    "emulator/training/__init__.py": "f28c24f7090dbeee9aa5c978ef974a24d90d653067a4300f9a9a3084cc555de0",
+    "emulator/training/arguments.py": "8caa66e1a6098ef64f97cbed38fe746b0b6c0c9f0230e94d4155bb5ee57991bb",
+    "emulator/training/checkpoints.py": "2b3c241363163a3819d30203cb92f4b9694231912131f7fb3a5d3c77a6a9e609",
+    "emulator/training/engine.py": "e59e62d799e436b5d5ae74eca5365ad55576be55d337dee3f6aa05104f994268",
+    "emulator/training/excess_amplitude.py": "44e70109591ca5d7d5bd667657cec239f6af41c7c7ba65678ae65d627715227d",
+    "emulator/training/excess_shape.py": "b2196ec5507ddeab7963e0c6656e88cc2f1a49335d8651268ce649176bea8bfd",
+    "emulator/training/final_peak.py": "e5aef099cee04fd92cafa0c6957c8341e0561be8cc7f09de46a04014fd567f4f",
+    "emulator/training/losses.py": "fa0eb15dc8830cb5b19f071c182431ab0385c034af28b0df633a7e5f06a74e2f",
+    "emulator/training/metrics.py": "72c77ed8e57c15bdaf06ce8e20a3b694df8a1792953a84e5a2dc04d1d5c5d5e2",
+    "train.sh": "ad11d81aa4eca4218d24d6f8edaa6eb2f97c71113877511d5dd899884efa2c42"
+  },
+  "changed_source_and_tests_sha256": {
+    "emulator/models/heads.py": "1f271b88e5759633095fcbd2556236d857bd99f78f4cbfd23e62ebdcdf89ba6f",
+    "emulator/models/reporting.py": "c6e5869eed44a88dd67a7108ca4384713d1079a5cad76d4fdb99aa86560d5e59",
+    "emulator/models/__init__.py": "633fcb6f96db112b7167bbce24ceca039b76ed12b968b02238403696e40a0ac2",
+    "train.py": "be25b15eb59f8650ed1b20406d69bfed26bfad4bb929189aa29b9fc26c02e95d",
+    "infer.py": "92d944b99cac3db77e4664f2af0c5dbb055deca4a7ef07fc0ee73d91e2df8a20",
+    "tests/test_severity_shape.py": "c51f024abfc55f2112e21d924e2f468fdb3383145934e91ea7debf9fc66cd86b",
+    "tests/test_model_reporting.py": "0822225e52cb02396025dee1e01b852e9e3c4de77c9b77219fbdaf8fe63c5098",
+    "tests/test_checkpoint_pipeline.py": "330ad6a9bc509a102e93ba3aea700f307657c862006b50a0a32340b1a271f37e",
+    "tests/test_pipeline.py": "d7eed89f6ecf6fb4d5dc8e0a5e01bcf2f899ee19cd188767acf7cb1a5a62d07f"
+  },
+  "scope": {
+    "experiment_configs_unchanged": true,
+    "new_experiment_configs": 0,
+    "real_training_experiments": 0,
+    "checkpoint_selection_algorithm_unchanged": true,
+    "loss_definitions_and_weights_unchanged": true
+  }
+}

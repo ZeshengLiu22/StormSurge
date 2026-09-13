@@ -47,8 +47,8 @@ Let `C_bar = mean_h(C)` and `eps = SEVERITY_SHAPE_EPS`:
 body_norm       = threshold - softplus(threshold - body(C))
 p_event         = sigmoid(gate(C_bar))           # same event branch as direct
 severity_phys   = softplus(severity(C_bar))       # [B], meters
-shape_raw       = softplus(shape(C))              # [B,K], unitless
-shape           = shape_raw / clamp_min(max_h(shape_raw), eps)
+shape_raw       = softplus(shape(C)) + eps        # [B,K], unitless
+shape           = shape_raw / max_h(shape_raw)
 excess_phys     = severity_phys[:,None] * shape   # [B,K], meters
 output.excess   = excess_phys / target_y_std      # [B,K], normalized excess
 prediction_norm = body_norm + p_event * output.excess
@@ -56,13 +56,23 @@ prediction_phys = body_phys + p_event * severity_phys[:,None] * shape
 ```
 
 The gate remains window-level and unitless; `fixed_gate` still uses the exact
-empirical TRAIN prevalence. Shape is nonnegative and has maximum exactly one
-per window whenever its raw maximum is at least epsilon. Severity and
-reconstructed excess are nonnegative. For that nondegenerate case, severity
-equals the physical maximum excess. If raw shape underflows to zero, the
-epsilon floor produces finite zero shape/excess; the maximum-one identity is
-not asserted for this protected degenerate case. No normalization crosses the
-batch axis, and no label enters any prediction branch.
+empirical TRAIN prevalence. Epsilon is added to the FP32 softplus output
+before dividing by the per-window maximum. Shape has maximum exactly one,
+including when every softplus value is smaller than the default epsilon or
+underflows to zero. In the all-underflow case shape is uniformly one, so
+severity still equals the physical maximum excess. Adding epsilon retains
+below-epsilon gradients until softplus itself underflows; there is no clamp
+on the predicted shape. No normalization crosses the batch axis, and no label
+enters any prediction branch.
+
+This corrects the normalization edge case reviewed at `f673555a`. Previously
+only the denominator was floored, allowing maxima below one (or zero) and
+breaking severity's amplitude interpretation. Severity-shape outputs and
+gradients intentionally change with this correction, including small rounding
+changes away from the edge. Existing weight shapes and checkpoint loading
+remain valid. Single/direct arithmetic is unchanged. The old frozen severity
+fixture is preserved as historical evidence; corrected severity-shape training
+is checked for exact equivalence across all five checkpoint-selection modes.
 
 `train.py` supplies `stats_cpu["y_std"].tolist()` only in `severity_shape` mode.
 `ModelConfig.target_y_std` saves this TRAIN vector, and the new head registers
@@ -81,8 +91,8 @@ width/dropout convention (`head_hidden` or twice the context width).
 
 Severity and shape final-layer weights are zero. Their biases are respectively
 `log(expm1(0.1))` and `log(expm1(1.0))`. Thus initial severity is approximately
-**0.1 meters** and raw shape is one; with the default epsilon, normalized shape
-is exactly one and initial physical event contribution is `p_event * 0.1 m` at
+**0.1 meters** and softplus shape is one, so raw shape is `1 + eps`.
+Normalized shape is exactly one and initial physical event contribution is `p_event * 0.1 m` at
 each horizon. Earlier MLP layers retain the existing initialization. The gate
 keeps zero final weights and the existing clipped-prior logit bias; fixed gate
 keeps the unclipped empirical prior. No new severity statistic is fitted.
@@ -90,6 +100,10 @@ keeps the unclipped empirical prior. No new severity statistic is fitted.
 The severity-shape head has one more regression MLP than direct, since one
 trajectory branch is replaced by two branches. This is an explicit architecture
 comparison, with unchanged backbone and existing trajectory supervision.
+[Parameter reporting](MODEL_PARAMETERS.md) now records total/trainable/head
+counts for every model and individual head branches in JSON. At context width
+128 and head width 256 the extra MLP contains exactly 33,281 parameters; the
+report counts actual modules without constructing an extra comparison model.
 Zero final weights initially block that branch's gradient to shared context;
 this is expected initialization behavior. Gradient-routing tests use nonzero
 synthetic final weights to verify every intended connection.
@@ -113,9 +127,10 @@ L_shape      = mean_i[E_i * mean_h((shape_i,h - shape_target_i,h)^2)] / q_E
 The physical target is the same as `clamp_min(y_phys - tau_train, 0)` within
 floating-point tolerance. It never uses the predicted body. A valid event has
 positive amplitude; amplitudes below epsilon remain safe and their target
-shape maximum may be below one. The same numerical epsilon floors the raw
-dimensionless shape denominator and the target amplitude denominator in meters,
-each in its own quantity's units.
+shape maximum may be below one. Target construction retains its existing
+amplitude denominator floor in meters. The predicted dimensionless shape uses
+additive epsilon before max normalization; this correction does not change
+the target, strict event definition, or any loss weight/reduction.
 
 `q_E` remains exactly `fit_loss_thresholds(...)["event_prior"]`, the strict
 TRAIN `event_count / train_windows`, passed by `train.py` to `ForecastLoss`.
@@ -140,7 +155,7 @@ L_existing_prediction_and_tail_slope
 its existing whole-batch/horizon reduction. `L_excess_amp` is #2's unchanged
 physical amplitude objective in square meters. It receives reconstructed
 normalized excess in either formulation; there is no second severity loss or
-`SEVERITY_LOSS_WEIGHT` control. Under hard-max pooling and nondegenerate shape,
+`SEVERITY_LOSS_WEIGHT` control. Under hard-max pooling,
 it supervises `severity_phys` directly. Canonical severity-shape comparisons
 should use `EXCESS_AMP_POOL="max"` for this interpretation. `smoothmax` still
 pools the reconstructed physical trajectory on both sides and remains an
@@ -148,8 +163,7 @@ optional sensitivity mode; it does not redefine the scalar severity target.
 
 Prediction loss connects body, gate, severity, shape and shared context.
 Trajectory excess loss connects severity and shape. Hard-max amplitude loss
-connects severity, with the unit-peak shape factor canceling in the ordinary
-case. Shape loss directly connects the shape branch. Amplitude/shape objectives
+connects severity, with the unit-peak shape factor canceling. Shape loss directly connects the shape branch. Amplitude/shape objectives
 do not directly supervise body or gate; shared-context coupling is expected.
 
 ## Ablations and future configuration capability

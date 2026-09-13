@@ -22,7 +22,7 @@ class ForecastOutput(NamedTuple):
 
 
 def head_mlp(hidden, dropout, head_hidden=None):
-    # All three dual-head branches use this same small architecture.
+    # All forecast branches use this same small architecture.
     if head_hidden is None:
         head_hidden = 2 * hidden
     return nn.Sequential(nn.Linear(hidden, head_hidden), nn.LeakyReLU(0.1),
@@ -105,7 +105,7 @@ class SeverityShapeHead(nn.Module):
         else:
             nn.init.zeros_(self.gate[-1].weight)
             nn.init.constant_(self.gate[-1].bias, math.log(init_prior / (1 - init_prior)))
-        # Start at severity = 0.1 meters, raw shape = 1 (normalized shape = 1).
+        # Start at severity = 0.1 meters, softplus shape = 1 (normalized shape = 1).
         # No fitted severity statistic or additional label-derived initialization.
         for branch, positive in ((self.severity, .1), (self.shape, 1.)):
             nn.init.zeros_(branch[-1].weight)
@@ -116,8 +116,10 @@ class SeverityShapeHead(nn.Module):
         body = self.threshold - F.softplus(self.threshold - raw_body)
         pooled = context.mean(dim=1)
         severity = F.softplus(self.severity(pooled).squeeze(-1).float())
-        raw_shape = F.softplus(self.shape(context).squeeze(-1).float())
-        shape = raw_shape / raw_shape.max(dim=1, keepdim=True).values.clamp_min(self.severity_shape_eps)
+        # Add epsilon before normalization: even softplus underflow retains
+        # a unit peak, so severity remains the physical peak excess amplitude.
+        raw_shape = F.softplus(self.shape(context).squeeze(-1).float()) + self.severity_shape_eps
+        shape = raw_shape / raw_shape.max(dim=1, keepdim=True).values
         excess = severity[:, None] * shape / self.target_y_std
         gate_logits = self.gate(pooled).float() if self.gate is not None else None
         probability = (gate_logits.sigmoid() if gate_logits is not None

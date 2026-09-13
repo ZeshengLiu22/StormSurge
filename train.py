@@ -23,7 +23,7 @@ from emulator.common.runtime import log_message
 from emulator.common.dual import initial_gate_prior
 from emulator.data import (ForcingGraphStore, ForcingGraphView, build_loader,
                            fit_loss_thresholds, fit_statistics, load_station_json, station_features_from_json)
-from emulator.models import ModelConfig, build_model
+from emulator.models import ModelConfig, build_model, count_model_parameters, format_parameter_counts
 from emulator.training import ForecastLoss, LossConfig, format_metrics, run_epoch
 from emulator.training.arguments import parse_args
 from emulator.training.checkpoints import (CheckpointSelector, CandidateCheckpointStore, SIMPLE_ROLES,
@@ -125,6 +125,9 @@ def train(args, device, distributed, rank, wall_start):
         dual_metadata["severity_shape_eps"] = args.severity_shape_eps
     model_config = ModelConfig(**model_values)
     model = build_model(model_config).to(device)
+    model_parameters = count_model_parameters(model)
+    if rank == 0:
+        log_message(format_parameter_counts(model_parameters))
     if distributed:
         model = DistributedDataParallel(model, device_ids=[device.index] if device.type == "cuda" else None)
     loss_config = LossConfig(**{field.name: getattr(args, field.name) for field in fields(LossConfig)})
@@ -189,7 +192,7 @@ def train(args, device, distributed, rank, wall_start):
                               "station": args.station, "split_config": split_config,
                               "split_tags": {key: [store.graph_tags[i] for i in indices] for key, indices in splits.items()},
                               "training_config": vars(args), "loss_thresholds": fitted, "dual_metadata": dual_metadata,
-                              "epoch": epoch, "val": validation.metrics}
+                              "epoch": epoch, "val": validation.metrics, "model_parameters": model_parameters}
 
             if candidate_store is not None:
                 candidate_store.retain(selection, candidate, checkpoint_snapshot)
@@ -235,7 +238,7 @@ def train(args, device, distributed, rank, wall_start):
                            x_clip=args.x_clip, save_predictions=True, event_threshold=fitted["tau_phys"])
         np.savez_compressed(output_dir / f"test_preds_{stem}.npz", **result.predictions)
         summary = {"best_epoch": best_epoch, "best_val_rmse": best_rmse, "training_seconds": elapsed,
-                   "loss_thresholds": fitted, "dual_metadata": dual_metadata,
+                   "loss_thresholds": fitted, "dual_metadata": dual_metadata, "model_parameters": model_parameters,
                    "val": checkpoint["val"], "checkpoint_selection": selection.summary(manifest_path),
                    "test": result.metrics, "test_scope": "external_all_years" if args.test_root_dir else "held_out_years"}
         if device.type == "cuda":

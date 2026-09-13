@@ -214,25 +214,73 @@ class SeverityShapeTests(unittest.TestCase):
         head, context, _, _ = severity_fixture()
         with torch.no_grad():
             head.shape[-1].weight.fill_(.4)
-        raw = F.softplus(head.shape(context).squeeze(-1).float())
+        raw = F.softplus(head.shape(context).squeeze(-1).float()) + head.severity_shape_eps
         expected = raw / raw.max(dim=1, keepdim=True).values
         output = head(context)
         torch.testing.assert_close(output.excess_shape, expected, rtol=0, atol=0)
         for index in range(len(context)):
             torch.testing.assert_close(output.excess_shape[index:index + 1], head(context[index:index + 1]).excess_shape)
 
-    def test_degenerate_underflow_shape_is_safe_under_epsilon_floor(self):
+    def test_degenerate_underflow_shape_has_unit_peak_and_preserves_severity(self):
         head, context, target, stats = severity_fixture(nonzero=False)
         with torch.no_grad():
             head.shape[-1].bias.fill_(-1000)
         output = head(context)
         self.assertTrue(torch.isfinite(output.prediction).all())
-        torch.testing.assert_close(output.excess_shape, torch.zeros_like(output.excess_shape), rtol=0, atol=0)
+        torch.testing.assert_close(output.excess_shape, torch.ones_like(output.excess_shape), rtol=0, atol=0)
+        torch.testing.assert_close((output.excess * stats['y_std']).max(dim=1).values, output.severity_phys)
         criterion = ForecastLoss(LossConfig(excess_formulation='severity_shape', excess_amp_loss_weight=.7,
             shape_loss_weight=.3), stats, 1., 1., event_prior=.25)
         loss = criterion(output, output.prediction * stats['y_std'], target)
         loss.backward()
         self.assertTrue(all(p.grad is not None and torch.isfinite(p.grad).all() for p in head.parameters()))
+
+    def test_all_small_shape_logits_keep_unit_peak_physical_severity_and_finite_gradients(self):
+        head, context, _, stats = severity_fixture(nonzero=False)
+        logits = torch.tensor([[-25., -30.], [-80., -85.], [-1000., -1001.], [-18., -18.]], requires_grad=True)
+        self.assertTrue((F.softplus(logits).max(dim=1).values < head.severity_shape_eps).all())
+        with patch.object(head.shape, 'forward', return_value=logits.unsqueeze(-1)):
+            output = head(context)
+        torch.testing.assert_close(output.excess_shape.max(dim=1).values, torch.ones(4), rtol=0, atol=0)
+        torch.testing.assert_close((output.severity_phys[:, None] * output.excess_shape).max(dim=1).values,
+                                   output.severity_phys, rtol=0, atol=0)
+        torch.testing.assert_close((output.excess * stats['y_std']).max(dim=1).values, output.severity_phys)
+        output.excess_shape[:, 1].sum().backward()
+        self.assertTrue(torch.isfinite(logits.grad).all())
+        # Adding epsilon preserves gradients below epsilon until softplus itself underflows.
+        self.assertTrue((logits.grad[:2, 1] > 0).all())
+        self.assertTrue((logits.grad[:2, 0] < 0).all())
+
+    def check_small_shape_autocast(self, device, dtype):
+        for bias in (-30., -1000.):
+            head, context, target, stats = severity_fixture(nonzero=False)
+            head, context, target = head.to(device), context.to(device), target.to(device)
+            stats = {key: value.to(device) for key, value in stats.items()}
+            with torch.no_grad():
+                head.shape[-1].bias.fill_(bias)
+            criterion = ForecastLoss(LossConfig(excess_formulation='severity_shape', excess_amp_loss_weight=.7,
+                                      shape_loss_weight=.3, peak_loss_weight=.4), stats, 1., 1.,
+                                      event_prior=.25, event_threshold=1.).to(device)
+            with torch.autocast(device_type=device.type, dtype=dtype):
+                output = head(context)
+                loss = criterion(output, output.prediction * stats['y_std'], target)
+            self.assertEqual(output.excess_shape.dtype, torch.float32)
+            torch.testing.assert_close(output.excess_shape, torch.ones_like(output.excess_shape), rtol=0, atol=0)
+            torch.testing.assert_close((output.excess * stats['y_std']).max(dim=1).values, output.severity_phys)
+            self.assertTrue(torch.isfinite(loss))
+            loss.backward()
+            self.assertTrue(all(parameter.grad is not None and torch.isfinite(parameter.grad).all()
+                                for parameter in head.parameters()))
+
+    def test_small_shape_logits_cpu_bfloat16_autocast(self):
+        self.check_small_shape_autocast(torch.device('cpu'), torch.bfloat16)
+
+    @unittest.skipUnless(torch.cuda.is_available(), 'CUDA is unavailable')
+    def test_small_shape_logits_cuda_fp16_bfloat16_autocast(self):
+        self.check_small_shape_autocast(torch.device('cuda'), torch.float16)
+        if torch.cuda.is_bf16_supported():
+            self.check_small_shape_autocast(torch.device('cuda'), torch.bfloat16)
+
 
     def test_severity_pact_reconstruction_checkpoint_and_label_free_inference(self):
         for encoder, history, fixed in itertools.product(('GraphSAGE', 'CNN'), (0, 2), (False, True)):

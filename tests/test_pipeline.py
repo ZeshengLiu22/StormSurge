@@ -193,7 +193,10 @@ class PipelineTests(unittest.TestCase):
                 lines = console.getvalue().splitlines()
                 # Best-checkpoint messages were added to production after this test.
                 best_lines = [line.split('] ', 1)[1] for line in lines if '] [Best] ' in line]
-                self.assertEqual(len(lines) - len(best_lines), 4)
+                parameter_lines = [line for line in lines if '] [Parameters] ' in line]
+                self.assertEqual(len(parameter_lines), 1)
+                self.assertEqual(parameter_lines[0], lines[0])
+                self.assertEqual(len(lines) - len(best_lines) - len(parameter_lines), 4)
                 for line in console.getvalue().splitlines():
                     self.assertRegex(line, r"^\[\d{4}-\d{2}-\d{2}\|\d{2}:\d{2}:\d{2}\]")
                 self.assertIn("Wall time:", console.getvalue().splitlines()[-1])

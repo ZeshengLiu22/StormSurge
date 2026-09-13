@@ -16,7 +16,7 @@ from emulator.common import configure_runtime
 from emulator.common.cli import head_type_name, parse_bool_int, temporal_block_name
 from emulator.common.runtime import log_message
 from emulator.data import ForcingGraphStore, ForcingGraphView, build_loader, load_station_json, station_features_from_json
-from emulator.models import ModelConfig, build_model
+from emulator.models import ModelConfig, build_model, count_model_parameters, format_parameter_counts
 from emulator.inference import classify_past_future, infer_dataset_tag, parse_year_tag
 from emulator.inference.dual_diagnostics import summarize_dual
 from emulator.training import format_metrics, run_epoch
@@ -168,6 +168,8 @@ def main(argv=None):
     device = torch.device("cuda" if cuda else "cpu")
     model = build_model(config).to(device)
     model.load_state_dict(checkpoint["model_state"], strict=True)
+    model_parameters = count_model_parameters(model)
+    log_message(format_parameter_counts(model_parameters))
     stats = {name: value.to(device) for name, value in checkpoint["normalization"].items()}
     station = args.station or checkpoint["station"]
     station_feat = checkpoint["station_feat"]
@@ -300,14 +302,14 @@ def main(argv=None):
         (out_dir / "dual_diagnostics.json").write_text(json.dumps(diagnostic_report, indent=2, allow_nan=False))
         log_message(f"Dual diagnostics: {out_dir / 'dual_diagnostics.json'}")
     wall_seconds = time.perf_counter() - wall_start
-    metadata = {"metrics": metrics, "runtime_seconds": elapsed, "wall_seconds": wall_seconds,
+    metadata = {"metrics": metrics, "model_parameters": model_parameters, "runtime_seconds": elapsed, "wall_seconds": wall_seconds,
                 "samples": len(indices), "scope": "external_all_years" if external else "held_out_years",
                 "years": sorted(year_to_indices), "results": results, "dual_metadata": dual_metadata,
                 "event_threshold_phys": event_threshold, "event_threshold_source": event_threshold_source}
     (out_dir / "metrics.json").write_text(json.dumps(metadata, indent=2))
     report = dict(timestamp=datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S UTC"),
                   test_tag=test_tag, source_tag=source, target_tag=target, station=station_tag,
-                  model=model_name, model_label=label, encoder_type=config.encoder_type,
+                  model=model_name, model_label=label, encoder_type=config.encoder_type, model_parameters=model_parameters,
                   temporal_block=config.temporal_block, head_type=config.head_type,
                   cnn_intermediate_channel=config.cnn_intermediate_channel if config.encoder_type == "CNN" else None,
                   time_encoding="relative_lag" if config.model == "pact" else None,

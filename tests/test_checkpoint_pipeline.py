@@ -151,7 +151,14 @@ def checkpoint_ddp_worker(rank, rendezvous, root_string):
     dist.init_process_group("gloo", init_method=f"file://{rendezvous}", rank=rank, world_size=2)
     real_epoch, real_save = train.run_epoch, torch.save
     real_manifest, real_select = cp.write_selection_manifest, train.CheckpointSelector
-    observed = dict(saves=[], manifests=[], selections=[], validation=[], test_calls=0)
+    observed = dict(saves=[], manifests=[], selections=[], validation=[], test_calls=0, parameter_logs=[])
+    real_log = train.log_message
+
+    def log(message):
+        if message.startswith("[Parameters]"):
+            assert rank == 0
+            observed["parameter_logs"].append(message)
+        real_log(message)
 
     def save(checkpoint, path, *args, **kwargs):
         observed["saves"].append(str(path))
@@ -189,7 +196,7 @@ def checkpoint_ddp_worker(rank, rendezvous, root_string):
         train.configure_runtime(args.seed + rank, 1, True, False)
         with contextlib.redirect_stdout(io.StringIO()), patch.object(train, "run_epoch", side_effect=epoch), \
                 patch.object(torch, "save", side_effect=save), patch.object(cp, "write_selection_manifest", side_effect=manifest), \
-                patch.object(train, "CheckpointSelector", ObservedSelector):
+                patch.object(train, "CheckpointSelector", ObservedSelector), patch.object(train, "log_message", side_effect=log):
             train.train(args, torch.device("cpu"), True, rank, time.perf_counter())
         (root / f"rank_{rank}.json").write_text(json.dumps(observed))
     finally:
@@ -253,10 +260,17 @@ class CheckpointPipelineTests(unittest.TestCase):
 
     def test_frozen_losses_forwards_updates_rng_and_cosine_unchanged_for_all_modes(self):
         reference = json.loads((FIXTURES / "post6_checkpoint_trajectories.json").read_text())
-        for variant, mode in itertools.product(VARIANTS, cp.SELECTION_METRICS):
+        for variant, mode in itertools.product(("single", "direct"), cp.SELECTION_METRICS):
             with self.subTest(variant=variant, mode=mode), tempfile.TemporaryDirectory() as tmp:
                 observed = trajectory_run(Path(tmp), variant, mode, auxiliary=1)
                 self.assertEqual(observed, reference["variants"][variant])
+
+    def test_corrected_severity_shape_trajectory_is_independent_of_selection_mode(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            reference = trajectory_run(Path(tmp), "severity_shape")
+        for mode in cp.SELECTION_METRICS:
+            with self.subTest(mode=mode), tempfile.TemporaryDirectory() as tmp:
+                self.assertEqual(trajectory_run(Path(tmp), "severity_shape", mode, auxiliary=1), reference)
 
     def test_rop_keeps_its_independent_two_metric_choices_across_selection_modes(self):
         for rop_metric, key in (("val_rmse_phys", "rmse_all"), ("val_rmse_peak", "rmse_peak5")):
@@ -293,6 +307,8 @@ class CheckpointPipelineTests(unittest.TestCase):
             self.assertEqual(zero["selections"], zero["validation"])
             self.assertTrue(zero["saves"])
             self.assertEqual(zero["manifests"], [0])
+            self.assertEqual(len(zero["parameter_logs"]), 1)
+            self.assertEqual(one["parameter_logs"], [])
             for key in ("saves", "manifests", "selections"):
                 self.assertEqual(one[key], [])
             self.assertEqual((zero["test_calls"], one["test_calls"]), (1, 0))
@@ -302,6 +318,8 @@ class CheckpointPipelineTests(unittest.TestCase):
                 checkpoint = torch.load(entry["path"], weights_only=False)
                 self.assertEqual(entry["val"], zero["validation"][entry["epoch"] - 1])
                 self.assertEqual(checkpoint["val"], entry["val"])
+                self.assertGreater(checkpoint["model_parameters"]["total"], 0)
+                self.assertIn(f"total={checkpoint['model_parameters']['total']:,}", zero["parameter_logs"][0])
 
 
 class CheckpointConfigTests(unittest.TestCase):
