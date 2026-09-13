@@ -15,11 +15,10 @@ from .excess_shape import excess_shape_loss
 from .final_peak import final_peak_terms, validate_event_threshold, validate_peak_config
 
 
-def validate_shape_config(config):
-    formulation = getattr(config, "excess_formulation", "direct")
-    validate_excess_formulation(formulation, getattr(config, "severity_shape_eps", 1e-6),
-                               getattr(config, "head_type", "dual"), getattr(config, "model", "pact"))
-    weight = getattr(config, "shape_loss_weight", 0.0)
+def validate_shape_config(config, *, head_type="dual", model="pact"):
+    formulation = config.excess_formulation
+    validate_excess_formulation(formulation, config.severity_shape_eps, head_type, model)
+    weight = config.shape_loss_weight
     if not math.isfinite(weight) or weight < 0:
         raise ValueError("--shape_loss_weight must be finite and nonnegative.")
     if weight > 0 and formulation != "severity_shape":
@@ -27,21 +26,21 @@ def validate_shape_config(config):
     return 0.0 if "shape_loss_weight" in DUAL_ABLATIONS.get(config.dual_ablation, ()) else weight
 
 
-def validate_excess_amp_config(config):
+def validate_excess_amp_config(config, *, head_type="dual"):
     """Validate the optional objective and return its effective ablation weight."""
-    weight = getattr(config, "excess_amp_loss_weight", 0.0)
-    pool = getattr(config, "excess_amp_pool", "max")
+    weight = config.excess_amp_loss_weight
+    pool = config.excess_amp_pool
     if not math.isfinite(weight) or weight < 0:
         raise ValueError("--excess_amp_loss_weight must be finite and nonnegative.")
     if pool not in ("max", "smoothmax"):
         raise ValueError("--excess_amp_pool must be max or smoothmax.")
-    if weight > 0 and getattr(config, "head_type", "dual") != "dual":
+    if weight > 0 and head_type != "dual":
         raise ValueError("Excess-amplitude supervision requires the supervised dual exceedance head "
                          "(--model perceiver3 --head_type dual).")
     if "excess_amp_loss_weight" in DUAL_ABLATIONS.get(config.dual_ablation, ()):
         weight = 0.0
     if weight > 0 and pool == "smoothmax":
-        beta = getattr(config, "excess_amp_beta", 20.0)
+        beta = config.excess_amp_beta
         if not math.isfinite(beta) or beta <= 0:
             raise ValueError("--excess_amp_beta must be finite and positive for smoothmax (inverse meters).")
     return weight
@@ -87,6 +86,12 @@ def dual_loss_terms(output, target_norm, y_std):
 
 @dataclass
 class LossConfig:
+    """Complete objective settings for every run; no config-version dispatch.
+
+    Resolve omitted options here or in the CLI before constructing ForecastLoss.
+    Loss computation reads these fields directly and never infers a zero weight
+    from a missing attribute. All loss modes share the same optional controls.
+    """
     loss_mode: str = "mse"
     wmse_alpha: float = 4.0
     wmse_s: float = 0.1
@@ -115,7 +120,7 @@ class LossConfig:
 
 
 class ForecastLoss(nn.Module):
-    def __init__(self, config, stats, peak_threshold, wmse_threshold, event_prior=None, event_threshold=None):
+    def __init__(self, config: LossConfig, stats, peak_threshold, wmse_threshold, event_prior=None, event_threshold=None):
         super().__init__()
         self.config = config
         self.register_buffer("y_mean", stats["y_mean"])
@@ -134,9 +139,9 @@ class ForecastLoss(nn.Module):
 
     def forward(self, output, prediction, target):
         c = self.config
-        if output.body is None and getattr(c, "excess_amp_loss_weight", 0.0) > 0:
+        if output.body is None and c.excess_amp_loss_weight > 0:
             raise ValueError("Excess-amplitude supervision requires the supervised dual exceedance head.")
-        if output.body is None and getattr(c, "shape_loss_weight", 0.0) > 0:
+        if output.body is None and c.shape_loss_weight > 0:
             raise ValueError("Shape supervision requires the severity_shape dual head.")
         error = (prediction - target).square()
         core = c.loss_mode.removesuffix("_slope")
@@ -162,9 +167,9 @@ class ForecastLoss(nn.Module):
             loss = loss + c.slope_lambda * (penalty * mask[:, None]).mean()
         # Final-output supervision is independent of all dual branch ablations,
         # including the no_branch_supervision early return below. Skip at zero.
-        if getattr(c, "peak_loss_weight", 0.0) > 0:
+        if c.peak_loss_weight > 0:
             peak = final_peak_terms(prediction, target, self.event_threshold_phys, self.event_prior,
-                                    getattr(c, "peak_pool", "max"), getattr(c, "peak_pool_beta", 20.0))
+                                    c.peak_pool, c.peak_pool_beta)
             loss = loss + c.peak_loss_weight * peak.loss
         if output.body is not None:
             if (output.gate_logits is None) != (c.dual_ablation == "fixed_gate"):
@@ -178,14 +183,14 @@ class ForecastLoss(nn.Module):
             dual_loss = c.body_loss_weight * body + c.excess_loss_weight * excess + c.gate_loss_weight * gate
             loss = loss + dual_loss
             # Leave the historical numerical/RNG path untouched at weight zero.
-            if getattr(c, "excess_amp_loss_weight", 0.0) > 0:
+            if c.excess_amp_loss_weight > 0:
                 amplitude = excess_amplitude_terms(output.excess, target_norm, output.threshold, self.y_std,
-                    self.event_prior, getattr(c, "excess_amp_pool", "max"), getattr(c, "excess_amp_beta", 20.0))
+                    self.event_prior, c.excess_amp_pool, c.excess_amp_beta)
                 loss = loss + c.excess_amp_loss_weight * amplitude.loss
-            if getattr(c, "shape_loss_weight", 0.0) > 0:
+            if c.shape_loss_weight > 0:
                 if output.excess_shape is None:
                     raise ValueError("Shape supervision requires the severity_shape dual head.")
                 shape_loss = excess_shape_loss(output.excess_shape, target_norm, output.threshold,
-                    self.y_std, self.event_prior, getattr(c, "severity_shape_eps", 1e-6))
+                    self.y_std, self.event_prior, c.severity_shape_eps)
                 loss = loss + c.shape_loss_weight * shape_loss
         return loss

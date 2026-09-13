@@ -9,14 +9,14 @@ from .excess_amplitude import peak_pool, validate_event_prior
 
 
 def validate_peak_config(config):
-    weight = getattr(config, "peak_loss_weight", 0.0)
-    pool = getattr(config, "peak_pool", "max")
+    weight = config.peak_loss_weight
+    pool = config.peak_pool
     if not math.isfinite(weight) or weight < 0:
         raise ValueError("--peak_loss_weight must be finite and nonnegative.")
     if pool not in ("max", "smoothmax"):
         raise ValueError("--peak_pool must be max or smoothmax.")
     if weight > 0 and pool == "smoothmax":
-        beta = getattr(config, "peak_pool_beta", 20.0)
+        beta = config.peak_pool_beta
         if not math.isfinite(beta) or beta <= 0:
             raise ValueError("--peak_pool_beta must be finite and positive for smoothmax (inverse meters).")
     return weight

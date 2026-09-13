@@ -264,7 +264,7 @@ class ExcessAmplitudeTests(unittest.TestCase):
                 legacy = asdict(c)
                 for key in ('excess_amp_loss_weight', 'excess_amp_pool', 'excess_amp_beta'):
                     legacy.pop(key)
-                for config in (SimpleNamespace(**legacy), LossConfig(**legacy, excess_amp_pool='smoothmax',
+                for config in (LossConfig(**legacy), LossConfig(**legacy, excess_amp_pool='smoothmax',
                                                                       excess_amp_beta=float('nan'))):
                     with patch('emulator.training.losses.excess_amplitude_terms', side_effect=AssertionError('disabled computation')):
                         actual = ForecastLoss(config, stats, 2., 1.)(repeat, repeat.prediction * stats['y_std'] + stats['y_mean'], target)

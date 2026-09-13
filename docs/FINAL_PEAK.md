@@ -48,7 +48,16 @@ passes `fitted["tau_phys"]` as the new trailing optional `event_threshold`
 argument, separately from the existing positional `peak_threshold`, which
 still means the **tail** threshold. `fitted["event_prior"]` remains the exact
 #2 empirical TRAIN prior. `ForecastLoss` validates these only when required
-by the active objective. Existing positional callers remain valid.
+by the active objective. Existing positional callers remain valid when supplied with a resolved `LossConfig`.
+
+All runs use this same complete config type. Loss functions directly read
+its fields; they do not detect old configurations or treat a missing attribute
+as a zero weight. Omitted input options are resolved by argparse/`LossConfig`
+before loss construction. The declared zero defaults apply to every loss mode;
+explicit positive controls work with the existing `mse`, tail, weighted and
+slope modes. New evaluation metrics remain active regardless of these weights.
+The [config-resolution follow-up report](audit/evidence/loss_config_validation.json)
+records tests of this uniform path and unchanged objective values/gradients.
 
 The strict event comparison uses the hard physical truth peak in FP64 against
 the original fitted threshold, matching `fit_loss_thresholds`' TRAIN event

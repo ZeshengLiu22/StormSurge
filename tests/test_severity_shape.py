@@ -171,7 +171,7 @@ class SeverityShapeTests(unittest.TestCase):
             for key in ('excess_formulation', 'shape_loss_weight', 'severity_shape_eps'):
                 old.pop(key)
             with patch('emulator.training.losses.excess_shape_loss', side_effect=AssertionError('disabled shape path')):
-                expected = ForecastLoss(SimpleNamespace(**old), stats, 1., 1., event_prior=.2)(output, prediction, target)
+                expected = ForecastLoss(LossConfig(**old), stats, 1., 1., event_prior=.2)(output, prediction, target)
                 actual = ForecastLoss(config, stats, 1., 1., event_prior=.2)(output, prediction, target)
             torch.testing.assert_close(actual, expected, rtol=0, atol=0)
 

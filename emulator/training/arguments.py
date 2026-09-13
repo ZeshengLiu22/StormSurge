@@ -255,8 +255,8 @@ def parse_args(argv=None):
         if not math.isfinite(getattr(args, name)):
             parser.error(f"--{name} must be finite; small values use the original numerical floor.")
     try:
-        validate_excess_amp_config(args)
-        validate_shape_config(args)
+        validate_excess_amp_config(args, head_type=args.head_type)
+        validate_shape_config(args, head_type=args.head_type, model=args.model)
         validate_peak_config(args)
     except ValueError as error:
         parser.error(str(error))

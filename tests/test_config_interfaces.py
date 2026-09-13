@@ -1,6 +1,7 @@
 """Exercise the original shell sweep and compare the loss-mode definitions."""
 
 import contextlib
+from dataclasses import asdict
 import io
 import itertools
 import os
@@ -34,6 +35,27 @@ def dry_commands(config):
 
 
 class ConfigInterfaceTests(unittest.TestCase):
+    def test_incomplete_loss_config_cannot_silently_disable_optional_objectives(self):
+        stats = dict(y_mean=torch.zeros(2), y_std=torch.ones(2))
+        for missing in ('excess_amp_loss_weight', 'shape_loss_weight', 'peak_loss_weight', 'excess_formulation'):
+            values = asdict(LossConfig())
+            values.pop(missing)
+            with self.subTest(missing=missing), self.assertRaisesRegex(AttributeError, missing):
+                ForecastLoss(SimpleNamespace(**values), stats, 1., 1.)
+            # Every input uses the same explicit config-resolution step, without age/version checks.
+            ForecastLoss(LossConfig(**values), stats, 1., 1.)
+
+    def test_every_loss_mode_keeps_explicit_amplitude_shape_and_peak_controls(self):
+        for mode in MODES:
+            with self.subTest(mode=mode):
+                args = train.parse_args(['--model', 'perceiver3', '--head_type', 'dual', '--loss_mode', mode,
+                    '--excess_formulation', 'severity_shape', '--excess_amp_loss_weight', '.7',
+                    '--shape_loss_weight', '.3', '--peak_loss_weight', '.4'])
+                self.assertEqual(args.loss_mode, mode)
+                self.assertEqual(args.excess_formulation, 'severity_shape')
+                self.assertEqual((args.excess_amp_loss_weight, args.shape_loss_weight, args.peak_loss_weight),
+                                 (.7, .3, .4))
+
     def test_mag_ignores_unused_lower_percentile_and_keeps_used_range_checks(self):
         graph = SimpleNamespace(x=torch.tensor([[-4., 0.], [-1., 0.], [2., 0.], [9., 0.]]),
                                 y=torch.tensor([.2, .7]))

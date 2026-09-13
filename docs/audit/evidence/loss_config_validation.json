@@ -1,0 +1,74 @@
+{
+  "generated_at": "2026-09-13T00:31:16.267867+00:00",
+  "base_revision": "90b3e6081806774c62fdbec0be1e81ba7b39b983",
+  "request": "Use one resolved loss configuration without missing-field compatibility fallbacks or config-age/loss-mode feature disabling.",
+  "files_modified": [
+    "README.md",
+    "docs/FINAL_PEAK.md",
+    "emulator/training/arguments.py",
+    "emulator/training/final_peak.py",
+    "emulator/training/losses.py",
+    "tests/test_config_interfaces.py",
+    "tests/test_excess_amplitude.py",
+    "tests/test_final_peak.py",
+    "tests/test_severity_shape.py",
+    "docs/audit/evidence/loss_config_validation.json"
+  ],
+  "source_sha256": {
+    "README.md": "afe99e5dce1682a96715b6d99605410c3825a05ca349ba7f3359ea07c854f33d",
+    "docs/FINAL_PEAK.md": "c1e416819a6b799ed7bf5f795cd38f7233a58429d4c77c30e6124cf67a58f415",
+    "emulator/training/arguments.py": "19988b99adb2432c024440e339894ab6be5b6069ceea06daf64447b3676a87f8",
+    "emulator/training/final_peak.py": "e5aef099cee04fd92cafa0c6957c8341e0561be8cc7f09de46a04014fd567f4f",
+    "emulator/training/losses.py": "fa0eb15dc8830cb5b19f071c182431ab0385c034af28b0df633a7e5f06a74e2f",
+    "tests/test_config_interfaces.py": "3aec0ed5dd671c0460378fb1dfa2a26fc0a07c2fc142c662b3394f2e19dbbe9d",
+    "tests/test_excess_amplitude.py": "d893b3425a16fd42cb2652caa802fd02f695c35b6816f67c9c8738528d259dce",
+    "tests/test_final_peak.py": "56ad21349839918183e6e98033a49f6428b8f6922839a2ead5441f5fa1c6103c",
+    "tests/test_severity_shape.py": "179dc0340d42e5ea78e3a04804d59d43d7b8b79185ab33fafff71aaa4e7a61ac"
+  },
+  "config_contract": "Resolve inputs through argparse/LossConfig; ForecastLoss reads complete fields directly. Missing controls in an unresolved namespace raise AttributeError instead of silently assigning zero.",
+  "explicit_model_validation": "CLI passes its actual head_type and model to the amplitude/shape validators.",
+  "uniform_defaults": {
+    "excess_amp_loss_weight": 0.0,
+    "shape_loss_weight": 0.0,
+    "peak_loss_weight": 0.0,
+    "excess_formulation": "direct"
+  },
+  "defaults_changed": false,
+  "defaults_depend_on_loss_mode_or_config_age": false,
+  "direct_peak_metrics_always_enabled": true,
+  "model_metric_and_formula_implementations_changed": false,
+  "disabled_new_features": "Only the declared zero weights, selected direct formulation, or documented explicit branch ablations/head constraints control optional features.",
+  "regression": {
+    "tests": 158,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "seconds": 42.005,
+    "command": "GLOO_SOCKET_IFNAME=lo PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=/tmp/pact-validation-deps /media/volume/PACT-Data/conda_envs/torchpyg-cu124/bin/python -m unittest discover -s tests -v",
+    "added_tests": [
+      "Incomplete loss controls cannot silently disable objectives",
+      "Every existing loss_mode preserves explicit amplitude/shape/peak controls"
+    ]
+  },
+  "numerical_comparison": {
+    "cases": 220,
+    "peak_weights_tested": [
+      0.0,
+      0.4
+    ],
+    "exact_loss_equality": true,
+    "exact_prediction_and_branch_gradient_equality": true,
+    "coverage": "Single output, direct dual and severity-shape dual; all five dual ablations; all ten loss modes."
+  },
+  "static_checks": {
+    "pyflakes": "passed",
+    "git_diff_check": "passed",
+    "ast_no_getattr_default_or_hasattr_in_loss_modules": "passed"
+  },
+  "existing_p0_p1_config_hashes_unchanged": 64,
+  "user_document_moves_and_untracked_p1_preserved": true,
+  "additional_checkout_created": false,
+  "experiment_configs_generated": false,
+  "experiments_started": false,
+  "scientific_weights_selected": false
+}

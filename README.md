@@ -110,6 +110,13 @@ The original training protocol is restored: DDP seeds each process with `seed + 
 
 Cosine with linear warmup remains the configured scheduler. The original `rop` option and its controls are also available. `--deterministic 0` and `--max_grad_norm 0` are defaults; positive `max_grad_norm` explicitly requests clipping. There is no retry or rollback guard. The redundant `--stable_arch` / `STABLE_ARCH` setting is removed; the current stability architecture always applies. `--dual_mode` remains and accepts only `exceedance`. Bare switches such as `--amp`, `--tf32`, `--pin_memory` and `--persistent_workers` retain their original argparse behavior. Shipped profiles enable BF16 and TF32.
 
+All runs use the same resolved `LossConfig`, regardless of config filename, age or `loss_mode`.
+The loss implementation reads explicit fields and does not silently assign zero to missing controls.
+CLI/config defaults remain `EXCESS_AMP_LOSS_WEIGHT=0`, `SHAPE_LOSS_WEIGHT=0`, `PEAK_LOSS_WEIGHT=0`
+and `EXCESS_FORMULATION=direct`, as specified by the optional-objective interfaces.
+Any existing loss mode can enable the new objectives with their own controls, subject to the documented
+head requirements and named ablations. Direct peak evaluation metrics are always computed.
+
 ## Metrics and artifacts
 
 Each epoch prints `[YYYY-MM-DD|HH:MM:SS]`, followed by the four historical trajectory errors below for Train and Val in physical units (surge **meters**), plus `peak_magnitude_rmse_top5` for each split:

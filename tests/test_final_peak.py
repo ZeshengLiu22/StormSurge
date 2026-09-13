@@ -254,7 +254,7 @@ class FinalPeakTests(unittest.TestCase):
             torch.testing.assert_close(actual, old + .4 * final_peak_terms(pred, truth, 1., .17).loss)
             self.assertEqual((c.excess_amp_loss_weight, c.shape_loss_weight), (amp, shape))
 
-    def test_disabled_path_skips_helper_and_preserves_old_namespaces_and_rng(self):
+    def test_disabled_path_skips_helper_after_config_resolution_and_preserves_rng(self):
         for formulation, mode in itertools.product(('direct', 'severity_shape'), MODES):
             output, pred, truth, stats = self._dual(formulation)
             c = LossConfig(loss_mode=mode, excess_formulation=formulation, excess_amp_loss_weight=.7,
@@ -264,7 +264,7 @@ class FinalPeakTests(unittest.TestCase):
                 legacy.pop(key)
             before = torch.get_rng_state().clone()
             with patch('emulator.training.losses.final_peak_terms', side_effect=AssertionError('disabled peak computation')):
-                old = ForecastLoss(SimpleNamespace(**legacy), stats, 3., 1., .17)(output, pred, truth)
+                old = ForecastLoss(LossConfig(**legacy), stats, 3., 1., .17)(output, pred, truth)
                 c.peak_pool, c.peak_pool_beta = 'smoothmax', float('nan')
                 new = ForecastLoss(c, stats, 3., 1., .17)(output, pred, truth)
             torch.testing.assert_close(old, new, rtol=0, atol=0)
