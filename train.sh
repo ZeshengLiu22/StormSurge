@@ -212,6 +212,8 @@ fi
 : "${ALL_RESULTS_ROOT:=}"
 # Opt in per config; historical configs retain timestamp-first directory names.
 : "${RUN_DIR_NAME_STYLE:=timestamp_runname}"
+# Optional Python metadata tag; empty preserves historical automatic tags.
+: "${PYTHON_RUN_TAG_BASE:=}"
 
 : "${DRY_RUN:=0}"
 if [[ "${DRY_RUN}" == "1" ]]; then
@@ -394,7 +396,7 @@ write_resolved_config() {
     MP_CONTEXT USE_TMUX DO_CONDA CONDA_MODULE CONDA_SH CONDA_ENV
     GATE_MODE NODE_READ_HEADS TIME_READ_HEADS TRANSFORMER_LAYERS
     TRANSFORMER_FF_MULT TRANSFORMER_DROPOUT MAX_TIME_STEPS ALL_RESULTS_ROOT
-    RUN_DIR_NAME_STYLE PACT_RUN_NAME PACT_RUNSTAMP SESSION_NAME
+    RUN_DIR_NAME_STYLE PACT_RUN_NAME PACT_RUNSTAMP SESSION_NAME PYTHON_RUN_TAG_BASE
   )
 
   {
@@ -609,7 +611,8 @@ for LOSS_MODE in "${LOSS_MODE_LIST[@]}"; do
                 SCHED_ARGS+=(--rop_metric "${ROP_METRIC}")
               fi
 
-              RUN_TAG="${STATION:-ALL}_${TRAIN_DATA_TAG}to${TEST_DATA_TAG}_${MODEL}${ENCODER_TAG}${TEMPORAL_TAG}${ACCUM_TAG}${EXTRA_TAG}${SPLIT_TAG}${LOSS_TAG2}_hist${H}h_hid${HIDDEN_CHANNELS}_L${NUM_LAYERS}_bs${BATCH_SIZE}_lr${LR_CUR}_ep${EPOCHS}_sch${SCHEDULER}_xn${X_NORM}"
+              AUTO_RUN_TAG="${STATION:-ALL}_${TRAIN_DATA_TAG}to${TEST_DATA_TAG}_${MODEL}${ENCODER_TAG}${TEMPORAL_TAG}${ACCUM_TAG}${EXTRA_TAG}${SPLIT_TAG}${LOSS_TAG2}_hist${H}h_hid${HIDDEN_CHANNELS}_L${NUM_LAYERS}_bs${BATCH_SIZE}_lr${LR_CUR}_ep${EPOCHS}_sch${SCHEDULER}_xn${X_NORM}"
+              RUN_TAG="${PYTHON_RUN_TAG_BASE:-${AUTO_RUN_TAG}}"
               LOG_TAG="${RUN_TAG}"
               if (( ${#LOG_TAG} > 240 )); then
                 LOG_HASH="$(printf '%s' "${RUN_TAG}" | sha256sum)"

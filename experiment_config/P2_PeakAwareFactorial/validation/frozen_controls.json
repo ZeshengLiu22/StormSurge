@@ -1,0 +1,435 @@
+{
+  "shell": {
+    "TRAIN_PY": [
+      "train.py"
+    ],
+    "ROOT_DIR": [
+      "/media/share/PACT/Data/Grid4_New/NCEP/graphs"
+    ],
+    "STATION_JSON_DIR": [
+      "/media/volume/PACT-Data/StormSurge/station_json"
+    ],
+    "TEST_ROOT_DIR": [
+      ""
+    ],
+    "MODEL": [
+      "perceiver3"
+    ],
+    "ENCODER_TYPE": [
+      "GraphSAGE"
+    ],
+    "CNN_INTERMEDIATE_CHANNEL": [
+      "29"
+    ],
+    "TEMPORAL_BLOCK": [
+      "Transformer"
+    ],
+    "HISTORY_HOURS_LIST": [
+      "24"
+    ],
+    "HIDDEN_CHANNELS": [
+      "128"
+    ],
+    "NUM_LAYERS": [
+      "2"
+    ],
+    "DROPOUT": [
+      "0.05"
+    ],
+    "HEAD_DROPOUT": [
+      "0.05"
+    ],
+    "NODE_READ_HEADS": [
+      "8"
+    ],
+    "TIME_READ_HEADS": [
+      "8"
+    ],
+    "TRANSFORMER_LAYERS": [
+      "2"
+    ],
+    "TRANSFORMER_FF_MULT": [
+      "4.0"
+    ],
+    "TRANSFORMER_DROPOUT": [
+      "0.0"
+    ],
+    "MAX_TIME_STEPS": [
+      "32"
+    ],
+    "TRAIN_RATIO": [
+      "0.6"
+    ],
+    "VAL_RATIO": [
+      "0.2"
+    ],
+    "SHUFFLE_YEARS": [
+      "0"
+    ],
+    "FUTURE_ONLY": [
+      "0"
+    ],
+    "FUTURE_YEAR_THRESHOLD": [
+      "2030"
+    ],
+    "SEED": [
+      "42"
+    ],
+    "USE_SITE_ELEVATION": [
+      "0"
+    ],
+    "USE_BATHYMETRY": [
+      "0"
+    ],
+    "HEAD_TYPE": [
+      "dual"
+    ],
+    "GATE_MODE": [
+      "window"
+    ],
+    "DUAL_MODE": [
+      "exceedance"
+    ],
+    "DUAL_LOSS": [
+      "1"
+    ],
+    "DUAL_ABLATION": [
+      "none"
+    ],
+    "EXCEEDANCE_PERCENTILE": [
+      "95"
+    ],
+    "BODY_LOSS_WEIGHT": [
+      "1"
+    ],
+    "EXCESS_LOSS_WEIGHT": [
+      "2"
+    ],
+    "GATE_LOSS_WEIGHT": [
+      "0.5"
+    ],
+    "TAIL_FRAC": [
+      "0.05"
+    ],
+    "TAIL_LAMBDA_LIST": [
+      "0.025"
+    ],
+    "SLOPE_LAMBDA_LIST": [
+      "0.01"
+    ],
+    "SLOPE_MASK_S_LIST": [
+      "0.10"
+    ],
+    "SLOPE_ROBUST": [
+      "charb"
+    ],
+    "SLOPE_CHARB_EPS": [
+      "1e-3"
+    ],
+    "SLOPE_HUBER_DELTA": [
+      "0.05"
+    ],
+    "WMSE_Q_LIST": [
+      "95"
+    ],
+    "WMSE_ALPHA": [
+      "4.0"
+    ],
+    "WMSE_S": [
+      "0.10"
+    ],
+    "WMSE_USE_ABS": [
+      "1"
+    ],
+    "DISABLE_OOD": [
+      "1"
+    ],
+    "X_NORM": [
+      "zscore"
+    ],
+    "X_CLIP": [
+      "0"
+    ],
+    "X_AUG": [
+      "0"
+    ],
+    "X_AUG_PROB": [
+      "0"
+    ],
+    "X_AUG_SCALE": [
+      "0"
+    ],
+    "X_AUG_BIAS": [
+      "0"
+    ],
+    "X_P_LO": [
+      "1.0"
+    ],
+    "X_P_HI": [
+      "99.0"
+    ],
+    "X_NODES_PER_GRAPH": [
+      "256"
+    ],
+    "BATCH_SIZE": [
+      "256"
+    ],
+    "GRAD_ACCUM_STEPS": [
+      "4"
+    ],
+    "LR_LIST": [
+      "5e-3"
+    ],
+    "EPOCHS": [
+      "300"
+    ],
+    "SCHEDULER": [
+      "cosine"
+    ],
+    "WARMUP_EPOCHS": [
+      "5"
+    ],
+    "WARMUP_START_FACTOR": [
+      "0.1"
+    ],
+    "MIN_LR": [
+      "1e-6"
+    ],
+    "MAX_GRAD_NORM": [
+      "0"
+    ],
+    "DETERMINISTIC": [
+      "0"
+    ],
+    "ROP_METRIC": [
+      "val_rmse_phys"
+    ],
+    "ROP_FACTOR": [
+      "0.5"
+    ],
+    "ROP_PATIENCE": [
+      "20"
+    ],
+    "ROP_THRESHOLD": [
+      "1e-4"
+    ],
+    "ROP_COOLDOWN": [
+      "0"
+    ],
+    "ROP_MIN_LR": [
+      "1e-6"
+    ],
+    "num_gpus": [
+      "1"
+    ],
+    "CUDA_VISIBLE_DEVICES": [
+      "0"
+    ],
+    "USE_AMP": [
+      "1"
+    ],
+    "AMP_DTYPE": [
+      "bf16"
+    ],
+    "USE_TF32": [
+      "1"
+    ],
+    "TORCH_THREADS": [
+      "1"
+    ],
+    "NUM_WORKERS": [
+      "0"
+    ],
+    "PIN_MEMORY": [
+      "0"
+    ],
+    "PERSISTENT_WORKERS": [
+      "0"
+    ],
+    "PREFETCH_FACTOR": [
+      "0"
+    ],
+    "MP_CONTEXT": [
+      "fork"
+    ],
+    "PYTHON_BIN": [
+      "/media/volume/PACT-Data/conda_envs/torchpyg-cu124/bin/python"
+    ],
+    "DO_CONDA": [
+      "0"
+    ],
+    "CONDA_ENV": [
+      "/media/volume/PACT-Data/conda_envs/torchpyg-cu124"
+    ],
+    "PYTHONDONTWRITEBYTECODE": [
+      "1"
+    ],
+    "USE_TMUX": [
+      "1"
+    ],
+    "RUN_DIR_NAME_STYLE": [
+      "runname_timestamp"
+    ],
+    "EXCESS_AMP_POOL": [
+      "max"
+    ],
+    "EXCESS_AMP_BETA": [
+      "20"
+    ],
+    "SEVERITY_SHAPE_EPS": [
+      "1e-6"
+    ],
+    "PEAK_POOL": [
+      "max"
+    ],
+    "PEAK_POOL_BETA": [
+      "20"
+    ],
+    "CHECKPOINT_SELECTION": [
+      "overall"
+    ],
+    "SAVE_AUX_CHECKPOINTS": [
+      "0"
+    ],
+    "CHECKPOINT_OVERALL_TOL": [
+      "0.01"
+    ],
+    "ALL_RESULTS_ROOT": [
+      "./All_Results/P2_PeakAwareFactorial"
+    ]
+  },
+  "resolved_cli": {
+    "root_dir": "/media/share/PACT/Data/Grid4_New/NCEP/graphs",
+    "test_root_dir": "",
+    "filter": null,
+    "station_json_dir": "/media/volume/PACT-Data/StormSurge/station_json",
+    "use_site_elevation": 0,
+    "use_bathymetry": 0,
+    "train_ratio": 0.6,
+    "val_ratio": 0.2,
+    "shuffle_years": 0,
+    "future_only": 0,
+    "future_year_threshold": 2030,
+    "batch_size": 256,
+    "grad_accum_steps": 4,
+    "epochs": 300,
+    "lr": 0.005,
+    "hidden_channels": 128,
+    "seed": 42,
+    "num_layers": 2,
+    "dropout": 0.05,
+    "history_hours": 24,
+    "x_norm": "zscore",
+    "x_p_lo": 1.0,
+    "x_p_hi": 99.0,
+    "x_nodes_per_graph": 256,
+    "x_clip": 0.0,
+    "x_aug": 0,
+    "x_aug_prob": 0.0,
+    "x_aug_scale": 0.0,
+    "x_aug_bias": 0.0,
+    "wmse_q": 95.0,
+    "wmse_alpha": 4.0,
+    "wmse_s": 0.1,
+    "wmse_use_abs": 1,
+    "tail_frac": 0.05,
+    "exceedance_percentile": 95.0,
+    "slope_lambda": 0.01,
+    "slope_mask_s": 0.1,
+    "slope_robust": "charb",
+    "slope_charb_eps": 0.001,
+    "slope_huber_delta": 0.05,
+    "scheduler": "cosine",
+    "min_lr": 1e-06,
+    "warmup_epochs": 5,
+    "warmup_start_factor": 0.1,
+    "rop_factor": 0.5,
+    "rop_patience": 20,
+    "rop_threshold": 0.0001,
+    "rop_cooldown": 0,
+    "rop_min_lr": 1e-06,
+    "rop_metric": "val_rmse_phys",
+    "num_workers": 0,
+    "pin_memory": false,
+    "persistent_workers": false,
+    "prefetch_factor": 0,
+    "mp_context": "fork",
+    "torch_threads": 1,
+    "tf32": true,
+    "amp": true,
+    "amp_dtype": "bf16",
+    "model": "perceiver3",
+    "encoder_type": "GraphSAGE",
+    "cnn_intermediate_channel": 29,
+    "head_type": "dual",
+    "head_dropout": 0.05,
+    "gate_mode": "window",
+    "dual_mode": "exceedance",
+    "dual_loss": 1,
+    "dual_ablation": "none",
+    "body_loss_weight": 1.0,
+    "excess_loss_weight": 2.0,
+    "severity_shape_eps": 1e-06,
+    "excess_amp_pool": "max",
+    "excess_amp_beta": 20.0,
+    "peak_pool": "max",
+    "peak_pool_beta": 20.0,
+    "gate_loss_weight": 0.5,
+    "max_grad_norm": 0.0,
+    "deterministic": 0,
+    "temporal_block": "Transformer",
+    "node_read_heads": 8,
+    "time_read_heads": 8,
+    "transformer_layers": 2,
+    "transformer_ff_mult": 4.0,
+    "transformer_dropout": 0.0,
+    "max_time_steps": 32,
+    "checkpoint_selection": "overall",
+    "checkpoint_overall_tol": 0.01,
+    "save_aux_checkpoints": 0,
+    "device": "auto",
+    "use_station_meta": 1
+  },
+  "weights": {
+    "body_loss_weight": 1,
+    "excess_loss_weight": 2,
+    "gate_loss_weight": 0.5,
+    "tail_frac": 0.05,
+    "configured_tail_lambda": 0.025,
+    "active_tail_lambda": [
+      0,
+      0.025
+    ],
+    "direct_amplitude_weights": [
+      0,
+      0.0007
+    ],
+    "severity_amplitude_weights": [
+      0,
+      0.0025
+    ],
+    "direct_shape_weights": [
+      0
+    ],
+    "severity_shape_weights": [
+      0,
+      3e-05
+    ],
+    "peak_weights": [
+      0,
+      0.0035
+    ],
+    "excess_amp_pool": "max",
+    "excess_amp_beta": 20,
+    "peak_pool": "max",
+    "peak_pool_beta": 20,
+    "severity_shape_eps": 1e-06,
+    "exceedance_percentile": 95
+  },
+  "optimizer": {
+    "class_name": "torch.optim.Adam",
+    "lr": 0.005,
+    "weight_decay": 1e-05,
+    "source": "train.py:136"
+  }
+}

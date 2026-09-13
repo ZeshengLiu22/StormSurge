@@ -1,0 +1,3592 @@
+{
+  "commit": "3bfe08c0978a4b9278e5536debf1852e9fceb54f",
+  "tracked_sha256": {
+    ".gitignore": "7157f7a333fedf0f27f93a336977ccdc56b76129ed4692de0536f30416681ba5",
+    "LICENSE": "2413ccd32f7bdd06ced42807f7e3df326bb99f6a76447269aaca64693e5ce587",
+    "README.md": "9377f72a620b2ea5d40d514fd3cc0fa92dfb3fd9e0a0e9eeaa8b88d18b16cdca",
+    "configs/configs_infer/infer_config_AWI.sh": "fbca1701f7f257d544a6f9f332c83c374a3af0b5fe28a30cb43877eb928a9988",
+    "configs/configs_infer/infer_config_CNRM.sh": "6606332be6b3c50dfadd445e30e0b48dbc6dfc7666e930c6dcbb926e49f02a18",
+    "configs/configs_infer/infer_config_EC_EARTH.sh": "ef1b25a70cdb47719177eebd07b56c992036c99efdaaf942056ab1d9087b9ffd",
+    "configs/configs_infer/infer_config_MPI.sh": "b7863c71f0e70663447da6db9abdf90be2549156659655ed2460c3f452531495",
+    "configs/configs_infer/infer_config_MRI.sh": "a45b90e8b494dca83bdbe74a5249f6daadaebbcd6c0390f50c7bc2c7bbf7a06a",
+    "configs/configs_infer/infer_config_NCEP.sh": "f492833496ff1cb675db5e10df0a406098820826d7f09439139d0b1531df46fa",
+    "configs/configs_infer/infer_config_common.sh": "cde6e6d4c79668b9e26dd106cca0ea7008f5d0f354f1225140a1bf350fc57fd3",
+    "configs/configs_infer/infer_multi_config_AWI.sh": "cdbd32b4c939c12c9339a0c5f795ebecbd662c2c2cad693d7d245d36c8a2d229",
+    "configs/configs_infer/infer_multi_config_CNRM.sh": "92d863c948fd2d9cfc4440d135ef9dc68bb86eb90f184003e58d2fad2be235b5",
+    "configs/configs_infer/infer_multi_config_EC_EARTH.sh": "b4158fb4ce8a4be284307e6e2a0740e283de97284a762d37512e7c3c18d5abe5",
+    "configs/configs_infer/infer_multi_config_MPI.sh": "f8922f0bb49e8ce2a20076f70497f78d1366ac337615567017cdd81341bc4dfc",
+    "configs/configs_infer/infer_multi_config_MRI.sh": "39259801524c73595b493264576d6388dbdc9e134328031084184773902b8d80",
+    "configs/configs_infer/infer_multi_config_NCEP.sh": "5d4f3a2fb5ab0d9dd6f414eebfe127fee335eb48fed1f9346a7cc4af00c88791",
+    "configs/configs_train/AWI/train_config_AWI_Battery_Baseline_0h.sh": "2f0bce9faa2e11c51f2a9ad49e4a60ea0fb5b240f8bf593776bae38ee389b44e",
+    "configs/configs_train/AWI/train_config_AWI_Battery_Baseline_12h.sh": "5741051bdcaa9d0f239a4ca94096b251971fa24c848ea6d5fa59f23c8c93e9f7",
+    "configs/configs_train/AWI/train_config_AWI_Battery_P3_Base.sh": "c8890f89d4ea246223885dc684b85849bb71b4807c863a35a13b971f6a988557",
+    "configs/configs_train/AWI/train_config_AWI_Battery_P3_Base_PastOnly.sh": "9c29a9197659ca9e943011ea7a07b0423b38057faa80008eb72cdd7f25925471",
+    "configs/configs_train/AWI/train_config_AWI_Battery_P3_Best.sh": "35bc4856ba4dbadb708873fb4d214a8ea7d967df91acdec26570acc055645b1a",
+    "configs/configs_train/AWI/train_config_AWI_Battery_P3_Best_FutureOnly.sh": "e89ac44f94e90bada965c77741867bf5adc35abd562622df763514e289c070a0",
+    "configs/configs_train/AWI/train_config_AWI_Battery_P3_Best_PastOnly.sh": "8bd7c39879b5e1baaf1cca1f0bb4ba6b9426b5fdface4894e4c082f07b25a013",
+    "configs/configs_train/AWI/train_config_AWI_Battery_P3_Best_shuffle.sh": "21df9ea823bddbf7003fc2f060b6db8a3b967bde27ef4c847217e188c5699b4b",
+    "configs/configs_train/CNRM/train_config_CNRM_Battery_Baseline_0h.sh": "6addd14df1c265e00efa34a10595149f459a4d22cf53a8cab0db8df365b8ff28",
+    "configs/configs_train/CNRM/train_config_CNRM_Battery_Baseline_12h.sh": "c3aa87a59a334283000733f92d8dac3be715f47ad2222ca20d2fa73e777f1a9a",
+    "configs/configs_train/CNRM/train_config_CNRM_Battery_P3_Base.sh": "da52b68f9fdb98863b586851bc63da0863d6b66d80da6fc3dea58da3a6b16f23",
+    "configs/configs_train/CNRM/train_config_CNRM_Battery_P3_Base_PastOnly.sh": "45607ef0a93b76ac24cb9320eca5a86208a7d2f9b391836364d6b959dc7d766a",
+    "configs/configs_train/CNRM/train_config_CNRM_Battery_P3_Best.sh": "48ef17b98c254c186c09c4876c3651890e0101b8ddf863f8c08e9d10f78a6730",
+    "configs/configs_train/CNRM/train_config_CNRM_Battery_P3_Best_FutureOnly.sh": "9b5da1296e1a80607514335028fbbff838a495320ae20ac0b0bb75f71201d7c4",
+    "configs/configs_train/CNRM/train_config_CNRM_Battery_P3_Best_PastOnly.sh": "5f6916cddba8155661d8a56683ffee10409e771e37b07b7d07f622f571abd956",
+    "configs/configs_train/CNRM/train_config_CNRM_Battery_P3_Best_shuffle.sh": "63d5371dccaee73318eb2b2a38f824b8789a29f0526502f49fa46af5992e268a",
+    "configs/configs_train/EC_EARTH/train_config_EC_EARTH_Battery_Baseline_0h.sh": "87a32bad8c838774e87b353264f6b23d1b2a64c32cb2ed00f7b9ede4cf44e384",
+    "configs/configs_train/EC_EARTH/train_config_EC_EARTH_Battery_Baseline_12h.sh": "b75b59fc7155d267a4abc4817061ea448bb1117f5008340039831e923e43f852",
+    "configs/configs_train/EC_EARTH/train_config_EC_EARTH_Battery_P3_Base.sh": "655c88d8b0c141f7f634dcb9efea48e579a4d246d1940fee84ec3bbd23cafe3c",
+    "configs/configs_train/EC_EARTH/train_config_EC_EARTH_Battery_P3_Base_PastOnly.sh": "1237ad09f4447d390f3d1e86ac04f90e7ef5f22a6e11f8ce5c43c8a5c6e3ab4f",
+    "configs/configs_train/EC_EARTH/train_config_EC_EARTH_Battery_P3_Best.sh": "b924ec7c163787b9628e4da335a428c58d44f7777260aafdcb0177a29e1d59b6",
+    "configs/configs_train/EC_EARTH/train_config_EC_EARTH_Battery_P3_Best_FutureOnly.sh": "d9b7c5a499b4bf4d7a1b8dc9fa78c5dd387efc2320f4a3596889a456a5772439",
+    "configs/configs_train/EC_EARTH/train_config_EC_EARTH_Battery_P3_Best_PastOnly.sh": "fdf867b7c312d7f35430d6321082903d11709bf8c0a3970108560bca221d48e8",
+    "configs/configs_train/EC_EARTH/train_config_EC_EARTH_Battery_P3_Best_shuffle.sh": "8e6426d0fd1f97d1c9ccf7c86eb3c1898bcaf35e206ebe3284ab5cf201475d65",
+    "configs/configs_train/MPI/train_config_MPI_Battery_Baseline_0h.sh": "837fa4de63a2184fd80a791a7ff71279ca014f2689468e512971e224e42cce67",
+    "configs/configs_train/MPI/train_config_MPI_Battery_Baseline_12h.sh": "a0e21cd929f5b7ab5e34cd6c63a4348c73b6c52c8876db39e7e689c6ad0d2bdb",
+    "configs/configs_train/MPI/train_config_MPI_Battery_P3_Base.sh": "05b28defc91713c046449209db3b45267d8e7ec1ccefdc81b53e0f2fccfadfcc",
+    "configs/configs_train/MPI/train_config_MPI_Battery_P3_Base_PastOnly.sh": "a27dc0fa11c653a546e319a6e429400c719b666308e03b3476245fc53d137ce4",
+    "configs/configs_train/MPI/train_config_MPI_Battery_P3_Best.sh": "ff4a3fe982925fda106fecd3b2cb70b77ba065ecac19885fe809decc0fdc49a6",
+    "configs/configs_train/MPI/train_config_MPI_Battery_P3_Best_FutureOnly.sh": "ba84e29a29191bebe50e14431d59fc4dbe7325288f1e15e42d7b7011b0abcb08",
+    "configs/configs_train/MPI/train_config_MPI_Battery_P3_Best_PastOnly.sh": "3d6e61323424baa1b3918a5bc2cca76e958efb44ef664835afa92cec751cac26",
+    "configs/configs_train/MPI/train_config_MPI_Battery_P3_Best_shuffle.sh": "cfd8705a0f92db5c66a58a9d3687d2d67c425c9c2c4c59e1307f9370b60377fa",
+    "configs/configs_train/MRI/train_config_MRI_Battery_Baseline_0h.sh": "2904e184980f498cce0db98244426ada0cde4fc25e0ba7e6bff9e64c66c92b6a",
+    "configs/configs_train/MRI/train_config_MRI_Battery_Baseline_12h.sh": "f2f88b5324d38d522187db66b21db8cf01b777c3791eae97c4db636d11bc6975",
+    "configs/configs_train/MRI/train_config_MRI_Battery_P3_Base.sh": "eec1b4c6211a9aff2b17891a2f6ae26748a85699f775bce8855bf636cc288064",
+    "configs/configs_train/MRI/train_config_MRI_Battery_P3_Base_PastOnly.sh": "71e98c65c31fbae4a95e9c89fc8500cbd9d01d5438046fbfb75c4c4ffaff684f",
+    "configs/configs_train/MRI/train_config_MRI_Battery_P3_Best.sh": "662380924173450b083404cb718ec8fe48f6a58a03dc8250de89860a5e7c658f",
+    "configs/configs_train/MRI/train_config_MRI_Battery_P3_Best_FutureOnly.sh": "8f48839aed2a0a42cf2795f47fc1af9a327190f667437cbf677326eea3998e7e",
+    "configs/configs_train/MRI/train_config_MRI_Battery_P3_Best_PastOnly.sh": "95d0209737d6b90eae5ee5fd4aeb29cb291f7f07586f541090770404ac764693",
+    "configs/configs_train/MRI/train_config_MRI_Battery_P3_Best_shuffle.sh": "63414ba70929da86a8570c4897d11e86b1e37e9bf05a3094f207bc653f3ef020",
+    "configs/configs_train/NCEP/train_config_NCEP_Battery_Baseline_0h.sh": "f802fafb3d8fe24211347facb7ded8fcdcc696f5db84c403834328f233fd9ace",
+    "configs/configs_train/NCEP/train_config_NCEP_Battery_Baseline_12h.sh": "d270b66aa978c2c461d6b1bfab8906d1e267b4d1fbccca588539b894a04735bd",
+    "configs/configs_train/NCEP/train_config_NCEP_Battery_P3_Base.sh": "1d7c085d147daee5c3057ede9db31fa04f4a4a4104ae9879dddf3ed4326c32ca",
+    "configs/configs_train/NCEP/train_config_NCEP_Battery_P3_Best.sh": "1dd63e3cc0583b426fd41acc8e046408cfc5984ed6d90f3416be32d095da25eb",
+    "configs/configs_train/NCEP/train_config_NCEP_Boston_Baseline_0h.sh": "86c24e5fcc68997113f5b0cfada2fb196915b356e58345477466b737af0feb63",
+    "configs/configs_train/NCEP/train_config_NCEP_Boston_Baseline_12h.sh": "a16ecaea2a03dfb18b1ebb2ffd6ab7555fa4a6a2cdd4ac1198f3507e80a261f5",
+    "configs/configs_train/NCEP/train_config_NCEP_Boston_P3_Base.sh": "e6d3aea51a9238c194a8bf2b7268cc1881f32d63ffc46c8a81506b0901c8433a",
+    "configs/configs_train/NCEP/train_config_NCEP_Boston_P3_Best.sh": "1857aaf8fcf6b4054c73e13d130ba11faf04882e97df1594e60087ee923ad82e",
+    "configs/configs_train/NCEP/train_config_NCEP_CBBT_Baseline_0h.sh": "967636474c7e92a0a7d6b38dfde32ff5904750e1f9451be22ed2e39e383da745",
+    "configs/configs_train/NCEP/train_config_NCEP_CBBT_Baseline_12h.sh": "347a096906bb9b7130aae718e815a6fe5716f934f533a4bfdd28cd87b2e7e8b5",
+    "configs/configs_train/NCEP/train_config_NCEP_CBBT_P3_Base.sh": "397af394dfe89fa8e3d79be2c2c9be63807703cf652395d9205283a9a8e559cf",
+    "configs/configs_train/NCEP/train_config_NCEP_CBBT_P3_Best.sh": "06c1d4bec44005d46df67b3bd671dc7756de0603639755e8f7a8770290df564f",
+    "configs/configs_train/NCEP/train_config_NCEP_Lewes_Baseline_0h.sh": "d2da8f06b1435bcc4c448f8da774977ab2868c3d24d597b54da032801f5c6482",
+    "configs/configs_train/NCEP/train_config_NCEP_Lewes_Baseline_12h.sh": "0acec06181a1943db2cc4af40fdc1cb4ec5670b3450ddfcf298379c8f9f9e4c3",
+    "configs/configs_train/NCEP/train_config_NCEP_Lewes_P3_Base.sh": "7749d74f8ccfe5509fbf0af9f48e11813bbf3a59408659a96866605257aad987",
+    "configs/configs_train/NCEP/train_config_NCEP_Lewes_P3_Best.sh": "ca4fa9525ff37ef9b37a6889dd69f0c2eac3059c6a8df8aa0906319b737384b4",
+    "configs/configs_train/train_config_common.sh": "d588d832b2c07a9de46bf849983b12eb104883e306364d4e20b2e36ee28d9a95",
+    "configs/configs_train_single/AWI/train_config_AWI_Battery_Baseline_0h.sh": "2f0bce9faa2e11c51f2a9ad49e4a60ea0fb5b240f8bf593776bae38ee389b44e",
+    "configs/configs_train_single/AWI/train_config_AWI_Battery_Baseline_12h.sh": "5741051bdcaa9d0f239a4ca94096b251971fa24c848ea6d5fa59f23c8c93e9f7",
+    "configs/configs_train_single/AWI/train_config_AWI_Battery_P3_Base.sh": "c8890f89d4ea246223885dc684b85849bb71b4807c863a35a13b971f6a988557",
+    "configs/configs_train_single/AWI/train_config_AWI_Battery_P3_Base_PastOnly.sh": "9c29a9197659ca9e943011ea7a07b0423b38057faa80008eb72cdd7f25925471",
+    "configs/configs_train_single/AWI/train_config_AWI_Battery_P3_Best.sh": "35bc4856ba4dbadb708873fb4d214a8ea7d967df91acdec26570acc055645b1a",
+    "configs/configs_train_single/AWI/train_config_AWI_Battery_P3_Best_FutureOnly.sh": "e89ac44f94e90bada965c77741867bf5adc35abd562622df763514e289c070a0",
+    "configs/configs_train_single/AWI/train_config_AWI_Battery_P3_Best_PastOnly.sh": "8bd7c39879b5e1baaf1cca1f0bb4ba6b9426b5fdface4894e4c082f07b25a013",
+    "configs/configs_train_single/AWI/train_config_AWI_Battery_P3_Best_shuffle.sh": "21df9ea823bddbf7003fc2f060b6db8a3b967bde27ef4c847217e188c5699b4b",
+    "configs/configs_train_single/CNRM/train_config_CNRM_Battery_Baseline_0h.sh": "6addd14df1c265e00efa34a10595149f459a4d22cf53a8cab0db8df365b8ff28",
+    "configs/configs_train_single/CNRM/train_config_CNRM_Battery_Baseline_12h.sh": "c3aa87a59a334283000733f92d8dac3be715f47ad2222ca20d2fa73e777f1a9a",
+    "configs/configs_train_single/CNRM/train_config_CNRM_Battery_P3_Base.sh": "da52b68f9fdb98863b586851bc63da0863d6b66d80da6fc3dea58da3a6b16f23",
+    "configs/configs_train_single/CNRM/train_config_CNRM_Battery_P3_Base_PastOnly.sh": "45607ef0a93b76ac24cb9320eca5a86208a7d2f9b391836364d6b959dc7d766a",
+    "configs/configs_train_single/CNRM/train_config_CNRM_Battery_P3_Best.sh": "48ef17b98c254c186c09c4876c3651890e0101b8ddf863f8c08e9d10f78a6730",
+    "configs/configs_train_single/CNRM/train_config_CNRM_Battery_P3_Best_FutureOnly.sh": "9b5da1296e1a80607514335028fbbff838a495320ae20ac0b0bb75f71201d7c4",
+    "configs/configs_train_single/CNRM/train_config_CNRM_Battery_P3_Best_PastOnly.sh": "5f6916cddba8155661d8a56683ffee10409e771e37b07b7d07f622f571abd956",
+    "configs/configs_train_single/CNRM/train_config_CNRM_Battery_P3_Best_shuffle.sh": "63d5371dccaee73318eb2b2a38f824b8789a29f0526502f49fa46af5992e268a",
+    "configs/configs_train_single/EC_EARTH/train_config_EC_EARTH_Battery_Baseline_0h.sh": "87a32bad8c838774e87b353264f6b23d1b2a64c32cb2ed00f7b9ede4cf44e384",
+    "configs/configs_train_single/EC_EARTH/train_config_EC_EARTH_Battery_Baseline_12h.sh": "b75b59fc7155d267a4abc4817061ea448bb1117f5008340039831e923e43f852",
+    "configs/configs_train_single/EC_EARTH/train_config_EC_EARTH_Battery_P3_Base.sh": "655c88d8b0c141f7f634dcb9efea48e579a4d246d1940fee84ec3bbd23cafe3c",
+    "configs/configs_train_single/EC_EARTH/train_config_EC_EARTH_Battery_P3_Base_PastOnly.sh": "1237ad09f4447d390f3d1e86ac04f90e7ef5f22a6e11f8ce5c43c8a5c6e3ab4f",
+    "configs/configs_train_single/EC_EARTH/train_config_EC_EARTH_Battery_P3_Best.sh": "b924ec7c163787b9628e4da335a428c58d44f7777260aafdcb0177a29e1d59b6",
+    "configs/configs_train_single/EC_EARTH/train_config_EC_EARTH_Battery_P3_Best_FutureOnly.sh": "d9b7c5a499b4bf4d7a1b8dc9fa78c5dd387efc2320f4a3596889a456a5772439",
+    "configs/configs_train_single/EC_EARTH/train_config_EC_EARTH_Battery_P3_Best_PastOnly.sh": "fdf867b7c312d7f35430d6321082903d11709bf8c0a3970108560bca221d48e8",
+    "configs/configs_train_single/EC_EARTH/train_config_EC_EARTH_Battery_P3_Best_shuffle.sh": "8e6426d0fd1f97d1c9ccf7c86eb3c1898bcaf35e206ebe3284ab5cf201475d65",
+    "configs/configs_train_single/MPI/train_config_MPI_Battery_Baseline_0h.sh": "837fa4de63a2184fd80a791a7ff71279ca014f2689468e512971e224e42cce67",
+    "configs/configs_train_single/MPI/train_config_MPI_Battery_Baseline_12h.sh": "a0e21cd929f5b7ab5e34cd6c63a4348c73b6c52c8876db39e7e689c6ad0d2bdb",
+    "configs/configs_train_single/MPI/train_config_MPI_Battery_P3_Base.sh": "05b28defc91713c046449209db3b45267d8e7ec1ccefdc81b53e0f2fccfadfcc",
+    "configs/configs_train_single/MPI/train_config_MPI_Battery_P3_Base_PastOnly.sh": "a27dc0fa11c653a546e319a6e429400c719b666308e03b3476245fc53d137ce4",
+    "configs/configs_train_single/MPI/train_config_MPI_Battery_P3_Best.sh": "ff4a3fe982925fda106fecd3b2cb70b77ba065ecac19885fe809decc0fdc49a6",
+    "configs/configs_train_single/MPI/train_config_MPI_Battery_P3_Best_FutureOnly.sh": "ba84e29a29191bebe50e14431d59fc4dbe7325288f1e15e42d7b7011b0abcb08",
+    "configs/configs_train_single/MPI/train_config_MPI_Battery_P3_Best_PastOnly.sh": "3d6e61323424baa1b3918a5bc2cca76e958efb44ef664835afa92cec751cac26",
+    "configs/configs_train_single/MPI/train_config_MPI_Battery_P3_Best_shuffle.sh": "cfd8705a0f92db5c66a58a9d3687d2d67c425c9c2c4c59e1307f9370b60377fa",
+    "configs/configs_train_single/MRI/train_config_MRI_Battery_Baseline_0h.sh": "2904e184980f498cce0db98244426ada0cde4fc25e0ba7e6bff9e64c66c92b6a",
+    "configs/configs_train_single/MRI/train_config_MRI_Battery_Baseline_12h.sh": "f2f88b5324d38d522187db66b21db8cf01b777c3791eae97c4db636d11bc6975",
+    "configs/configs_train_single/MRI/train_config_MRI_Battery_P3_Base.sh": "eec1b4c6211a9aff2b17891a2f6ae26748a85699f775bce8855bf636cc288064",
+    "configs/configs_train_single/MRI/train_config_MRI_Battery_P3_Base_PastOnly.sh": "71e98c65c31fbae4a95e9c89fc8500cbd9d01d5438046fbfb75c4c4ffaff684f",
+    "configs/configs_train_single/MRI/train_config_MRI_Battery_P3_Best.sh": "662380924173450b083404cb718ec8fe48f6a58a03dc8250de89860a5e7c658f",
+    "configs/configs_train_single/MRI/train_config_MRI_Battery_P3_Best_FutureOnly.sh": "8f48839aed2a0a42cf2795f47fc1af9a327190f667437cbf677326eea3998e7e",
+    "configs/configs_train_single/MRI/train_config_MRI_Battery_P3_Best_PastOnly.sh": "95d0209737d6b90eae5ee5fd4aeb29cb291f7f07586f541090770404ac764693",
+    "configs/configs_train_single/MRI/train_config_MRI_Battery_P3_Best_shuffle.sh": "63414ba70929da86a8570c4897d11e86b1e37e9bf05a3094f207bc653f3ef020",
+    "configs/configs_train_single/NCEP/train_config_NCEP_Battery_Baseline_0h.sh": "f802fafb3d8fe24211347facb7ded8fcdcc696f5db84c403834328f233fd9ace",
+    "configs/configs_train_single/NCEP/train_config_NCEP_Battery_Baseline_12h.sh": "d270b66aa978c2c461d6b1bfab8906d1e267b4d1fbccca588539b894a04735bd",
+    "configs/configs_train_single/NCEP/train_config_NCEP_Battery_P3_Base.sh": "1d7c085d147daee5c3057ede9db31fa04f4a4a4104ae9879dddf3ed4326c32ca",
+    "configs/configs_train_single/NCEP/train_config_NCEP_Battery_P3_Best.sh": "1dd63e3cc0583b426fd41acc8e046408cfc5984ed6d90f3416be32d095da25eb",
+    "configs/configs_train_single/NCEP/train_config_NCEP_Boston_Baseline_0h.sh": "86c24e5fcc68997113f5b0cfada2fb196915b356e58345477466b737af0feb63",
+    "configs/configs_train_single/NCEP/train_config_NCEP_Boston_Baseline_12h.sh": "a16ecaea2a03dfb18b1ebb2ffd6ab7555fa4a6a2cdd4ac1198f3507e80a261f5",
+    "configs/configs_train_single/NCEP/train_config_NCEP_Boston_P3_Base.sh": "e6d3aea51a9238c194a8bf2b7268cc1881f32d63ffc46c8a81506b0901c8433a",
+    "configs/configs_train_single/NCEP/train_config_NCEP_Boston_P3_Best.sh": "1857aaf8fcf6b4054c73e13d130ba11faf04882e97df1594e60087ee923ad82e",
+    "configs/configs_train_single/NCEP/train_config_NCEP_CBBT_Baseline_0h.sh": "967636474c7e92a0a7d6b38dfde32ff5904750e1f9451be22ed2e39e383da745",
+    "configs/configs_train_single/NCEP/train_config_NCEP_CBBT_Baseline_12h.sh": "347a096906bb9b7130aae718e815a6fe5716f934f533a4bfdd28cd87b2e7e8b5",
+    "configs/configs_train_single/NCEP/train_config_NCEP_CBBT_P3_Base.sh": "397af394dfe89fa8e3d79be2c2c9be63807703cf652395d9205283a9a8e559cf",
+    "configs/configs_train_single/NCEP/train_config_NCEP_CBBT_P3_Best.sh": "06c1d4bec44005d46df67b3bd671dc7756de0603639755e8f7a8770290df564f",
+    "configs/configs_train_single/NCEP/train_config_NCEP_Lewes_Baseline_0h.sh": "d2da8f06b1435bcc4c448f8da774977ab2868c3d24d597b54da032801f5c6482",
+    "configs/configs_train_single/NCEP/train_config_NCEP_Lewes_Baseline_12h.sh": "0acec06181a1943db2cc4af40fdc1cb4ec5670b3450ddfcf298379c8f9f9e4c3",
+    "configs/configs_train_single/NCEP/train_config_NCEP_Lewes_P3_Base.sh": "7749d74f8ccfe5509fbf0af9f48e11813bbf3a59408659a96866605257aad987",
+    "configs/configs_train_single/NCEP/train_config_NCEP_Lewes_P3_Best.sh": "ca4fa9525ff37ef9b37a6889dd69f0c2eac3059c6a8df8aa0906319b737384b4",
+    "configs/configs_train_single/train_config_common.sh": "551e5008242679b94841b9daa670202dc62c0ba82e9efa72004e747098dd95bb",
+    "configs/dual_ablations/train_config_NCEP_Battery_Fixed_Gate.sh": "1ab7f4016ab500db84532b7abb1512c0a884e2297ec4c48029653573d071d1a5",
+    "configs/dual_ablations/train_config_NCEP_Battery_No_Branch_Supervision.sh": "4540c3e65158163016e523c6028b188342cb4ac9dd89a6f82debda1a024f36ef",
+    "configs/dual_ablations/train_config_NCEP_Battery_No_Excess_Loss.sh": "c35ec91c84e4f7cfc68df2aa6e509256014a695854cd33f06a5b915b9e1f3546",
+    "configs/dual_ablations/train_config_NCEP_Battery_No_Gate_BCE.sh": "1809c67e69fc15d85bf258b19338c62332c7035b2ab954508da42e7374bb5d2b",
+    "configs/train_config_NCEP_Battery_Stable_Dual.sh": "a6b881f774c063a091c72a473e9093acb0d2318488a1b9fe0e721c064e26345b",
+    "configs/train_config_NCEP_Battery_Stable_Single.sh": "ffb85e1b0e939ec406685e061696205a3c98363e51846f96750608a86759e13b",
+    "docs/CHECKPOINT_SELECTION.md": "e8d62a044a04f0ab7c8832bd325083b684ff1a6a14d977d3d5f66e7d3f9b6420",
+    "docs/DUAL_HEAD_EXPLAINED.md": "b3977587a7fd430687889540f66fcf6ad7f78f3800ed3e550ac06c644f4260e1",
+    "docs/EXCESS_AMPLITUDE.md": "6765ff17ca0a84958ca411a81f768dc8c6174866594191afe1a0ded7f3879a8d",
+    "docs/FINAL_PEAK.md": "c1e416819a6b799ed7bf5f795cd38f7233a58429d4c77c30e6124cf67a58f415",
+    "docs/MODEL_PARAMETERS.md": "0100f030885a70c07208b4d12e30c6a521e0da1b22680e2ca35914ae0ea5e820",
+    "docs/ORIGINAL_COMPARISON.md": "4d91f7f5b116e33b718dcc206591448e0ac46c11aa3bbc9a7b9ab2be492f435a",
+    "docs/SEVERITY_SHAPE.md": "cf657a77617157778b72c980484b8f4f24670fe5cf54a40f5b268409b7a69896",
+    "docs/STABILITY_AND_DUAL_HEAD.md": "7c7e1f7b537e2178167d66982abfe6605ca27f2684c501526ff90df3c31d6595",
+    "docs/audit/argparse_comparison.json": "c2a4c10f9b0971bed583b39cb13b99f663e10d08968088b3c83d2d8a963195b2",
+    "docs/audit/compare_original.py": "9258e0650565e215f0b1e891d5f33ec1d03074363d9fd8806426f523a0c13d61",
+    "docs/audit/comparison_summary.json": "c4cee2d88c0bcde078dff6619773b121da7b88c3da18a737cb2dcad4b1a31bd1",
+    "docs/audit/evidence/README.md": "60518f2ce1c026dc67b8f8d9d2ebcbaa9fc1b95177f554045a51d9514fad572b",
+    "docs/audit/evidence/checkpoint_selection_tests.txt": "3102b086f40bf70dbf33a612ab6f74b030333f71d31f19f87cea07788df26a00",
+    "docs/audit/evidence/checkpoint_selection_validation.json": "70d1692f1a3d7ce5e061893abb323075922d0662128b5cae5301eb95d535b2b2",
+    "docs/audit/evidence/cnn_grid_equivalence.json": "13857497765f4f2acdbb1eaef521bd90a4547355a11e4892e880241db7211c84",
+    "docs/audit/evidence/cnn_grid_tests.txt": "b6d4f3c886485cc87a8ea1e0c5ac674a93b90131f3319f8acb66a99e51955d46",
+    "docs/audit/evidence/cnn_model_tests.txt": "30b1dcb7734434d80173434a6f081bdacd367a5ddc63f620e8d5c751d9e2c8fa",
+    "docs/audit/evidence/dual_review_tests.txt": "6f739dc4260c6d0afa60d32cc6d50ffcc6dade4b8770393418c83abf09293202",
+    "docs/audit/evidence/dual_review_validation.json": "7aafd8084d85027263ae4166dc6f08985968c91f9beb60529236de72ff946653",
+    "docs/audit/evidence/excess_amplitude_tests.txt": "23f95ceacf80f2b8a55203d0be97e43dc5eb8130c880b0d7992fa6d5d69e0742",
+    "docs/audit/evidence/excess_amplitude_validation.json": "6c08708aa91b4e76956a73b416574da54c71c20cf13cdfb823a44472d7b42bfc",
+    "docs/audit/evidence/final_peak_tests.txt": "b4c476476aaac710d68aa60841e628cedf83d6009802693d1eb79f1ab7f041b1",
+    "docs/audit/evidence/final_peak_validation.json": "061ce9312459bb20c8850a622905c839e2ee69b693daec24f670e2c2ff738822",
+    "docs/audit/evidence/gpu_equivalence.json": "a6e1d54eed2682c333266329dea91553e9b7505da7c802ab9674d244b2e690ae",
+    "docs/audit/evidence/history_validation_scope.json": "93e580c3b304661066a4b4ff4a3f0533619d788a99d58c3a08b2af91215ebd07",
+    "docs/audit/evidence/history_window_contract.json": "8b7ba40b204bcf73630ccead74b1002eab956b39536ca4e936510f6f4637c239",
+    "docs/audit/evidence/integrity.json": "86dcb438e2136ed5df121bf2d421d6874c8456cc1107d9a6001e704242dc4e6f",
+    "docs/audit/evidence/loss_config_validation.json": "07f9784c55c6d1d84ec1ce8d11c005334c259af564ea06f9e679f4efecba88f8",
+    "docs/audit/evidence/mag_strip_tests.txt": "c935294413bc32fe2242a1755f083760f1bc7416b19ec69cb5d653a279048d52",
+    "docs/audit/evidence/mag_strip_validation.json": "4bf572b76ddff1831490d2883bc196c5a4f19614755435565172a2db69d396db",
+    "docs/audit/evidence/model_equivalence.json": "e0550865acc29438212f70d78f0a091c335a474ec48084668a9c89475fe18f51",
+    "docs/audit/evidence/model_interface_restore.json": "d0e9bfcde17b386357d268080d1649f84a41e8fdbe90fd2b49d7e163689d2b39",
+    "docs/audit/evidence/protocol_cpu_1ranks.json": "133724655454879658f64d977ad531b18c803508c73d92fd423bd1b64ef06ecf",
+    "docs/audit/evidence/protocol_cpu_2ranks.json": "5d5b419b2c62c0c80674df71bc88e41210842e0df568d38630827e2ce2f29bc0",
+    "docs/audit/evidence/protocol_cuda_1ranks.json": "aa0f83bd5c36e06603ed5d1a1ae99c98cee17235cafb5cd0539d4f2d119a138d",
+    "docs/audit/evidence/publication_tests.txt": "e950a4c61dcfdc5f64fe637963bf1a70937b069194e860bee0f81ed857ffa9b5",
+    "docs/audit/evidence/runtime_review.json": "5eeafa5af74568373c8ea99477deec34630e89477531806850879dd0ac0b2a56",
+    "docs/audit/evidence/runtime_review_tests.txt": "79ebaec6162a28f8940901135526b3710692366489b45a5fc12cf2a946d69fc7",
+    "docs/audit/evidence/sample_additive_tail.json": "970728a90f68df101726c459ea113826bd10667f076db3413dd115a010492285",
+    "docs/audit/evidence/sample_additive_tail_tests.txt": "a34e81a6ee98f3da23ce4288ab1ee100329b8e425e68a1d3f5078d890a610b3d",
+    "docs/audit/evidence/scheduler_comparison.json": "48b48fe102ac9e9bf72cf0be51e3069040e05ae6926896fdd7cad34e44176f8c",
+    "docs/audit/evidence/severity_shape_tests.txt": "fa1f05353ed757811b754845b966a038e39bbdfc7b35bc4bd68a43164f16c0c9",
+    "docs/audit/evidence/severity_shape_validation.json": "42a9276ee4dee938510d65c1aee93046deb2ce759e56726f1128a78ca4c6afc5",
+    "docs/audit/evidence/shape_parameters_tests.txt": "9c869b1e6a2c2e17e5ad96e782fbfcdd145e1f355749552097c5ef2861d5e42b",
+    "docs/audit/evidence/shape_parameters_validation.json": "a8e5c377df8796ab22891319acd66d93085b70cd0604ed27a5b634baf1a378f3",
+    "docs/audit/evidence/smoke_ddp.txt": "1a2aac5080d006f1bca1419cc97b5773751216a1dcc5f502eb8cd31d68fd57b5",
+    "docs/audit/evidence/smoke_ddp_observed_rank0.json": "e66123cea677f5168710ab9781e0bec497a42d9cce163aead8e7efc03aadb7e9",
+    "docs/audit/evidence/smoke_ddp_observed_rank1.json": "d9892e1e57dd1e7a4fc5417fc052d07d78dfe9e86bc59f705ff0ed84fbb533f9",
+    "docs/audit/evidence/smoke_gpu.txt": "76be3919035bd0fba7d4478add1597c3de69810f0e75940c04cf74427d3f3715",
+    "docs/audit/evidence/smoke_gpu_observed_rank0.json": "4ca7b12c03a58402c80dd8b1ae5f494f23ef68180fd7a8c153f12e2d6653ae9e",
+    "docs/audit/evidence/station_metadata_restore.json": "49b16190b86e8a5681d4f39106946e36158959aaa6117d699a045ae9c436697a",
+    "docs/audit/evidence/station_metadata_restore_tests.txt": "6b18465ab070bd5a74e31652cbde2444aa7fa14a951a6341adbc63e167d3f20c",
+    "docs/audit/evidence/store_train_shape_restore.json": "ea985a2717108696b0dcbc6c96492058df716ee354647af65001a9028166e980",
+    "docs/audit/evidence/store_train_shape_tests.txt": "74f6c7a570760ae850f7c81bda19c4b5248d9183e010bb71947954eb655f76c6",
+    "docs/audit/evidence/target_shape_tests.txt": "c0a09ea3c17a3d3f66a3af12d2d22079e23bca185f5710aa8c71db20dafd3409",
+    "docs/audit/evidence/target_shape_validation.json": "d20dd0c52e05e8aebf0e93ccf3dc146398356f94e7a96e26d34b861653fd9a20",
+    "docs/audit/migration_verification.json": "07c627701c27738160ad2dfd0fc1b294c029dd58c31edf099138e1ec421df917",
+    "docs/audit/original_to_current.diff": "cba9beba745c278fd7e6707262ff20701b06a3c5cf0ce13ba647945321b02848",
+    "docs/audit/source_inventory.csv": "331a0672e44c017c7923342335ef307ae756ee1ac1e2ab895c7d76429a3d097e",
+    "docs/audit/source_inventory.json": "d991c4c0c1bdd9b72556206bceefe7af16dce66a18340b24ba77976da249f400",
+    "docs/audit/v2_source_hashes.json": "49636dd408125a05a9206c28e2d55c3171874c1064f95f867f00d05944264c59",
+    "docs/audit/verify_cnn_grid.py": "3803f80fa40a0b93126be0a351acd84de254d124040d0f43e8269c952d40f041",
+    "docs/history/Emulator_changelog.md": "19f7a53c22ce8e0ff38b10e6b275f60a9478f25a17a50ff00797a93ca9c959b6",
+    "emulator/__init__.py": "51e67819dff8dab4aa9c6fb6137bdaa752418efe515577eb1bc6ca92f75cbaaa",
+    "emulator/common/__init__.py": "e085d6d57ddcd94a9f3c4fa2256b2be70a2de95acca98ca1f37b97855c282687",
+    "emulator/common/cli.py": "230beba27a518d88cdf62213dbe525fe248c29dba15c62d192a533aea8ea184c",
+    "emulator/common/dual.py": "d83334dd49d683d17298ab4d2a4e9a6f71383add9be85060a857aac02141a41d",
+    "emulator/common/inference_artifacts.sh": "20203bac2af9713915fadc9ae89385ec379abd2c3a992bbe690f2d073e8ee3eb",
+    "emulator/common/runtime.py": "6197b9cd163e95f9afc419d42f9932403eb6c980ef072012d53aff2f56e5ad41",
+    "emulator/data/__init__.py": "cd3194da20868cc554ac207a96fd32a76c3e18a3cd4e0b3b7de1c67be8669ff0",
+    "emulator/data/graph_store.py": "ea032027cc1d8f533cbae47667565b42225f2b1234a576174d8cc7fb08a0b2ce",
+    "emulator/data/loaders.py": "1d28870c8808f0250f39b993265098459fb5b5d6186a7089a8fdcd9df6c38d98",
+    "emulator/data/normalization.py": "54a0a78ed9568dec92713f726d9c6ed9c14fb47903879e51efc629ee0d3c4251",
+    "emulator/data/station_metadata.py": "54d874bd5c7952fa3bae62034869dc0de1ae42c6b8e87a434aa565269557eeb6",
+    "emulator/data/stats.py": "77634ae907216a07469e860f52e48e72d30beaa88714c1c75257fa8d0caeac82",
+    "emulator/inference/__init__.py": "a4a17f727e269fea79f9974d8f06c75e7959f12ea85fb72c938d63d0982345fa",
+    "emulator/inference/dual_diagnostics.py": "f758a0eba2b63bd248303649fec798223cd20e0c3eab31a735eaba70aa5cbecd",
+    "emulator/inference/grouping.py": "a2a1aabec95bde2780e688ef91129a62fb5e4c44d47b4a222cfe3cc358c89902",
+    "emulator/models/__init__.py": "633fcb6f96db112b7167bbce24ceca039b76ed12b968b02238403696e40a0ac2",
+    "emulator/models/architectures.py": "0b815e45804612b29ce137724e0c38e946bf11f15adc6a5253a20a002cd51468",
+    "emulator/models/heads.py": "1f271b88e5759633095fcbd2556236d857bd99f78f4cbfd23e62ebdcdf89ba6f",
+    "emulator/models/reporting.py": "c6e5869eed44a88dd67a7108ca4384713d1079a5cad76d4fdb99aa86560d5e59",
+    "emulator/models/spatial.py": "0e357c954206bf574284d2f9b916a93e3171aaaa916e12e11a08926cb8b4eff9",
+    "emulator/models/temporal.py": "e44e63e5e4fc1d42dec167a6c3d0a472c7b3de8a696b1711812d48be30758085",
+    "emulator/training/__init__.py": "f28c24f7090dbeee9aa5c978ef974a24d90d653067a4300f9a9a3084cc555de0",
+    "emulator/training/arguments.py": "8caa66e1a6098ef64f97cbed38fe746b0b6c0c9f0230e94d4155bb5ee57991bb",
+    "emulator/training/checkpoints.py": "2b3c241363163a3819d30203cb92f4b9694231912131f7fb3a5d3c77a6a9e609",
+    "emulator/training/engine.py": "e59e62d799e436b5d5ae74eca5365ad55576be55d337dee3f6aa05104f994268",
+    "emulator/training/excess_amplitude.py": "44e70109591ca5d7d5bd667657cec239f6af41c7c7ba65678ae65d627715227d",
+    "emulator/training/excess_shape.py": "48daa170d972592aa6b583e7cb19f1381d03492b5a8944fb99e858ffbf50a78b",
+    "emulator/training/final_peak.py": "e5aef099cee04fd92cafa0c6957c8341e0561be8cc7f09de46a04014fd567f4f",
+    "emulator/training/losses.py": "fa0eb15dc8830cb5b19f071c182431ab0385c034af28b0df633a7e5f06a74e2f",
+    "emulator/training/metrics.py": "72c77ed8e57c15bdaf06ce8e20a3b694df8a1792953a84e5a2dc04d1d5c5d5e2",
+    "environment_dataprep.yml": "e3b10843e616112b6bac839f060f58f21fddde6644b6d5d51a9aa63a11dea9cd",
+    "environment_training.yml": "e5ec667014aea9f3d20574ff644b7fea0405ba86b93b2e64bd136c1c2ee43859",
+    "experiment_config/P0_QuickRun/AUDIT.md": "348f780d842aed5b62401b62fc93b95f3a467bedf620130fa7119dabfb6b088a",
+    "experiment_config/P0_QuickRun/README.md": "68130028f98df164e6244d84815a681e983745783b80e8d8c1f40629324259f1",
+    "experiment_config/P0_QuickRun/generate_configs.py": "c1deac296876830e7cb8792f6024b7e844bb4d9dcfce2e4a93624c943facd3da",
+    "experiment_config/P0_QuickRun/manifest.tsv": "e880fff485b5e675c643293e1646b56f132263ce4fd4d07208e5612503b65c51",
+    "experiment_config/P0_QuickRun/train_config_NCEP_Battery_24h_dual_mse.sh": "ee8bfab773ccd2b22763e72b0d6c7ec3d70430dcda65aee47628c4805888a1c5",
+    "experiment_config/P0_QuickRun/train_config_NCEP_Battery_24h_dual_slope.sh": "510293e0aad2315b87fe5a78b41f484e557c74c8605563d3204394d67107f9fe",
+    "experiment_config/P0_QuickRun/train_config_NCEP_Battery_24h_dual_tail.sh": "01659b93c50a01c078f91b60526acdd1adf6ba0c9a7672246ca6de2209947bcc",
+    "experiment_config/P0_QuickRun/train_config_NCEP_Battery_24h_dual_tail_slope.sh": "70cd18c661ce12b850a9a19dca4b41f02517824d7838723e7e1aaeacf98f2a4b",
+    "experiment_config/P0_QuickRun/train_config_NCEP_Battery_24h_single_mse.sh": "6ffdb837e0119e7871b66d4992e10cdc1ad67be5e2754e0189cfbdd089e46b49",
+    "experiment_config/P0_QuickRun/train_config_NCEP_Battery_24h_single_slope.sh": "10a594e78d0720d1d20090403099e33f642dcc51d80c5c49a574baee38a6f8f9",
+    "experiment_config/P0_QuickRun/train_config_NCEP_Battery_24h_single_tail.sh": "e46ef9c068372d4b7e6071e44f70a8df67556f6ec6278cbc5c21a45a29a1352d",
+    "experiment_config/P0_QuickRun/train_config_NCEP_Battery_24h_single_tail_slope.sh": "6290b7da6ba1d2429dc4d53060588b1944e4f0bb604b4b3d9ed8b3579463e5ca",
+    "experiment_config/P0_QuickRun/train_config_NCEP_Boston_24h_dual_mse.sh": "df0057909c8b67fd93c8eff14484805eda6cdbcae62283613f73020515bf9c59",
+    "experiment_config/P0_QuickRun/train_config_NCEP_Boston_24h_dual_slope.sh": "850516fef6c07582550e83a7392b8c0f82a0b70a89ece4a7021c93fbb50647a7",
+    "experiment_config/P0_QuickRun/train_config_NCEP_Boston_24h_dual_tail.sh": "1c7f0bd0210aea6e7d6b24162e68cad52276fa672054100372a90f7d359fe52b",
+    "experiment_config/P0_QuickRun/train_config_NCEP_Boston_24h_dual_tail_slope.sh": "d0d14eddc598de92fff4e86b2aa9b756c16f0a982d8d08475473f42f35a07fdf",
+    "experiment_config/P0_QuickRun/train_config_NCEP_Boston_24h_single_mse.sh": "59ebd72959005902db319bae6826d2b690aa1e6a8c561721db1505f4c051c01c",
+    "experiment_config/P0_QuickRun/train_config_NCEP_Boston_24h_single_slope.sh": "b6ef1baaa922eeb1c736bcb68ddb9ff66c624da5c137a76bc46fc3fa7e0dacf5",
+    "experiment_config/P0_QuickRun/train_config_NCEP_Boston_24h_single_tail.sh": "de17c7b3826a3e33edf1eb0d03d6f519e727d3a4d398f39da7682dfce2ddb833",
+    "experiment_config/P0_QuickRun/train_config_NCEP_Boston_24h_single_tail_slope.sh": "658bae75b1a0a1541eb241409e5d5c8bf877daa7a29e7e798db3c77d89365dd8",
+    "experiment_config/P0_QuickRun/train_config_NCEP_CBBT_24h_dual_mse.sh": "8364505e18ec2d1a5f291d7aa8013e30bc5c81280c13f946a3946a697a74112c",
+    "experiment_config/P0_QuickRun/train_config_NCEP_CBBT_24h_dual_slope.sh": "e016c7ac21a091de3e820527658767916e002a497c2b1bf188b5ee5947833a30",
+    "experiment_config/P0_QuickRun/train_config_NCEP_CBBT_24h_dual_tail.sh": "d4bd0870c682fa5b7f74ea0565cd2a77b51f333aed929385d49574e7613004c3",
+    "experiment_config/P0_QuickRun/train_config_NCEP_CBBT_24h_dual_tail_slope.sh": "721e0292b7cb39dd89f69cd2346d078ce23aa1d622179674a5f388c24ac62fac",
+    "experiment_config/P0_QuickRun/train_config_NCEP_CBBT_24h_single_mse.sh": "8d191abac09be3b1f0867371672dfcc4bb2efa0866cbc3f31e4e821a03460042",
+    "experiment_config/P0_QuickRun/train_config_NCEP_CBBT_24h_single_slope.sh": "c8a20053ac98218b9a7a573b6f189a051d5a400bcdc53df0b4bc2fe92c241f3c",
+    "experiment_config/P0_QuickRun/train_config_NCEP_CBBT_24h_single_tail.sh": "3b0ecc7ed6e0793a5b7c1840810b399974300b419ebe8f53ddc32be778cf9c1b",
+    "experiment_config/P0_QuickRun/train_config_NCEP_CBBT_24h_single_tail_slope.sh": "d78a02b400d6edd9654a40c18749b6fd67dc31f915ad22f73461a2d0f4ebf7ca",
+    "experiment_config/P0_QuickRun/train_config_NCEP_Lewes_24h_dual_mse.sh": "0f15fce43e9be30046c297281829e83414edec4f3321ae7e67edea51165d8188",
+    "experiment_config/P0_QuickRun/train_config_NCEP_Lewes_24h_dual_slope.sh": "d503a33840f1eb27555b392ebbd049656d56c4cc4574ecc238f4eb0c47a0280d",
+    "experiment_config/P0_QuickRun/train_config_NCEP_Lewes_24h_dual_tail.sh": "31e7f4cf05e729cc2a0f695c66b7d878cf7b4071843966e3f5f3236bc44c9924",
+    "experiment_config/P0_QuickRun/train_config_NCEP_Lewes_24h_dual_tail_slope.sh": "a9047023e1b1ce7562de9f3364c7344c29800f4940f4b717176b1212fb85f712",
+    "experiment_config/P0_QuickRun/train_config_NCEP_Lewes_24h_single_mse.sh": "87ad6c9e14e1ff2225c35a223fdb54b0c84c192b0a00e795055fe6d02c603ec5",
+    "experiment_config/P0_QuickRun/train_config_NCEP_Lewes_24h_single_slope.sh": "217f1ce43fe3fabcc3db00c7dafbd0e913d03bf354178af6478ceb82fc258691",
+    "experiment_config/P0_QuickRun/train_config_NCEP_Lewes_24h_single_tail.sh": "c1c15aa83201f33f55350ed78e3886b32932d8884ac6caae73d3a66877996b8c",
+    "experiment_config/P0_QuickRun/train_config_NCEP_Lewes_24h_single_tail_slope.sh": "eadb5eeaf60a8983845a10476536c6c25175758cce2f3d6d33c7e80e93808546",
+    "experiment_config/P0_QuickRun/validate_configs.py": "5f47a16b97dd7ac72610f819db491714ad7e7bd707428df0a7cec49e40d6e747",
+    "experiment_config/P0_QuickRun/validate_queue.py": "4d923565d06fb6abbf478850f15ad64f7228fd7397df96a14beaafe2bee8c3ec",
+    "experiment_config/P0_QuickRun/validation/baseline_hashes.json": "7dd8c5b2d047e9f9cd2420c2a5f890294b90fea2f4393dc50a45758818f47bbb",
+    "experiment_config/P0_QuickRun/validation/config_validation.json": "b8835c9e14d00f9b72370be9cb9669189281987b741ce43746556cf8b6526b47",
+    "experiment_config/P0_QuickRun/validation/dry_runs.txt": "bbc84a305e2b4372efff04685bfb852e54e42203fa5b897072e8c191021893b0",
+    "experiment_config/P0_QuickRun/validation/environment_verification.json": "74599a611c53f18b94c128fe8ce6e2e7ba95dfbddf1e5414a31d3875cf012761",
+    "experiment_config/P0_QuickRun/validation/final_checks.json": "227c1a87f698063536a8f2eece1d8a557c159124b0b10c159027c1bce9e05eac",
+    "experiment_config/P0_QuickRun/validation/probe_failure_config_used.sh.txt": "a38d33e6bea9131cca7438e67107182334c00d5b4d06a32217f992c9ee0d79de",
+    "experiment_config/P0_QuickRun/validation/probe_failure_exit_status.txt": "076320a2a08267b4c026d06573bba408ea68841e73cdc20e62cce59de165ece3",
+    "experiment_config/P0_QuickRun/validation/probe_failure_launcher.log.txt": "fe582406a8dcbb21dcd5c28b37f400295626a5ac00a818ea585d8c34fd04c085",
+    "experiment_config/P0_QuickRun/validation/probe_failure_stub_invocation.json.txt": "7c22aadf17f673ec044325060b8d67c6247e59a9afd9ebfd896a51847190ba3d",
+    "experiment_config/P0_QuickRun/validation/probe_success_config_used.sh.txt": "e81b24880dc49b42a32c3bfdf6cc90b919298cbfd482421e00c410256fd76da7",
+    "experiment_config/P0_QuickRun/validation/probe_success_exit_status.txt": "9a271f2a916b0b6ee6cecb2426f0b3206ef074578be55d9bc94f6f3fe3ab86aa",
+    "experiment_config/P0_QuickRun/validation/probe_success_launcher.log.txt": "a5a22d67840c770534d5bf0f6a89b7970b8b7935c3eaa6c9f0a30219b01bceeb",
+    "experiment_config/P0_QuickRun/validation/probe_success_stub_invocation.json.txt": "29fcc697822279257a9d2e5a52255e144b5bd42e4467bfd55040862228e9572f",
+    "experiment_config/P0_QuickRun/validation/queue_active.txt": "718ed0fbcb5c0651add2d87a422b0153fffbdacfa8ed33735ca319526c1fd154",
+    "experiment_config/P0_QuickRun/validation/queue_dry_run.txt": "f72b26a51c5d667f213980cf4b5114ca89af3a8a7c4352b4968ac5366b661db8",
+    "experiment_config/P0_QuickRun/validation/queue_failure.txt": "934a29a3b4c902831f0a8496b3d485c2ce1697caea3dc39763b827ad1d9aa87a",
+    "experiment_config/P0_QuickRun/validation/queue_success.txt": "577793fa0fd3ee9c849255f48b7ab212e19f24e71130c8b27491d5861a82e460",
+    "experiment_config/P0_QuickRun/validation/queue_validation.json": "e9e94748f85fe3dd68bcdebd3a49ec4f9c66174256b07d853bcd8d38964f2de3",
+    "experiment_config/P0_QuickRun/validation/tmux_calls.txt": "83cbcfae3984ce836d1615f0a3507ac0a38c68ddc61642ec7448ef47de774669",
+    "experiment_config/P1_WeightProbe/README.md": "b2b813373f2d89244532d49a04dabe7f65992a1bfeb795e7d0dcbf7ccd376661",
+    "experiment_config/P1_WeightProbe/manifest.tsv": "03e7f1f3b3a215bc62aa003c3b54956e26e54dcb0a590d8c7b182bb0261d3243",
+    "experiment_config/P1_WeightProbe/train_config_NCEP_Battery_24h_dual_ex10_notail.sh": "71f44086d2b0c7aa23b34b695a5d3757468d851dd85b35a380911ba7f3e35d2a",
+    "experiment_config/P1_WeightProbe/train_config_NCEP_Battery_24h_dual_ex10_tail005.sh": "35a317e258be079d32f64a360f28d65534af510ff0fcec7b3478a14597f9f677",
+    "experiment_config/P1_WeightProbe/train_config_NCEP_Battery_24h_dual_ex10_tail010.sh": "a6d2d18c85803d5c5a0e221b0f071e7cde66fee04724a81fc29debdc5498052d",
+    "experiment_config/P1_WeightProbe/train_config_NCEP_Battery_24h_dual_ex2_tail005.sh": "1d71c510f67054b16f5cd60f836af415f17e6b1f715159f73dcffbb0a8bbffd7",
+    "experiment_config/P1_WeightProbe/train_config_NCEP_Battery_24h_dual_ex2_tail010.sh": "a12ef2c1e63cd4c27a9af677c0ec6b7a7d7fae6f97a3b823970bf11d746ddf3c",
+    "experiment_config/P1_WeightProbe/train_config_NCEP_Battery_24h_dual_ex5_notail.sh": "84e308f0d2f0057422ef490f2ee4e043b72d1df33b5816bf0484370882b36727",
+    "experiment_config/P1_WeightProbe/train_config_NCEP_Battery_24h_dual_ex5_tail005.sh": "bd9e43aba90032982150d84eb6d06791e57c68e2cf68b4c770c239a94f2354c2",
+    "experiment_config/P1_WeightProbe/train_config_NCEP_Battery_24h_dual_ex5_tail010.sh": "81ed9e563e574f10fa5eed6aa7f750d70dcde92664a2aa01b6af79a7c5021a77",
+    "experiment_config/P1_WeightProbe/train_config_NCEP_Boston_24h_dual_ex10_notail.sh": "c77661d0006712764dd62b814e4f374bef44027bc29ff6f772e18cf096fcb9f6",
+    "experiment_config/P1_WeightProbe/train_config_NCEP_Boston_24h_dual_ex10_tail005.sh": "cb150a18a41bb69acc7c34fbed405692b4d21b78493315d470b4a1a1977b2e86",
+    "experiment_config/P1_WeightProbe/train_config_NCEP_Boston_24h_dual_ex10_tail010.sh": "dd404b8dd3b080432ba5d7de97514f8ebc2271f1c6f3a3ba9008dd26b31d9fb8",
+    "experiment_config/P1_WeightProbe/train_config_NCEP_Boston_24h_dual_ex2_tail005.sh": "2fefedc907db6675fc35cf360d6ceaebb2f38dda5afb7b85b5405f71e7f99d89",
+    "experiment_config/P1_WeightProbe/train_config_NCEP_Boston_24h_dual_ex2_tail010.sh": "0bcf7028aa448072b9a02547c1cc058b9e46be05b4ad155ea11bb9a222f8e130",
+    "experiment_config/P1_WeightProbe/train_config_NCEP_Boston_24h_dual_ex5_notail.sh": "c5520d25935e8d220ebc4ea7dd84cd27447a7a85e2b4f1f0d92230e1621a0427",
+    "experiment_config/P1_WeightProbe/train_config_NCEP_Boston_24h_dual_ex5_tail005.sh": "52a6f292ac8ea588cc70330f477c02f3fc6060aa38a6560fe2bfcd15ff0af3ea",
+    "experiment_config/P1_WeightProbe/train_config_NCEP_Boston_24h_dual_ex5_tail010.sh": "6ac33b61246e1cd06ad9883195543c6825949a936c0209cc22ee5b5a6cfbc354",
+    "experiment_config/P1_WeightProbe/train_config_NCEP_CBBT_24h_dual_ex10_notail.sh": "27619a8114225dde02725346d08b389f317cb689482cc9f5c45e38c9878625c5",
+    "experiment_config/P1_WeightProbe/train_config_NCEP_CBBT_24h_dual_ex10_tail005.sh": "b65e87504981ea5e4f1cbae133c481908fea2f0b8ede555252e46fb4774477b2",
+    "experiment_config/P1_WeightProbe/train_config_NCEP_CBBT_24h_dual_ex10_tail010.sh": "0f05205e803f03737d755180e93536f61045ce9980e24d654e09ab41919c1515",
+    "experiment_config/P1_WeightProbe/train_config_NCEP_CBBT_24h_dual_ex2_tail005.sh": "163b49029e7cb736c98e92c8ea20eb2d27a3a6d796982c521f2cb7c00c2305ec",
+    "experiment_config/P1_WeightProbe/train_config_NCEP_CBBT_24h_dual_ex2_tail010.sh": "e80eb102f48115053d658945428092a55a75545c2d95c699ef371e1509a9af06",
+    "experiment_config/P1_WeightProbe/train_config_NCEP_CBBT_24h_dual_ex5_notail.sh": "75a10230bb001ba5eae164c3e53a652b14bd94a650a9b5a1479b6ce6c8f1bdd7",
+    "experiment_config/P1_WeightProbe/train_config_NCEP_CBBT_24h_dual_ex5_tail005.sh": "f49e44ce6c5f123e990104f7e78bffc0960aae7967fe34f62eebd0f2ea3ec8d8",
+    "experiment_config/P1_WeightProbe/train_config_NCEP_CBBT_24h_dual_ex5_tail010.sh": "b49f3eb7a52f66b739a4801ced841752cbaa48cabd99d1f8690d86ed976129fd",
+    "experiment_config/P1_WeightProbe/train_config_NCEP_Lewes_24h_dual_ex10_notail.sh": "c10f67ceb881c5be762dfe25e3ced4b6d65b022b3759e0a4141e0d429074c2ce",
+    "experiment_config/P1_WeightProbe/train_config_NCEP_Lewes_24h_dual_ex10_tail005.sh": "7858f629f4bcf640735f3d5867096458197e1c1879a0826aace596af492faa8f",
+    "experiment_config/P1_WeightProbe/train_config_NCEP_Lewes_24h_dual_ex10_tail010.sh": "b0847c1612a7d63907fa3755291c3fb27c271c82e5bc5f6ed69c81a3f78418a9",
+    "experiment_config/P1_WeightProbe/train_config_NCEP_Lewes_24h_dual_ex2_tail005.sh": "3855f4872489ad61bae208a66dc2e3c153d7042188685ed576ef9adf25d53c28",
+    "experiment_config/P1_WeightProbe/train_config_NCEP_Lewes_24h_dual_ex2_tail010.sh": "6f5f3f4b9c100168303e85a26edf5700676bcb34221366024a3b83dbdce5cd79",
+    "experiment_config/P1_WeightProbe/train_config_NCEP_Lewes_24h_dual_ex5_notail.sh": "de942b7b63fd9846dd61c8774db3cddf2e80f2140125722cc9567133b01a4d16",
+    "experiment_config/P1_WeightProbe/train_config_NCEP_Lewes_24h_dual_ex5_tail005.sh": "5366f57e11a192becc98c24040cacbc53274b67063d38e6def0325290417b835",
+    "experiment_config/P1_WeightProbe/train_config_NCEP_Lewes_24h_dual_ex5_tail010.sh": "80e6c75bc7838a09060035505f87594f356a69ed4c734350b9143faaa4cefb1e",
+    "experiment_config/P1_WeightProbe/validate_configs.py": "3bd2254711761c96bb2fa7c0393a70901f51382c438d115d80598a3dd82b2735",
+    "experiment_config/P1_WeightProbe/validation/config_validation.json": "0b2cd917033202a730ebd9f25b32b1fe86522eff636d2427180e52df797a985d",
+    "experiment_config/P1_WeightProbe/validation/dry_runs.txt": "ee3f72941559403e32a4401bc12300f0636418c0c5a174888c45e5582484dc61",
+    "experiment_config/P1_WeightProbe/validation/final_checks.json": "d3a67cb349cfb116e53ae16beacf95c4c4e9add10596b50b79090ec668060afd",
+    "experiment_config/P1_WeightProbe/validation/original_sha256.json": "c504872ede901910ca2c1c9dffcd094c7b3dd59208aba62e17f8a584ab01a953",
+    "experiment_config/P1_WeightProbe/validation/p0_reference_dry_runs.txt": "0ff12142531b4563a1a10011f33a5e0ef1310f7ac0e4da8dc36add1436c224d2",
+    "infer.py": "92d944b99cac3db77e4664f2af0c5dbb055deca4a7ef07fc0ee73d91e2df8a20",
+    "infer.sh": "6059ada60a4ce9d5957d61d8fce371ebe5f8fe3df55626e960ba0af56ef6de64",
+    "infer_multi.sh": "b11dda5dd6067c2d5db6aed6aeed8946988f9b119752aeaab3bb5403b994b6fb",
+    "preprocessing/forcing_cmip6.py": "49a7839c506f998373d65070c40b820b7f05f40b4b87d671a2ea3df7f31f95af",
+    "preprocessing/preprocessing_forcing_CMIP6_AWI_Mean_Removal.py": "dae18e939fe2db75430ec5507ad0c0f4c519673ab4537f7e4d9e4f157aa29032",
+    "preprocessing/preprocessing_forcing_CMIP6_CNRM_Mean_Removal.py": "3aa8816d218ffa3197a7a953b2233117ea0e10b59e83899b153d12e3ba2de115",
+    "preprocessing/preprocessing_forcing_CMIP6_EC_EARTH_Mean_Removal.py": "dcf396e15ef6f15959c1baea76a551d5c44d547e1cd8845c675fb34b90378e7c",
+    "preprocessing/preprocessing_forcing_CMIP6_MPI_Mean_Removal.py": "5ddc1514f28cc8f45ee72c036291eceecd6db7e4ca94f71a9184502a122bc1b2",
+    "preprocessing/preprocessing_forcing_CMIP6_MRI_Mean_Removal.py": "6cd89571e374ac737b402dcfebfaf51b07ed998fa6ef3dddce9ea65d8babded1",
+    "preprocessing/preprocessing_forcing_NCEP_Mean_Removal.py": "b644d884c1bf1097e8f2ac18c938a09bb5feff345666960b630cd3e379ade3a0",
+    "preprocessing/preprocessing_simulation.py": "dd8a6dc993e06b9e81f3f7db0412f3490f3596ecf31ed6546022c95129ba6b7c",
+    "preprocessing/time_align_unified.py": "333f5af8ab41b946f99d9375e58bed64ac5f286c98913ffaf26eafb8cab0fca6",
+    "station_json/Battery.json": "ac5e53f863a21806c9c8d9243c2318677796a34c114c0c9c0952ceb2d1cfa320",
+    "station_json/Boston.json": "709e0a4b3c5ddc77496435e1f15280f457c5cbb2a47b1eea02328a2da8a5aea1",
+    "station_json/CBBT.json": "a319d59e3fd6c014b92e3bb56245092fbf5964f721a20595a83fb6a2fa5df203",
+    "station_json/Lewes.json": "684a57e640f93d752dc236f48957fb15c4e75508920765b7e30076d1b8e36416",
+    "tests/fixtures/post3_peak_metrics.json": "5584bc0b2cf7d7ae59d3f340e743566617e6861552e10af3e92e16540c4de74f",
+    "tests/fixtures/post6_checkpoint_selection.json": "1fc829dcb9222a43e7f4b03abddd213eeefccb34c569ed36267b23fb0633c2f1",
+    "tests/fixtures/post6_checkpoint_trajectories.json": "1a709d65e6ae4929e93888a6393f366009d5073e5b8db71f271199a815a6622b",
+    "tests/test_checkpoint_pipeline.py": "330ad6a9bc509a102e93ba3aea700f307657c862006b50a0a32340b1a271f37e",
+    "tests/test_checkpoints.py": "5c5b4359446c92939dff0d2eb07294de482bca869b450d019530ff00281d93da",
+    "tests/test_config_interfaces.py": "3aec0ed5dd671c0460378fb1dfa2a26fc0a07c2fc142c662b3394f2e19dbbe9d",
+    "tests/test_dual_experiments.py": "80ab44ee57775e60d41a91eac0c1c66c9085a4f26e69a10cb472baedf77da3a4",
+    "tests/test_dual_loss.py": "6db58b27553b985b210950f59d3154eb9c3cddec4c4e482c0dbd970116473da4",
+    "tests/test_excess_amplitude.py": "7b4eea3593cf65388e88fbb1e51f821f1d93c49e35b44cd4e1b2b40009dc8a61",
+    "tests/test_final_peak.py": "56ad21349839918183e6e98033a49f6428b8f6922839a2ead5441f5fa1c6103c",
+    "tests/test_forcing.py": "2b8acbfc0ce03e24957220ce1ee622ed59283989e2ac98ba7a1b3e76db7380c5",
+    "tests/test_inference_reporting.py": "2396edef20b879a771ce380e12be8d19036c0da5a8822bd7aaf30e9119f26456",
+    "tests/test_model_reporting.py": "0822225e52cb02396025dee1e01b852e9e3c4de77c9b77219fbdaf8fe63c5098",
+    "tests/test_models.py": "2e6de61ef5b08be327de6a23eb85928713652c1769dc43b08ff6d72a1b7905db",
+    "tests/test_peak_metrics.py": "8c0e1b52e7899c205e20505e071eb8c509e7f746d2a6ed320e22b07ba23f85ae",
+    "tests/test_peak_reporting.py": "c2f74f6960bd819a7220d9977fbc2c12d7e7f2b2a6d46da35e23877dcc3d5bd1",
+    "tests/test_pipeline.py": "d7eed89f6ecf6fb4d5dc8e0a5e01bcf2f899ee19cd188767acf7cb1a5a62d07f",
+    "tests/test_preprocessing_pipeline.py": "59918c26c3db8cef501974303e7d5ce8eb28934cbf216011b110759cd72f5bd3",
+    "tests/test_severity_shape.py": "0002b19ffa517d7fc526e648f99f1d5a81ac3e24f43e72d934b9c8d4b0846485",
+    "tests/test_station_metadata.py": "0ea22a5ddaad78403d3ca5911a0240fb0126a06e93d9efe962ecc85421160015",
+    "tests/test_tail_loss.py": "584bb759062fc1c99b5920366bf1fb6a04908efb8afbd9736ded95c28bd93e45",
+    "tests/test_time_alignment.py": "48a6d623951953874d1af57a925a7f88828ffc7fd72543372d332005c518b0e2",
+    "tests/test_training.py": "9a202b8d6e664c2e24cb34439eabaad8e4dd62d1c569160502b72e07d21d17d4",
+    "train.py": "be25b15eb59f8650ed1b20406d69bfed26bfad4bb929189aa29b9fc26c02e95d",
+    "train.sh": "ad11d81aa4eca4218d24d6f8edaa6eb2f97c71113877511d5dd899884efa2c42"
+  },
+  "results_metadata": {
+    ".": [
+      16893,
+      4096,
+      1789079789244733149
+    ],
+    "P1_WeightProbe": [
+      16893,
+      4096,
+      1789128083670387751
+    ],
+    "P0_QuickRun": [
+      16893,
+      4096,
+      1789072247681201004
+    ],
+    "P1_WeightProbe/NCEP_Boston_24h_dual_ex10_tail010__20260911_120123": [
+      16893,
+      4096,
+      1789129597054298085
+    ],
+    "P1_WeightProbe/NCEP_Lewes_24h_dual_ex10_tail005__20260911_044652": [
+      16893,
+      4096,
+      1789103515635288316
+    ],
+    "P1_WeightProbe/NCEP_CBBT_24h_dual_ex2_tail005__20260910_233923": [
+      16893,
+      4096,
+      1789085086129294020
+    ],
+    "P1_WeightProbe/NCEP_Lewes_24h_dual_ex5_notail__20260911_021255": [
+      16893,
+      4096,
+      1789094328177660140
+    ],
+    "P1_WeightProbe/NCEP_Boston_24h_dual_ex2_tail010__20260911_101939": [
+      16893,
+      4096,
+      1789123493234462891
+    ],
+    "P1_WeightProbe/NCEP_Battery_24h_dual_ex5_tail010__20260911_074607": [
+      16893,
+      4096,
+      1789114287868927048
+    ],
+    "P1_WeightProbe/NCEP_Boston_24h_dual_ex10_tail005__20260911_113539": [
+      16893,
+      4096,
+      1789128078774472384
+    ],
+    "P1_WeightProbe/NCEP_Boston_24h_dual_ex10_notail__20260911_092826": [
+      16893,
+      4096,
+      1789120450105904152
+    ],
+    "P1_WeightProbe/NCEP_Boston_24h_dual_ex5_tail010__20260911_111031": [
+      16893,
+      4096,
+      1789126534920018389
+    ],
+    "P1_WeightProbe/NCEP_Lewes_24h_dual_ex10_tail010__20260911_051155": [
+      16893,
+      4096,
+      1789105060789170060
+    ],
+    "P1_WeightProbe/NCEP_Boston_24h_dual_ex5_tail005__20260911_104457": [
+      16893,
+      4096,
+      1789125029022136860
+    ],
+    "P1_WeightProbe/NCEP_Lewes_24h_dual_ex2_tail010__20260911_032951": [
+      16893,
+      4096,
+      1789098926114569017
+    ],
+    "P1_WeightProbe/NCEP_Boston_24h_dual_ex2_tail005__20260911_095410": [
+      16893,
+      4096,
+      1789121977638953691
+    ],
+    "P1_WeightProbe/NCEP_CBBT_24h_dual_ex10_tail005__20260911_012153": [
+      16893,
+      4096,
+      1789091232729517615
+    ],
+    "P1_WeightProbe/NCEP_Boston_24h_dual_ex5_notail__20260911_090238": [
+      16893,
+      4096,
+      1789118903494464647
+    ],
+    "P1_WeightProbe/NCEP_Battery_24h_dual_ex10_notail__20260911_060312": [
+      16893,
+      4096,
+      1789108102325339577
+    ],
+    "P1_WeightProbe/NCEP_CBBT_24h_dual_ex5_tail005__20260911_003041": [
+      16893,
+      4096,
+      1789088177226582056
+    ],
+    "P1_WeightProbe/NCEP_Lewes_24h_dual_ex5_tail010__20260911_042113": [
+      16893,
+      4096,
+      1789102009334419727
+    ],
+    "P1_WeightProbe/NCEP_CBBT_24h_dual_ex2_tail010__20260911_000447": [
+      16893,
+      4096,
+      1789086636813065030
+    ],
+    "P1_WeightProbe/NCEP_CBBT_24h_dual_ex5_notail__20260910_224816": [
+      16893,
+      4096,
+      1789082023361594738
+    ],
+    "P1_WeightProbe/NCEP_Battery_24h_dual_ex5_notail__20260911_053744": [
+      16893,
+      4096,
+      1789106590748112326
+    ],
+    "P1_WeightProbe/NCEP_Battery_24h_dual_ex2_tail010__20260911_065420": [
+      16893,
+      4096,
+      1789111217983178400
+    ],
+    "P1_WeightProbe/NCEP_CBBT_24h_dual_ex10_notail__20260910_231345": [
+      16893,
+      4096,
+      1789083560784093521
+    ],
+    "P1_WeightProbe/NCEP_Lewes_24h_dual_ex10_notail__20260911_023849": [
+      16893,
+      4096,
+      1789095836509551023
+    ],
+    "P1_WeightProbe/NCEP_Lewes_24h_dual_ex5_tail005__20260911_035529": [
+      16893,
+      4096,
+      1789100470243544131
+    ],
+    "P1_WeightProbe/NCEP_Battery_24h_dual_ex10_tail005__20260911_081131": [
+      16893,
+      4096,
+      1789115811743366143
+    ],
+    "P1_WeightProbe/NCEP_Battery_24h_dual_ex2_tail005__20260911_062826": [
+      16893,
+      4096,
+      1789109656029744835
+    ],
+    "P1_WeightProbe/NCEP_Battery_24h_dual_ex10_tail010__20260911_083654": [
+      16893,
+      4096,
+      1789117353580275621
+    ],
+    "P1_WeightProbe/NCEP_Battery_24h_dual_ex5_tail005__20260911_072018": [
+      16893,
+      4096,
+      1789112767163377661
+    ],
+    "P1_WeightProbe/NCEP_CBBT_24h_dual_ex10_tail010__20260911_014716": [
+      16893,
+      4096,
+      1789092775060646560
+    ],
+    "P1_WeightProbe/NCEP_Lewes_24h_dual_ex2_tail005__20260911_030357": [
+      16893,
+      4096,
+      1789097390392024952
+    ],
+    "P1_WeightProbe/NCEP_CBBT_24h_dual_ex5_tail010__20260911_005619": [
+      16893,
+      4096,
+      1789089709441116483
+    ],
+    "P1_WeightProbe/NCEP_Boston_24h_dual_ex10_tail010__20260911_120123/test_preds_perceiver3_mse_tail_b9973439ea_Boston_NCEPtoNCEP_perceiver3_ga4_nrh8_tr.npz": [
+      33204,
+      173059,
+      1789129596175313210
+    ],
+    "P1_WeightProbe/NCEP_Boston_24h_dual_ex10_tail010__20260911_120123/metrics_perceiver3_mse_tail_b9973439ea_Boston_NCEPtoNCEP_perceiver3_ga4_nrh8_tr.jsonl": [
+      33204,
+      91497,
+      1789129595480325169
+    ],
+    "P1_WeightProbe/NCEP_Boston_24h_dual_ex10_tail010__20260911_120123/config_used.sh": [
+      33204,
+      3508,
+      1789128083683387526
+    ],
+    "P1_WeightProbe/NCEP_Boston_24h_dual_ex10_tail010__20260911_120123/config_perceiver3_mse_tail_b9973439ea_Boston_NCEPtoNCEP_perceiver3_ga4_nrh8_tr.json": [
+      33204,
+      2431,
+      1789128087059329171
+    ],
+    "P1_WeightProbe/NCEP_Boston_24h_dual_ex10_tail010__20260911_120123/best_perceiver3_mse_tail_b9973439ea_Boston_NCEPtoNCEP_perceiver3_ga4_nrh8_tr.pth": [
+      33204,
+      3733556,
+      1789129465554561063
+    ],
+    "P1_WeightProbe/NCEP_Boston_24h_dual_ex10_tail010__20260911_120123/summary_perceiver3_mse_tail_b9973439ea_Boston_NCEPtoNCEP_perceiver3_ga4_nrh8_tr.json": [
+      33204,
+      1344,
+      1789129596176313193
+    ],
+    "P1_WeightProbe/NCEP_Boston_24h_dual_ex10_tail010__20260911_120123/train_Boston_NCEPtoNCEP_perceiver3_ga4_nrh8_trh8_L2_ff4.0_td0.0_stable1v3_exceedance_gmwindow_eq95_danone_lossmse_tail_tf0.05_tl0.10_hist24h_hid128_L2_bs256_lr5e-3_ep300_schcosine_xnzscore.log": [
+      33204,
+      68302,
+      1789129596176313193
+    ],
+    "P1_WeightProbe/NCEP_Boston_24h_dual_ex10_tail010__20260911_120123/exit_status": [
+      33204,
+      2,
+      1789129597055298068
+    ],
+    "P1_WeightProbe/NCEP_Boston_24h_dual_ex10_tail010__20260911_120123/launcher.log": [
+      33204,
+      70233,
+      1789129597054298085
+    ],
+    "P1_WeightProbe/NCEP_Lewes_24h_dual_ex10_tail005__20260911_044652/train_Lewes_NCEPtoNCEP_perceiver3_ga4_nrh8_trh8_L2_ff4.0_td0.0_stable1v3_exceedance_gmwindow_eq95_danone_lossmse_tail_tf0.05_tl0.05_hist24h_hid128_L2_bs256_lr5e-3_ep300_schcosine_xnzscore.log": [
+      33204,
+      68050,
+      1789103514770303101
+    ],
+    "P1_WeightProbe/NCEP_Lewes_24h_dual_ex10_tail005__20260911_044652/test_preds_perceiver3_mse_tail_d14cd1b4a6_Lewes_NCEPtoNCEP_perceiver3_ga4_nrh8_trh.npz": [
+      33204,
+      167513,
+      1789103514770303101
+    ],
+    "P1_WeightProbe/NCEP_Lewes_24h_dual_ex10_tail005__20260911_044652/best_perceiver3_mse_tail_d14cd1b4a6_Lewes_NCEPtoNCEP_perceiver3_ga4_nrh8_trh.pth": [
+      33204,
+      3712244,
+      1789103360157947124
+    ],
+    "P1_WeightProbe/NCEP_Lewes_24h_dual_ex10_tail005__20260911_044652/metrics_perceiver3_mse_tail_d14cd1b4a6_Lewes_NCEPtoNCEP_perceiver3_ga4_nrh8_trh.jsonl": [
+      33204,
+      91790,
+      1789103514064315168
+    ],
+    "P1_WeightProbe/NCEP_Lewes_24h_dual_ex10_tail005__20260911_044652/config_perceiver3_mse_tail_d14cd1b4a6_Lewes_NCEPtoNCEP_perceiver3_ga4_nrh8_trh.json": [
+      33204,
+      2429,
+      1789102015792303574
+    ],
+    "P1_WeightProbe/NCEP_Lewes_24h_dual_ex10_tail005__20260911_044652/summary_perceiver3_mse_tail_d14cd1b4a6_Lewes_NCEPtoNCEP_perceiver3_ga4_nrh8_trh.json": [
+      33204,
+      1337,
+      1789103514770303101
+    ],
+    "P1_WeightProbe/NCEP_Lewes_24h_dual_ex10_tail005__20260911_044652/config_used.sh": [
+      33204,
+      3504,
+      1789102012439363871
+    ],
+    "P1_WeightProbe/NCEP_Lewes_24h_dual_ex10_tail005__20260911_044652/exit_status": [
+      33204,
+      2,
+      1789103515635288316
+    ],
+    "P1_WeightProbe/NCEP_Lewes_24h_dual_ex10_tail005__20260911_044652/launcher.log": [
+      33204,
+      69976,
+      1789103515635288316
+    ],
+    "P1_WeightProbe/NCEP_CBBT_24h_dual_ex2_tail005__20260910_233923/config_used.sh": [
+      33204,
+      3496,
+      1789083564493013254
+    ],
+    "P1_WeightProbe/NCEP_CBBT_24h_dual_ex2_tail005__20260910_233923/best_perceiver3_mse_tail_b2bc7cb3f9_CBBT_NCEPtoNCEP_perceiver3_ga4_nrh8_trh8.pth": [
+      33204,
+      3690996,
+      1789085038731137740
+    ],
+    "P1_WeightProbe/NCEP_CBBT_24h_dual_ex2_tail005__20260910_233923/metrics_perceiver3_mse_tail_b2bc7cb3f9_CBBT_NCEPtoNCEP_perceiver3_ga4_nrh8_trh8.jsonl": [
+      33204,
+      92043,
+      1789085084539322307
+    ],
+    "P1_WeightProbe/NCEP_CBBT_24h_dual_ex2_tail005__20260910_233923/summary_perceiver3_mse_tail_b2bc7cb3f9_CBBT_NCEPtoNCEP_perceiver3_ga4_nrh8_trh8.json": [
+      33204,
+      1343,
+      1789085085242309800
+    ],
+    "P1_WeightProbe/NCEP_CBBT_24h_dual_ex2_tail005__20260910_233923/test_preds_perceiver3_mse_tail_b2bc7cb3f9_CBBT_NCEPtoNCEP_perceiver3_ga4_nrh8_trh8.npz": [
+      33204,
+      170091,
+      1789085085242309800
+    ],
+    "P1_WeightProbe/NCEP_CBBT_24h_dual_ex2_tail005__20260910_233923/exit_status": [
+      33204,
+      2,
+      1789085086129294020
+    ],
+    "P1_WeightProbe/NCEP_CBBT_24h_dual_ex2_tail005__20260910_233923/launcher.log": [
+      33204,
+      70694,
+      1789085086129294020
+    ],
+    "P1_WeightProbe/NCEP_CBBT_24h_dual_ex2_tail005__20260910_233923/config_perceiver3_mse_tail_b2bc7cb3f9_CBBT_NCEPtoNCEP_perceiver3_ga4_nrh8_trh8.json": [
+      33204,
+      2424,
+      1789083567805941649
+    ],
+    "P1_WeightProbe/NCEP_CBBT_24h_dual_ex2_tail005__20260910_233923/train_CBBT_NCEPtoNCEP_perceiver3_ga4_nrh8_trh8_L2_ff4.0_td0.0_stable1v3_exceedance_gmwindow_eq95_danone_lossmse_tail_tf0.05_tl0.05_hist24h_hid128_L2_bs256_lr5e-3_ep300_schcosine_xnzscore.log": [
+      33204,
+      68779,
+      1789085085242309800
+    ],
+    "P1_WeightProbe/NCEP_Lewes_24h_dual_ex5_notail__20260911_021255/config_perceiver3_mse_c4082b019f_Lewes_NCEPtoNCEP_perceiver3_ga4_nrh8_trh.json": [
+      33204,
+      2401,
+      1789092779250575801
+    ],
+    "P1_WeightProbe/NCEP_Lewes_24h_dual_ex5_notail__20260911_021255/config_used.sh": [
+      33204,
+      3489,
+      1789092775829633574
+    ],
+    "P1_WeightProbe/NCEP_Lewes_24h_dual_ex5_notail__20260911_021255/train_Lewes_NCEPtoNCEP_perceiver3_ga4_nrh8_trh8_L2_ff4.0_td0.0_stable1v3_exceedance_gmwindow_eq95_danone_lossmse_hist24h_hid128_L2_bs256_lr5e-3_ep300_schcosine_xnzscore.log": [
+      33204,
+      68193,
+      1789094327285675861
+    ],
+    "P1_WeightProbe/NCEP_Lewes_24h_dual_ex5_notail__20260911_021255/metrics_perceiver3_mse_c4082b019f_Lewes_NCEPtoNCEP_perceiver3_ga4_nrh8_trh.jsonl": [
+      33204,
+      91740,
+      1789094326591688092
+    ],
+    "P1_WeightProbe/NCEP_Lewes_24h_dual_ex5_notail__20260911_021255/exit_status": [
+      33204,
+      2,
+      1789094328177660140
+    ],
+    "P1_WeightProbe/NCEP_Lewes_24h_dual_ex5_notail__20260911_021255/summary_perceiver3_mse_c4082b019f_Lewes_NCEPtoNCEP_perceiver3_ga4_nrh8_trh.json": [
+      33204,
+      1315,
+      1789094327285675861
+    ],
+    "P1_WeightProbe/NCEP_Lewes_24h_dual_ex5_notail__20260911_021255/launcher.log": [
+      33204,
+      70100,
+      1789094328177660140
+    ],
+    "P1_WeightProbe/NCEP_Lewes_24h_dual_ex5_notail__20260911_021255/test_preds_perceiver3_mse_c4082b019f_Lewes_NCEPtoNCEP_perceiver3_ga4_nrh8_trh.npz": [
+      33204,
+      167982,
+      1789094327284675878
+    ],
+    "P1_WeightProbe/NCEP_Lewes_24h_dual_ex5_notail__20260911_021255/best_perceiver3_mse_c4082b019f_Lewes_NCEPtoNCEP_perceiver3_ga4_nrh8_trh.pth": [
+      33204,
+      3711495,
+      1789094174174385531
+    ],
+    "P1_WeightProbe/NCEP_Boston_24h_dual_ex2_tail010__20260911_101939/config_perceiver3_mse_tail_595c477ac4_Boston_NCEPtoNCEP_perceiver3_ga4_nrh8_tr.json": [
+      33204,
+      2429,
+      1789121982791865676
+    ],
+    "P1_WeightProbe/NCEP_Boston_24h_dual_ex2_tail010__20260911_101939/config_used.sh": [
+      33204,
+      3504,
+      1789121979304925235
+    ],
+    "P1_WeightProbe/NCEP_Boston_24h_dual_ex2_tail010__20260911_101939/test_preds_perceiver3_mse_tail_595c477ac4_Boston_NCEPtoNCEP_perceiver3_ga4_nrh8_tr.npz": [
+      33204,
+      175562,
+      1789123492314478868
+    ],
+    "P1_WeightProbe/NCEP_Boston_24h_dual_ex2_tail010__20260911_101939/best_perceiver3_mse_tail_595c477ac4_Boston_NCEPtoNCEP_perceiver3_ga4_nrh8_tr.pth": [
+      33204,
+      3733556,
+      1789123431399537146
+    ],
+    "P1_WeightProbe/NCEP_Boston_24h_dual_ex2_tail010__20260911_101939/summary_perceiver3_mse_tail_595c477ac4_Boston_NCEPtoNCEP_perceiver3_ga4_nrh8_tr.json": [
+      33204,
+      1340,
+      1789123492314478868
+    ],
+    "P1_WeightProbe/NCEP_Boston_24h_dual_ex2_tail010__20260911_101939/train_Boston_NCEPtoNCEP_perceiver3_ga4_nrh8_trh8_L2_ff4.0_td0.0_stable1v3_exceedance_gmwindow_eq95_danone_lossmse_tail_tf0.05_tl0.10_hist24h_hid128_L2_bs256_lr5e-3_ep300_schcosine_xnzscore.log": [
+      33204,
+      68668,
+      1789123492314478868
+    ],
+    "P1_WeightProbe/NCEP_Boston_24h_dual_ex2_tail010__20260911_101939/exit_status": [
+      33204,
+      2,
+      1789123493234462891
+    ],
+    "P1_WeightProbe/NCEP_Boston_24h_dual_ex2_tail010__20260911_101939/launcher.log": [
+      33204,
+      70593,
+      1789123493234462891
+    ],
+    "P1_WeightProbe/NCEP_Boston_24h_dual_ex2_tail010__20260911_101939/metrics_perceiver3_mse_tail_595c477ac4_Boston_NCEPtoNCEP_perceiver3_ga4_nrh8_tr.jsonl": [
+      33204,
+      91764,
+      1789123491575491702
+    ],
+    "P1_WeightProbe/NCEP_Battery_24h_dual_ex5_tail010__20260911_074607/metrics_perceiver3_mse_tail_1efc6fbd33_Battery_NCEPtoNCEP_perceiver3_ga4_nrh8_t.jsonl": [
+      33204,
+      91394,
+      1789114286264953945
+    ],
+    "P1_WeightProbe/NCEP_Battery_24h_dual_ex5_tail010__20260911_074607/config_used.sh": [
+      33204,
+      3508,
+      1789112767671369202
+    ],
+    "P1_WeightProbe/NCEP_Battery_24h_dual_ex5_tail010__20260911_074607/summary_perceiver3_mse_tail_1efc6fbd33_Battery_NCEPtoNCEP_perceiver3_ga4_nrh8_t.json": [
+      33204,
+      1343,
+      1789114286981941922
+    ],
+    "P1_WeightProbe/NCEP_Battery_24h_dual_ex5_tail010__20260911_074607/test_preds_perceiver3_mse_tail_1efc6fbd33_Battery_NCEPtoNCEP_perceiver3_ga4_nrh8_t.npz": [
+      33204,
+      176472,
+      1789114286981941922
+    ],
+    "P1_WeightProbe/NCEP_Battery_24h_dual_ex5_tail010__20260911_074607/train_Battery_NCEPtoNCEP_perceiver3_ga4_nrh8_trh8_L2_ff4.0_td0.0_stable1v3_exceedance_gmwindow_eq95_danone_lossmse_tail_tf0.05_tl0.10_hist24h_hid128_L2_bs256_lr5e-3_ep300_schcosine_xnzscore.log": [
+      33204,
+      68305,
+      1789114286981941922
+    ],
+    "P1_WeightProbe/NCEP_Battery_24h_dual_ex5_tail010__20260911_074607/best_perceiver3_mse_tail_1efc6fbd33_Battery_NCEPtoNCEP_perceiver3_ga4_nrh8_t.pth": [
+      33204,
+      3754804,
+      1789114200221396784
+    ],
+    "P1_WeightProbe/NCEP_Battery_24h_dual_ex5_tail010__20260911_074607/exit_status": [
+      33204,
+      2,
+      1789114287868927048
+    ],
+    "P1_WeightProbe/NCEP_Battery_24h_dual_ex5_tail010__20260911_074607/launcher.log": [
+      33204,
+      70235,
+      1789114287868927048
+    ],
+    "P1_WeightProbe/NCEP_Battery_24h_dual_ex5_tail010__20260911_074607/config_perceiver3_mse_tail_1efc6fbd33_Battery_NCEPtoNCEP_perceiver3_ga4_nrh8_t.json": [
+      33204,
+      2432,
+      1789112771117311820
+    ],
+    "P1_WeightProbe/NCEP_Boston_24h_dual_ex10_tail005__20260911_113539/train_Boston_NCEPtoNCEP_perceiver3_ga4_nrh8_trh8_L2_ff4.0_td0.0_stable1v3_exceedance_gmwindow_eq95_danone_lossmse_tail_tf0.05_tl0.05_hist24h_hid128_L2_bs256_lr5e-3_ep300_schcosine_xnzscore.log": [
+      33204,
+      67564,
+      1789128077860488184
+    ],
+    "P1_WeightProbe/NCEP_Boston_24h_dual_ex10_tail005__20260911_113539/config_used.sh": [
+      33204,
+      3508,
+      1789126540007920391
+    ],
+    "P1_WeightProbe/NCEP_Boston_24h_dual_ex10_tail005__20260911_113539/best_perceiver3_mse_tail_6ca0057131_Boston_NCEPtoNCEP_perceiver3_ga4_nrh8_tr.pth": [
+      33204,
+      3733556,
+      1789128015866560281
+    ],
+    "P1_WeightProbe/NCEP_Boston_24h_dual_ex10_tail005__20260911_113539/metrics_perceiver3_mse_tail_6ca0057131_Boston_NCEPtoNCEP_perceiver3_ga4_nrh8_tr.jsonl": [
+      33204,
+      91777,
+      1789128077137500682
+    ],
+    "P1_WeightProbe/NCEP_Boston_24h_dual_ex10_tail005__20260911_113539/test_preds_perceiver3_mse_tail_6ca0057131_Boston_NCEPtoNCEP_perceiver3_ga4_nrh8_tr.npz": [
+      33204,
+      173349,
+      1789128077860488184
+    ],
+    "P1_WeightProbe/NCEP_Boston_24h_dual_ex10_tail005__20260911_113539/config_perceiver3_mse_tail_6ca0057131_Boston_NCEPtoNCEP_perceiver3_ga4_nrh8_tr.json": [
+      33204,
+      2432,
+      1789126543448854175
+    ],
+    "P1_WeightProbe/NCEP_Boston_24h_dual_ex10_tail005__20260911_113539/summary_perceiver3_mse_tail_6ca0057131_Boston_NCEPtoNCEP_perceiver3_ga4_nrh8_tr.json": [
+      33204,
+      1342,
+      1789128077860488184
+    ],
+    "P1_WeightProbe/NCEP_Boston_24h_dual_ex10_tail005__20260911_113539/exit_status": [
+      33204,
+      2,
+      1789128078774472384
+    ],
+    "P1_WeightProbe/NCEP_Boston_24h_dual_ex10_tail005__20260911_113539/launcher.log": [
+      33204,
+      69495,
+      1789128078774472384
+    ],
+    "P1_WeightProbe/NCEP_Boston_24h_dual_ex10_notail__20260911_092826/train_Boston_NCEPtoNCEP_perceiver3_ga4_nrh8_trh8_L2_ff4.0_td0.0_stable1v3_exceedance_gmwindow_eq95_danone_lossmse_hist24h_hid128_L2_bs256_lr5e-3_ep300_schcosine_xnzscore.log": [
+      33204,
+      67218,
+      1789120449225918895
+    ],
+    "P1_WeightProbe/NCEP_Boston_24h_dual_ex10_notail__20260911_092826/test_preds_perceiver3_mse_e5eb822822_Boston_NCEPtoNCEP_perceiver3_ga4_nrh8_tr.npz": [
+      33204,
+      173151,
+      1789120449225918895
+    ],
+    "P1_WeightProbe/NCEP_Boston_24h_dual_ex10_notail__20260911_092826/best_perceiver3_mse_e5eb822822_Boston_NCEPtoNCEP_perceiver3_ga4_nrh8_tr.pth": [
+      33204,
+      3732743,
+      1789120386750964186
+    ],
+    "P1_WeightProbe/NCEP_Boston_24h_dual_ex10_notail__20260911_092826/config_used.sh": [
+      33204,
+      3497,
+      1789118907111402005
+    ],
+    "P1_WeightProbe/NCEP_Boston_24h_dual_ex10_notail__20260911_092826/summary_perceiver3_mse_e5eb822822_Boston_NCEPtoNCEP_perceiver3_ga4_nrh8_tr.json": [
+      33204,
+      1320,
+      1789120449225918895
+    ],
+    "P1_WeightProbe/NCEP_Boston_24h_dual_ex10_notail__20260911_092826/metrics_perceiver3_mse_e5eb822822_Boston_NCEPtoNCEP_perceiver3_ga4_nrh8_tr.jsonl": [
+      33204,
+      91823,
+      1789120448497931091
+    ],
+    "P1_WeightProbe/NCEP_Boston_24h_dual_ex10_notail__20260911_092826/exit_status": [
+      33204,
+      2,
+      1789120450105904152
+    ],
+    "P1_WeightProbe/NCEP_Boston_24h_dual_ex10_notail__20260911_092826/launcher.log": [
+      33204,
+      69136,
+      1789120450105904152
+    ],
+    "P1_WeightProbe/NCEP_Boston_24h_dual_ex10_notail__20260911_092826/config_perceiver3_mse_e5eb822822_Boston_NCEPtoNCEP_perceiver3_ga4_nrh8_tr.json": [
+      33204,
+      2406,
+      1789118910523342918
+    ],
+    "P1_WeightProbe/NCEP_Boston_24h_dual_ex5_tail010__20260911_111031/best_perceiver3_mse_tail_16aeec3814_Boston_NCEPtoNCEP_perceiver3_ga4_nrh8_tr.pth": [
+      33204,
+      3733556,
+      1789126528301146032
+    ],
+    "P1_WeightProbe/NCEP_Boston_24h_dual_ex5_tail010__20260911_111031/metrics_perceiver3_mse_tail_16aeec3814_Boston_NCEPtoNCEP_perceiver3_ga4_nrh8_tr.jsonl": [
+      33204,
+      91874,
+      1789126533334048958
+    ],
+    "P1_WeightProbe/NCEP_Boston_24h_dual_ex5_tail010__20260911_111031/config_perceiver3_mse_tail_16aeec3814_Boston_NCEPtoNCEP_perceiver3_ga4_nrh8_tr.json": [
+      33204,
+      2429,
+      1789125034836043937
+    ],
+    "P1_WeightProbe/NCEP_Boston_24h_dual_ex5_tail010__20260911_111031/config_used.sh": [
+      33204,
+      3504,
+      1789125031456097966
+    ],
+    "P1_WeightProbe/NCEP_Boston_24h_dual_ex5_tail010__20260911_111031/test_preds_perceiver3_mse_tail_16aeec3814_Boston_NCEPtoNCEP_perceiver3_ga4_nrh8_tr.npz": [
+      33204,
+      175650,
+      1789126534030035542
+    ],
+    "P1_WeightProbe/NCEP_Boston_24h_dual_ex5_tail010__20260911_111031/train_Boston_NCEPtoNCEP_perceiver3_ga4_nrh8_trh8_L2_ff4.0_td0.0_stable1v3_exceedance_gmwindow_eq95_danone_lossmse_tail_tf0.05_tl0.10_hist24h_hid128_L2_bs256_lr5e-3_ep300_schcosine_xnzscore.log": [
+      33204,
+      68791,
+      1789126534031035523
+    ],
+    "P1_WeightProbe/NCEP_Boston_24h_dual_ex5_tail010__20260911_111031/summary_perceiver3_mse_tail_16aeec3814_Boston_NCEPtoNCEP_perceiver3_ga4_nrh8_tr.json": [
+      33204,
+      1340,
+      1789126534031035523
+    ],
+    "P1_WeightProbe/NCEP_Boston_24h_dual_ex5_tail010__20260911_111031/exit_status": [
+      33204,
+      2,
+      1789126534920018389
+    ],
+    "P1_WeightProbe/NCEP_Boston_24h_dual_ex5_tail010__20260911_111031/launcher.log": [
+      33204,
+      70716,
+      1789126534919018409
+    ],
+    "P1_WeightProbe/NCEP_Lewes_24h_dual_ex10_tail010__20260911_051155/summary_perceiver3_mse_tail_8124e19efe_Lewes_NCEPtoNCEP_perceiver3_ga4_nrh8_trh.json": [
+      33204,
+      1337,
+      1789105059872185601
+    ],
+    "P1_WeightProbe/NCEP_Lewes_24h_dual_ex10_tail010__20260911_051155/test_preds_perceiver3_mse_tail_8124e19efe_Lewes_NCEPtoNCEP_perceiver3_ga4_nrh8_trh.npz": [
+      33204,
+      167510,
+      1789105059872185601
+    ],
+    "P1_WeightProbe/NCEP_Lewes_24h_dual_ex10_tail010__20260911_051155/train_Lewes_NCEPtoNCEP_perceiver3_ga4_nrh8_trh8_L2_ff4.0_td0.0_stable1v3_exceedance_gmwindow_eq95_danone_lossmse_tail_tf0.05_tl0.10_hist24h_hid128_L2_bs256_lr5e-3_ep300_schcosine_xnzscore.log": [
+      33204,
+      68542,
+      1789105059873185584
+    ],
+    "P1_WeightProbe/NCEP_Lewes_24h_dual_ex10_tail010__20260911_051155/config_used.sh": [
+      33204,
+      3504,
+      1789103515935283188
+    ],
+    "P1_WeightProbe/NCEP_Lewes_24h_dual_ex10_tail010__20260911_051155/metrics_perceiver3_mse_tail_8124e19efe_Lewes_NCEPtoNCEP_perceiver3_ga4_nrh8_trh.jsonl": [
+      33204,
+      91856,
+      1789105059102198652
+    ],
+    "P1_WeightProbe/NCEP_Lewes_24h_dual_ex10_tail010__20260911_051155/config_perceiver3_mse_tail_8124e19efe_Lewes_NCEPtoNCEP_perceiver3_ga4_nrh8_trh.json": [
+      33204,
+      2428,
+      1789103519326225229
+    ],
+    "P1_WeightProbe/NCEP_Lewes_24h_dual_ex10_tail010__20260911_051155/exit_status": [
+      33204,
+      2,
+      1789105060789170060
+    ],
+    "P1_WeightProbe/NCEP_Lewes_24h_dual_ex10_tail010__20260911_051155/launcher.log": [
+      33204,
+      70468,
+      1789105060788170077
+    ],
+    "P1_WeightProbe/NCEP_Lewes_24h_dual_ex10_tail010__20260911_051155/best_perceiver3_mse_tail_8124e19efe_Lewes_NCEPtoNCEP_perceiver3_ga4_nrh8_trh.pth": [
+      33204,
+      3712244,
+      1789104960246873652
+    ],
+    "P1_WeightProbe/NCEP_Boston_24h_dual_ex5_tail005__20260911_104457/test_preds_perceiver3_mse_tail_2354844391_Boston_NCEPtoNCEP_perceiver3_ga4_nrh8_tr.npz": [
+      33204,
+      175222,
+      1789125028104151527
+    ],
+    "P1_WeightProbe/NCEP_Boston_24h_dual_ex5_tail005__20260911_104457/summary_perceiver3_mse_tail_2354844391_Boston_NCEPtoNCEP_perceiver3_ga4_nrh8_tr.json": [
+      33204,
+      1341,
+      1789125028104151527
+    ],
+    "P1_WeightProbe/NCEP_Boston_24h_dual_ex5_tail005__20260911_104457/best_perceiver3_mse_tail_2354844391_Boston_NCEPtoNCEP_perceiver3_ga4_nrh8_tr.pth": [
+      33204,
+      3733556,
+      1789124966724128594
+    ],
+    "P1_WeightProbe/NCEP_Boston_24h_dual_ex5_tail005__20260911_104457/train_Boston_NCEPtoNCEP_perceiver3_ga4_nrh8_trh8_L2_ff4.0_td0.0_stable1v3_exceedance_gmwindow_eq95_danone_lossmse_tail_tf0.05_tl0.05_hist24h_hid128_L2_bs256_lr5e-3_ep300_schcosine_xnzscore.log": [
+      33204,
+      69283,
+      1789125028104151527
+    ],
+    "P1_WeightProbe/NCEP_Boston_24h_dual_ex5_tail005__20260911_104457/config_used.sh": [
+      33204,
+      3504,
+      1789123497841382887
+    ],
+    "P1_WeightProbe/NCEP_Boston_24h_dual_ex5_tail005__20260911_104457/config_perceiver3_mse_tail_2354844391_Boston_NCEPtoNCEP_perceiver3_ga4_nrh8_tr.json": [
+      33204,
+      2430,
+      1789123501264323447
+    ],
+    "P1_WeightProbe/NCEP_Boston_24h_dual_ex5_tail005__20260911_104457/metrics_perceiver3_mse_tail_2354844391_Boston_NCEPtoNCEP_perceiver3_ga4_nrh8_tr.jsonl": [
+      33204,
+      91806,
+      1789125027404162709
+    ],
+    "P1_WeightProbe/NCEP_Boston_24h_dual_ex5_tail005__20260911_104457/exit_status": [
+      33204,
+      2,
+      1789125029022136860
+    ],
+    "P1_WeightProbe/NCEP_Boston_24h_dual_ex5_tail005__20260911_104457/launcher.log": [
+      33204,
+      71208,
+      1789125029022136860
+    ],
+    "P1_WeightProbe/NCEP_Lewes_24h_dual_ex2_tail010__20260911_032951/summary_perceiver3_mse_tail_33ae232c52_Lewes_NCEPtoNCEP_perceiver3_ga4_nrh8_trh.json": [
+      33204,
+      1339,
+      1789098925235583740
+    ],
+    "P1_WeightProbe/NCEP_Lewes_24h_dual_ex2_tail010__20260911_032951/test_preds_perceiver3_mse_tail_33ae232c52_Lewes_NCEPtoNCEP_perceiver3_ga4_nrh8_trh.npz": [
+      33204,
+      168132,
+      1789098925235583740
+    ],
+    "P1_WeightProbe/NCEP_Lewes_24h_dual_ex2_tail010__20260911_032951/train_Lewes_NCEPtoNCEP_perceiver3_ga4_nrh8_trh8_L2_ff4.0_td0.0_stable1v3_exceedance_gmwindow_eq95_danone_lossmse_tail_tf0.05_tl0.10_hist24h_hid128_L2_bs256_lr5e-3_ep300_schcosine_xnzscore.log": [
+      33204,
+      67432,
+      1789098925235583740
+    ],
+    "P1_WeightProbe/NCEP_Lewes_24h_dual_ex2_tail010__20260911_032951/config_used.sh": [
+      33204,
+      3500,
+      1789097391660003223
+    ],
+    "P1_WeightProbe/NCEP_Lewes_24h_dual_ex2_tail010__20260911_032951/best_perceiver3_mse_tail_33ae232c52_Lewes_NCEPtoNCEP_perceiver3_ga4_nrh8_trh.pth": [
+      33204,
+      3712244,
+      1789098838312038519
+    ],
+    "P1_WeightProbe/NCEP_Lewes_24h_dual_ex2_tail010__20260911_032951/config_perceiver3_mse_tail_33ae232c52_Lewes_NCEPtoNCEP_perceiver3_ga4_nrh8_trh.json": [
+      33204,
+      2426,
+      1789097395051945096
+    ],
+    "P1_WeightProbe/NCEP_Lewes_24h_dual_ex2_tail010__20260911_032951/exit_status": [
+      33204,
+      2,
+      1789098926114569017
+    ],
+    "P1_WeightProbe/NCEP_Lewes_24h_dual_ex2_tail010__20260911_032951/launcher.log": [
+      33204,
+      69352,
+      1789098926114569017
+    ],
+    "P1_WeightProbe/NCEP_Lewes_24h_dual_ex2_tail010__20260911_032951/metrics_perceiver3_mse_tail_33ae232c52_Lewes_NCEPtoNCEP_perceiver3_ga4_nrh8_trh.jsonl": [
+      33204,
+      91848,
+      1789098924543595331
+    ],
+    "P1_WeightProbe/NCEP_Boston_24h_dual_ex2_tail005__20260911_095410/train_Boston_NCEPtoNCEP_perceiver3_ga4_nrh8_trh8_L2_ff4.0_td0.0_stable1v3_exceedance_gmwindow_eq95_danone_lossmse_tail_tf0.05_tl0.05_hist24h_hid128_L2_bs256_lr5e-3_ep300_schcosine_xnzscore.log": [
+      33204,
+      68053,
+      1789121976742968994
+    ],
+    "P1_WeightProbe/NCEP_Boston_24h_dual_ex2_tail005__20260911_095410/metrics_perceiver3_mse_tail_9adaa995df_Boston_NCEPtoNCEP_perceiver3_ga4_nrh8_tr.jsonl": [
+      33204,
+      91789,
+      1789121976046980882
+    ],
+    "P1_WeightProbe/NCEP_Boston_24h_dual_ex2_tail005__20260911_095410/config_used.sh": [
+      33204,
+      3504,
+      1789120450730893681
+    ],
+    "P1_WeightProbe/NCEP_Boston_24h_dual_ex2_tail005__20260911_095410/config_perceiver3_mse_tail_9adaa995df_Boston_NCEPtoNCEP_perceiver3_ga4_nrh8_tr.json": [
+      33204,
+      2430,
+      1789120454211835356
+    ],
+    "P1_WeightProbe/NCEP_Boston_24h_dual_ex2_tail005__20260911_095410/best_perceiver3_mse_tail_9adaa995df_Boston_NCEPtoNCEP_perceiver3_ga4_nrh8_tr.pth": [
+      33204,
+      3733556,
+      1789121811422792219
+    ],
+    "P1_WeightProbe/NCEP_Boston_24h_dual_ex2_tail005__20260911_095410/exit_status": [
+      33204,
+      2,
+      1789121977638953691
+    ],
+    "P1_WeightProbe/NCEP_Boston_24h_dual_ex2_tail005__20260911_095410/launcher.log": [
+      33204,
+      69978,
+      1789121977637953708
+    ],
+    "P1_WeightProbe/NCEP_Boston_24h_dual_ex2_tail005__20260911_095410/summary_perceiver3_mse_tail_9adaa995df_Boston_NCEPtoNCEP_perceiver3_ga4_nrh8_tr.json": [
+      33204,
+      1339,
+      1789121976742968994
+    ],
+    "P1_WeightProbe/NCEP_Boston_24h_dual_ex2_tail005__20260911_095410/test_preds_perceiver3_mse_tail_9adaa995df_Boston_NCEPtoNCEP_perceiver3_ga4_nrh8_tr.npz": [
+      33204,
+      176446,
+      1789121976741969011
+    ],
+    "P1_WeightProbe/NCEP_CBBT_24h_dual_ex10_tail005__20260911_012153/config_used.sh": [
+      33204,
+      3500,
+      1789089713637031637
+    ],
+    "P1_WeightProbe/NCEP_CBBT_24h_dual_ex10_tail005__20260911_012153/best_perceiver3_mse_tail_1cb0346604_CBBT_NCEPtoNCEP_perceiver3_ga4_nrh8_trh8.pth": [
+      33204,
+      3690996,
+      1789091174716520983
+    ],
+    "P1_WeightProbe/NCEP_CBBT_24h_dual_ex10_tail005__20260911_012153/summary_perceiver3_mse_tail_1cb0346604_CBBT_NCEPtoNCEP_perceiver3_ga4_nrh8_trh8.json": [
+      33204,
+      1342,
+      1789091231853532757
+    ],
+    "P1_WeightProbe/NCEP_CBBT_24h_dual_ex10_tail005__20260911_012153/metrics_perceiver3_mse_tail_1cb0346604_CBBT_NCEPtoNCEP_perceiver3_ga4_nrh8_trh8.jsonl": [
+      33204,
+      92044,
+      1789091231141545065
+    ],
+    "P1_WeightProbe/NCEP_CBBT_24h_dual_ex10_tail005__20260911_012153/test_preds_perceiver3_mse_tail_1cb0346604_CBBT_NCEPtoNCEP_perceiver3_ga4_nrh8_trh8.npz": [
+      33204,
+      168806,
+      1789091231853532757
+    ],
+    "P1_WeightProbe/NCEP_CBBT_24h_dual_ex10_tail005__20260911_012153/exit_status": [
+      33204,
+      2,
+      1789091232729517615
+    ],
+    "P1_WeightProbe/NCEP_CBBT_24h_dual_ex10_tail005__20260911_012153/launcher.log": [
+      33204,
+      70826,
+      1789091232728517632
+    ],
+    "P1_WeightProbe/NCEP_CBBT_24h_dual_ex10_tail005__20260911_012153/config_perceiver3_mse_tail_1cb0346604_CBBT_NCEPtoNCEP_perceiver3_ga4_nrh8_trh8.json": [
+      33204,
+      2426,
+      1789089717036962964
+    ],
+    "P1_WeightProbe/NCEP_CBBT_24h_dual_ex10_tail005__20260911_012153/train_CBBT_NCEPtoNCEP_perceiver3_ga4_nrh8_trh8_L2_ff4.0_td0.0_stable1v3_exceedance_gmwindow_eq95_danone_lossmse_tail_tf0.05_tl0.05_hist24h_hid128_L2_bs256_lr5e-3_ep300_schcosine_xnzscore.log": [
+      33204,
+      68905,
+      1789091231853532757
+    ],
+    "P1_WeightProbe/NCEP_Boston_24h_dual_ex5_notail__20260911_090238/test_preds_perceiver3_mse_b3ecdd1759_Boston_NCEPtoNCEP_perceiver3_ga4_nrh8_tr.npz": [
+      33204,
+      172942,
+      1789118902600480130
+    ],
+    "P1_WeightProbe/NCEP_Boston_24h_dual_ex5_notail__20260911_090238/train_Boston_NCEPtoNCEP_perceiver3_ga4_nrh8_trh8_L2_ff4.0_td0.0_stable1v3_exceedance_gmwindow_eq95_danone_lossmse_hist24h_hid128_L2_bs256_lr5e-3_ep300_schcosine_xnzscore.log": [
+      33204,
+      67830,
+      1789118902601480113
+    ],
+    "P1_WeightProbe/NCEP_Boston_24h_dual_ex5_notail__20260911_090238/best_perceiver3_mse_b3ecdd1759_Boston_NCEPtoNCEP_perceiver3_ga4_nrh8_tr.pth": [
+      33204,
+      3732743,
+      1789118768973797751
+    ],
+    "P1_WeightProbe/NCEP_Boston_24h_dual_ex5_notail__20260911_090238/config_used.sh": [
+      33204,
+      3493,
+      1789117358481190804
+    ],
+    "P1_WeightProbe/NCEP_Boston_24h_dual_ex5_notail__20260911_090238/config_perceiver3_mse_b3ecdd1759_Boston_NCEPtoNCEP_perceiver3_ga4_nrh8_tr.json": [
+      33204,
+      2404,
+      1789117361904131572
+    ],
+    "P1_WeightProbe/NCEP_Boston_24h_dual_ex5_notail__20260911_090238/summary_perceiver3_mse_b3ecdd1759_Boston_NCEPtoNCEP_perceiver3_ga4_nrh8_tr.json": [
+      33204,
+      1321,
+      1789118902601480113
+    ],
+    "P1_WeightProbe/NCEP_Boston_24h_dual_ex5_notail__20260911_090238/exit_status": [
+      33204,
+      2,
+      1789118903494464647
+    ],
+    "P1_WeightProbe/NCEP_Boston_24h_dual_ex5_notail__20260911_090238/metrics_perceiver3_mse_b3ecdd1759_Boston_NCEPtoNCEP_perceiver3_ga4_nrh8_tr.jsonl": [
+      33204,
+      91794,
+      1789118901887492479
+    ],
+    "P1_WeightProbe/NCEP_Boston_24h_dual_ex5_notail__20260911_090238/launcher.log": [
+      33204,
+      69742,
+      1789118903494464647
+    ],
+    "P1_WeightProbe/NCEP_Battery_24h_dual_ex10_notail__20260911_060312/train_Battery_NCEPtoNCEP_perceiver3_ga4_nrh8_trh8_L2_ff4.0_td0.0_stable1v3_exceedance_gmwindow_eq95_danone_lossmse_hist24h_hid128_L2_bs256_lr5e-3_ep300_schcosine_xnzscore.log": [
+      33204,
+      70053,
+      1789108101441354832
+    ],
+    "P1_WeightProbe/NCEP_Battery_24h_dual_ex10_notail__20260911_060312/summary_perceiver3_mse_bd33111aa7_Battery_NCEPtoNCEP_perceiver3_ga4_nrh8_t.json": [
+      33204,
+      1324,
+      1789108101440354849
+    ],
+    "P1_WeightProbe/NCEP_Battery_24h_dual_ex10_notail__20260911_060312/best_perceiver3_mse_bd33111aa7_Battery_NCEPtoNCEP_perceiver3_ga4_nrh8_t.pth": [
+      33204,
+      3754055,
+      1789108065664972478
+    ],
+    "P1_WeightProbe/NCEP_Battery_24h_dual_ex10_notail__20260911_060312/metrics_perceiver3_mse_bd33111aa7_Battery_NCEPtoNCEP_perceiver3_ga4_nrh8_t.jsonl": [
+      33204,
+      91438,
+      1789108100739366946
+    ],
+    "P1_WeightProbe/NCEP_Battery_24h_dual_ex10_notail__20260911_060312/test_preds_perceiver3_mse_bd33111aa7_Battery_NCEPtoNCEP_perceiver3_ga4_nrh8_t.npz": [
+      33204,
+      170757,
+      1789108101440354849
+    ],
+    "P1_WeightProbe/NCEP_Battery_24h_dual_ex10_notail__20260911_060312/config_used.sh": [
+      33204,
+      3501,
+      1789106593131071626
+    ],
+    "P1_WeightProbe/NCEP_Battery_24h_dual_ex10_notail__20260911_060312/config_perceiver3_mse_bd33111aa7_Battery_NCEPtoNCEP_perceiver3_ga4_nrh8_t.json": [
+      33204,
+      2409,
+      1789106596511013900
+    ],
+    "P1_WeightProbe/NCEP_Battery_24h_dual_ex10_notail__20260911_060312/exit_status": [
+      33204,
+      2,
+      1789108102325339577
+    ],
+    "P1_WeightProbe/NCEP_Battery_24h_dual_ex10_notail__20260911_060312/launcher.log": [
+      33204,
+      71976,
+      1789108102325339577
+    ],
+    "P1_WeightProbe/NCEP_CBBT_24h_dual_ex5_tail005__20260911_003041/config_perceiver3_mse_tail_6a6962a950_CBBT_NCEPtoNCEP_perceiver3_ga4_nrh8_trh8.json": [
+      33204,
+      2424,
+      1789086644930925861
+    ],
+    "P1_WeightProbe/NCEP_CBBT_24h_dual_ex5_tail005__20260911_003041/test_preds_perceiver3_mse_tail_6a6962a950_CBBT_NCEPtoNCEP_perceiver3_ga4_nrh8_trh8.npz": [
+      33204,
+      169654,
+      1789088176329594783
+    ],
+    "P1_WeightProbe/NCEP_CBBT_24h_dual_ex5_tail005__20260911_003041/metrics_perceiver3_mse_tail_6a6962a950_CBBT_NCEPtoNCEP_perceiver3_ga4_nrh8_trh8.jsonl": [
+      33204,
+      92050,
+      1789088175627604741
+    ],
+    "P1_WeightProbe/NCEP_CBBT_24h_dual_ex5_tail005__20260911_003041/config_used.sh": [
+      33204,
+      3496,
+      1789086641438985728
+    ],
+    "P1_WeightProbe/NCEP_CBBT_24h_dual_ex5_tail005__20260911_003041/summary_perceiver3_mse_tail_6a6962a950_CBBT_NCEPtoNCEP_perceiver3_ga4_nrh8_trh8.json": [
+      33204,
+      1343,
+      1789088176329594783
+    ],
+    "P1_WeightProbe/NCEP_CBBT_24h_dual_ex5_tail005__20260911_003041/best_perceiver3_mse_tail_6a6962a950_CBBT_NCEPtoNCEP_perceiver3_ga4_nrh8_trh8.pth": [
+      33204,
+      3690996,
+      1789088119260396957
+    ],
+    "P1_WeightProbe/NCEP_CBBT_24h_dual_ex5_tail005__20260911_003041/exit_status": [
+      33204,
+      2,
+      1789088177226582056
+    ],
+    "P1_WeightProbe/NCEP_CBBT_24h_dual_ex5_tail005__20260911_003041/launcher.log": [
+      33204,
+      70325,
+      1789088177225582070
+    ],
+    "P1_WeightProbe/NCEP_CBBT_24h_dual_ex5_tail005__20260911_003041/train_CBBT_NCEPtoNCEP_perceiver3_ga4_nrh8_trh8_L2_ff4.0_td0.0_stable1v3_exceedance_gmwindow_eq95_danone_lossmse_tail_tf0.05_tl0.05_hist24h_hid128_L2_bs256_lr5e-3_ep300_schcosine_xnzscore.log": [
+      33204,
+      68410,
+      1789088176329594783
+    ],
+    "P1_WeightProbe/NCEP_Lewes_24h_dual_ex5_tail010__20260911_042113/metrics_perceiver3_mse_tail_9a8a384191_Lewes_NCEPtoNCEP_perceiver3_ga4_nrh8_trh.jsonl": [
+      33204,
+      91799,
+      1789102007656449920
+    ],
+    "P1_WeightProbe/NCEP_Lewes_24h_dual_ex5_tail010__20260911_042113/config_perceiver3_mse_tail_9a8a384191_Lewes_NCEPtoNCEP_perceiver3_ga4_nrh8_trh.json": [
+      33204,
+      2426,
+      1789100477292425051
+    ],
+    "P1_WeightProbe/NCEP_Lewes_24h_dual_ex5_tail010__20260911_042113/train_Lewes_NCEPtoNCEP_perceiver3_ga4_nrh8_trh8_L2_ff4.0_td0.0_stable1v3_exceedance_gmwindow_eq95_danone_lossmse_tail_tf0.05_tl0.10_hist24h_hid128_L2_bs256_lr5e-3_ep300_schcosine_xnzscore.log": [
+      33204,
+      67678,
+      1789102008424436100
+    ],
+    "P1_WeightProbe/NCEP_Lewes_24h_dual_ex5_tail010__20260911_042113/config_used.sh": [
+      33204,
+      3500,
+      1789100473827483586
+    ],
+    "P1_WeightProbe/NCEP_Lewes_24h_dual_ex5_tail010__20260911_042113/best_perceiver3_mse_tail_9a8a384191_Lewes_NCEPtoNCEP_perceiver3_ga4_nrh8_trh.pth": [
+      33204,
+      3712244,
+      1789101855091144671
+    ],
+    "P1_WeightProbe/NCEP_Lewes_24h_dual_ex5_tail010__20260911_042113/test_preds_perceiver3_mse_tail_9a8a384191_Lewes_NCEPtoNCEP_perceiver3_ga4_nrh8_trh.npz": [
+      33204,
+      168406,
+      1789102008424436100
+    ],
+    "P1_WeightProbe/NCEP_Lewes_24h_dual_ex5_tail010__20260911_042113/exit_status": [
+      33204,
+      2,
+      1789102009334419727
+    ],
+    "P1_WeightProbe/NCEP_Lewes_24h_dual_ex5_tail010__20260911_042113/launcher.log": [
+      33204,
+      69598,
+      1789102009334419727
+    ],
+    "P1_WeightProbe/NCEP_Lewes_24h_dual_ex5_tail010__20260911_042113/summary_perceiver3_mse_tail_9a8a384191_Lewes_NCEPtoNCEP_perceiver3_ga4_nrh8_trh.json": [
+      33204,
+      1335,
+      1789102008424436100
+    ],
+    "P1_WeightProbe/NCEP_CBBT_24h_dual_ex2_tail010__20260911_000447/config_used.sh": [
+      33204,
+      3496,
+      1789085087806264185
+    ],
+    "P1_WeightProbe/NCEP_CBBT_24h_dual_ex2_tail010__20260911_000447/config_perceiver3_mse_tail_704fca8123_CBBT_NCEPtoNCEP_perceiver3_ga4_nrh8_trh8.json": [
+      33204,
+      2423,
+      1789085091251202901
+    ],
+    "P1_WeightProbe/NCEP_CBBT_24h_dual_ex2_tail010__20260911_000447/metrics_perceiver3_mse_tail_704fca8123_CBBT_NCEPtoNCEP_perceiver3_ga4_nrh8_trh8.jsonl": [
+      33204,
+      91981,
+      1789086635241091975
+    ],
+    "P1_WeightProbe/NCEP_CBBT_24h_dual_ex2_tail010__20260911_000447/summary_perceiver3_mse_tail_704fca8123_CBBT_NCEPtoNCEP_perceiver3_ga4_nrh8_trh8.json": [
+      33204,
+      1342,
+      1789086635935080079
+    ],
+    "P1_WeightProbe/NCEP_CBBT_24h_dual_ex2_tail010__20260911_000447/test_preds_perceiver3_mse_tail_704fca8123_CBBT_NCEPtoNCEP_perceiver3_ga4_nrh8_trh8.npz": [
+      33204,
+      169681,
+      1789086635935080079
+    ],
+    "P1_WeightProbe/NCEP_CBBT_24h_dual_ex2_tail010__20260911_000447/train_CBBT_NCEPtoNCEP_perceiver3_ga4_nrh8_trh8_L2_ff4.0_td0.0_stable1v3_exceedance_gmwindow_eq95_danone_lossmse_tail_tf0.05_tl0.10_hist24h_hid128_L2_bs256_lr5e-3_ep300_schcosine_xnzscore.log": [
+      33204,
+      67549,
+      1789086635935080079
+    ],
+    "P1_WeightProbe/NCEP_CBBT_24h_dual_ex2_tail010__20260911_000447/exit_status": [
+      33204,
+      2,
+      1789086636813065030
+    ],
+    "P1_WeightProbe/NCEP_CBBT_24h_dual_ex2_tail010__20260911_000447/launcher.log": [
+      33204,
+      69464,
+      1789086636812065047
+    ],
+    "P1_WeightProbe/NCEP_CBBT_24h_dual_ex2_tail010__20260911_000447/best_perceiver3_mse_tail_704fca8123_CBBT_NCEPtoNCEP_perceiver3_ga4_nrh8_trh8.pth": [
+      33204,
+      3690996,
+      1789086604661615949
+    ],
+    "P1_WeightProbe/NCEP_CBBT_24h_dual_ex5_notail__20260910_224816/best_perceiver3_mse_6e775480e5_CBBT_NCEPtoNCEP_perceiver3_ga4_nrh8_trh8.pth": [
+      33204,
+      3690183,
+      1789081991046140990
+    ],
+    "P1_WeightProbe/NCEP_CBBT_24h_dual_ex5_notail__20260910_224816/test_preds_perceiver3_mse_6e775480e5_CBBT_NCEPtoNCEP_perceiver3_ga4_nrh8_trh8.npz": [
+      33204,
+      169445,
+      1789082022466609868
+    ],
+    "P1_WeightProbe/NCEP_CBBT_24h_dual_ex5_notail__20260910_224816/config_used.sh": [
+      33204,
+      3485,
+      1789080497004519309
+    ],
+    "P1_WeightProbe/NCEP_CBBT_24h_dual_ex5_notail__20260910_224816/train_CBBT_NCEPtoNCEP_perceiver3_ga4_nrh8_trh8_L2_ff4.0_td0.0_stable1v3_exceedance_gmwindow_eq95_danone_lossmse_hist24h_hid128_L2_bs256_lr5e-3_ep300_schcosine_xnzscore.log": [
+      33204,
+      68187,
+      1789082022467609851
+    ],
+    "P1_WeightProbe/NCEP_CBBT_24h_dual_ex5_notail__20260910_224816/summary_perceiver3_mse_6e775480e5_CBBT_NCEPtoNCEP_perceiver3_ga4_nrh8_trh8.json": [
+      33204,
+      1323,
+      1789082022466609868
+    ],
+    "P1_WeightProbe/NCEP_CBBT_24h_dual_ex5_notail__20260910_224816/exit_status": [
+      33204,
+      2,
+      1789082023361594738
+    ],
+    "P1_WeightProbe/NCEP_CBBT_24h_dual_ex5_notail__20260910_224816/launcher.log": [
+      33204,
+      70089,
+      1789082023361594738
+    ],
+    "P1_WeightProbe/NCEP_CBBT_24h_dual_ex5_notail__20260910_224816/metrics_perceiver3_mse_6e775480e5_CBBT_NCEPtoNCEP_perceiver3_ga4_nrh8_trh8.jsonl": [
+      33204,
+      92022,
+      1789082021726622378
+    ],
+    "P1_WeightProbe/NCEP_CBBT_24h_dual_ex5_notail__20260910_224816/config_perceiver3_mse_6e775480e5_CBBT_NCEPtoNCEP_perceiver3_ga4_nrh8_trh8.json": [
+      33204,
+      2398,
+      1789080500361461787
+    ],
+    "P1_WeightProbe/NCEP_Battery_24h_dual_ex5_notail__20260911_053744/train_Battery_NCEPtoNCEP_perceiver3_ga4_nrh8_trh8_L2_ff4.0_td0.0_stable1v3_exceedance_gmwindow_eq95_danone_lossmse_hist24h_hid128_L2_bs256_lr5e-3_ep300_schcosine_xnzscore.log": [
+      33204,
+      67836,
+      1789106589839127850
+    ],
+    "P1_WeightProbe/NCEP_Battery_24h_dual_ex5_notail__20260911_053744/config_perceiver3_mse_91f64ba852_Battery_NCEPtoNCEP_perceiver3_ga4_nrh8_t.json": [
+      33204,
+      2407,
+      1789105067958048553
+    ],
+    "P1_WeightProbe/NCEP_Battery_24h_dual_ex5_notail__20260911_053744/config_used.sh": [
+      33204,
+      3497,
+      1789105064579105824
+    ],
+    "P1_WeightProbe/NCEP_Battery_24h_dual_ex5_notail__20260911_053744/metrics_perceiver3_mse_91f64ba852_Battery_NCEPtoNCEP_perceiver3_ga4_nrh8_t.jsonl": [
+      33204,
+      91435,
+      1789106589118140164
+    ],
+    "P1_WeightProbe/NCEP_Battery_24h_dual_ex5_notail__20260911_053744/best_perceiver3_mse_91f64ba852_Battery_NCEPtoNCEP_perceiver3_ga4_nrh8_t.pth": [
+      33204,
+      3754055,
+      1789106437898724266
+    ],
+    "P1_WeightProbe/NCEP_Battery_24h_dual_ex5_notail__20260911_053744/exit_status": [
+      33204,
+      2,
+      1789106590748112326
+    ],
+    "P1_WeightProbe/NCEP_Battery_24h_dual_ex5_notail__20260911_053744/launcher.log": [
+      33204,
+      69753,
+      1789106590748112326
+    ],
+    "P1_WeightProbe/NCEP_Battery_24h_dual_ex5_notail__20260911_053744/summary_perceiver3_mse_91f64ba852_Battery_NCEPtoNCEP_perceiver3_ga4_nrh8_t.json": [
+      33204,
+      1320,
+      1789106589838127867
+    ],
+    "P1_WeightProbe/NCEP_Battery_24h_dual_ex5_notail__20260911_053744/test_preds_perceiver3_mse_91f64ba852_Battery_NCEPtoNCEP_perceiver3_ga4_nrh8_t.npz": [
+      33204,
+      175917,
+      1789106589838127867
+    ],
+    "P1_WeightProbe/NCEP_Battery_24h_dual_ex2_tail010__20260911_065420/test_preds_perceiver3_mse_tail_17489a32f8_Battery_NCEPtoNCEP_perceiver3_ga4_nrh8_t.npz": [
+      33204,
+      178951,
+      1789111217084193344
+    ],
+    "P1_WeightProbe/NCEP_Battery_24h_dual_ex2_tail010__20260911_065420/metrics_perceiver3_mse_tail_17489a32f8_Battery_NCEPtoNCEP_perceiver3_ga4_nrh8_t.jsonl": [
+      33204,
+      91459,
+      1789111216303206325
+    ],
+    "P1_WeightProbe/NCEP_Battery_24h_dual_ex2_tail010__20260911_065420/config_used.sh": [
+      33204,
+      3508,
+      1789109660322671584
+    ],
+    "P1_WeightProbe/NCEP_Battery_24h_dual_ex2_tail010__20260911_065420/config_perceiver3_mse_tail_17489a32f8_Battery_NCEPtoNCEP_perceiver3_ga4_nrh8_t.json": [
+      33204,
+      2432,
+      1789109663708613810
+    ],
+    "P1_WeightProbe/NCEP_Battery_24h_dual_ex2_tail010__20260911_065420/train_Battery_NCEPtoNCEP_perceiver3_ga4_nrh8_trh8_L2_ff4.0_td0.0_stable1v3_exceedance_gmwindow_eq95_danone_lossmse_tail_tf0.05_tl0.10_hist24h_hid128_L2_bs256_lr5e-3_ep300_schcosine_xnzscore.log": [
+      33204,
+      69043,
+      1789111217084193344
+    ],
+    "P1_WeightProbe/NCEP_Battery_24h_dual_ex2_tail010__20260911_065420/exit_status": [
+      33204,
+      2,
+      1789111217983178400
+    ],
+    "P1_WeightProbe/NCEP_Battery_24h_dual_ex2_tail010__20260911_065420/launcher.log": [
+      33204,
+      70973,
+      1789111217983178400
+    ],
+    "P1_WeightProbe/NCEP_Battery_24h_dual_ex2_tail010__20260911_065420/best_perceiver3_mse_tail_17489a32f8_Battery_NCEPtoNCEP_perceiver3_ga4_nrh8_t.pth": [
+      33204,
+      3754804,
+      1789111180417802551
+    ],
+    "P1_WeightProbe/NCEP_Battery_24h_dual_ex2_tail010__20260911_065420/summary_perceiver3_mse_tail_17489a32f8_Battery_NCEPtoNCEP_perceiver3_ga4_nrh8_t.json": [
+      33204,
+      1342,
+      1789111217084193344
+    ],
+    "P1_WeightProbe/NCEP_CBBT_24h_dual_ex10_notail__20260910_231345/config_perceiver3_mse_80472f0a65_CBBT_NCEPtoNCEP_perceiver3_ga4_nrh8_trh8.json": [
+      33204,
+      2400,
+      1789082029113497492
+    ],
+    "P1_WeightProbe/NCEP_CBBT_24h_dual_ex10_notail__20260910_231345/config_used.sh": [
+      33204,
+      3489,
+      1789082025618556580
+    ],
+    "P1_WeightProbe/NCEP_CBBT_24h_dual_ex10_notail__20260910_231345/summary_perceiver3_mse_80472f0a65_CBBT_NCEPtoNCEP_perceiver3_ga4_nrh8_trh8.json": [
+      33204,
+      1322,
+      1789083559901112645
+    ],
+    "P1_WeightProbe/NCEP_CBBT_24h_dual_ex10_notail__20260910_231345/best_perceiver3_mse_80472f0a65_CBBT_NCEPtoNCEP_perceiver3_ga4_nrh8_trh8.pth": [
+      33204,
+      3690183,
+      1789083514153112295
+    ],
+    "P1_WeightProbe/NCEP_CBBT_24h_dual_ex10_notail__20260910_231345/train_CBBT_NCEPtoNCEP_perceiver3_ga4_nrh8_trh8_L2_ff4.0_td0.0_stable1v3_exceedance_gmwindow_eq95_danone_lossmse_hist24h_hid128_L2_bs256_lr5e-3_ep300_schcosine_xnzscore.log": [
+      33204,
+      68559,
+      1789083559901112645
+    ],
+    "P1_WeightProbe/NCEP_CBBT_24h_dual_ex10_notail__20260910_231345/exit_status": [
+      33204,
+      2,
+      1789083560784093521
+    ],
+    "P1_WeightProbe/NCEP_CBBT_24h_dual_ex10_notail__20260910_231345/launcher.log": [
+      33204,
+      70467,
+      1789083560784093521
+    ],
+    "P1_WeightProbe/NCEP_CBBT_24h_dual_ex10_notail__20260910_231345/test_preds_perceiver3_mse_80472f0a65_CBBT_NCEPtoNCEP_perceiver3_ga4_nrh8_trh8.npz": [
+      33204,
+      167887,
+      1789083559901112645
+    ],
+    "P1_WeightProbe/NCEP_CBBT_24h_dual_ex10_notail__20260910_231345/metrics_perceiver3_mse_80472f0a65_CBBT_NCEPtoNCEP_perceiver3_ga4_nrh8_trh8.jsonl": [
+      33204,
+      92066,
+      1789083559216127486
+    ],
+    "P1_WeightProbe/NCEP_Lewes_24h_dual_ex10_notail__20260911_023849/config_used.sh": [
+      33204,
+      3493,
+      1789094329500636826
+    ],
+    "P1_WeightProbe/NCEP_Lewes_24h_dual_ex10_notail__20260911_023849/config_perceiver3_mse_ade1654f22_Lewes_NCEPtoNCEP_perceiver3_ga4_nrh8_trh.json": [
+      33204,
+      2403,
+      1789094332919576580
+    ],
+    "P1_WeightProbe/NCEP_Lewes_24h_dual_ex10_notail__20260911_023849/test_preds_perceiver3_mse_ade1654f22_Lewes_NCEPtoNCEP_perceiver3_ga4_nrh8_trh.npz": [
+      33204,
+      167591,
+      1789095835587566605
+    ],
+    "P1_WeightProbe/NCEP_Lewes_24h_dual_ex10_notail__20260911_023849/train_Lewes_NCEPtoNCEP_perceiver3_ga4_nrh8_trh8_L2_ff4.0_td0.0_stable1v3_exceedance_gmwindow_eq95_danone_lossmse_hist24h_hid128_L2_bs256_lr5e-3_ep300_schcosine_xnzscore.log": [
+      33204,
+      67950,
+      1789095835588566588
+    ],
+    "P1_WeightProbe/NCEP_Lewes_24h_dual_ex10_notail__20260911_023849/best_perceiver3_mse_ade1654f22_Lewes_NCEPtoNCEP_perceiver3_ga4_nrh8_trh.pth": [
+      33204,
+      3711495,
+      1789095685260130820
+    ],
+    "P1_WeightProbe/NCEP_Lewes_24h_dual_ex10_notail__20260911_023849/exit_status": [
+      33204,
+      2,
+      1789095836509551023
+    ],
+    "P1_WeightProbe/NCEP_Lewes_24h_dual_ex10_notail__20260911_023849/launcher.log": [
+      33204,
+      69863,
+      1789095836509551023
+    ],
+    "P1_WeightProbe/NCEP_Lewes_24h_dual_ex10_notail__20260911_023849/metrics_perceiver3_mse_ade1654f22_Lewes_NCEPtoNCEP_perceiver3_ga4_nrh8_trh.jsonl": [
+      33204,
+      91800,
+      1789095834889578401
+    ],
+    "P1_WeightProbe/NCEP_Lewes_24h_dual_ex10_notail__20260911_023849/summary_perceiver3_mse_ade1654f22_Lewes_NCEPtoNCEP_perceiver3_ga4_nrh8_trh.json": [
+      33204,
+      1322,
+      1789095835588566588
+    ],
+    "P1_WeightProbe/NCEP_Lewes_24h_dual_ex5_tail005__20260911_035529/train_Lewes_NCEPtoNCEP_perceiver3_ga4_nrh8_trh8_L2_ff4.0_td0.0_stable1v3_exceedance_gmwindow_eq95_danone_lossmse_tail_tf0.05_tl0.05_hist24h_hid128_L2_bs256_lr5e-3_ep300_schcosine_xnzscore.log": [
+      33204,
+      68539,
+      1789100469369558895
+    ],
+    "P1_WeightProbe/NCEP_Lewes_24h_dual_ex5_tail005__20260911_035529/best_perceiver3_mse_tail_4d092e795c_Lewes_NCEPtoNCEP_perceiver3_ga4_nrh8_trh.pth": [
+      33204,
+      3712244,
+      1789100382632024149
+    ],
+    "P1_WeightProbe/NCEP_Lewes_24h_dual_ex5_tail005__20260911_035529/summary_perceiver3_mse_tail_4d092e795c_Lewes_NCEPtoNCEP_perceiver3_ga4_nrh8_trh.json": [
+      33204,
+      1336,
+      1789100469369558895
+    ],
+    "P1_WeightProbe/NCEP_Lewes_24h_dual_ex5_tail005__20260911_035529/metrics_perceiver3_mse_tail_4d092e795c_Lewes_NCEPtoNCEP_perceiver3_ga4_nrh8_trh.jsonl": [
+      33204,
+      91791,
+      1789100468659570890
+    ],
+    "P1_WeightProbe/NCEP_Lewes_24h_dual_ex5_tail005__20260911_035529/config_perceiver3_mse_tail_4d092e795c_Lewes_NCEPtoNCEP_perceiver3_ga4_nrh8_trh.json": [
+      33204,
+      2427,
+      1789098933674442380
+    ],
+    "P1_WeightProbe/NCEP_Lewes_24h_dual_ex5_tail005__20260911_035529/config_used.sh": [
+      33204,
+      3500,
+      1789098930244499838
+    ],
+    "P1_WeightProbe/NCEP_Lewes_24h_dual_ex5_tail005__20260911_035529/exit_status": [
+      33204,
+      2,
+      1789100470243544131
+    ],
+    "P1_WeightProbe/NCEP_Lewes_24h_dual_ex5_tail005__20260911_035529/launcher.log": [
+      33204,
+      70459,
+      1789100470243544131
+    ],
+    "P1_WeightProbe/NCEP_Lewes_24h_dual_ex5_tail005__20260911_035529/test_preds_perceiver3_mse_tail_4d092e795c_Lewes_NCEPtoNCEP_perceiver3_ga4_nrh8_trh.npz": [
+      33204,
+      167744,
+      1789100469369558895
+    ],
+    "P1_WeightProbe/NCEP_Battery_24h_dual_ex10_tail005__20260911_081131/train_Battery_NCEPtoNCEP_perceiver3_ga4_nrh8_trh8_L2_ff4.0_td0.0_stable1v3_exceedance_gmwindow_eq95_danone_lossmse_tail_tf0.05_tl0.05_hist24h_hid128_L2_bs256_lr5e-3_ep300_schcosine_xnzscore.log": [
+      33204,
+      68062,
+      1789115810870380788
+    ],
+    "P1_WeightProbe/NCEP_Battery_24h_dual_ex10_tail005__20260911_081131/config_used.sh": [
+      33204,
+      3512,
+      1789114291276869898
+    ],
+    "P1_WeightProbe/NCEP_Battery_24h_dual_ex10_tail005__20260911_081131/config_perceiver3_mse_tail_765b99be26_Battery_NCEPtoNCEP_perceiver3_ga4_nrh8_t.json": [
+      33204,
+      2435,
+      1789114294737811860
+    ],
+    "P1_WeightProbe/NCEP_Battery_24h_dual_ex10_tail005__20260911_081131/test_preds_perceiver3_mse_tail_765b99be26_Battery_NCEPtoNCEP_perceiver3_ga4_nrh8_t.npz": [
+      33204,
+      175439,
+      1789115810870380788
+    ],
+    "P1_WeightProbe/NCEP_Battery_24h_dual_ex10_tail005__20260911_081131/summary_perceiver3_mse_tail_765b99be26_Battery_NCEPtoNCEP_perceiver3_ga4_nrh8_t.json": [
+      33204,
+      1341,
+      1789115810870380788
+    ],
+    "P1_WeightProbe/NCEP_Battery_24h_dual_ex10_tail005__20260911_081131/exit_status": [
+      33204,
+      2,
+      1789115811743366143
+    ],
+    "P1_WeightProbe/NCEP_Battery_24h_dual_ex10_tail005__20260911_081131/launcher.log": [
+      33204,
+      69998,
+      1789115811743366143
+    ],
+    "P1_WeightProbe/NCEP_Battery_24h_dual_ex10_tail005__20260911_081131/best_perceiver3_mse_tail_765b99be26_Battery_NCEPtoNCEP_perceiver3_ga4_nrh8_t.pth": [
+      33204,
+      3754804,
+      1789115678997592991
+    ],
+    "P1_WeightProbe/NCEP_Battery_24h_dual_ex10_tail005__20260911_081131/metrics_perceiver3_mse_tail_765b99be26_Battery_NCEPtoNCEP_perceiver3_ga4_nrh8_t.jsonl": [
+      33204,
+      91394,
+      1789115810167392581
+    ],
+    "P1_WeightProbe/NCEP_Battery_24h_dual_ex2_tail005__20260911_062826/config_perceiver3_mse_tail_2d3772c165_Battery_NCEPtoNCEP_perceiver3_ga4_nrh8_t.json": [
+      33204,
+      2433,
+      1789108110084205699
+    ],
+    "P1_WeightProbe/NCEP_Battery_24h_dual_ex2_tail005__20260911_062826/train_Battery_NCEPtoNCEP_perceiver3_ga4_nrh8_trh8_L2_ff4.0_td0.0_stable1v3_exceedance_gmwindow_eq95_danone_lossmse_tail_tf0.05_tl0.05_hist24h_hid128_L2_bs256_lr5e-3_ep300_schcosine_xnzscore.log": [
+      33204,
+      68305,
+      1789109655137760055
+    ],
+    "P1_WeightProbe/NCEP_Battery_24h_dual_ex2_tail005__20260911_062826/summary_perceiver3_mse_tail_2d3772c165_Battery_NCEPtoNCEP_perceiver3_ga4_nrh8_t.json": [
+      33204,
+      1343,
+      1789109655137760055
+    ],
+    "P1_WeightProbe/NCEP_Battery_24h_dual_ex2_tail005__20260911_062826/config_used.sh": [
+      33204,
+      3508,
+      1789108106673264551
+    ],
+    "P1_WeightProbe/NCEP_Battery_24h_dual_ex2_tail005__20260911_062826/best_perceiver3_mse_tail_2d3772c165_Battery_NCEPtoNCEP_perceiver3_ga4_nrh8_t.pth": [
+      33204,
+      3754804,
+      1789109531215874703
+    ],
+    "P1_WeightProbe/NCEP_Battery_24h_dual_ex2_tail005__20260911_062826/metrics_perceiver3_mse_tail_2d3772c165_Battery_NCEPtoNCEP_perceiver3_ga4_nrh8_t.jsonl": [
+      33204,
+      91448,
+      1789109654437771999
+    ],
+    "P1_WeightProbe/NCEP_Battery_24h_dual_ex2_tail005__20260911_062826/exit_status": [
+      33204,
+      2,
+      1789109656029744835
+    ],
+    "P1_WeightProbe/NCEP_Battery_24h_dual_ex2_tail005__20260911_062826/launcher.log": [
+      33204,
+      70235,
+      1789109656029744835
+    ],
+    "P1_WeightProbe/NCEP_Battery_24h_dual_ex2_tail005__20260911_062826/test_preds_perceiver3_mse_tail_2d3772c165_Battery_NCEPtoNCEP_perceiver3_ga4_nrh8_t.npz": [
+      33204,
+      179319,
+      1789109655137760055
+    ],
+    "P1_WeightProbe/NCEP_Battery_24h_dual_ex10_tail010__20260911_083654/config_perceiver3_mse_tail_5dd3aec956_Battery_NCEPtoNCEP_perceiver3_ga4_nrh8_t.json": [
+      33204,
+      2434,
+      1789115818299256166
+    ],
+    "P1_WeightProbe/NCEP_Battery_24h_dual_ex10_tail010__20260911_083654/config_used.sh": [
+      33204,
+      3512,
+      1789115814887313402
+    ],
+    "P1_WeightProbe/NCEP_Battery_24h_dual_ex10_tail010__20260911_083654/metrics_perceiver3_mse_tail_5dd3aec956_Battery_NCEPtoNCEP_perceiver3_ga4_nrh8_t.jsonl": [
+      33204,
+      90282,
+      1789117351959303676
+    ],
+    "P1_WeightProbe/NCEP_Battery_24h_dual_ex10_tail010__20260911_083654/train_Battery_NCEPtoNCEP_perceiver3_ga4_nrh8_trh8_L2_ff4.0_td0.0_stable1v3_exceedance_gmwindow_eq95_danone_lossmse_tail_tf0.05_tl0.10_hist24h_hid128_L2_bs256_lr5e-3_ep300_schcosine_xnzscore.log": [
+      33204,
+      63634,
+      1789117352702290817
+    ],
+    "P1_WeightProbe/NCEP_Battery_24h_dual_ex10_tail010__20260911_083654/best_perceiver3_mse_tail_5dd3aec956_Battery_NCEPtoNCEP_perceiver3_ga4_nrh8_t.pth": [
+      33204,
+      3754804,
+      1789116957248180666
+    ],
+    "P1_WeightProbe/NCEP_Battery_24h_dual_ex10_tail010__20260911_083654/summary_perceiver3_mse_tail_5dd3aec956_Battery_NCEPtoNCEP_perceiver3_ga4_nrh8_t.json": [
+      33204,
+      1342,
+      1789117352702290817
+    ],
+    "P1_WeightProbe/NCEP_Battery_24h_dual_ex10_tail010__20260911_083654/exit_status": [
+      33204,
+      2,
+      1789117353580275621
+    ],
+    "P1_WeightProbe/NCEP_Battery_24h_dual_ex10_tail010__20260911_083654/launcher.log": [
+      33204,
+      65570,
+      1789117353580275621
+    ],
+    "P1_WeightProbe/NCEP_Battery_24h_dual_ex10_tail010__20260911_083654/test_preds_perceiver3_mse_tail_5dd3aec956_Battery_NCEPtoNCEP_perceiver3_ga4_nrh8_t.npz": [
+      33204,
+      177053,
+      1789117352701290834
+    ],
+    "P1_WeightProbe/NCEP_Battery_24h_dual_ex5_tail005__20260911_072018/metrics_perceiver3_mse_tail_60b5064e56_Battery_NCEPtoNCEP_perceiver3_ga4_nrh8_t.jsonl": [
+      33204,
+      91474,
+      1789112765566404252
+    ],
+    "P1_WeightProbe/NCEP_Battery_24h_dual_ex5_tail005__20260911_072018/train_Battery_NCEPtoNCEP_perceiver3_ga4_nrh8_trh8_L2_ff4.0_td0.0_stable1v3_exceedance_gmwindow_eq95_danone_lossmse_tail_tf0.05_tl0.05_hist24h_hid128_L2_bs256_lr5e-3_ep300_schcosine_xnzscore.log": [
+      33204,
+      69289,
+      1789112766276392430
+    ],
+    "P1_WeightProbe/NCEP_Battery_24h_dual_ex5_tail005__20260911_072018/best_perceiver3_mse_tail_60b5064e56_Battery_NCEPtoNCEP_perceiver3_ga4_nrh8_t.pth": [
+      33204,
+      3754804,
+      1789112679962828710
+    ],
+    "P1_WeightProbe/NCEP_Battery_24h_dual_ex5_tail005__20260911_072018/config_used.sh": [
+      33204,
+      3508,
+      1789111219038160863
+    ],
+    "P1_WeightProbe/NCEP_Battery_24h_dual_ex5_tail005__20260911_072018/config_perceiver3_mse_tail_60b5064e56_Battery_NCEPtoNCEP_perceiver3_ga4_nrh8_t.json": [
+      33204,
+      2433,
+      1789111222524102913
+    ],
+    "P1_WeightProbe/NCEP_Battery_24h_dual_ex5_tail005__20260911_072018/test_preds_perceiver3_mse_tail_60b5064e56_Battery_NCEPtoNCEP_perceiver3_ga4_nrh8_t.npz": [
+      33204,
+      170504,
+      1789112766276392430
+    ],
+    "P1_WeightProbe/NCEP_Battery_24h_dual_ex5_tail005__20260911_072018/summary_perceiver3_mse_tail_60b5064e56_Battery_NCEPtoNCEP_perceiver3_ga4_nrh8_t.json": [
+      33204,
+      1343,
+      1789112766276392430
+    ],
+    "P1_WeightProbe/NCEP_Battery_24h_dual_ex5_tail005__20260911_072018/exit_status": [
+      33204,
+      2,
+      1789112767163377661
+    ],
+    "P1_WeightProbe/NCEP_Battery_24h_dual_ex5_tail005__20260911_072018/launcher.log": [
+      33204,
+      71219,
+      1789112767163377661
+    ],
+    "P1_WeightProbe/NCEP_CBBT_24h_dual_ex10_tail010__20260911_014716/test_preds_perceiver3_mse_tail_1113e0369b_CBBT_NCEPtoNCEP_perceiver3_ga4_nrh8_trh8.npz": [
+      33204,
+      167834,
+      1789092774137662147
+    ],
+    "P1_WeightProbe/NCEP_CBBT_24h_dual_ex10_tail010__20260911_014716/summary_perceiver3_mse_tail_1113e0369b_CBBT_NCEPtoNCEP_perceiver3_ga4_nrh8_trh8.json": [
+      33204,
+      1339,
+      1789092774137662147
+    ],
+    "P1_WeightProbe/NCEP_CBBT_24h_dual_ex10_tail010__20260911_014716/best_perceiver3_mse_tail_1113e0369b_CBBT_NCEPtoNCEP_perceiver3_ga4_nrh8_trh8.pth": [
+      33204,
+      3690996,
+      1789092617529303765
+    ],
+    "P1_WeightProbe/NCEP_CBBT_24h_dual_ex10_tail010__20260911_014716/config_used.sh": [
+      33204,
+      3500,
+      1789091237195440421
+    ],
+    "P1_WeightProbe/NCEP_CBBT_24h_dual_ex10_tail010__20260911_014716/config_perceiver3_mse_tail_1113e0369b_CBBT_NCEPtoNCEP_perceiver3_ga4_nrh8_trh8.json": [
+      33204,
+      2425,
+      1789091240712379631
+    ],
+    "P1_WeightProbe/NCEP_CBBT_24h_dual_ex10_tail010__20260911_014716/metrics_perceiver3_mse_tail_1113e0369b_CBBT_NCEPtoNCEP_perceiver3_ga4_nrh8_trh8.jsonl": [
+      33204,
+      92091,
+      1789092773408674458
+    ],
+    "P1_WeightProbe/NCEP_CBBT_24h_dual_ex10_tail010__20260911_014716/train_CBBT_NCEPtoNCEP_perceiver3_ga4_nrh8_trh8_L2_ff4.0_td0.0_stable1v3_exceedance_gmwindow_eq95_danone_lossmse_tail_tf0.05_tl0.10_hist24h_hid128_L2_bs256_lr5e-3_ep300_schcosine_xnzscore.log": [
+      33204,
+      68167,
+      1789092774137662147
+    ],
+    "P1_WeightProbe/NCEP_CBBT_24h_dual_ex10_tail010__20260911_014716/exit_status": [
+      33204,
+      2,
+      1789092775060646560
+    ],
+    "P1_WeightProbe/NCEP_CBBT_24h_dual_ex10_tail010__20260911_014716/launcher.log": [
+      33204,
+      70088,
+      1789092775059646577
+    ],
+    "P1_WeightProbe/NCEP_Lewes_24h_dual_ex2_tail005__20260911_030357/train_Lewes_NCEPtoNCEP_perceiver3_ga4_nrh8_trh8_L2_ff4.0_td0.0_stable1v3_exceedance_gmwindow_eq95_danone_lossmse_tail_tf0.05_tl0.05_hist24h_hid128_L2_bs256_lr5e-3_ep300_schcosine_xnzscore.log": [
+      33204,
+      68047,
+      1789097389510040067
+    ],
+    "P1_WeightProbe/NCEP_Lewes_24h_dual_ex2_tail005__20260911_030357/config_used.sh": [
+      33204,
+      3500,
+      1789095838035525233
+    ],
+    "P1_WeightProbe/NCEP_Lewes_24h_dual_ex2_tail005__20260911_030357/metrics_perceiver3_mse_tail_4fd563d91b_Lewes_NCEPtoNCEP_perceiver3_ga4_nrh8_trh.jsonl": [
+      33204,
+      91828,
+      1789097388733053382
+    ],
+    "P1_WeightProbe/NCEP_Lewes_24h_dual_ex2_tail005__20260911_030357/best_perceiver3_mse_tail_4fd563d91b_Lewes_NCEPtoNCEP_perceiver3_ga4_nrh8_trh.pth": [
+      33204,
+      3712244,
+      1789097327493102782
+    ],
+    "P1_WeightProbe/NCEP_Lewes_24h_dual_ex2_tail005__20260911_030357/test_preds_perceiver3_mse_tail_4fd563d91b_Lewes_NCEPtoNCEP_perceiver3_ga4_nrh8_trh.npz": [
+      33204,
+      167796,
+      1789097389510040067
+    ],
+    "P1_WeightProbe/NCEP_Lewes_24h_dual_ex2_tail005__20260911_030357/config_perceiver3_mse_tail_4fd563d91b_Lewes_NCEPtoNCEP_perceiver3_ga4_nrh8_trh.json": [
+      33204,
+      2427,
+      1789095841685463541
+    ],
+    "P1_WeightProbe/NCEP_Lewes_24h_dual_ex2_tail005__20260911_030357/exit_status": [
+      33204,
+      2,
+      1789097390392024952
+    ],
+    "P1_WeightProbe/NCEP_Lewes_24h_dual_ex2_tail005__20260911_030357/launcher.log": [
+      33204,
+      69967,
+      1789097390392024952
+    ],
+    "P1_WeightProbe/NCEP_Lewes_24h_dual_ex2_tail005__20260911_030357/summary_perceiver3_mse_tail_4fd563d91b_Lewes_NCEPtoNCEP_perceiver3_ga4_nrh8_trh.json": [
+      33204,
+      1336,
+      1789097389510040067
+    ],
+    "P1_WeightProbe/NCEP_CBBT_24h_dual_ex5_tail010__20260911_005619/metrics_perceiver3_mse_tail_5b909ddd22_CBBT_NCEPtoNCEP_perceiver3_ga4_nrh8_trh8.jsonl": [
+      33204,
+      92075,
+      1789089707790149896
+    ],
+    "P1_WeightProbe/NCEP_CBBT_24h_dual_ex5_tail010__20260911_005619/config_perceiver3_mse_tail_5b909ddd22_CBBT_NCEPtoNCEP_perceiver3_ga4_nrh8_trh8.json": [
+      33204,
+      2423,
+      1789088183448493680
+    ],
+    "P1_WeightProbe/NCEP_CBBT_24h_dual_ex5_tail010__20260911_005619/config_used.sh": [
+      33204,
+      3496,
+      1789088180045542037
+    ],
+    "P1_WeightProbe/NCEP_CBBT_24h_dual_ex5_tail010__20260911_005619/best_perceiver3_mse_tail_5b909ddd22_CBBT_NCEPtoNCEP_perceiver3_ga4_nrh8_trh8.pth": [
+      33204,
+      3690996,
+      1789089652386281180
+    ],
+    "P1_WeightProbe/NCEP_CBBT_24h_dual_ex5_tail010__20260911_005619/test_preds_perceiver3_mse_tail_5b909ddd22_CBBT_NCEPtoNCEP_perceiver3_ga4_nrh8_trh8.npz": [
+      33204,
+      169361,
+      1789089708553134452
+    ],
+    "P1_WeightProbe/NCEP_CBBT_24h_dual_ex5_tail010__20260911_005619/train_CBBT_NCEPtoNCEP_perceiver3_ga4_nrh8_trh8_L2_ff4.0_td0.0_stable1v3_exceedance_gmwindow_eq95_danone_lossmse_tail_tf0.05_tl0.10_hist24h_hid128_L2_bs256_lr5e-3_ep300_schcosine_xnzscore.log": [
+      33204,
+      68164,
+      1789089708554134432
+    ],
+    "P1_WeightProbe/NCEP_CBBT_24h_dual_ex5_tail010__20260911_005619/exit_status": [
+      33204,
+      2,
+      1789089709442116463
+    ],
+    "P1_WeightProbe/NCEP_CBBT_24h_dual_ex5_tail010__20260911_005619/launcher.log": [
+      33204,
+      70079,
+      1789089709441116483
+    ],
+    "P1_WeightProbe/NCEP_CBBT_24h_dual_ex5_tail010__20260911_005619/summary_perceiver3_mse_tail_5b909ddd22_CBBT_NCEPtoNCEP_perceiver3_ga4_nrh8_trh8.json": [
+      33204,
+      1342,
+      1789089708554134432
+    ],
+    "P0_QuickRun/NCEP_Boston_24h_single_tail_slope__20260910_200528": [
+      16893,
+      4096,
+      1789072245800230958
+    ],
+    "P0_QuickRun/NCEP_Boston_24h_single_mse__20260910_173457": [
+      16893,
+      4096,
+      1789063175652213922
+    ],
+    "P0_QuickRun/NCEP_CBBT_24h_single_tail_slope__20260910_095907": [
+      16893,
+      4096,
+      1789035839216284152
+    ],
+    "P0_QuickRun/NCEP_CBBT_24h_single_mse__20260910_072750": [
+      16893,
+      4096,
+      1789026763112906989
+    ],
+    "P0_QuickRun/NCEP_Lewes_24h_dual_slope__20260910_125507": [
+      16893,
+      4096,
+      1789046479387231264
+    ],
+    "P0_QuickRun/NCEP_Battery_24h_single_mse__20260910_141203": [
+      16893,
+      4096,
+      1789051009909589711
+    ],
+    "P0_QuickRun/NCEP_Battery_24h_single_tail__20260910_150245": [
+      16893,
+      4096,
+      1789054057766609778
+    ],
+    "P0_QuickRun/NCEP_Lewes_24h_dual_tail__20260910_120435": [
+      16893,
+      4096,
+      1789043410207552124
+    ],
+    "P0_QuickRun/NCEP_CBBT_24h_dual_mse__20260910_075244": [
+      16893,
+      4096,
+      1789028308336585592
+    ],
+    "P0_QuickRun/NCEP_Boston_24h_single_tail__20260910_182454": [
+      16893,
+      4096,
+      1789066152725322875
+    ],
+    "P0_QuickRun/NCEP_Battery_24h_dual_slope__20260910_161806": [
+      16893,
+      4096,
+      1789058643789424840
+    ],
+    "P0_QuickRun/NCEP_Battery_24h_dual_tail__20260910_152739": [
+      16893,
+      4096,
+      1789055573516741242
+    ],
+    "P0_QuickRun/NCEP_Boston_24h_dual_tail_slope__20260910_203047": [
+      16893,
+      4096,
+      1789073806704480927
+    ],
+    "P0_QuickRun/NCEP_Battery_24h_single_slope__20260910_155257": [
+      16893,
+      4096,
+      1789057081743915300
+    ],
+    "P0_QuickRun/NCEP_CBBT_24h_dual_slope__20260910_093323": [
+      16893,
+      4096,
+      1789034344840715040
+    ],
+    "P0_QuickRun/NCEP_Lewes_24h_single_tail_slope__20260910_132121": [
+      16893,
+      4096,
+      1789047979085009976
+    ],
+    "P0_QuickRun/NCEP_Lewes_24h_single_mse__20260910_104959": [
+      16893,
+      4096,
+      1789038872328596160
+    ],
+    "P0_QuickRun/NCEP_Lewes_24h_single_tail__20260910_114006": [
+      16893,
+      4096,
+      1789041873203401789
+    ],
+    "P0_QuickRun/NCEP_Boston_24h_single_slope__20260910_191516": [
+      16893,
+      4096,
+      1789069214565203933
+    ],
+    "P0_QuickRun/NCEP_CBBT_24h_dual_tail_slope__20260910_102401": [
+      16893,
+      4096,
+      1789037399135841172
+    ],
+    "P0_QuickRun/NCEP_Lewes_24h_single_slope__20260910_123014": [
+      16893,
+      4096,
+      1789044907140364477
+    ],
+    "P0_QuickRun/NCEP_Boston_24h_dual_slope__20260910_194015": [
+      16893,
+      4096,
+      1789070727000737233
+    ],
+    "P0_QuickRun/NCEP_Boston_24h_dual_mse__20260910_175936": [
+      16893,
+      4096,
+      1789064692179198386
+    ],
+    "P0_QuickRun/NCEP_Battery_24h_single_tail_slope__20260910_164405": [
+      16893,
+      4096,
+      1789060149204211093
+    ],
+    "P0_QuickRun/NCEP_Battery_24h_dual_mse__20260910_143652": [
+      16893,
+      4096,
+      1789052563092183738
+    ],
+    "P0_QuickRun/NCEP_CBBT_24h_dual_tail__20260910_084311": [
+      16893,
+      4096,
+      1789031332871743014
+    ],
+    "P0_QuickRun/NCEP_Battery_24h_dual_tail_slope__20260910_170913": [
+      16893,
+      4096,
+      1789061694987264619
+    ],
+    "P0_QuickRun/NCEP_Lewes_24h_dual_tail_slope__20260910_134619": [
+      16893,
+      4096,
+      1789049518617903603
+    ],
+    "P0_QuickRun/NCEP_Boston_24h_dual_tail__20260910_184913": [
+      16893,
+      4096,
+      1789067716183742390
+    ],
+    "P0_QuickRun/NCEP_CBBT_24h_single_slope__20260910_090855": [
+      16893,
+      4096,
+      1789032803322881142
+    ],
+    "P0_QuickRun/NCEP_CBBT_24h_single_tail__20260910_081833": [
+      16893,
+      4096,
+      1789029789527182942
+    ],
+    "P0_QuickRun/NCEP_Lewes_24h_dual_mse__20260910_111433": [
+      16893,
+      4096,
+      1789040402799952109
+    ],
+    "P0_QuickRun/NCEP_Boston_24h_single_tail_slope__20260910_200528/best_perceiver3_mse_tail_slope_98a58d1fd5_Boston_NCEPtoNCEP_perceiver3_ga4_nrh8_tr.pth": [
+      33204,
+      3463202,
+      1789072199406968713
+    ],
+    "P0_QuickRun/NCEP_Boston_24h_single_tail_slope__20260910_200528/train_Boston_NCEPtoNCEP_perceiver3_ga4_nrh8_trh8_L2_ff4.0_td0.0_stable1v3_exceedance_hsingle_lossmse_tail_slope_tf0.05_tl0.025_sl0.01_sms0.10_charb_hist24h_hid128_L2_bs256_lr5e-3_ep300_schcosine_xnzscore.log": [
+      33204,
+      69194,
+      1789072244923244923
+    ],
+    "P0_QuickRun/NCEP_Boston_24h_single_tail_slope__20260910_200528/summary_perceiver3_mse_tail_slope_98a58d1fd5_Boston_NCEPtoNCEP_perceiver3_ga4_nrh8_tr.json": [
+      33204,
+      1038,
+      1789072244923244923
+    ],
+    "P0_QuickRun/NCEP_Boston_24h_single_tail_slope__20260910_200528/config_used.sh": [
+      33204,
+      3513,
+      1789070729153700475
+    ],
+    "P0_QuickRun/NCEP_Boston_24h_single_tail_slope__20260910_200528/test_preds_perceiver3_mse_tail_slope_98a58d1fd5_Boston_NCEPtoNCEP_perceiver3_ga4_nrh8_tr.npz": [
+      33204,
+      162056,
+      1789072244922244939
+    ],
+    "P0_QuickRun/NCEP_Boston_24h_single_tail_slope__20260910_200528/metrics_perceiver3_mse_tail_slope_98a58d1fd5_Boston_NCEPtoNCEP_perceiver3_ga4_nrh8_tr.jsonl": [
+      33204,
+      91753,
+      1789072244201256420
+    ],
+    "P0_QuickRun/NCEP_Boston_24h_single_tail_slope__20260910_200528/config_perceiver3_mse_tail_slope_98a58d1fd5_Boston_NCEPtoNCEP_perceiver3_ga4_nrh8_tr.json": [
+      33204,
+      2452,
+      1789070732565642226
+    ],
+    "P0_QuickRun/NCEP_Boston_24h_single_tail_slope__20260910_200528/exit_status": [
+      33204,
+      2,
+      1789072245800230958
+    ],
+    "P0_QuickRun/NCEP_Boston_24h_single_tail_slope__20260910_200528/launcher.log": [
+      33204,
+      71124,
+      1789072245800230958
+    ],
+    "P0_QuickRun/NCEP_Boston_24h_single_mse__20260910_173457/metrics_perceiver3_mse_1ab20a73a8_Boston_NCEPtoNCEP_perceiver3_ga4_nrh8_tr.jsonl": [
+      33204,
+      91677,
+      1789063174073249166
+    ],
+    "P0_QuickRun/NCEP_Boston_24h_single_mse__20260910_173457/config_used.sh": [
+      33204,
+      3481,
+      1789061697778217764
+    ],
+    "P0_QuickRun/NCEP_Boston_24h_single_mse__20260910_173457/best_perceiver3_mse_1ab20a73a8_Boston_NCEPtoNCEP_perceiver3_ga4_nrh8_tr.pth": [
+      33204,
+      3461986,
+      1789063091391128431
+    ],
+    "P0_QuickRun/NCEP_Boston_24h_single_mse__20260910_173457/test_preds_perceiver3_mse_1ab20a73a8_Boston_NCEPtoNCEP_perceiver3_ga4_nrh8_tr.npz": [
+      33204,
+      162072,
+      1789063174780233383
+    ],
+    "P0_QuickRun/NCEP_Boston_24h_single_mse__20260910_173457/train_Boston_NCEPtoNCEP_perceiver3_ga4_nrh8_trh8_L2_ff4.0_td0.0_stable1v3_exceedance_hsingle_lossmse_hist24h_hid128_L2_bs256_lr5e-3_ep300_schcosine_xnzscore.log": [
+      33204,
+      67431,
+      1789063174781233360
+    ],
+    "P0_QuickRun/NCEP_Boston_24h_single_mse__20260910_173457/summary_perceiver3_mse_1ab20a73a8_Boston_NCEPtoNCEP_perceiver3_ga4_nrh8_tr.json": [
+      33204,
+      998,
+      1789063174780233383
+    ],
+    "P0_QuickRun/NCEP_Boston_24h_single_mse__20260910_173457/exit_status": [
+      33204,
+      2,
+      1789063175652213922
+    ],
+    "P0_QuickRun/NCEP_Boston_24h_single_mse__20260910_173457/launcher.log": [
+      33204,
+      69315,
+      1789063175652213922
+    ],
+    "P0_QuickRun/NCEP_Boston_24h_single_mse__20260910_173457/config_perceiver3_mse_1ab20a73a8_Boston_NCEPtoNCEP_perceiver3_ga4_nrh8_tr.json": [
+      33204,
+      2385,
+      1789061701215160065
+    ],
+    "P0_QuickRun/NCEP_CBBT_24h_single_tail_slope__20260910_095907/best_perceiver3_mse_tail_slope_64d74034f9_CBBT_NCEPtoNCEP_perceiver3_ga4_nrh8_trh8.pth": [
+      33204,
+      3420642,
+      1789035752500826638
+    ],
+    "P0_QuickRun/NCEP_CBBT_24h_single_tail_slope__20260910_095907/config_used.sh": [
+      33204,
+      3505,
+      1789034347687651931
+    ],
+    "P0_QuickRun/NCEP_CBBT_24h_single_tail_slope__20260910_095907/config_perceiver3_mse_tail_slope_64d74034f9_CBBT_NCEPtoNCEP_perceiver3_ga4_nrh8_trh8.json": [
+      33204,
+      2446,
+      1789034351092576548
+    ],
+    "P0_QuickRun/NCEP_CBBT_24h_single_tail_slope__20260910_095907/train_CBBT_NCEPtoNCEP_perceiver3_ga4_nrh8_trh8_L2_ff4.0_td0.0_stable1v3_exceedance_hsingle_lossmse_tail_slope_tf0.05_tl0.025_sl0.01_sms0.10_charb_hist24h_hid128_L2_bs256_lr5e-3_ep300_schcosine_xnzscore.log": [
+      33204,
+      68567,
+      1789035838373299128
+    ],
+    "P0_QuickRun/NCEP_CBBT_24h_single_tail_slope__20260910_095907/test_preds_perceiver3_mse_tail_slope_64d74034f9_CBBT_NCEPtoNCEP_perceiver3_ga4_nrh8_trh8.npz": [
+      33204,
+      162531,
+      1789035838373299128
+    ],
+    "P0_QuickRun/NCEP_CBBT_24h_single_tail_slope__20260910_095907/metrics_perceiver3_mse_tail_slope_64d74034f9_CBBT_NCEPtoNCEP_perceiver3_ga4_nrh8_trh8.jsonl": [
+      33204,
+      91924,
+      1789035837682311404
+    ],
+    "P0_QuickRun/NCEP_CBBT_24h_single_tail_slope__20260910_095907/exit_status": [
+      33204,
+      2,
+      1789035839216284152
+    ],
+    "P0_QuickRun/NCEP_CBBT_24h_single_tail_slope__20260910_095907/launcher.log": [
+      33204,
+      70487,
+      1789035839216284152
+    ],
+    "P0_QuickRun/NCEP_CBBT_24h_single_tail_slope__20260910_095907/summary_perceiver3_mse_tail_slope_64d74034f9_CBBT_NCEPtoNCEP_perceiver3_ga4_nrh8_trh8.json": [
+      33204,
+      1041,
+      1789035838373299128
+    ],
+    "P0_QuickRun/NCEP_CBBT_24h_single_mse__20260910_072750/best_perceiver3_mse_5658595b7f_CBBT_NCEPtoNCEP_perceiver3_ga4_nrh8_trh8.pth": [
+      33204,
+      3419426,
+      1789026676652422872
+    ],
+    "P0_QuickRun/NCEP_CBBT_24h_single_mse__20260910_072750/summary_perceiver3_mse_5658595b7f_CBBT_NCEPtoNCEP_perceiver3_ga4_nrh8_trh8.json": [
+      33204,
+      994,
+      1789026762237922293
+    ],
+    "P0_QuickRun/NCEP_CBBT_24h_single_mse__20260910_072750/config_perceiver3_mse_5658595b7f_CBBT_NCEPtoNCEP_perceiver3_ga4_nrh8_trh8.json": [
+      33204,
+      2379,
+      1789025274499590713
+    ],
+    "P0_QuickRun/NCEP_CBBT_24h_single_mse__20260910_072750/train_CBBT_NCEPtoNCEP_perceiver3_ga4_nrh8_trh8_L2_ff4.0_td0.0_stable1v3_exceedance_hsingle_lossmse_hist24h_hid128_L2_bs256_lr5e-3_ep300_schcosine_xnzscore.log": [
+      33204,
+      67542,
+      1789026762237922293
+    ],
+    "P0_QuickRun/NCEP_CBBT_24h_single_mse__20260910_072750/config_used.sh": [
+      33204,
+      3473,
+      1789025271115646999
+    ],
+    "P0_QuickRun/NCEP_CBBT_24h_single_mse__20260910_072750/metrics_perceiver3_mse_5658595b7f_CBBT_NCEPtoNCEP_perceiver3_ga4_nrh8_trh8.jsonl": [
+      33204,
+      91897,
+      1789026761503935131
+    ],
+    "P0_QuickRun/NCEP_CBBT_24h_single_mse__20260910_072750/test_preds_perceiver3_mse_5658595b7f_CBBT_NCEPtoNCEP_perceiver3_ga4_nrh8_trh8.npz": [
+      33204,
+      162325,
+      1789026762237922293
+    ],
+    "P0_QuickRun/NCEP_CBBT_24h_single_mse__20260910_072750/exit_status": [
+      33204,
+      2,
+      1789026763112906989
+    ],
+    "P0_QuickRun/NCEP_CBBT_24h_single_mse__20260910_072750/launcher.log": [
+      33204,
+      69416,
+      1789026763112906989
+    ],
+    "P0_QuickRun/NCEP_Lewes_24h_dual_slope__20260910_125507/best_perceiver3_mse_slope_75a757d56d_Lewes_NCEPtoNCEP_perceiver3_ga4_nrh8_trh.pth": [
+      33204,
+      3712317,
+      1789046391539700888
+    ],
+    "P0_QuickRun/NCEP_Lewes_24h_dual_slope__20260910_125507/config_perceiver3_mse_slope_75a757d56d_Lewes_NCEPtoNCEP_perceiver3_ga4_nrh8_trh.json": [
+      33204,
+      2426,
+      1789044911274296939
+    ],
+    "P0_QuickRun/NCEP_Lewes_24h_dual_slope__20260910_125507/test_preds_perceiver3_mse_slope_75a757d56d_Lewes_NCEPtoNCEP_perceiver3_ga4_nrh8_trh.npz": [
+      33204,
+      169212,
+      1789046478540245436
+    ],
+    "P0_QuickRun/NCEP_Lewes_24h_dual_slope__20260910_125507/train_Lewes_NCEPtoNCEP_perceiver3_ga4_nrh8_trh8_L2_ff4.0_td0.0_stable1v3_exceedance_gmwindow_eq95_danone_lossmse_slope_sl0.01_sms0.10_charb_hist24h_hid128_L2_bs256_lr5e-3_ep300_schcosine_xnzscore.log": [
+      33204,
+      69455,
+      1789046478541245419
+    ],
+    "P0_QuickRun/NCEP_Lewes_24h_dual_slope__20260910_125507/config_used.sh": [
+      33204,
+      3481,
+      1789044907814353467
+    ],
+    "P0_QuickRun/NCEP_Lewes_24h_dual_slope__20260910_125507/summary_perceiver3_mse_slope_75a757d56d_Lewes_NCEPtoNCEP_perceiver3_ga4_nrh8_trh.json": [
+      33204,
+      1346,
+      1789046478540245436
+    ],
+    "P0_QuickRun/NCEP_Lewes_24h_dual_slope__20260910_125507/exit_status": [
+      33204,
+      2,
+      1789046479388231248
+    ],
+    "P0_QuickRun/NCEP_Lewes_24h_dual_slope__20260910_125507/launcher.log": [
+      33204,
+      71338,
+      1789046479387231264
+    ],
+    "P0_QuickRun/NCEP_Lewes_24h_dual_slope__20260910_125507/metrics_perceiver3_mse_slope_75a757d56d_Lewes_NCEPtoNCEP_perceiver3_ga4_nrh8_trh.jsonl": [
+      33204,
+      91791,
+      1789046477848257013
+    ],
+    "P0_QuickRun/NCEP_Battery_24h_single_mse__20260910_141203/config_perceiver3_mse_0f0e0aa117_Battery_NCEPtoNCEP_perceiver3_ga4_nrh8_t.json": [
+      33204,
+      2388,
+      1789049527286756647
+    ],
+    "P0_QuickRun/NCEP_Battery_24h_single_mse__20260910_141203/config_used.sh": [
+      33204,
+      3485,
+      1789049523822815367
+    ],
+    "P0_QuickRun/NCEP_Battery_24h_single_mse__20260910_141203/test_preds_perceiver3_mse_0f0e0aa117_Battery_NCEPtoNCEP_perceiver3_ga4_nrh8_t.npz": [
+      33204,
+      164491,
+      1789051009070604123
+    ],
+    "P0_QuickRun/NCEP_Battery_24h_single_mse__20260910_141203/train_Battery_NCEPtoNCEP_perceiver3_ga4_nrh8_trh8_L2_ff4.0_td0.0_stable1v3_exceedance_hsingle_lossmse_hist24h_hid128_L2_bs256_lr5e-3_ep300_schcosine_xnzscore.log": [
+      33204,
+      68298,
+      1789051009070604123
+    ],
+    "P0_QuickRun/NCEP_Battery_24h_single_mse__20260910_141203/summary_perceiver3_mse_0f0e0aa117_Battery_NCEPtoNCEP_perceiver3_ga4_nrh8_t.json": [
+      33204,
+      997,
+      1789051009070604123
+    ],
+    "P0_QuickRun/NCEP_Battery_24h_single_mse__20260910_141203/exit_status": [
+      33204,
+      2,
+      1789051009910589694
+    ],
+    "P0_QuickRun/NCEP_Battery_24h_single_mse__20260910_141203/launcher.log": [
+      33204,
+      70187,
+      1789051009909589711
+    ],
+    "P0_QuickRun/NCEP_Battery_24h_single_mse__20260910_141203/metrics_perceiver3_mse_0f0e0aa117_Battery_NCEPtoNCEP_perceiver3_ga4_nrh8_t.jsonl": [
+      33204,
+      91367,
+      1789051008328616870
+    ],
+    "P0_QuickRun/NCEP_Battery_24h_single_mse__20260910_141203/best_perceiver3_mse_0f0e0aa117_Battery_NCEPtoNCEP_perceiver3_ga4_nrh8_t.pth": [
+      33204,
+      3483298,
+      1789050925118048162
+    ],
+    "P0_QuickRun/NCEP_Battery_24h_single_tail__20260910_150245/metrics_perceiver3_mse_tail_fa5b194662_Battery_NCEPtoNCEP_perceiver3_ga4_nrh8_t.jsonl": [
+      33204,
+      91395,
+      1789054056167637999
+    ],
+    "P0_QuickRun/NCEP_Battery_24h_single_tail__20260910_150245/config_used.sh": [
+      33204,
+      3493,
+      1789052566029134007
+    ],
+    "P0_QuickRun/NCEP_Battery_24h_single_tail__20260910_150245/test_preds_perceiver3_mse_tail_fa5b194662_Battery_NCEPtoNCEP_perceiver3_ga4_nrh8_t.npz": [
+      33204,
+      164539,
+      1789054056912624850
+    ],
+    "P0_QuickRun/NCEP_Battery_24h_single_tail__20260910_150245/config_perceiver3_mse_tail_fa5b194662_Battery_NCEPtoNCEP_perceiver3_ga4_nrh8_t.json": [
+      33204,
+      2416,
+      1789052569433076369
+    ],
+    "P0_QuickRun/NCEP_Battery_24h_single_tail__20260910_150245/summary_perceiver3_mse_tail_fa5b194662_Battery_NCEPtoNCEP_perceiver3_ga4_nrh8_t.json": [
+      33204,
+      1018,
+      1789054056912624850
+    ],
+    "P0_QuickRun/NCEP_Battery_24h_single_tail__20260910_150245/best_perceiver3_mse_tail_fa5b194662_Battery_NCEPtoNCEP_perceiver3_ga4_nrh8_t.pth": [
+      33204,
+      3484066,
+      1789053986991860328
+    ],
+    "P0_QuickRun/NCEP_Battery_24h_single_tail__20260910_150245/exit_status": [
+      33204,
+      2,
+      1789054057766609778
+    ],
+    "P0_QuickRun/NCEP_Battery_24h_single_tail__20260910_150245/launcher.log": [
+      33204,
+      71162,
+      1789054057766609778
+    ],
+    "P0_QuickRun/NCEP_Battery_24h_single_tail__20260910_150245/train_Battery_NCEPtoNCEP_perceiver3_ga4_nrh8_trh8_L2_ff4.0_td0.0_stable1v3_exceedance_hsingle_lossmse_tail_tf0.05_tl0.025_hist24h_hid128_L2_bs256_lr5e-3_ep300_schcosine_xnzscore.log": [
+      33204,
+      69263,
+      1789054056912624850
+    ],
+    "P0_QuickRun/NCEP_Lewes_24h_dual_tail__20260910_120435/config_perceiver3_mse_tail_06a576c72b_Lewes_NCEPtoNCEP_perceiver3_ga4_nrh8_trh.json": [
+      33204,
+      2419,
+      1789041879071303795
+    ],
+    "P0_QuickRun/NCEP_Lewes_24h_dual_tail__20260910_120435/config_used.sh": [
+      33204,
+      3477,
+      1789041875609361608
+    ],
+    "P0_QuickRun/NCEP_Lewes_24h_dual_tail__20260910_120435/test_preds_perceiver3_mse_tail_06a576c72b_Lewes_NCEPtoNCEP_perceiver3_ga4_nrh8_trh.npz": [
+      33204,
+      167623,
+      1789043409370566601
+    ],
+    "P0_QuickRun/NCEP_Lewes_24h_dual_tail__20260910_120435/train_Lewes_NCEPtoNCEP_perceiver3_ga4_nrh8_trh8_L2_ff4.0_td0.0_stable1v3_exceedance_gmwindow_eq95_danone_lossmse_tail_tf0.05_tl0.025_hist24h_hid128_L2_bs256_lr5e-3_ep300_schcosine_xnzscore.log": [
+      33204,
+      68769,
+      1789043409371566584
+    ],
+    "P0_QuickRun/NCEP_Lewes_24h_dual_tail__20260910_120435/best_perceiver3_mse_tail_06a576c72b_Lewes_NCEPtoNCEP_perceiver3_ga4_nrh8_trh.pth": [
+      33204,
+      3712244,
+      1789043337892805293
+    ],
+    "P0_QuickRun/NCEP_Lewes_24h_dual_tail__20260910_120435/exit_status": [
+      33204,
+      2,
+      1789043410207552124
+    ],
+    "P0_QuickRun/NCEP_Lewes_24h_dual_tail__20260910_120435/launcher.log": [
+      33204,
+      70646,
+      1789043410207552124
+    ],
+    "P0_QuickRun/NCEP_Lewes_24h_dual_tail__20260910_120435/metrics_perceiver3_mse_tail_06a576c72b_Lewes_NCEPtoNCEP_perceiver3_ga4_nrh8_trh.jsonl": [
+      33204,
+      91811,
+      1789043408654578986
+    ],
+    "P0_QuickRun/NCEP_Lewes_24h_dual_tail__20260910_120435/summary_perceiver3_mse_tail_06a576c72b_Lewes_NCEPtoNCEP_perceiver3_ga4_nrh8_trh.json": [
+      33204,
+      1336,
+      1789043409370566601
+    ],
+    "P0_QuickRun/NCEP_CBBT_24h_dual_mse__20260910_075244/metrics_perceiver3_mse_445e9f6c51_CBBT_NCEPtoNCEP_perceiver3_ga4_nrh8_trh8.jsonl": [
+      33204,
+      92028,
+      1789028306741610688
+    ],
+    "P0_QuickRun/NCEP_CBBT_24h_dual_mse__20260910_075244/config_used.sh": [
+      33204,
+      3465,
+      1789026764665879829
+    ],
+    "P0_QuickRun/NCEP_CBBT_24h_dual_mse__20260910_075244/test_preds_perceiver3_mse_445e9f6c51_CBBT_NCEPtoNCEP_perceiver3_ga4_nrh8_trh8.npz": [
+      33204,
+      169605,
+      1789028307466599282
+    ],
+    "P0_QuickRun/NCEP_CBBT_24h_dual_mse__20260910_075244/train_CBBT_NCEPtoNCEP_perceiver3_ga4_nrh8_trh8_L2_ff4.0_td0.0_stable1v3_exceedance_gmwindow_eq95_danone_lossmse_hist24h_hid128_L2_bs256_lr5e-3_ep300_schcosine_xnzscore.log": [
+      33204,
+      69397,
+      1789028307466599282
+    ],
+    "P0_QuickRun/NCEP_CBBT_24h_dual_mse__20260910_075244/config_perceiver3_mse_445e9f6c51_CBBT_NCEPtoNCEP_perceiver3_ga4_nrh8_trh8.json": [
+      33204,
+      2388,
+      1789026768157818766
+    ],
+    "P0_QuickRun/NCEP_CBBT_24h_dual_mse__20260910_075244/summary_perceiver3_mse_445e9f6c51_CBBT_NCEPtoNCEP_perceiver3_ga4_nrh8_trh8.json": [
+      33204,
+      1320,
+      1789028307466599282
+    ],
+    "P0_QuickRun/NCEP_CBBT_24h_dual_mse__20260910_075244/exit_status": [
+      33204,
+      2,
+      1789028308336585592
+    ],
+    "P0_QuickRun/NCEP_CBBT_24h_dual_mse__20260910_075244/launcher.log": [
+      33204,
+      71259,
+      1789028308336585592
+    ],
+    "P0_QuickRun/NCEP_CBBT_24h_dual_mse__20260910_075244/best_perceiver3_mse_445e9f6c51_CBBT_NCEPtoNCEP_perceiver3_ga4_nrh8_trh8.pth": [
+      33204,
+      3690183,
+      1789028251559475448
+    ],
+    "P0_QuickRun/NCEP_Boston_24h_single_tail__20260910_182454/test_preds_perceiver3_mse_tail_2966b39eba_Boston_NCEPtoNCEP_perceiver3_ga4_nrh8_tr.npz": [
+      33204,
+      162278,
+      1789066151888337649
+    ],
+    "P0_QuickRun/NCEP_Boston_24h_single_tail__20260910_182454/summary_perceiver3_mse_tail_2966b39eba_Boston_NCEPtoNCEP_perceiver3_ga4_nrh8_tr.json": [
+      33204,
+      1014,
+      1789066151888337649
+    ],
+    "P0_QuickRun/NCEP_Boston_24h_single_tail__20260910_182454/config_used.sh": [
+      33204,
+      3489,
+      1789064694931149189
+    ],
+    "P0_QuickRun/NCEP_Boston_24h_single_tail__20260910_182454/config_perceiver3_mse_tail_2966b39eba_Boston_NCEPtoNCEP_perceiver3_ga4_nrh8_tr.json": [
+      33204,
+      2413,
+      1789064698375087626
+    ],
+    "P0_QuickRun/NCEP_Boston_24h_single_tail__20260910_182454/metrics_perceiver3_mse_tail_2966b39eba_Boston_NCEPtoNCEP_perceiver3_ga4_nrh8_tr.jsonl": [
+      33204,
+      91752,
+      1789066151188350004
+    ],
+    "P0_QuickRun/NCEP_Boston_24h_single_tail__20260910_182454/exit_status": [
+      33204,
+      2,
+      1789066152725322875
+    ],
+    "P0_QuickRun/NCEP_Boston_24h_single_tail__20260910_182454/launcher.log": [
+      33204,
+      69921,
+      1789066152725322875
+    ],
+    "P0_QuickRun/NCEP_Boston_24h_single_tail__20260910_182454/train_Boston_NCEPtoNCEP_perceiver3_ga4_nrh8_trh8_L2_ff4.0_td0.0_stable1v3_exceedance_hsingle_lossmse_tail_tf0.05_tl0.025_hist24h_hid128_L2_bs256_lr5e-3_ep300_schcosine_xnzscore.log": [
+      33204,
+      68027,
+      1789066151889337631
+    ],
+    "P0_QuickRun/NCEP_Boston_24h_single_tail__20260910_182454/best_perceiver3_mse_tail_2966b39eba_Boston_NCEPtoNCEP_perceiver3_ga4_nrh8_tr.pth": [
+      33204,
+      3462818,
+      1789066151202349757
+    ],
+    "P0_QuickRun/NCEP_Battery_24h_dual_slope__20260910_161806/metrics_perceiver3_mse_slope_31cc3718a4_Battery_NCEPtoNCEP_perceiver3_ga4_nrh8_t.jsonl": [
+      33204,
+      91411,
+      1789058642191451775
+    ],
+    "P0_QuickRun/NCEP_Battery_24h_dual_slope__20260910_161806/train_Battery_NCEPtoNCEP_perceiver3_ga4_nrh8_trh8_L2_ff4.0_td0.0_stable1v3_exceedance_gmwindow_eq95_danone_lossmse_slope_sl0.01_sms0.10_charb_hist24h_hid128_L2_bs256_lr5e-3_ep300_schcosine_xnzscore.log": [
+      33204,
+      67991,
+      1789058642935439235
+    ],
+    "P0_QuickRun/NCEP_Battery_24h_dual_slope__20260910_161806/best_perceiver3_mse_slope_31cc3718a4_Battery_NCEPtoNCEP_perceiver3_ga4_nrh8_t.pth": [
+      33204,
+      3754877,
+      1789058595341241499
+    ],
+    "P0_QuickRun/NCEP_Battery_24h_dual_slope__20260910_161806/config_perceiver3_mse_slope_31cc3718a4_Battery_NCEPtoNCEP_perceiver3_ga4_nrh8_t.json": [
+      33204,
+      2432,
+      1789057090192769775
+    ],
+    "P0_QuickRun/NCEP_Battery_24h_dual_slope__20260910_161806/config_used.sh": [
+      33204,
+      3489,
+      1789057086753829001
+    ],
+    "P0_QuickRun/NCEP_Battery_24h_dual_slope__20260910_161806/test_preds_perceiver3_mse_slope_31cc3718a4_Battery_NCEPtoNCEP_perceiver3_ga4_nrh8_t.npz": [
+      33204,
+      178021,
+      1789058642935439235
+    ],
+    "P0_QuickRun/NCEP_Battery_24h_dual_slope__20260910_161806/summary_perceiver3_mse_slope_31cc3718a4_Battery_NCEPtoNCEP_perceiver3_ga4_nrh8_t.json": [
+      33204,
+      1351,
+      1789058642935439235
+    ],
+    "P0_QuickRun/NCEP_Battery_24h_dual_slope__20260910_161806/exit_status": [
+      33204,
+      2,
+      1789058643789424840
+    ],
+    "P0_QuickRun/NCEP_Battery_24h_dual_slope__20260910_161806/launcher.log": [
+      33204,
+      69884,
+      1789058643788424857
+    ],
+    "P0_QuickRun/NCEP_Battery_24h_dual_tail__20260910_152739/summary_perceiver3_mse_tail_4f503befb4_Battery_NCEPtoNCEP_perceiver3_ga4_nrh8_t.json": [
+      33204,
+      1344,
+      1789055572645754811
+    ],
+    "P0_QuickRun/NCEP_Battery_24h_dual_tail__20260910_152739/config_used.sh": [
+      33204,
+      3485,
+      1789054059583577711
+    ],
+    "P0_QuickRun/NCEP_Battery_24h_dual_tail__20260910_152739/metrics_perceiver3_mse_tail_4f503befb4_Battery_NCEPtoNCEP_perceiver3_ga4_nrh8_t.jsonl": [
+      33204,
+      91452,
+      1789055571943765745
+    ],
+    "P0_QuickRun/NCEP_Battery_24h_dual_tail__20260910_152739/config_perceiver3_mse_tail_4f503befb4_Battery_NCEPtoNCEP_perceiver3_ga4_nrh8_t.json": [
+      33204,
+      2425,
+      1789054063175514324
+    ],
+    "P0_QuickRun/NCEP_Battery_24h_dual_tail__20260910_152739/train_Battery_NCEPtoNCEP_perceiver3_ga4_nrh8_trh8_L2_ff4.0_td0.0_stable1v3_exceedance_gmwindow_eq95_danone_lossmse_tail_tf0.05_tl0.025_hist24h_hid128_L2_bs256_lr5e-3_ep300_schcosine_xnzscore.log": [
+      33204,
+      68043,
+      1789055572645754811
+    ],
+    "P0_QuickRun/NCEP_Battery_24h_dual_tail__20260910_152739/best_perceiver3_mse_tail_4f503befb4_Battery_NCEPtoNCEP_perceiver3_ga4_nrh8_t.pth": [
+      33204,
+      3754804,
+      1789055531820388830
+    ],
+    "P0_QuickRun/NCEP_Battery_24h_dual_tail__20260910_152739/exit_status": [
+      33204,
+      2,
+      1789055573516741242
+    ],
+    "P0_QuickRun/NCEP_Battery_24h_dual_tail__20260910_152739/launcher.log": [
+      33204,
+      69930,
+      1789055573516741242
+    ],
+    "P0_QuickRun/NCEP_Battery_24h_dual_tail__20260910_152739/test_preds_perceiver3_mse_tail_4f503befb4_Battery_NCEPtoNCEP_perceiver3_ga4_nrh8_t.npz": [
+      33204,
+      177391,
+      1789055572645754811
+    ],
+    "P0_QuickRun/NCEP_Boston_24h_dual_tail_slope__20260910_203047/train_Boston_NCEPtoNCEP_perceiver3_ga4_nrh8_trh8_L2_ff4.0_td0.0_stable1v3_exceedance_gmwindow_eq95_danone_lossmse_tail_slope_tf0.05_tl0.025_sl0.01_sms0.10_charb_hist24h_hid128_L2_bs256_lr5e-3_ep300_schcosine_xnzscore.log": [
+      33204,
+      67974,
+      1789073805785501613
+    ],
+    "P0_QuickRun/NCEP_Boston_24h_dual_tail_slope__20260910_203047/config_used.sh": [
+      33204,
+      3505,
+      1789072247694200797
+    ],
+    "P0_QuickRun/NCEP_Boston_24h_dual_tail_slope__20260910_203047/best_perceiver3_mse_tail_slope_c31d56d239_Boston_NCEPtoNCEP_perceiver3_ga4_nrh8_tr.pth": [
+      33204,
+      3733994,
+      1789073623247754540
+    ],
+    "P0_QuickRun/NCEP_Boston_24h_dual_tail_slope__20260910_203047/summary_perceiver3_mse_tail_slope_c31d56d239_Boston_NCEPtoNCEP_perceiver3_ga4_nrh8_tr.json": [
+      33204,
+      1368,
+      1789073805785501613
+    ],
+    "P0_QuickRun/NCEP_Boston_24h_dual_tail_slope__20260910_203047/metrics_perceiver3_mse_tail_slope_c31d56d239_Boston_NCEPtoNCEP_perceiver3_ga4_nrh8_tr.jsonl": [
+      33204,
+      91847,
+      1789073805070517712
+    ],
+    "P0_QuickRun/NCEP_Boston_24h_dual_tail_slope__20260910_203047/exit_status": [
+      33204,
+      2,
+      1789073806704480927
+    ],
+    "P0_QuickRun/NCEP_Boston_24h_dual_tail_slope__20260910_203047/launcher.log": [
+      33204,
+      69892,
+      1789073806704480927
+    ],
+    "P0_QuickRun/NCEP_Boston_24h_dual_tail_slope__20260910_203047/test_preds_perceiver3_mse_tail_slope_c31d56d239_Boston_NCEPtoNCEP_perceiver3_ga4_nrh8_tr.npz": [
+      33204,
+      175125,
+      1789073805784501636
+    ],
+    "P0_QuickRun/NCEP_Boston_24h_dual_tail_slope__20260910_203047/config_perceiver3_mse_tail_slope_c31d56d239_Boston_NCEPtoNCEP_perceiver3_ga4_nrh8_tr.json": [
+      33204,
+      2461,
+      1789072251088146740
+    ],
+    "P0_QuickRun/NCEP_Battery_24h_single_slope__20260910_155257/train_Battery_NCEPtoNCEP_perceiver3_ga4_nrh8_trh8_L2_ff4.0_td0.0_stable1v3_exceedance_hsingle_lossmse_slope_sl0.01_sms0.10_charb_hist24h_hid128_L2_bs256_lr5e-3_ep300_schcosine_xnzscore.log": [
+      33204,
+      68473,
+      1789057080878930202
+    ],
+    "P0_QuickRun/NCEP_Battery_24h_single_slope__20260910_155257/config_perceiver3_mse_slope_422e69a479_Battery_NCEPtoNCEP_perceiver3_ga4_nrh8_t.json": [
+      33204,
+      2423,
+      1789055581619614935
+    ],
+    "P0_QuickRun/NCEP_Battery_24h_single_slope__20260910_155257/config_used.sh": [
+      33204,
+      3497,
+      1789055578177668605
+    ],
+    "P0_QuickRun/NCEP_Battery_24h_single_slope__20260910_155257/summary_perceiver3_mse_slope_422e69a479_Battery_NCEPtoNCEP_perceiver3_ga4_nrh8_t.json": [
+      33204,
+      1022,
+      1789057080878930202
+    ],
+    "P0_QuickRun/NCEP_Battery_24h_single_slope__20260910_155257/test_preds_perceiver3_mse_slope_422e69a479_Battery_NCEPtoNCEP_perceiver3_ga4_nrh8_t.npz": [
+      33204,
+      164594,
+      1789057080877930219
+    ],
+    "P0_QuickRun/NCEP_Battery_24h_single_slope__20260910_155257/metrics_perceiver3_mse_slope_422e69a479_Battery_NCEPtoNCEP_perceiver3_ga4_nrh8_t.jsonl": [
+      33204,
+      91373,
+      1789057080179942244
+    ],
+    "P0_QuickRun/NCEP_Battery_24h_single_slope__20260910_155257/exit_status": [
+      33204,
+      2,
+      1789057081743915300
+    ],
+    "P0_QuickRun/NCEP_Battery_24h_single_slope__20260910_155257/launcher.log": [
+      33204,
+      70378,
+      1789057081743915300
+    ],
+    "P0_QuickRun/NCEP_Battery_24h_single_slope__20260910_155257/best_perceiver3_mse_slope_422e69a479_Battery_NCEPtoNCEP_perceiver3_ga4_nrh8_t.pth": [
+      33204,
+      3484130,
+      1789056937208414048
+    ],
+    "P0_QuickRun/NCEP_CBBT_24h_dual_slope__20260910_093323/test_preds_perceiver3_mse_slope_f962d630a8_CBBT_NCEPtoNCEP_perceiver3_ga4_nrh8_trh8.npz": [
+      33204,
+      170472,
+      1789034343977734184
+    ],
+    "P0_QuickRun/NCEP_CBBT_24h_dual_slope__20260910_093323/config_used.sh": [
+      33204,
+      3477,
+      1789032804031869205
+    ],
+    "P0_QuickRun/NCEP_CBBT_24h_dual_slope__20260910_093323/summary_perceiver3_mse_slope_f962d630a8_CBBT_NCEPtoNCEP_perceiver3_ga4_nrh8_trh8.json": [
+      33204,
+      1351,
+      1789034343977734184
+    ],
+    "P0_QuickRun/NCEP_CBBT_24h_dual_slope__20260910_093323/metrics_perceiver3_mse_slope_f962d630a8_CBBT_NCEPtoNCEP_perceiver3_ga4_nrh8_trh8.jsonl": [
+      33204,
+      91992,
+      1789034343281749630
+    ],
+    "P0_QuickRun/NCEP_CBBT_24h_dual_slope__20260910_093323/train_CBBT_NCEPtoNCEP_perceiver3_ga4_nrh8_trh8_L2_ff4.0_td0.0_stable1v3_exceedance_gmwindow_eq95_danone_lossmse_slope_sl0.01_sms0.10_charb_hist24h_hid128_L2_bs256_lr5e-3_ep300_schcosine_xnzscore.log": [
+      33204,
+      67850,
+      1789034343977734184
+    ],
+    "P0_QuickRun/NCEP_CBBT_24h_dual_slope__20260910_093323/best_perceiver3_mse_slope_f962d630a8_CBBT_NCEPtoNCEP_perceiver3_ga4_nrh8_trh8.pth": [
+      33204,
+      3691069,
+      1789034312400408713
+    ],
+    "P0_QuickRun/NCEP_CBBT_24h_dual_slope__20260910_093323/exit_status": [
+      33204,
+      2,
+      1789034344840715040
+    ],
+    "P0_QuickRun/NCEP_CBBT_24h_dual_slope__20260910_093323/launcher.log": [
+      33204,
+      69728,
+      1789034344840715040
+    ],
+    "P0_QuickRun/NCEP_CBBT_24h_dual_slope__20260910_093323/config_perceiver3_mse_slope_f962d630a8_CBBT_NCEPtoNCEP_perceiver3_ga4_nrh8_trh8.json": [
+      33204,
+      2423,
+      1789032807450811642
+    ],
+    "P0_QuickRun/NCEP_Lewes_24h_single_tail_slope__20260910_132121/metrics_perceiver3_mse_tail_slope_cdf82d3a82_Lewes_NCEPtoNCEP_perceiver3_ga4_nrh8_trh.jsonl": [
+      33204,
+      91713,
+      1789047977457037295
+    ],
+    "P0_QuickRun/NCEP_Lewes_24h_single_tail_slope__20260910_132121/config_used.sh": [
+      33204,
+      3509,
+      1789046481517195628
+    ],
+    "P0_QuickRun/NCEP_Lewes_24h_single_tail_slope__20260910_132121/config_perceiver3_mse_tail_slope_cdf82d3a82_Lewes_NCEPtoNCEP_perceiver3_ga4_nrh8_trh.json": [
+      33204,
+      2449,
+      1789046484934138459
+    ],
+    "P0_QuickRun/NCEP_Lewes_24h_single_tail_slope__20260910_132121/best_perceiver3_mse_tail_slope_cdf82d3a82_Lewes_NCEPtoNCEP_perceiver3_ga4_nrh8_trh.pth": [
+      33204,
+      3441954,
+      1789047977471037060
+    ],
+    "P0_QuickRun/NCEP_Lewes_24h_single_tail_slope__20260910_132121/summary_perceiver3_mse_tail_slope_cdf82d3a82_Lewes_NCEPtoNCEP_perceiver3_ga4_nrh8_trh.json": [
+      33204,
+      1038,
+      1789047978227024373
+    ],
+    "P0_QuickRun/NCEP_Lewes_24h_single_tail_slope__20260910_132121/test_preds_perceiver3_mse_tail_slope_cdf82d3a82_Lewes_NCEPtoNCEP_perceiver3_ga4_nrh8_trh.npz": [
+      33204,
+      164135,
+      1789047978227024373
+    ],
+    "P0_QuickRun/NCEP_Lewes_24h_single_tail_slope__20260910_132121/train_Lewes_NCEPtoNCEP_perceiver3_ga4_nrh8_trh8_L2_ff4.0_td0.0_stable1v3_exceedance_hsingle_lossmse_tail_slope_tf0.05_tl0.025_sl0.01_sms0.10_charb_hist24h_hid128_L2_bs256_lr5e-3_ep300_schcosine_xnzscore.log": [
+      33204,
+      67958,
+      1789047978227024373
+    ],
+    "P0_QuickRun/NCEP_Lewes_24h_single_tail_slope__20260910_132121/exit_status": [
+      33204,
+      2,
+      1789047979085009976
+    ],
+    "P0_QuickRun/NCEP_Lewes_24h_single_tail_slope__20260910_132121/launcher.log": [
+      33204,
+      69883,
+      1789047979085009976
+    ],
+    "P0_QuickRun/NCEP_Lewes_24h_single_mse__20260910_104959/metrics_perceiver3_mse_5e1b6532fe_Lewes_NCEPtoNCEP_perceiver3_ga4_nrh8_trh.jsonl": [
+      33204,
+      91748,
+      1789038870801614695
+    ],
+    "P0_QuickRun/NCEP_Lewes_24h_single_mse__20260910_104959/train_Lewes_NCEPtoNCEP_perceiver3_ga4_nrh8_trh8_L2_ff4.0_td0.0_stable1v3_exceedance_hsingle_lossmse_hist24h_hid128_L2_bs256_lr5e-3_ep300_schcosine_xnzscore.log": [
+      33204,
+      69270,
+      1789038871478606480
+    ],
+    "P0_QuickRun/NCEP_Lewes_24h_single_mse__20260910_104959/test_preds_perceiver3_mse_5e1b6532fe_Lewes_NCEPtoNCEP_perceiver3_ga4_nrh8_trh.npz": [
+      33204,
+      164181,
+      1789038871478606480
+    ],
+    "P0_QuickRun/NCEP_Lewes_24h_single_mse__20260910_104959/config_used.sh": [
+      33204,
+      3477,
+      1789037399955826801
+    ],
+    "P0_QuickRun/NCEP_Lewes_24h_single_mse__20260910_104959/summary_perceiver3_mse_5e1b6532fe_Lewes_NCEPtoNCEP_perceiver3_ga4_nrh8_trh.json": [
+      33204,
+      993,
+      1789038871478606480
+    ],
+    "P0_QuickRun/NCEP_Lewes_24h_single_mse__20260910_104959/exit_status": [
+      33204,
+      2,
+      1789038872328596160
+    ],
+    "P0_QuickRun/NCEP_Lewes_24h_single_mse__20260910_104959/launcher.log": [
+      33204,
+      71149,
+      1789038872328596160
+    ],
+    "P0_QuickRun/NCEP_Lewes_24h_single_mse__20260910_104959/best_perceiver3_mse_5e1b6532fe_Lewes_NCEPtoNCEP_perceiver3_ga4_nrh8_trh.pth": [
+      33204,
+      3440738,
+      1789038851320849582
+    ],
+    "P0_QuickRun/NCEP_Lewes_24h_single_mse__20260910_104959/config_perceiver3_mse_5e1b6532fe_Lewes_NCEPtoNCEP_perceiver3_ga4_nrh8_trh.json": [
+      33204,
+      2382,
+      1789037403353767249
+    ],
+    "P0_QuickRun/NCEP_Lewes_24h_single_tail__20260910_114006/config_used.sh": [
+      33204,
+      3485,
+      1789040407109883862
+    ],
+    "P0_QuickRun/NCEP_Lewes_24h_single_tail__20260910_114006/summary_perceiver3_mse_tail_9ed74f0665_Lewes_NCEPtoNCEP_perceiver3_ga4_nrh8_trh.json": [
+      33204,
+      1012,
+      1789041872336416269
+    ],
+    "P0_QuickRun/NCEP_Lewes_24h_single_tail__20260910_114006/metrics_perceiver3_mse_tail_9ed74f0665_Lewes_NCEPtoNCEP_perceiver3_ga4_nrh8_trh.jsonl": [
+      33204,
+      91675,
+      1789041871649427742
+    ],
+    "P0_QuickRun/NCEP_Lewes_24h_single_tail__20260910_114006/best_perceiver3_mse_tail_9ed74f0665_Lewes_NCEPtoNCEP_perceiver3_ga4_nrh8_trh.pth": [
+      33204,
+      3441506,
+      1789041818233320361
+    ],
+    "P0_QuickRun/NCEP_Lewes_24h_single_tail__20260910_114006/train_Lewes_NCEPtoNCEP_perceiver3_ga4_nrh8_trh8_L2_ff4.0_td0.0_stable1v3_exceedance_hsingle_lossmse_tail_tf0.05_tl0.025_hist24h_hid128_L2_bs256_lr5e-3_ep300_schcosine_xnzscore.log": [
+      33204,
+      67898,
+      1789041872336416269
+    ],
+    "P0_QuickRun/NCEP_Lewes_24h_single_tail__20260910_114006/exit_status": [
+      33204,
+      2,
+      1789041873203401789
+    ],
+    "P0_QuickRun/NCEP_Lewes_24h_single_tail__20260910_114006/launcher.log": [
+      33204,
+      69787,
+      1789041873203401789
+    ],
+    "P0_QuickRun/NCEP_Lewes_24h_single_tail__20260910_114006/config_perceiver3_mse_tail_9ed74f0665_Lewes_NCEPtoNCEP_perceiver3_ga4_nrh8_trh.json": [
+      33204,
+      2410,
+      1789040410442831082
+    ],
+    "P0_QuickRun/NCEP_Lewes_24h_single_tail__20260910_114006/test_preds_perceiver3_mse_tail_9ed74f0665_Lewes_NCEPtoNCEP_perceiver3_ga4_nrh8_trh.npz": [
+      33204,
+      164209,
+      1789041872336416269
+    ],
+    "P0_QuickRun/NCEP_Boston_24h_single_slope__20260910_191516/metrics_perceiver3_mse_slope_972a0f61c5_Boston_NCEPtoNCEP_perceiver3_ga4_nrh8_tr.jsonl": [
+      33204,
+      91733,
+      1789069212942237878
+    ],
+    "P0_QuickRun/NCEP_Boston_24h_single_slope__20260910_191516/train_Boston_NCEPtoNCEP_perceiver3_ga4_nrh8_trh8_L2_ff4.0_td0.0_stable1v3_exceedance_hsingle_lossmse_slope_sl0.01_sms0.10_charb_hist24h_hid128_L2_bs256_lr5e-3_ep300_schcosine_xnzscore.log": [
+      33204,
+      68098,
+      1789069213660222859
+    ],
+    "P0_QuickRun/NCEP_Boston_24h_single_slope__20260910_191516/config_used.sh": [
+      33204,
+      3493,
+      1789067717074730169
+    ],
+    "P0_QuickRun/NCEP_Boston_24h_single_slope__20260910_191516/exit_status": [
+      33204,
+      2,
+      1789069214565203933
+    ],
+    "P0_QuickRun/NCEP_Boston_24h_single_slope__20260910_191516/launcher.log": [
+      33204,
+      69998,
+      1789069214565203933
+    ],
+    "P0_QuickRun/NCEP_Boston_24h_single_slope__20260910_191516/summary_perceiver3_mse_slope_972a0f61c5_Boston_NCEPtoNCEP_perceiver3_ga4_nrh8_tr.json": [
+      33204,
+      1023,
+      1789069213660222859
+    ],
+    "P0_QuickRun/NCEP_Boston_24h_single_slope__20260910_191516/best_perceiver3_mse_slope_972a0f61c5_Boston_NCEPtoNCEP_perceiver3_ga4_nrh8_tr.pth": [
+      33204,
+      3462882,
+      1789069023374674736
+    ],
+    "P0_QuickRun/NCEP_Boston_24h_single_slope__20260910_191516/config_perceiver3_mse_slope_972a0f61c5_Boston_NCEPtoNCEP_perceiver3_ga4_nrh8_tr.json": [
+      33204,
+      2420,
+      1789067720434684046
+    ],
+    "P0_QuickRun/NCEP_Boston_24h_single_slope__20260910_191516/test_preds_perceiver3_mse_slope_972a0f61c5_Boston_NCEPtoNCEP_perceiver3_ga4_nrh8_tr.npz": [
+      33204,
+      162112,
+      1789069213660222859
+    ],
+    "P0_QuickRun/NCEP_CBBT_24h_dual_tail_slope__20260910_102401/config_used.sh": [
+      33204,
+      3497,
+      1789035841255247930
+    ],
+    "P0_QuickRun/NCEP_CBBT_24h_dual_tail_slope__20260910_102401/config_perceiver3_mse_tail_slope_57e82ae1a0_CBBT_NCEPtoNCEP_perceiver3_ga4_nrh8_trh8.json": [
+      33204,
+      2455,
+      1789035844689186931
+    ],
+    "P0_QuickRun/NCEP_CBBT_24h_dual_tail_slope__20260910_102401/test_preds_perceiver3_mse_tail_slope_57e82ae1a0_CBBT_NCEPtoNCEP_perceiver3_ga4_nrh8_trh8.npz": [
+      33204,
+      169809,
+      1789037398273856279
+    ],
+    "P0_QuickRun/NCEP_CBBT_24h_dual_tail_slope__20260910_102401/metrics_perceiver3_mse_tail_slope_57e82ae1a0_CBBT_NCEPtoNCEP_perceiver3_ga4_nrh8_trh8.jsonl": [
+      33204,
+      92018,
+      1789037397582868389
+    ],
+    "P0_QuickRun/NCEP_CBBT_24h_dual_tail_slope__20260910_102401/summary_perceiver3_mse_tail_slope_57e82ae1a0_CBBT_NCEPtoNCEP_perceiver3_ga4_nrh8_trh8.json": [
+      33204,
+      1368,
+      1789037398273856279
+    ],
+    "P0_QuickRun/NCEP_CBBT_24h_dual_tail_slope__20260910_102401/exit_status": [
+      33204,
+      2,
+      1789037399135841172
+    ],
+    "P0_QuickRun/NCEP_CBBT_24h_dual_tail_slope__20260910_102401/launcher.log": [
+      33204,
+      70362,
+      1789037399135841172
+    ],
+    "P0_QuickRun/NCEP_CBBT_24h_dual_tail_slope__20260910_102401/best_perceiver3_mse_tail_slope_57e82ae1a0_CBBT_NCEPtoNCEP_perceiver3_ga4_nrh8_trh8.pth": [
+      33204,
+      3691434,
+      1789037269601111606
+    ],
+    "P0_QuickRun/NCEP_CBBT_24h_dual_tail_slope__20260910_102401/train_CBBT_NCEPtoNCEP_perceiver3_ga4_nrh8_trh8_L2_ff4.0_td0.0_stable1v3_exceedance_gmwindow_eq95_danone_lossmse_tail_slope_tf0.05_tl0.025_sl0.01_sms0.10_charb_hist24h_hid128_L2_bs256_lr5e-3_ep300_schcosine_xnzscore.log": [
+      33204,
+      68454,
+      1789037398273856279
+    ],
+    "P0_QuickRun/NCEP_Lewes_24h_single_slope__20260910_123014/best_perceiver3_mse_slope_5f6184669c_Lewes_NCEPtoNCEP_perceiver3_ga4_nrh8_trh.pth": [
+      33204,
+      3441570,
+      1789044895476554959
+    ],
+    "P0_QuickRun/NCEP_Lewes_24h_single_slope__20260910_123014/config_perceiver3_mse_slope_5f6184669c_Lewes_NCEPtoNCEP_perceiver3_ga4_nrh8_trh.json": [
+      33204,
+      2417,
+      1789043417761421493
+    ],
+    "P0_QuickRun/NCEP_Lewes_24h_single_slope__20260910_123014/config_used.sh": [
+      33204,
+      3489,
+      1789043414275481769
+    ],
+    "P0_QuickRun/NCEP_Lewes_24h_single_slope__20260910_123014/metrics_perceiver3_mse_slope_5f6184669c_Lewes_NCEPtoNCEP_perceiver3_ga4_nrh8_trh.jsonl": [
+      33204,
+      91767,
+      1789044905589389812
+    ],
+    "P0_QuickRun/NCEP_Lewes_24h_single_slope__20260910_123014/summary_perceiver3_mse_slope_5f6184669c_Lewes_NCEPtoNCEP_perceiver3_ga4_nrh8_trh.json": [
+      33204,
+      1020,
+      1789044906280378525
+    ],
+    "P0_QuickRun/NCEP_Lewes_24h_single_slope__20260910_123014/test_preds_perceiver3_mse_slope_5f6184669c_Lewes_NCEPtoNCEP_perceiver3_ga4_nrh8_trh.npz": [
+      33204,
+      164046,
+      1789044906280378525
+    ],
+    "P0_QuickRun/NCEP_Lewes_24h_single_slope__20260910_123014/train_Lewes_NCEPtoNCEP_perceiver3_ga4_nrh8_trh8_L2_ff4.0_td0.0_stable1v3_exceedance_hsingle_lossmse_slope_sl0.01_sms0.10_charb_hist24h_hid128_L2_bs256_lr5e-3_ep300_schcosine_xnzscore.log": [
+      33204,
+      68707,
+      1789044906281378509
+    ],
+    "P0_QuickRun/NCEP_Lewes_24h_single_slope__20260910_123014/exit_status": [
+      33204,
+      2,
+      1789044907140364477
+    ],
+    "P0_QuickRun/NCEP_Lewes_24h_single_slope__20260910_123014/launcher.log": [
+      33204,
+      70602,
+      1789044907139364494
+    ],
+    "P0_QuickRun/NCEP_Boston_24h_dual_slope__20260910_194015/metrics_perceiver3_mse_slope_22c3854d35_Boston_NCEPtoNCEP_perceiver3_ga4_nrh8_tr.jsonl": [
+      33204,
+      91822,
+      1789070725371765046
+    ],
+    "P0_QuickRun/NCEP_Boston_24h_dual_slope__20260910_194015/best_perceiver3_mse_slope_22c3854d35_Boston_NCEPtoNCEP_perceiver3_ga4_nrh8_tr.pth": [
+      33204,
+      3733629,
+      1789070665206793097
+    ],
+    "P0_QuickRun/NCEP_Boston_24h_dual_slope__20260910_194015/config_used.sh": [
+      33204,
+      3485,
+      1789069215569182945
+    ],
+    "P0_QuickRun/NCEP_Boston_24h_dual_slope__20260910_194015/test_preds_perceiver3_mse_slope_22c3854d35_Boston_NCEPtoNCEP_perceiver3_ga4_nrh8_tr.npz": [
+      33204,
+      176010,
+      1789070726069753128
+    ],
+    "P0_QuickRun/NCEP_Boston_24h_dual_slope__20260910_194015/train_Boston_NCEPtoNCEP_perceiver3_ga4_nrh8_trh8_L2_ff4.0_td0.0_stable1v3_exceedance_gmwindow_eq95_danone_lossmse_slope_sl0.01_sms0.10_charb_hist24h_hid128_L2_bs256_lr5e-3_ep300_schcosine_xnzscore.log": [
+      33204,
+      67493,
+      1789070726070753111
+    ],
+    "P0_QuickRun/NCEP_Boston_24h_dual_slope__20260910_194015/config_perceiver3_mse_slope_22c3854d35_Boston_NCEPtoNCEP_perceiver3_ga4_nrh8_tr.json": [
+      33204,
+      2429,
+      1789069218994111404
+    ],
+    "P0_QuickRun/NCEP_Boston_24h_dual_slope__20260910_194015/exit_status": [
+      33204,
+      2,
+      1789070727000737233
+    ],
+    "P0_QuickRun/NCEP_Boston_24h_dual_slope__20260910_194015/launcher.log": [
+      33204,
+      69381,
+      1789070727000737233
+    ],
+    "P0_QuickRun/NCEP_Boston_24h_dual_slope__20260910_194015/summary_perceiver3_mse_slope_22c3854d35_Boston_NCEPtoNCEP_perceiver3_ga4_nrh8_tr.json": [
+      33204,
+      1346,
+      1789070726069753128
+    ],
+    "P0_QuickRun/NCEP_Boston_24h_dual_mse__20260910_175936/train_Boston_NCEPtoNCEP_perceiver3_ga4_nrh8_trh8_L2_ff4.0_td0.0_stable1v3_exceedance_gmwindow_eq95_danone_lossmse_hist24h_hid128_L2_bs256_lr5e-3_ep300_schcosine_xnzscore.log": [
+      33204,
+      67318,
+      1789064691300214101
+    ],
+    "P0_QuickRun/NCEP_Boston_24h_dual_mse__20260910_175936/test_preds_perceiver3_mse_4ba3c84de1_Boston_NCEPtoNCEP_perceiver3_ga4_nrh8_tr.npz": [
+      33204,
+      176355,
+      1789064691300214101
+    ],
+    "P0_QuickRun/NCEP_Boston_24h_dual_mse__20260910_175936/summary_perceiver3_mse_4ba3c84de1_Boston_NCEPtoNCEP_perceiver3_ga4_nrh8_tr.json": [
+      33204,
+      1317,
+      1789064691300214101
+    ],
+    "P0_QuickRun/NCEP_Boston_24h_dual_mse__20260910_175936/best_perceiver3_mse_4ba3c84de1_Boston_NCEPtoNCEP_perceiver3_ga4_nrh8_tr.pth": [
+      33204,
+      3732743,
+      1789064560359559518
+    ],
+    "P0_QuickRun/NCEP_Boston_24h_dual_mse__20260910_175936/config_used.sh": [
+      33204,
+      3473,
+      1789063176314199153
+    ],
+    "P0_QuickRun/NCEP_Boston_24h_dual_mse__20260910_175936/config_perceiver3_mse_4ba3c84de1_Boston_NCEPtoNCEP_perceiver3_ga4_nrh8_tr.json": [
+      33204,
+      2394,
+      1789063179750122559
+    ],
+    "P0_QuickRun/NCEP_Boston_24h_dual_mse__20260910_175936/exit_status": [
+      33204,
+      2,
+      1789064692179198386
+    ],
+    "P0_QuickRun/NCEP_Boston_24h_dual_mse__20260910_175936/launcher.log": [
+      33204,
+      69190,
+      1789064692179198386
+    ],
+    "P0_QuickRun/NCEP_Boston_24h_dual_mse__20260910_175936/metrics_perceiver3_mse_4ba3c84de1_Boston_NCEPtoNCEP_perceiver3_ga4_nrh8_tr.jsonl": [
+      33204,
+      91823,
+      1789064690587226848
+    ],
+    "P0_QuickRun/NCEP_Battery_24h_single_tail_slope__20260910_164405/best_perceiver3_mse_tail_slope_e403c57167_Battery_NCEPtoNCEP_perceiver3_ga4_nrh8_t.pth": [
+      33204,
+      3484514,
+      1789060064259637233
+    ],
+    "P0_QuickRun/NCEP_Battery_24h_single_tail_slope__20260910_164405/config_perceiver3_mse_tail_slope_e403c57167_Battery_NCEPtoNCEP_perceiver3_ga4_nrh8_t.json": [
+      33204,
+      2455,
+      1789058648902338660
+    ],
+    "P0_QuickRun/NCEP_Battery_24h_single_tail_slope__20260910_164405/config_used.sh": [
+      33204,
+      3517,
+      1789058645451396827
+    ],
+    "P0_QuickRun/NCEP_Battery_24h_single_tail_slope__20260910_164405/metrics_perceiver3_mse_tail_slope_e403c57167_Battery_NCEPtoNCEP_perceiver3_ga4_nrh8_t.jsonl": [
+      33204,
+      91426,
+      1789060147634237454
+    ],
+    "P0_QuickRun/NCEP_Battery_24h_single_tail_slope__20260910_164405/train_Battery_NCEPtoNCEP_perceiver3_ga4_nrh8_trh8_L2_ff4.0_td0.0_stable1v3_exceedance_hsingle_lossmse_tail_slope_tf0.05_tl0.025_sl0.01_sms0.10_charb_hist24h_hid128_L2_bs256_lr5e-3_ep300_schcosine_xnzscore.log": [
+      33204,
+      68216,
+      1789060148339225617
+    ],
+    "P0_QuickRun/NCEP_Battery_24h_single_tail_slope__20260910_164405/summary_perceiver3_mse_tail_slope_e403c57167_Battery_NCEPtoNCEP_perceiver3_ga4_nrh8_t.json": [
+      33204,
+      1043,
+      1789060148339225617
+    ],
+    "P0_QuickRun/NCEP_Battery_24h_single_tail_slope__20260910_164405/exit_status": [
+      33204,
+      2,
+      1789060149204211093
+    ],
+    "P0_QuickRun/NCEP_Battery_24h_single_tail_slope__20260910_164405/launcher.log": [
+      33204,
+      70151,
+      1789060149204211093
+    ],
+    "P0_QuickRun/NCEP_Battery_24h_single_tail_slope__20260910_164405/test_preds_perceiver3_mse_tail_slope_e403c57167_Battery_NCEPtoNCEP_perceiver3_ga4_nrh8_t.npz": [
+      33204,
+      164529,
+      1789060148338225633
+    ],
+    "P0_QuickRun/NCEP_Battery_24h_dual_mse__20260910_143652/train_Battery_NCEPtoNCEP_perceiver3_ga4_nrh8_trh8_L2_ff4.0_td0.0_stable1v3_exceedance_gmwindow_eq95_danone_lossmse_hist24h_hid128_L2_bs256_lr5e-3_ep300_schcosine_xnzscore.log": [
+      33204,
+      67816,
+      1789052562230198334
+    ],
+    "P0_QuickRun/NCEP_Battery_24h_dual_mse__20260910_143652/best_perceiver3_mse_fac42f0d63_Battery_NCEPtoNCEP_perceiver3_ga4_nrh8_t.pth": [
+      33204,
+      3754055,
+      1789052516282976380
+    ],
+    "P0_QuickRun/NCEP_Battery_24h_dual_mse__20260910_143652/metrics_perceiver3_mse_fac42f0d63_Battery_NCEPtoNCEP_perceiver3_ga4_nrh8_t.jsonl": [
+      33204,
+      91451,
+      1789052561481211017
+    ],
+    "P0_QuickRun/NCEP_Battery_24h_dual_mse__20260910_143652/config_used.sh": [
+      33204,
+      3477,
+      1789051012357547662
+    ],
+    "P0_QuickRun/NCEP_Battery_24h_dual_mse__20260910_143652/test_preds_perceiver3_mse_fac42f0d63_Battery_NCEPtoNCEP_perceiver3_ga4_nrh8_t.npz": [
+      33204,
+      174041,
+      1789052562230198334
+    ],
+    "P0_QuickRun/NCEP_Battery_24h_dual_mse__20260910_143652/exit_status": [
+      33204,
+      2,
+      1789052563093183721
+    ],
+    "P0_QuickRun/NCEP_Battery_24h_dual_mse__20260910_143652/launcher.log": [
+      33204,
+      69693,
+      1789052563092183738
+    ],
+    "P0_QuickRun/NCEP_Battery_24h_dual_mse__20260910_143652/config_perceiver3_mse_fac42f0d63_Battery_NCEPtoNCEP_perceiver3_ga4_nrh8_t.json": [
+      33204,
+      2397,
+      1789051015697490296
+    ],
+    "P0_QuickRun/NCEP_Battery_24h_dual_mse__20260910_143652/summary_perceiver3_mse_fac42f0d63_Battery_NCEPtoNCEP_perceiver3_ga4_nrh8_t.json": [
+      33204,
+      1326,
+      1789052562230198334
+    ],
+    "P0_QuickRun/NCEP_CBBT_24h_dual_tail__20260910_084311/test_preds_perceiver3_mse_tail_d79c45efbb_CBBT_NCEPtoNCEP_perceiver3_ga4_nrh8_trh8.npz": [
+      33204,
+      170198,
+      1789031332024757435
+    ],
+    "P0_QuickRun/NCEP_CBBT_24h_dual_tail__20260910_084311/config_perceiver3_mse_tail_d79c45efbb_CBBT_NCEPtoNCEP_perceiver3_ga4_nrh8_trh8.json": [
+      33204,
+      2416,
+      1789029795288086317
+    ],
+    "P0_QuickRun/NCEP_CBBT_24h_dual_tail__20260910_084311/train_CBBT_NCEPtoNCEP_perceiver3_ga4_nrh8_trh8_L2_ff4.0_td0.0_stable1v3_exceedance_gmwindow_eq95_danone_lossmse_tail_tf0.05_tl0.025_hist24h_hid128_L2_bs256_lr5e-3_ep300_schcosine_xnzscore.log": [
+      33204,
+      69132,
+      1789031332024757435
+    ],
+    "P0_QuickRun/NCEP_CBBT_24h_dual_tail__20260910_084311/config_used.sh": [
+      33204,
+      3473,
+      1789029791861143796
+    ],
+    "P0_QuickRun/NCEP_CBBT_24h_dual_tail__20260910_084311/metrics_perceiver3_mse_tail_d79c45efbb_CBBT_NCEPtoNCEP_perceiver3_ga4_nrh8_trh8.jsonl": [
+      33204,
+      92029,
+      1789031331323769370
+    ],
+    "P0_QuickRun/NCEP_CBBT_24h_dual_tail__20260910_084311/summary_perceiver3_mse_tail_d79c45efbb_CBBT_NCEPtoNCEP_perceiver3_ga4_nrh8_trh8.json": [
+      33204,
+      1342,
+      1789031332024757435
+    ],
+    "P0_QuickRun/NCEP_CBBT_24h_dual_tail__20260910_084311/exit_status": [
+      33204,
+      2,
+      1789031332871743014
+    ],
+    "P0_QuickRun/NCEP_CBBT_24h_dual_tail__20260910_084311/launcher.log": [
+      33204,
+      71004,
+      1789031332871743014
+    ],
+    "P0_QuickRun/NCEP_CBBT_24h_dual_tail__20260910_084311/best_perceiver3_mse_tail_d79c45efbb_CBBT_NCEPtoNCEP_perceiver3_ga4_nrh8_trh8.pth": [
+      33204,
+      3690996,
+      1789031274483737433
+    ],
+    "P0_QuickRun/NCEP_Battery_24h_dual_tail_slope__20260910_170913/test_preds_perceiver3_mse_tail_slope_6517ac8200_Battery_NCEPtoNCEP_perceiver3_ga4_nrh8_t.npz": [
+      33204,
+      176607,
+      1789061694141278821
+    ],
+    "P0_QuickRun/NCEP_Battery_24h_dual_tail_slope__20260910_170913/best_perceiver3_mse_tail_slope_6517ac8200_Battery_NCEPtoNCEP_perceiver3_ga4_nrh8_t.pth": [
+      33204,
+      3755306,
+      1789061653073968225
+    ],
+    "P0_QuickRun/NCEP_Battery_24h_dual_tail_slope__20260910_170913/train_Battery_NCEPtoNCEP_perceiver3_ga4_nrh8_trh8_L2_ff4.0_td0.0_stable1v3_exceedance_gmwindow_eq95_danone_lossmse_tail_slope_tf0.05_tl0.025_sl0.01_sms0.10_charb_hist24h_hid128_L2_bs256_lr5e-3_ep300_schcosine_xnzscore.log": [
+      33204,
+      69210,
+      1789061694141278821
+    ],
+    "P0_QuickRun/NCEP_Battery_24h_dual_tail_slope__20260910_170913/config_used.sh": [
+      33204,
+      3509,
+      1789060154081129206
+    ],
+    "P0_QuickRun/NCEP_Battery_24h_dual_tail_slope__20260910_170913/summary_perceiver3_mse_tail_slope_6517ac8200_Battery_NCEPtoNCEP_perceiver3_ga4_nrh8_t.json": [
+      33204,
+      1368,
+      1789061694141278821
+    ],
+    "P0_QuickRun/NCEP_Battery_24h_dual_tail_slope__20260910_170913/config_perceiver3_mse_tail_slope_6517ac8200_Battery_NCEPtoNCEP_perceiver3_ga4_nrh8_t.json": [
+      33204,
+      2464,
+      1789060157451072622
+    ],
+    "P0_QuickRun/NCEP_Battery_24h_dual_tail_slope__20260910_170913/metrics_perceiver3_mse_tail_slope_6517ac8200_Battery_NCEPtoNCEP_perceiver3_ga4_nrh8_t.jsonl": [
+      33204,
+      91483,
+      1789061693425290841
+    ],
+    "P0_QuickRun/NCEP_Battery_24h_dual_tail_slope__20260910_170913/exit_status": [
+      33204,
+      2,
+      1789061694987264619
+    ],
+    "P0_QuickRun/NCEP_Battery_24h_dual_tail_slope__20260910_170913/launcher.log": [
+      33204,
+      71133,
+      1789061694987264619
+    ],
+    "P0_QuickRun/NCEP_Lewes_24h_dual_tail_slope__20260910_134619/config_used.sh": [
+      33204,
+      3501,
+      1789047980071993413
+    ],
+    "P0_QuickRun/NCEP_Lewes_24h_dual_tail_slope__20260910_134619/metrics_perceiver3_mse_tail_slope_64dc8ce5cd_Lewes_NCEPtoNCEP_perceiver3_ga4_nrh8_trh.jsonl": [
+      33204,
+      91795,
+      1789049517056930066
+    ],
+    "P0_QuickRun/NCEP_Lewes_24h_dual_tail_slope__20260910_134619/best_perceiver3_mse_tail_slope_64dc8ce5cd_Lewes_NCEPtoNCEP_perceiver3_ga4_nrh8_trh.pth": [
+      33204,
+      3712746,
+      1789049365161507481
+    ],
+    "P0_QuickRun/NCEP_Lewes_24h_dual_tail_slope__20260910_134619/train_Lewes_NCEPtoNCEP_perceiver3_ga4_nrh8_trh8_L2_ff4.0_td0.0_stable1v3_exceedance_gmwindow_eq95_danone_lossmse_tail_slope_tf0.05_tl0.025_sl0.01_sms0.10_charb_hist24h_hid128_L2_bs256_lr5e-3_ep300_schcosine_xnzscore.log": [
+      33204,
+      67845,
+      1789049517743918420
+    ],
+    "P0_QuickRun/NCEP_Lewes_24h_dual_tail_slope__20260910_134619/summary_perceiver3_mse_tail_slope_64dc8ce5cd_Lewes_NCEPtoNCEP_perceiver3_ga4_nrh8_trh.json": [
+      33204,
+      1364,
+      1789049517743918420
+    ],
+    "P0_QuickRun/NCEP_Lewes_24h_dual_tail_slope__20260910_134619/test_preds_perceiver3_mse_tail_slope_64dc8ce5cd_Lewes_NCEPtoNCEP_perceiver3_ga4_nrh8_trh.npz": [
+      33204,
+      168158,
+      1789049517743918420
+    ],
+    "P0_QuickRun/NCEP_Lewes_24h_dual_tail_slope__20260910_134619/exit_status": [
+      33204,
+      2,
+      1789049518617903603
+    ],
+    "P0_QuickRun/NCEP_Lewes_24h_dual_tail_slope__20260910_134619/launcher.log": [
+      33204,
+      69758,
+      1789049518617903603
+    ],
+    "P0_QuickRun/NCEP_Lewes_24h_dual_tail_slope__20260910_134619/config_perceiver3_mse_tail_slope_64dc8ce5cd_Lewes_NCEPtoNCEP_perceiver3_ga4_nrh8_trh.json": [
+      33204,
+      2458,
+      1789047983552935000
+    ],
+    "P0_QuickRun/NCEP_Boston_24h_dual_tail__20260910_184913/best_perceiver3_mse_tail_8428b93d12_Boston_NCEPtoNCEP_perceiver3_ga4_nrh8_tr.pth": [
+      33204,
+      3733556,
+      1789067589534435602
+    ],
+    "P0_QuickRun/NCEP_Boston_24h_dual_tail__20260910_184913/test_preds_perceiver3_mse_tail_8428b93d12_Boston_NCEPtoNCEP_perceiver3_ga4_nrh8_tr.npz": [
+      33204,
+      176129,
+      1789067715310754361
+    ],
+    "P0_QuickRun/NCEP_Boston_24h_dual_tail__20260910_184913/metrics_perceiver3_mse_tail_8428b93d12_Boston_NCEPtoNCEP_perceiver3_ga4_nrh8_tr.jsonl": [
+      33204,
+      91820,
+      1789067714556764696
+    ],
+    "P0_QuickRun/NCEP_Boston_24h_dual_tail__20260910_184913/config_used.sh": [
+      33204,
+      3481,
+      1789066153386311209
+    ],
+    "P0_QuickRun/NCEP_Boston_24h_dual_tail__20260910_184913/summary_perceiver3_mse_tail_8428b93d12_Boston_NCEPtoNCEP_perceiver3_ga4_nrh8_tr.json": [
+      33204,
+      1344,
+      1789067715311754347
+    ],
+    "P0_QuickRun/NCEP_Boston_24h_dual_tail__20260910_184913/train_Boston_NCEPtoNCEP_perceiver3_ga4_nrh8_trh8_L2_ff4.0_td0.0_stable1v3_exceedance_gmwindow_eq95_danone_lossmse_tail_tf0.05_tl0.025_hist24h_hid128_L2_bs256_lr5e-3_ep300_schcosine_xnzscore.log": [
+      33204,
+      68283,
+      1789067715311754347
+    ],
+    "P0_QuickRun/NCEP_Boston_24h_dual_tail__20260910_184913/config_perceiver3_mse_tail_8428b93d12_Boston_NCEPtoNCEP_perceiver3_ga4_nrh8_tr.json": [
+      33204,
+      2422,
+      1789066156752251798
+    ],
+    "P0_QuickRun/NCEP_Boston_24h_dual_tail__20260910_184913/exit_status": [
+      33204,
+      2,
+      1789067716183742390
+    ],
+    "P0_QuickRun/NCEP_Boston_24h_dual_tail__20260910_184913/launcher.log": [
+      33204,
+      70165,
+      1789067716182742404
+    ],
+    "P0_QuickRun/NCEP_CBBT_24h_single_slope__20260910_090855/summary_perceiver3_mse_slope_b76319ea83_CBBT_NCEPtoNCEP_perceiver3_ga4_nrh8_trh8.json": [
+      33204,
+      1023,
+      1789032802466895553
+    ],
+    "P0_QuickRun/NCEP_CBBT_24h_single_slope__20260910_090855/config_perceiver3_mse_slope_b76319ea83_CBBT_NCEPtoNCEP_perceiver3_ga4_nrh8_trh8.json": [
+      33204,
+      2414,
+      1789031338938639724
+    ],
+    "P0_QuickRun/NCEP_CBBT_24h_single_slope__20260910_090855/config_used.sh": [
+      33204,
+      3485,
+      1789031335527697795
+    ],
+    "P0_QuickRun/NCEP_CBBT_24h_single_slope__20260910_090855/metrics_perceiver3_mse_slope_b76319ea83_CBBT_NCEPtoNCEP_perceiver3_ga4_nrh8_trh8.jsonl": [
+      33204,
+      91531,
+      1789032801780907103
+    ],
+    "P0_QuickRun/NCEP_CBBT_24h_single_slope__20260910_090855/best_perceiver3_mse_slope_b76319ea83_CBBT_NCEPtoNCEP_perceiver3_ga4_nrh8_trh8.pth": [
+      33204,
+      3420322,
+      1789032782383233658
+    ],
+    "P0_QuickRun/NCEP_CBBT_24h_single_slope__20260910_090855/test_preds_perceiver3_mse_slope_b76319ea83_CBBT_NCEPtoNCEP_perceiver3_ga4_nrh8_trh8.npz": [
+      33204,
+      162259,
+      1789032802465895570
+    ],
+    "P0_QuickRun/NCEP_CBBT_24h_single_slope__20260910_090855/train_CBBT_NCEPtoNCEP_perceiver3_ga4_nrh8_trh8_L2_ff4.0_td0.0_stable1v3_exceedance_hsingle_lossmse_slope_sl0.01_sms0.10_charb_hist24h_hid128_L2_bs256_lr5e-3_ep300_schcosine_xnzscore.log": [
+      33204,
+      71284,
+      1789032802466895553
+    ],
+    "P0_QuickRun/NCEP_CBBT_24h_single_slope__20260910_090855/exit_status": [
+      33204,
+      2,
+      1789032803322881142
+    ],
+    "P0_QuickRun/NCEP_CBBT_24h_single_slope__20260910_090855/launcher.log": [
+      33204,
+      73174,
+      1789032803322881142
+    ],
+    "P0_QuickRun/NCEP_CBBT_24h_single_tail__20260910_081833/test_preds_perceiver3_mse_tail_687f629936_CBBT_NCEPtoNCEP_perceiver3_ga4_nrh8_trh8.npz": [
+      33204,
+      162221,
+      1789029788677197198
+    ],
+    "P0_QuickRun/NCEP_CBBT_24h_single_tail__20260910_081833/config_used.sh": [
+      33204,
+      3481,
+      1789028313361506493
+    ],
+    "P0_QuickRun/NCEP_CBBT_24h_single_tail__20260910_081833/exit_status": [
+      33204,
+      2,
+      1789029789527182942
+    ],
+    "P0_QuickRun/NCEP_CBBT_24h_single_tail__20260910_081833/launcher.log": [
+      33204,
+      69284,
+      1789029789526182958
+    ],
+    "P0_QuickRun/NCEP_CBBT_24h_single_tail__20260910_081833/summary_perceiver3_mse_tail_687f629936_CBBT_NCEPtoNCEP_perceiver3_ga4_nrh8_trh8.json": [
+      33204,
+      1014,
+      1789029788677197198
+    ],
+    "P0_QuickRun/NCEP_CBBT_24h_single_tail__20260910_081833/best_perceiver3_mse_tail_687f629936_CBBT_NCEPtoNCEP_perceiver3_ga4_nrh8_trh8.pth": [
+      33204,
+      3420194,
+      1789029705550590978
+    ],
+    "P0_QuickRun/NCEP_CBBT_24h_single_tail__20260910_081833/config_perceiver3_mse_tail_687f629936_CBBT_NCEPtoNCEP_perceiver3_ga4_nrh8_trh8.json": [
+      33204,
+      2407,
+      1789028316797452376
+    ],
+    "P0_QuickRun/NCEP_CBBT_24h_single_tail__20260910_081833/train_CBBT_NCEPtoNCEP_perceiver3_ga4_nrh8_trh8_L2_ff4.0_td0.0_stable1v3_exceedance_hsingle_lossmse_tail_tf0.05_tl0.025_hist24h_hid128_L2_bs256_lr5e-3_ep300_schcosine_xnzscore.log": [
+      33204,
+      67400,
+      1789029788677197198
+    ],
+    "P0_QuickRun/NCEP_CBBT_24h_single_tail__20260910_081833/metrics_perceiver3_mse_tail_687f629936_CBBT_NCEPtoNCEP_perceiver3_ga4_nrh8_trh8.jsonl": [
+      33204,
+      91993,
+      1789029788000208553
+    ],
+    "P0_QuickRun/NCEP_Lewes_24h_dual_mse__20260910_111433/summary_perceiver3_mse_cb51e4cdfe_Lewes_NCEPtoNCEP_perceiver3_ga4_nrh8_trh.json": [
+      33204,
+      1319,
+      1789040401952965519
+    ],
+    "P0_QuickRun/NCEP_Lewes_24h_dual_mse__20260910_111433/config_perceiver3_mse_cb51e4cdfe_Lewes_NCEPtoNCEP_perceiver3_ga4_nrh8_trh.json": [
+      33204,
+      2391,
+      1789038876948539975
+    ],
+    "P0_QuickRun/NCEP_Lewes_24h_dual_mse__20260910_111433/config_used.sh": [
+      33204,
+      3469,
+      1789038873466582335
+    ],
+    "P0_QuickRun/NCEP_Lewes_24h_dual_mse__20260910_111433/train_Lewes_NCEPtoNCEP_perceiver3_ga4_nrh8_trh8_L2_ff4.0_td0.0_stable1v3_exceedance_gmwindow_eq95_danone_lossmse_hist24h_hid128_L2_bs256_lr5e-3_ep300_schcosine_xnzscore.log": [
+      33204,
+      67681,
+      1789040401952965519
+    ],
+    "P0_QuickRun/NCEP_Lewes_24h_dual_mse__20260910_111433/test_preds_perceiver3_mse_cb51e4cdfe_Lewes_NCEPtoNCEP_perceiver3_ga4_nrh8_trh.npz": [
+      33204,
+      167889,
+      1789040401952965519
+    ],
+    "P0_QuickRun/NCEP_Lewes_24h_dual_mse__20260910_111433/exit_status": [
+      33204,
+      2,
+      1789040402799952109
+    ],
+    "P0_QuickRun/NCEP_Lewes_24h_dual_mse__20260910_111433/launcher.log": [
+      33204,
+      69548,
+      1789040402799952109
+    ],
+    "P0_QuickRun/NCEP_Lewes_24h_dual_mse__20260910_111433/best_perceiver3_mse_cb51e4cdfe_Lewes_NCEPtoNCEP_perceiver3_ga4_nrh8_trh.pth": [
+      33204,
+      3711495,
+      1789040269034066379
+    ],
+    "P0_QuickRun/NCEP_Lewes_24h_dual_mse__20260910_111433/metrics_perceiver3_mse_cb51e4cdfe_Lewes_NCEPtoNCEP_perceiver3_ga4_nrh8_trh.jsonl": [
+      33204,
+      91811,
+      1789040401204977362
+    ]
+  },
+  "git_status": "?? experiment_config/P2_PeakAwareFactorial/README.md\n?? experiment_config/P2_PeakAwareFactorial/validation_report.json\n?? experiment_config/P2_PeakAwareFactorial/validation_report.md\n"
+}
