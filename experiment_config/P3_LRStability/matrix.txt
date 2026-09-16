@@ -1,0 +1,52 @@
+P3_LRStability
+
+Unique runs: 31
+
+By LR:
+    5e-3: 7
+    2e-3: 12
+    1e-3: 12
+
+By station:
+    CBBT: 0
+    Lewes: 3
+    Battery: 15
+    Boston: 13
+
+Core probe: 16
+Degradation-alert treatments: 21 nominal
+Overlap removed: 6
+Final unique: 31
+
+Station | T A S P | LR | reason
+Lewes | 0 0 0 1 | 5e-3 | p2_degradation_alert
+Lewes | 0 0 0 1 | 2e-3 | p2_degradation_alert
+Lewes | 0 0 0 1 | 1e-3 | p2_degradation_alert
+Battery | 0 0 0 0 | 2e-3 | core_probe
+Battery | 0 0 0 0 | 1e-3 | core_probe
+Battery | 0 0 1 1 | 5e-3 | p2_degradation_alert
+Battery | 0 0 1 1 | 2e-3 | p2_degradation_alert
+Battery | 0 0 1 1 | 1e-3 | p2_degradation_alert
+Battery | 0 1 0 1 | 2e-3 | core_probe
+Battery | 0 1 0 1 | 1e-3 | core_probe
+Battery | 1 0 1 0 | 5e-3 | p2_degradation_alert
+Battery | 1 0 1 0 | 2e-3 | p2_degradation_alert
+Battery | 1 0 1 0 | 1e-3 | p2_degradation_alert
+Battery | 1 1 0 0 | 5e-3 | p2_degradation_alert
+Battery | 1 1 0 0 | 2e-3 | core_probe+p2_degradation_alert
+Battery | 1 1 0 0 | 1e-3 | core_probe+p2_degradation_alert
+Battery | 1 1 0 1 | 2e-3 | core_probe
+Battery | 1 1 0 1 | 1e-3 | core_probe
+Boston | 0 0 0 0 | 2e-3 | core_probe
+Boston | 0 0 0 0 | 1e-3 | core_probe
+Boston | 0 1 0 1 | 5e-3 | p2_degradation_alert
+Boston | 0 1 0 1 | 2e-3 | core_probe+p2_degradation_alert
+Boston | 0 1 0 1 | 1e-3 | core_probe+p2_degradation_alert
+Boston | 1 0 0 0 | 5e-3 | p2_degradation_alert
+Boston | 1 0 0 0 | 2e-3 | p2_degradation_alert
+Boston | 1 0 0 0 | 1e-3 | p2_degradation_alert
+Boston | 1 1 0 0 | 5e-3 | p2_degradation_alert
+Boston | 1 1 0 0 | 2e-3 | core_probe+p2_degradation_alert
+Boston | 1 1 0 0 | 1e-3 | core_probe+p2_degradation_alert
+Boston | 1 1 0 1 | 2e-3 | core_probe
+Boston | 1 1 0 1 | 1e-3 | core_probe

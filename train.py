@@ -223,23 +223,24 @@ def train(args, device, distributed, rank, wall_start):
                                                      {args.checkpoint_selection: checkpoint_path})
         selected, _ = selection.resolve()
         best_epoch, best_rmse = selected.epoch, selected.val["rmse_all"]
-        # Only finalized primary weights reach TEST. Auxiliary roles add no evaluation pass.
+        # Re-evaluate only finalized primary weights, on each full split without DDP padding.
         checkpoint = torch.load(checkpoint_path, map_location=device, weights_only=False)
         network = model.module if distributed else model
         network.load_state_dict(checkpoint["model_state"], strict=True)
+        final_options = dict(epoch_options, distributed=False)
+        final_validation = run_epoch(network, build_loader(val_data, None, **loader_options), **final_options)
         if args.test_root_dir:
             test_store = ForcingGraphStore(args.test_root_dir, args.station)
             test_indices = list(range(len(test_store.graphs)))
         else:
             test_store, test_indices = store, splits["test"]
         test_data = ForcingGraphView(test_store, test_indices, history_steps)
-        result = run_epoch(network, build_loader(test_data, None, **loader_options), device, stats,
-                           station_feat=station_feat, use_amp=use_amp, amp_dtype=amp_dtype,
-                           x_clip=args.x_clip, save_predictions=True, event_threshold=fitted["tau_phys"])
+        result = run_epoch(network, build_loader(test_data, None, **loader_options),
+                           save_predictions=True, **final_options)
         np.savez_compressed(output_dir / f"test_preds_{stem}.npz", **result.predictions)
         summary = {"best_epoch": best_epoch, "best_val_rmse": best_rmse, "training_seconds": elapsed,
                    "loss_thresholds": fitted, "dual_metadata": dual_metadata, "model_parameters": model_parameters,
-                   "val": checkpoint["val"], "checkpoint_selection": selection.summary(manifest_path),
+                   "val": final_validation.metrics, "checkpoint_selection": selection.summary(manifest_path),
                    "test": result.metrics, "test_scope": "external_all_years" if args.test_root_dir else "held_out_years"}
         if device.type == "cuda":
             torch.cuda.synchronize(device)
@@ -247,8 +248,25 @@ def train(args, device, distributed, rank, wall_start):
         summary["wall_seconds"] = wall_seconds
         summary["run_tag"] = args.run_tag
         summary_path.write_text(json.dumps(summary, indent=2))
-        log_message(f'Best epoch {checkpoint["epoch"]:03d} | {format_metrics("Val", checkpoint["val"])} | '
-                    f'{format_metrics("Test", result.metrics)}')
+        log_message(f'Best checkpoint: epoch {best_epoch:03d} | selection={selection.mode}')
+        log_message("FINAL BEST-CHECKPOINT RE-EVALUATION")
+        columns = (("AllRMSE", "rmse_all"), ("AllMAE", "mae_all"),
+                   ("Top5RMSE", "rmse_peak5"), ("Top5MAE", "mae_peak5"),
+                   ("PeakRMSE", "peak_magnitude_rmse_top5"), ("PeakMAE", "peak_magnitude_mae_top5"),
+                   ("PeakBias", "peak_bias_top5"), ("Under%", "peak_underprediction_fraction_top5"),
+                   ("TruePeakRMSE", "true_peak_point_rmse_top5"), ("TimingSteps", "peak_timing_mae_steps_top5"))
+        table = [["Split", *[label for label, _ in columns]]]
+        for split in ("val", "test"):
+            values = []
+            for _, key in columns:
+                value = summary[split].get(key)
+                values.append("NA" if value is None else
+                              format(value, ".2%" if key == "peak_underprediction_fraction_top5" else ".6f"))
+            table.append([split.upper(), *values])
+        widths = [max(map(len, column)) for column in zip(*table)]
+        for row in table:
+            log_message("  ".join(value.ljust(width) if index == 0 else value.rjust(width)
+                                  for index, (value, width) in enumerate(zip(row, widths))))
         hours, remainder = divmod(wall_seconds, 3600)
         minutes, seconds = divmod(remainder, 60)
         log_message(f"Wall time: {int(hours):02d}:{int(minutes):02d}:{seconds:06.3f} ({wall_seconds:.3f} s)")

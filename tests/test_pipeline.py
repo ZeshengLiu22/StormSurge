@@ -188,15 +188,15 @@ class PipelineTests(unittest.TestCase):
                 console = io.StringIO()
                 with contextlib.redirect_stdout(console), patch.object(train, "run_epoch", wraps=train.run_epoch) as observed:
                     train.main(args)
-                # Two epochs of train/Val plus one final Test; reporting adds no evaluation pass.
-                self.assertEqual(observed.call_count, 5)
+                # Two epochs of TRAIN/VAL, then one fresh pass each on final VAL and TEST.
+                self.assertEqual(observed.call_count, 6)
                 lines = console.getvalue().splitlines()
                 # Best-checkpoint messages were added to production after this test.
                 best_lines = [line.split('] ', 1)[1] for line in lines if '] [Best] ' in line]
                 parameter_lines = [line for line in lines if '] [Parameters] ' in line]
                 self.assertEqual(len(parameter_lines), 1)
                 self.assertEqual(parameter_lines[0], lines[0])
-                self.assertEqual(len(lines) - len(best_lines) - len(parameter_lines), 4)
+                self.assertEqual(len(lines) - len(best_lines) - len(parameter_lines), 8)
                 for line in console.getvalue().splitlines():
                     self.assertRegex(line, r"^\[\d{4}-\d{2}-\d{2}\|\d{2}:\d{2}:\d{2}\]")
                 self.assertIn("Wall time:", console.getvalue().splitlines()[-1])
@@ -218,10 +218,10 @@ class PipelineTests(unittest.TestCase):
                 self.assertEqual(summary["best_val_rmse"], summary["val"]["rmse_all"])
                 self.assertEqual(summary["best_epoch"], checkpoint["epoch"])
                 self.assertEqual(tuple(summary["test"]), METRIC_NAMES + PEAK_METRIC_NAMES)
-                final_metrics = console.getvalue().splitlines()[-2]
-                self.assertIn(f'Best epoch {checkpoint["epoch"]:03d}', final_metrics)
-                self.assertIn(train.format_metrics("Val", summary["val"]), final_metrics)
-                self.assertIn(train.format_metrics("Test", summary["test"]), final_metrics)
+                self.assertIn(f'Best checkpoint: epoch {checkpoint["epoch"]:03d} | selection=overall', lines[-6])
+                self.assertIn('FINAL BEST-CHECKPOINT RE-EVALUATION', lines[-5])
+                self.assertTrue(lines[-3].split('] ', 1)[1].startswith('VAL '))
+                self.assertTrue(lines[-2].split('] ', 1)[1].startswith('TEST '))
                 self.assertNotIn("stable_arch", checkpoint["training_config"])
                 self.assertNotIn("STABLE_ARCH=", (output / "config_used.sh").read_text())
                 self.assertEqual(checkpoint["model_config"]["history_steps"], history // 6)

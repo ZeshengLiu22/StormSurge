@@ -656,7 +656,7 @@ class SeverityShapeTests(unittest.TestCase):
             for formulation, ablation in [('direct', 'none'), ('severity_shape', 'none'), ('severity_shape', 'fixed_gate')]:
                 destination = root / f'{formulation}_{ablation}'
                 shape_weight = '.3' if formulation == 'severity_shape' else '0'
-                epochs = [EpochResult(metrics), EpochResult(metrics), EpochResult(metrics,
+                epochs = [EpochResult(metrics), EpochResult(metrics), EpochResult(metrics), EpochResult(metrics,
                     dict(y_true=np.zeros((0, 4)), y_pred=np.zeros((0, 4)), tags=np.array([], dtype=str)))]
                 # Exercise persistence without executing an optimizer or training epoch.
                 with patch.object(train, 'ForecastLoss', wraps=ForecastLoss) as constructor, \

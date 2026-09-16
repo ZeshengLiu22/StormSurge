@@ -112,7 +112,7 @@ class ModelParameterTests(unittest.TestCase):
                             '--temporal_block', 'MLP', '--history_hours', str(history), '--excess_formulation', formulation,
                             '--dual_ablation', ablation, '--hidden_channels', '16', '--node_read_heads', '2',
                             '--time_read_heads', '2', '--epochs', '1', '--num_workers', '0', '--device', 'cpu'])
-                    self.assertEqual(epochs.call_count, 3)  # TRAIN, VAL, one final TEST.
+                    self.assertEqual(epochs.call_count, 4)  # TRAIN, VAL, then final VAL and TEST.
                     path, = output.glob('best_*.pth')
                     checkpoint = torch.load(path, weights_only=False)
                     counts = checkpoint['model_parameters']

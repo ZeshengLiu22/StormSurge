@@ -43,19 +43,20 @@ def arguments(graphs, stations, output, variant="single"):
     return args
 
 
-def recorded_run(root, mode="overall", auxiliary=0, variant="single", extra=()):
+def recorded_run(root, mode="overall", auxiliary=0, variant="single", extra=(), years=5):
     torch.manual_seed(824)
-    graphs, stations = make_fixture(root)
+    graphs, stations = make_fixture(root, years=years)
     output = root / "run"
     args = arguments(graphs, stations, output, variant)
     args += ["--checkpoint_selection", mode, "--save_aux_checkpoints", str(auxiliary), *extra]
-    state = dict(train_calls=0, val_calls=0, test_calls=0, loaders=0, states={})
+    state = dict(train_calls=0, val_calls=0, test_calls=0, loaders=0, states={}, final_splits=[], final_metrics={})
     real_epoch, real_loader = train.run_epoch, train.build_loader
 
     def loader(*args, **kwargs):
         state["loaders"] += 1
-        if state["loaders"] == 3:
-            # Test construction itself follows final resolution/materialization, not just inference.
+        if state["loaders"] > 2:
+            # Both full final loaders follow primary resolution/materialization.
+            assert state["loaders"] in (3, 4)
             assert state["val_calls"] == len(CONFLICTING)
             paths = list(output.glob("best_*.pth"))
             assert len(paths) == 1
@@ -64,17 +65,29 @@ def recorded_run(root, mode="overall", auxiliary=0, variant="single", extra=()):
             if auxiliary or mode != "overall":
                 assert len(list(output.glob("checkpoint_selection_*.json"))) == 1
                 assert not (output / "checkpoint_candidates").exists()
-            state["test_loader_selected_epoch"] = checkpoint["epoch"]
+            split = "val" if state["loaders"] == 3 else "test"
+            assert args[1] is None
+            view = args[0]
+            assert [view.store.graph_tags[i] for i in view.indices] == checkpoint["split_tags"][split]
+            state["final_loader_selected_epoch"] = checkpoint["epoch"]
         return real_loader(*args, **kwargs)
 
     def epoch(model, *args, **kwargs):
-        if kwargs.get("save_predictions"):
-            state["test_calls"] += 1
-            assert state["test_loader_selected_epoch"] == WINNERS[mode]
-            state["test_marker"] = next(model.parameters()).detach().flatten()[0].item()
+        if state["loaders"] > 2:
+            split = "val" if state["loaders"] == 3 else "test"
+            state["final_splits"].append(split)
+            assert kwargs.get("optimizer") is None
+            assert not kwargs.get("distributed", False)
+            assert bool(kwargs.get("save_predictions")) == (split == "test")
+            assert state["final_loader_selected_epoch"] == WINNERS[mode]
+            if split == "test":
+                state["test_calls"] += 1
+                state["test_marker"] = next(model.parameters()).detach().flatten()[0].item()
             for key, tensor in state["states"][WINNERS[mode]].items():
                 torch.testing.assert_close(model.state_dict()[key], tensor, rtol=0, atol=0)
-            return real_epoch(model, *args, **kwargs)
+            result = real_epoch(model, *args, **kwargs)
+            state["final_metrics"][split] = dict(result.metrics)
+            return result
         if kwargs.get("optimizer") is not None:
             state["train_calls"] += 1
             with torch.no_grad():
@@ -85,9 +98,12 @@ def recorded_run(root, mode="overall", auxiliary=0, variant="single", extra=()):
             state["val_calls"] += 1
         return EpochResult(dict(CONFLICTING[state["train_calls"] - 1]))
 
-    with contextlib.redirect_stdout(io.StringIO()), patch.object(train, "run_epoch", side_effect=epoch), \
-            patch.object(train, "build_loader", side_effect=loader), patch.object(torch.optim.lr_scheduler.LambdaLR, "step"):
+    console = io.StringIO()
+    with contextlib.redirect_stdout(console), patch.object(train, "run_epoch", side_effect=epoch), \
+            patch.object(train, "build_loader", side_effect=loader), patch.object(torch.optim.lr_scheduler.LambdaLR, "step"), \
+            patch.object(torch.optim.Adam, "step", side_effect=AssertionError("no training")):
         train.main(args)
+    state["console"] = console.getvalue()
     return output, state
 
 
@@ -134,7 +150,7 @@ def trajectory_run(root, variant, mode="overall", auxiliary=0, scheduler="cosine
                                 numpy_rng=hashlib.sha256(repr(np.random.get_state()).encode()).hexdigest()))
             return result
         result = real_epoch(model, *args, **kwargs)
-        if not kwargs.get("save_predictions"):
+        if not kwargs.get("save_predictions") and "actual_val_metrics" not in history[-1]:
             # Evaluate the real validation forward, then supply conflicting selection criteria.
             history[-1]["actual_val_metrics"] = dict(result.metrics)
             result.metrics.update(CONFLICTING[len(history) - 1])
@@ -151,7 +167,7 @@ def checkpoint_ddp_worker(rank, rendezvous, root_string):
     dist.init_process_group("gloo", init_method=f"file://{rendezvous}", rank=rank, world_size=2)
     real_epoch, real_save = train.run_epoch, torch.save
     real_manifest, real_select = cp.write_selection_manifest, train.CheckpointSelector
-    observed = dict(saves=[], manifests=[], selections=[], validation=[], test_calls=0, parameter_logs=[])
+    observed = dict(saves=[], manifests=[], selections=[], validation=[], final_val_calls=0, test_calls=0, parameter_logs=[])
     real_log = train.log_message
 
     def log(message):
@@ -177,13 +193,14 @@ def checkpoint_ddp_worker(rank, rendezvous, root_string):
             return super().observe(epoch, val)
 
     def epoch(model, *args, **kwargs):
-        if kwargs.get("save_predictions"):
-            observed["test_calls"] += 1
+        if not kwargs.get("distributed"):
+            split = "test" if kwargs.get("save_predictions") else "final_val"
+            observed[f"{split}_calls"] += 1
             assert rank == 0
             assert len(observed["validation"]) == 3
             assert observed["manifests"] == [0]
         result = real_epoch(model, *args, **kwargs)
-        if kwargs.get("optimizer") is None and not kwargs.get("save_predictions"):
+        if kwargs.get("optimizer") is None and kwargs.get("distributed"):
             observed["validation"].append(dict(result.metrics))
         return result
 
@@ -211,8 +228,11 @@ class CheckpointPipelineTests(unittest.TestCase):
             checkpoint_path, = output.rglob("best_*.pth")
             self.assertRegex(checkpoint_path.name, r"^best_perceiver3_mse_[0-9a-f]{10}_selection_fixture\.pth$")
             summary = json.loads(next(output.glob("summary_*.json")).read_text())
-            for key in ("best_epoch", "best_val_rmse", "val", "test"):
+            for key in ("best_epoch", "best_val_rmse", "test"):
                 self.assertEqual(summary[key], reference[key])
+            self.assertEqual(torch.load(checkpoint_path, weights_only=False)["val"], reference["val"])
+            self.assertEqual(summary["val"], state["final_metrics"]["val"])
+            self.assertNotEqual(summary["val"], reference["val"])
             self.assertEqual(state["test_marker"], reference["test_marker"])
             self.assertEqual(state["test_calls"], reference["test_calls"])
             with np.load(next(output.glob("test_preds_*.npz"))) as predictions:
@@ -222,11 +242,12 @@ class CheckpointPipelineTests(unittest.TestCase):
             self.assertFalse((output / "checkpoint_candidates").exists())
             self.assertFalse(list(output.glob("checkpoint_selection_*.json")))
 
-    def test_all_modes_aux_settings_and_head_variants_use_final_primary_once(self):
+    def test_all_modes_aux_settings_and_head_variants_re_evaluate_final_primary_val_and_test_once(self):
         for variant, mode, auxiliary in itertools.product(VARIANTS, cp.SELECTION_METRICS, (0, 1)):
             with self.subTest(variant=variant, mode=mode, auxiliary=auxiliary), tempfile.TemporaryDirectory() as tmp:
                 output, state = recorded_run(Path(tmp), mode, auxiliary, variant)
-                self.assertEqual((state["train_calls"], state["val_calls"], state["test_calls"], state["loaders"]), (6, 6, 1, 3))
+                self.assertEqual((state["train_calls"], state["val_calls"], state["test_calls"], state["loaders"]), (6, 6, 1, 4))
+                self.assertEqual(state["final_splits"], ["val", "test"])
                 canonical, = output.rglob("best_*.pth")
                 checkpoint = torch.load(canonical, weights_only=False)
                 expected = WINNERS[mode]
@@ -235,7 +256,10 @@ class CheckpointPipelineTests(unittest.TestCase):
                 summary = json.loads(next(output.glob("summary_*.json")).read_text())
                 self.assertEqual(summary["best_epoch"], expected)
                 self.assertEqual(summary["best_val_rmse"], CONFLICTING[expected - 1]["rmse_all"])
-                self.assertEqual(summary["val"], CONFLICTING[expected - 1])
+                self.assertEqual(checkpoint["val"], CONFLICTING[expected - 1])
+                for split in ("val", "test"):
+                    self.assertEqual(summary[split], state["final_metrics"][split])
+                self.assertNotEqual(summary["val"], checkpoint["val"])
                 for role in cp.SIMPLE_ROLES:
                     self.assertEqual(summary["checkpoint_selection"][f"best_{role}_epoch"], WINNERS[role])
                 config = json.loads(next(output.glob("config_*.json")).read_text())
@@ -257,6 +281,37 @@ class CheckpointPipelineTests(unittest.TestCase):
                         for key, tensor in state["states"][WINNERS[role]].items():
                             torch.testing.assert_close(artifact["model_state"][key], tensor, rtol=0, atol=0)
                     self.assertEqual(len(list(output.rglob("*.pth"))), 5 if auxiliary else 1)
+
+    def test_final_table_matches_fresh_summary_including_empty_test(self):
+        columns = (("AllRMSE", "rmse_all"), ("AllMAE", "mae_all"),
+                   ("Top5RMSE", "rmse_peak5"), ("Top5MAE", "mae_peak5"),
+                   ("PeakRMSE", "peak_magnitude_rmse_top5"), ("PeakMAE", "peak_magnitude_mae_top5"),
+                   ("PeakBias", "peak_bias_top5"), ("Under%", "peak_underprediction_fraction_top5"),
+                   ("TruePeakRMSE", "true_peak_point_rmse_top5"), ("TimingSteps", "peak_timing_mae_steps_top5"))
+        for empty_test in (False, True):
+            with self.subTest(empty_test=empty_test), tempfile.TemporaryDirectory() as tmp:
+                output, state = recorded_run(Path(tmp), years=2 if empty_test else 5)
+                summary = json.loads(next(output.glob("summary_*.json")).read_text())
+                lines = [line.split("] ", 1)[1] for line in state["console"].splitlines()]
+                self.assertEqual(lines[-6], "Best checkpoint: epoch 003 | selection=overall")
+                self.assertEqual(lines[-5], "FINAL BEST-CHECKPOINT RE-EVALUATION")
+                self.assertEqual(lines[-4].split(), ["Split", *[label for label, _ in columns]])
+                for split, line in zip(("val", "test"), lines[-3:-1]):
+                    values = line.split()
+                    self.assertEqual(values[0], split.upper())
+                    self.assertEqual(len(values), len(columns) + 1)
+                    for (_, key), value in zip(columns, values[1:]):
+                        expected = summary[split][key]
+                        if expected is None:
+                            self.assertEqual(value, "NA")
+                        elif key == "peak_underprediction_fraction_top5":
+                            self.assertTrue(value.endswith("%"))
+                            self.assertAlmostEqual(float(value[:-1]), expected * 100, delta=.005)
+                        else:
+                            self.assertAlmostEqual(float(value), expected, delta=.0000005)
+                if empty_test:
+                    self.assertTrue(all(value is None for value in summary["test"].values()))
+                self.assertEqual(state["final_splits"], ["val", "test"])
 
     def test_frozen_losses_forwards_updates_rng_and_cosine_unchanged_for_all_modes(self):
         reference = json.loads((FIXTURES / "post6_checkpoint_trajectories.json").read_text())
@@ -312,6 +367,7 @@ class CheckpointPipelineTests(unittest.TestCase):
             for key in ("saves", "manifests", "selections"):
                 self.assertEqual(one[key], [])
             self.assertEqual((zero["test_calls"], one["test_calls"]), (1, 0))
+            self.assertEqual((zero["final_val_calls"], one["final_val_calls"]), (1, 0))
             manifest = json.loads(next((root / "run").glob("checkpoint_selection_*.json")).read_text())
             self.assertEqual(len(list((root / "run").rglob("best_*.pth"))), 1)
             for role, entry in manifest["roles"].items():

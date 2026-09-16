@@ -425,7 +425,7 @@ class ExcessAmplitudeTests(unittest.TestCase):
             val1 = dict(metrics, rmse_all=.5, rmse_peak5=2.)
             val2 = dict(metrics, rmse_all=.7, rmse_peak5=.1)
             # Exercise setup and checkpoint saving without any optimizer/model training.
-            epochs = [EpochResult(metrics), EpochResult(val1), EpochResult(metrics), EpochResult(val2),
+            epochs = [EpochResult(metrics), EpochResult(val1), EpochResult(metrics), EpochResult(val2), EpochResult(metrics),
                       EpochResult(metrics, dict(y_true=np.zeros((0, 4)), y_pred=np.zeros((0, 4)), tags=np.array([], dtype=str)))]
             with patch.object(train, 'ForecastLoss', wraps=ForecastLoss) as constructor, \
                  patch.object(train, 'run_epoch', side_effect=epochs), \

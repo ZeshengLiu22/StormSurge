@@ -44,7 +44,7 @@ class PeakReportingTests(unittest.TestCase):
                 with self.subTest(formulation=formulation):
                     destination = root / formulation
                     epochs = [EpochResult(metrics), EpochResult(first), EpochResult(metrics),
-                              EpochResult(second), EpochResult(metrics, arrays)]
+                              EpochResult(second), EpochResult(metrics), EpochResult(metrics, arrays)]
                     # Checkpoint orchestration only: no optimizer step or training epoch runs.
                     with patch.object(train, 'ForecastLoss', wraps=ForecastLoss) as criterion, \
                          patch.object(train, 'run_epoch', side_effect=epochs) as evaluated, \
@@ -62,7 +62,7 @@ class PeakReportingTests(unittest.TestCase):
                             '--num_workers', '0', '--hidden_channels', '16', '--history_hours', '12'])
                     self.assertEqual(criterion.call_args.kwargs,
                                      dict(event_prior=fitted['event_prior'], event_threshold=fitted['tau_phys']))
-                    self.assertEqual(evaluated.call_count, 5)
+                    self.assertEqual(evaluated.call_count, 6)
                     self.assertTrue(all(c.kwargs['event_threshold'] == fitted['tau_phys'] for c in evaluated.call_args_list))
                     self.assertTrue(all(not c.kwargs.get('save_predictions', False) for c in evaluated.call_args_list[:4]))
                     checkpoint = next(destination.glob('best_*.pth'))
@@ -82,7 +82,7 @@ class PeakReportingTests(unittest.TestCase):
                     logs = [json.loads(line) for line in next(destination.glob('metrics_*.jsonl')).read_text().splitlines()]
                     self.assertEqual([r['val'] for r in logs], [first, second])
                     summary = json.loads(next(destination.glob('summary_*.json')).read_text())
-                    self.assertEqual(summary['val'], second)
+                    self.assertEqual(summary['val'], metrics)
                     self.assertEqual(summary['test'], metrics)
                     self.assertEqual(summary['best_epoch'], 2)
                     for key in ('val', 'test'):
