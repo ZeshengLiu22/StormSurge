@@ -1,0 +1,32 @@
+{
+  "all": {
+    "commands": 44,
+    "returncode": 0,
+    "mode": "--dry-run",
+    "queue_submissions": 0
+  },
+  "CBBT": {
+    "commands": 11,
+    "returncode": 0,
+    "mode": "--dry-run",
+    "queue_submissions": 0
+  },
+  "Lewes": {
+    "commands": 11,
+    "returncode": 0,
+    "mode": "--dry-run",
+    "queue_submissions": 0
+  },
+  "Battery": {
+    "commands": 11,
+    "returncode": 0,
+    "mode": "--dry-run",
+    "queue_submissions": 0
+  },
+  "Boston": {
+    "commands": 11,
+    "returncode": 0,
+    "mode": "--dry-run",
+    "queue_submissions": 0
+  }
+}

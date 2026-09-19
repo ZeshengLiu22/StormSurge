@@ -1,0 +1,38 @@
+{
+  "representative": "0919_CBBT_C3_Learned",
+  "runtime": {
+    "seed": 42,
+    "deterministic_algorithms": true,
+    "warn_only": false,
+    "cublas_workspace_config": ":4096:8",
+    "cudnn_deterministic": true,
+    "cudnn_benchmark": false,
+    "matmul_tf32": true,
+    "cudnn_tf32": true
+  },
+  "smoke_device": "cuda:0",
+  "cuda_available": true,
+  "gpu_name": "NVIDIA H100 80GB HBM3",
+  "gpu_amp_determinism_verified": true,
+  "exact_repeat_predictions_and_gradients": true,
+  "note": "Two synthetic forward/backward passes, no optimizer or dataset loading. CPU FP32 is a plumbing probe only when CUDA is unavailable; formal BF16 GPU execution is then unverified.",
+  "data_order_probe": {
+    "method": "Frozen model construction + existing shuffled loader on synthetic indices 0..63.",
+    "same_config_repeat_equal": true,
+    "cross_variant_equal": false,
+    "order_sha256": {
+      "legacy/mean": "4b4a60136792c29763785d629b637e3bdec918dbd0fca9572dd16c2d19ca6f6b",
+      "legacy/learned": "ce7878df44782d36db8636dcd9a690845d7ce5db7fae3efe4b0c39fdddacc3ae",
+      "c1/mean": "bbc9a1385a6535e0b288903c5492c5ef4ff875e617f91c4c17d36857b31462ff",
+      "c1/learned": "b2465b6bb3add135e28319ab71aca66c23fa2fc518de5b898b4b54dcb4f60161",
+      "c2/mean": "8fd92deaa55e3a27a8d73885f5710961575f0cd907ae715a604bf904af223b43",
+      "c2/learned": "b295a37b15f39e72ef5a44451ffb18981e11e40e464845d57b33dd91d7fc69b0",
+      "c2r/mean": "8fd92deaa55e3a27a8d73885f5710961575f0cd907ae715a604bf904af223b43",
+      "c2r/learned": "b295a37b15f39e72ef5a44451ffb18981e11e40e464845d57b33dd91d7fc69b0",
+      "c3/mean": "8fd92deaa55e3a27a8d73885f5710961575f0cd907ae715a604bf904af223b43",
+      "c3/learned": "b295a37b15f39e72ef5a44451ffb18981e11e40e464845d57b33dd91d7fc69b0"
+    }
+  },
+  "optimizer_steps": 0,
+  "real_training_jobs": 0
+}
