@@ -313,19 +313,29 @@ class CheckpointPipelineTests(unittest.TestCase):
                     self.assertTrue(all(value is None for value in summary["test"].values()))
                 self.assertEqual(state["final_splits"], ["val", "test"])
 
-    def test_frozen_losses_forwards_updates_rng_and_cosine_unchanged_for_all_modes(self):
+    def test_frozen_trajectory_with_legacy_loader_rng_unchanged_for_all_modes(self):
         reference = json.loads((FIXTURES / "post6_checkpoint_trajectories.json").read_text())
+        real_loader = train.build_loader
+
+        def legacy_loader(*args, **kwargs):
+            # Keep the historical fixture: only undo the intentional shuffle-RNG
+            # change so it still guards losses, updates, dropout and scheduling.
+            kwargs.pop("generator", None)
+            return real_loader(*args, **kwargs)
+
         for variant, mode in itertools.product(("single", "direct"), cp.SELECTION_METRICS):
-            with self.subTest(variant=variant, mode=mode), tempfile.TemporaryDirectory() as tmp:
+            with self.subTest(variant=variant, mode=mode), tempfile.TemporaryDirectory() as tmp, \
+                    patch.object(train, "build_loader", side_effect=legacy_loader):
                 observed = trajectory_run(Path(tmp), variant, mode, auxiliary=1)
                 self.assertEqual(observed, reference["variants"][variant])
 
-    def test_corrected_severity_shape_trajectory_is_independent_of_selection_mode(self):
-        with tempfile.TemporaryDirectory() as tmp:
-            reference = trajectory_run(Path(tmp), "severity_shape")
-        for mode in cp.SELECTION_METRICS:
-            with self.subTest(mode=mode), tempfile.TemporaryDirectory() as tmp:
-                self.assertEqual(trajectory_run(Path(tmp), "severity_shape", mode, auxiliary=1), reference)
+    def test_current_trajectory_is_independent_of_selection_mode(self):
+        for variant in ("single", "direct", "severity_shape"):
+            with tempfile.TemporaryDirectory() as tmp:
+                reference = trajectory_run(Path(tmp), variant)
+            for mode in cp.SELECTION_METRICS:
+                with self.subTest(variant=variant, mode=mode), tempfile.TemporaryDirectory() as tmp:
+                    self.assertEqual(trajectory_run(Path(tmp), variant, mode, auxiliary=1), reference)
 
     def test_rop_keeps_its_independent_two_metric_choices_across_selection_modes(self):
         for rop_metric, key in (("val_rmse_phys", "rmse_all"), ("val_rmse_peak", "rmse_peak5")):

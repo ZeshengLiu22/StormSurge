@@ -84,7 +84,7 @@ WARMUP_EPOCHS=5
 WARMUP_START_FACTOR="0.1"
 MIN_LR="1e-6"
 MAX_GRAD_NORM=0
-DETERMINISTIC=1
+DETERMINISTIC=0
 # Inactive with the fixed cosine scheduler; explicit for resolved snapshots.
 ROP_METRIC="val_rmse_phys"
 ROP_FACTOR="0.5"

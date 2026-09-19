@@ -46,7 +46,7 @@ def run_name(station, variant, pooling):
 
 def render_config(station, variant, pooling):
     name = run_name(station, variant, pooling)
-    changes = dict(SEED='42', DETERMINISTIC='1', SESSION_NAME=f'"${{SESSION_NAME:-{name}}}"',
+    changes = dict(SEED='42', DETERMINISTIC='0', SESSION_NAME=f'"${{SESSION_NAME:-{name}}}"',
                    PACT_RUN_NAME=f'"{name}"', ALL_RESULTS_ROOT=f'"{RESULTS}"')
     source = reference_path(station, variant).read_text()
     for key, value in changes.items():
@@ -73,7 +73,7 @@ def manifest_rows():
             exceedance_head_experiment=variant or 'NA', exceedance_gate_pooling=pooling or 'NA',
             loss_mode='mse', excess_formulation='direct', dual_loss=0 if single else 1,
             body_loss_weight=0 if single else 1, excess_loss_weight=0 if single else 2,
-            gate_loss_weight=0 if single else .5, seed=42, deterministic=1, lr='5e-3', history_hours=24,
+            gate_loss_weight=0 if single else .5, seed=42, deterministic=0, lr='5e-3', history_hours=24,
             hidden_channels=128, temporal_block='Transformer', encoder_type='GraphSAGE',
             batch_size=256, grad_accum_steps=4, epochs=300, num_gpus=1, amp_dtype='bf16',
             use_amp=1, use_tf32=1, num_workers=0, pin_memory=0, persistent_workers=0, prefetch_factor=0,
@@ -118,12 +118,13 @@ def main():
     provenance = dict(implementation_commit=subprocess.check_output(['git', 'rev-parse', 'HEAD'],
         cwd=REPO, text=True).strip(), reference_tree_sha256=reference_hashes(),
         frozen_source_sha256=frozen_hashes(),
-        protocol_change='DETERMINISTIC=0 -> 1 as explicitly requested; seed remains 42.',
+        protocol_change='DETERMINISTIC=1 -> 0 by user request, matching the 0916 reference; seed remains 42 and the independent training DataLoader generator is retained.',
         reference_use='Read-only generation/validation input; generated configs never source 0916 at runtime.')
     if provenance_path.exists():
         saved = json.loads(provenance_path.read_text())
         assert saved['reference_tree_sha256'] == provenance['reference_tree_sha256'], '0916 references changed.'
         assert saved['frozen_source_sha256'] == provenance['frozen_source_sha256'], 'Frozen implementation changed.'
+        assert saved['protocol_change'] == provenance['protocol_change'], 'Runtime protocol metadata differs.'
     elif not args.check:
         provenance_path.write_text(json.dumps(provenance, indent=2) + '\n')
     else:

@@ -36,30 +36,34 @@ Dataset root: `/media/share/PACT/Data/Grid4_New/NCEP/graphs`.
 Station metadata: `/media/volume/PACT-Data/StormSurge/station_json`.
 The station selector changes; neither path is invented or redirected.
 
-Every config explicitly sets **SEED=42, DETERMINISTIC=1**. The 0916 reference
-used determinism 0; this is the requested common protocol change. Execution stays
-one GPU (`num_gpus=1`, `CUDA_VISIBLE_DEVICES=0`), BF16 AMP, TF32 enabled, one Torch
-thread, `NUM_WORKERS=0`, `PIN_MEMORY=0`, `PERSISTENT_WORKERS=0`,
-`PREFETCH_FACTOR=0`, and multiprocessing `fork`. The canonical interpreter is
+Every config explicitly sets **SEED=42, DETERMINISTIC=0**, matching the 0916
+reference. Strict deterministic kernels were disabled by user request to improve
+throughput. Execution stays one GPU (`num_gpus=1`, `CUDA_VISIBLE_DEVICES=0`),
+BF16 AMP, TF32 enabled, one Torch thread, `NUM_WORKERS=0`, `PIN_MEMORY=0`,
+`PERSISTENT_WORKERS=0`, `PREFETCH_FACTOR=0`, and multiprocessing `fork`.
+The canonical interpreter is
 `/media/volume/PACT-Data/conda_envs/torchpyg-cu124/bin/python`, with `DO_CONDA=0`.
-The existing runtime enables deterministic algorithms with errors, sets
-`CUBLAS_WORKSPACE_CONFIG=:4096:8`, and disables cuDNN benchmarking. A deterministic
-operation failure must be reported as-is; neither these scripts nor the configs
-disable determinism or change precision in response.
+The existing runtime disables deterministic algorithms and cuDNN determinism;
+cuDNN benchmarking remains off, as in 0916. It does not set a cuBLAS workspace
+constraint in this mode. Seeded initialization and matched training sample order
+remain in place, but GPU training results are not guaranteed to repeat bitwise.
 
 Two inherited details matter for interpretation. Under MSE, the launcher omits
 tail/slope flags, so their inactive Python defaults remain 0.1/0.01; they do not
 enter this objective. Single branch flags are also omitted and remain inactive.
 The canonical Dual weights are **1/2/0.5**, not three unit weights.
 
-**Exact cross-variant minibatch order is not guaranteed by the frozen trainer.**
-It constructs the model before creating a shuffled loader without a dedicated
-generator. Different head architectures consume different global RNG draws.
-The suite preserves identical split/shuffle settings and checks repeatability of
-each configuration, but it cannot enforce identical shuffled order across heads
-without changing training code. The synthetic sampler probe records this limit.
-If identical minibatch order is mandatory for the study, that requires a separate
-trainer change before claiming a fully matched data-order ablation.
+**Cross-variant minibatch order is matched within each station.** Single-process
+training now gives its DataLoader a private `torch.Generator` seeded once from
+`args.seed`. This stream drives sample shuffling and iterator/worker seeds,
+independently of parameter initialization and dropout. Its state advances across
+epochs; it is never reset at epoch boundaries. All 11 architectures therefore
+share the same permutation sequence for the same data, seed and loader settings.
+The synthetic probe verifies all 300 epochs twice, including Single, while
+perturbing global RNG consumption between epochs. DDP sampler behavior and
+evaluation loader defaults are unchanged. Historical single-process training
+trajectories change intentionally; compare study runs using this fixed protocol.
+The two source-hash amendments are recorded in [provenance.json](provenance.json).
 
 All run artifacts stay under
 `/home/exouser/media/volume/PACT-Data/StormSurge/All_results_0919/` as
@@ -82,10 +86,12 @@ bash experiment_config_0919/run_all.sh --dry-run
 Validation checks inventory, factors, every inherited setting, optional losses,
 one-process launchers, paths, 44 production-parser commands, source/reference
 integrity, and unchanged result trees. It compares each run with its actual 0916
-reference. A representative C3 + Learned synthetic forward/backward is repeated
-with the resolved seed/runtime settings, without data loading or optimizer steps.
-The report explicitly distinguishes CPU plumbing checks from GPU BF16 validation;
-CPU checks do not certify deterministic CUDA execution. No real training runs.
+reference, including DETERMINISTIC=0. A representative C3 + Learned synthetic
+forward/backward checks finite predictions and gradients with the resolved
+seed/runtime settings, without data loading or optimizer steps. The report
+distinguishes CPU plumbing checks from GPU BF16 smoke validation. Neither is a
+claim of bitwise training repeatability; only the isolated sample-order stream
+is required to match across repeats and architectures. No real training runs.
 
 Evidence: [validation report](validation_report.md), [full resolved settings](validation_report.json),
 [44 resolved commands](dry_run_commands.txt), and
@@ -101,6 +107,8 @@ commands for use in an interactive shell with `qsub_local`; those direct command
 assume the documented GPU/environment preconditions. Job failures retain their
 nonzero status and logs through the existing queue worker; no retry changes settings.
 
-No jobs were submitted or training launched while creating this suite. No model,
-loss, optimizer, scheduler, dataset, metric, checkpoint, or existing launcher code
-was modified. No branch diagnostics are enabled or added.
+No study jobs were submitted or training launched while creating or validating
+this suite. The later data-order fix changes only loader construction in
+`train.py` and `emulator/data/loaders.py`; model, loss, optimizer, scheduler,
+dataset, metric, checkpoint and existing launcher code remain unchanged.
+No branch diagnostics are enabled or added.

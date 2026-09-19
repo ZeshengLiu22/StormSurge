@@ -19,6 +19,7 @@ def build_loader(
     prefetch_factor,
     mp_context,
     shuffle: bool = False,
+    generator=None,
 ):
     """Build a safe `torch_geometric.loader.DataLoader`.
 
@@ -27,6 +28,7 @@ def build_loader(
     - Evaluation keeps dataset order; training opts into shuffling explicitly.
     - If a sampler is provided (DDP), shuffling is disabled.
     - `prefetch_factor` is only passed when valid.
+    - An optional generator isolates shuffle/iterator seeds from the model RNG.
     """
     num_workers = int(num_workers)
     shuffle = bool(shuffle) and sampler is None
@@ -38,6 +40,7 @@ def build_loader(
         num_workers=num_workers,
         pin_memory=bool(pin_memory),
         drop_last=False,
+        generator=generator,
     )
 
     if num_workers > 0:

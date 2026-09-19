@@ -154,7 +154,10 @@ def train(args, device, distributed, rank, wall_start):
                           mp_context=args.mp_context)
     train_sampler = DistributedSampler(train_data, num_replicas=world, rank=rank, shuffle=True, drop_last=False) if distributed else None
     val_sampler = DistributedSampler(val_data, num_replicas=world, rank=rank, shuffle=False, drop_last=False) if distributed else None
-    train_loader = build_loader(train_data, train_sampler, shuffle=True, **loader_options)
+    # Isolate single-process data order from initialization/dropout RNG draws.
+    # Seed once; successive epochs advance this stream. DDP keeps its sampler RNG.
+    train_generator = torch.Generator().manual_seed(args.seed) if not distributed else None
+    train_loader = build_loader(train_data, train_sampler, shuffle=True, generator=train_generator, **loader_options)
     val_loader = build_loader(val_data, val_sampler, **loader_options)
     epoch_options = dict(device=device, stats=stats, station_feat=station_feat, use_amp=use_amp,
                          amp_dtype=amp_dtype, x_clip=args.x_clip, distributed=distributed,
