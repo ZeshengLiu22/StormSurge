@@ -40,6 +40,7 @@ events.out.tfevents.*
 /data/
 /Data
 /All_Results/
+/All_results_0916/
 /All_Inference_Results/
 outputs/
 results/

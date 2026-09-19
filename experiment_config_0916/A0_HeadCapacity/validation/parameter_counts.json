@@ -1,0 +1,1065 @@
+{
+  "method": "Counts use emulator.models.count_model_parameters on CPU models built from parsed A0 settings, actual graph tensor dimensions, and the six existing station-coordinate features. Only one TRAIN-year file per station is memory-mapped onto the meta device for shapes. Placeholder thresholds=0, target scales=1 and prior=0.05 are used only for counting; they are non-parameter buffers/initialization and do not change registered capacity. Training still fits actual TRAIN statistics. No model forward, optimizer, training or queue submission occurs.",
+  "stations": {
+    "CBBT": {
+      "input_channels": 5,
+      "output_horizons": 6,
+      "available_history_steps": 9,
+      "station_feat_dim": 6,
+      "sample_file": "/media/share/PACT/Data/Grid4_New/NCEP/graphs/1979_1980_CBBT_peryear_hist48_graphs.pt",
+      "split_year_groups": {
+        "train": [
+          "1979_1980",
+          "1980_1981",
+          "1981_1982",
+          "1982_1983",
+          "1983_1984",
+          "1984_1985",
+          "1985_1986",
+          "1986_1987",
+          "1987_1988",
+          "1988_1989",
+          "1989_1990",
+          "1990_1991",
+          "1991_1992",
+          "1992_1993",
+          "1993_1994",
+          "1994_1995",
+          "1995_1996",
+          "1996_1997",
+          "1997_1998",
+          "1998_1999",
+          "1999_2000",
+          "2000_2001"
+        ],
+        "val": [
+          "2001_2002",
+          "2002_2003",
+          "2003_2004",
+          "2004_2005",
+          "2005_2006",
+          "2006_2007",
+          "2007_2008"
+        ],
+        "test": [
+          "2008_2009",
+          "2009_2010",
+          "2010_2011",
+          "2011_2012",
+          "2012_2013",
+          "2013_2014",
+          "2014_2015"
+        ]
+      },
+      "variants": {
+        "single_base": {
+          "model_config": {
+            "in_channels": 5,
+            "out_channels": 6,
+            "hidden_channels": 128,
+            "model": "pact",
+            "encoder_type": "GraphSAGE",
+            "temporal_block": "Transformer",
+            "head_type": "single",
+            "num_layers": 2,
+            "dropout": 0.05,
+            "cnn_intermediate_channel": 29,
+            "history_steps": 4,
+            "max_time_steps": 32,
+            "node_read_heads": 8,
+            "time_read_heads": 8,
+            "temporal_layers": 2,
+            "temporal_ff_mult": 4.0,
+            "temporal_dropout": 0.0,
+            "head_dropout": 0.05,
+            "station_feat_dim": 6,
+            "peak_threshold_norm": null,
+            "peak_prior": 0.05,
+            "dual_ablation": "none",
+            "head_hidden": null,
+            "temporal_hidden": null,
+            "excess_formulation": "direct",
+            "target_y_std": null,
+            "severity_shape_eps": 1e-06
+          },
+          "parameters": {
+            "total": 618885,
+            "trainable": 618885,
+            "non_trainable": 0,
+            "head": {
+              "total": 33281,
+              "trainable": 33281,
+              "non_trainable": 0
+            },
+            "backbone": {
+              "total": 585604,
+              "trainable": 585604,
+              "non_trainable": 0
+            },
+            "head_branches": {
+              "regression": {
+                "total": 33281,
+                "trainable": 33281,
+                "non_trainable": 0
+              }
+            }
+          }
+        },
+        "dual_direct_base": {
+          "model_config": {
+            "in_channels": 5,
+            "out_channels": 6,
+            "hidden_channels": 128,
+            "model": "pact",
+            "encoder_type": "GraphSAGE",
+            "temporal_block": "Transformer",
+            "head_type": "dual",
+            "num_layers": 2,
+            "dropout": 0.05,
+            "cnn_intermediate_channel": 29,
+            "history_steps": 4,
+            "max_time_steps": 32,
+            "node_read_heads": 8,
+            "time_read_heads": 8,
+            "temporal_layers": 2,
+            "temporal_ff_mult": 4.0,
+            "temporal_dropout": 0.0,
+            "head_dropout": 0.05,
+            "station_feat_dim": 6,
+            "peak_threshold_norm": [
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "peak_prior": 0.05,
+            "dual_ablation": "none",
+            "head_hidden": null,
+            "temporal_hidden": null,
+            "excess_formulation": "direct",
+            "target_y_std": null,
+            "severity_shape_eps": 1e-06
+          },
+          "parameters": {
+            "total": 685447,
+            "trainable": 685447,
+            "non_trainable": 0,
+            "head": {
+              "total": 99843,
+              "trainable": 99843,
+              "non_trainable": 0
+            },
+            "backbone": {
+              "total": 585604,
+              "trainable": 585604,
+              "non_trainable": 0
+            },
+            "head_branches": {
+              "body": {
+                "total": 33281,
+                "trainable": 33281,
+                "non_trainable": 0
+              },
+              "excess": {
+                "total": 33281,
+                "trainable": 33281,
+                "non_trainable": 0
+              },
+              "gate": {
+                "total": 33281,
+                "trainable": 33281,
+                "non_trainable": 0
+              }
+            }
+          }
+        },
+        "dual_severity_base": {
+          "model_config": {
+            "in_channels": 5,
+            "out_channels": 6,
+            "hidden_channels": 128,
+            "model": "pact",
+            "encoder_type": "GraphSAGE",
+            "temporal_block": "Transformer",
+            "head_type": "dual",
+            "num_layers": 2,
+            "dropout": 0.05,
+            "cnn_intermediate_channel": 29,
+            "history_steps": 4,
+            "max_time_steps": 32,
+            "node_read_heads": 8,
+            "time_read_heads": 8,
+            "temporal_layers": 2,
+            "temporal_ff_mult": 4.0,
+            "temporal_dropout": 0.0,
+            "head_dropout": 0.05,
+            "station_feat_dim": 6,
+            "peak_threshold_norm": [
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "peak_prior": 0.05,
+            "dual_ablation": "none",
+            "head_hidden": null,
+            "temporal_hidden": null,
+            "excess_formulation": "severity_shape",
+            "target_y_std": [
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0
+            ],
+            "severity_shape_eps": 1e-06
+          },
+          "parameters": {
+            "total": 718728,
+            "trainable": 718728,
+            "non_trainable": 0,
+            "head": {
+              "total": 133124,
+              "trainable": 133124,
+              "non_trainable": 0
+            },
+            "backbone": {
+              "total": 585604,
+              "trainable": 585604,
+              "non_trainable": 0
+            },
+            "head_branches": {
+              "body": {
+                "total": 33281,
+                "trainable": 33281,
+                "non_trainable": 0
+              },
+              "severity": {
+                "total": 33281,
+                "trainable": 33281,
+                "non_trainable": 0
+              },
+              "shape": {
+                "total": 33281,
+                "trainable": 33281,
+                "non_trainable": 0
+              },
+              "gate": {
+                "total": 33281,
+                "trainable": 33281,
+                "non_trainable": 0
+              }
+            }
+          }
+        }
+      },
+      "severity_minus_direct": {
+        "total": 33281,
+        "head": 33281,
+        "backbone": 0,
+        "total_percent": 4.85537175011343,
+        "head_percent": 33.333333333333336
+      }
+    },
+    "Lewes": {
+      "input_channels": 5,
+      "output_horizons": 6,
+      "available_history_steps": 9,
+      "station_feat_dim": 6,
+      "sample_file": "/media/share/PACT/Data/Grid4_New/NCEP/graphs/1979_1980_Lewes_peryear_hist48_graphs.pt",
+      "split_year_groups": {
+        "train": [
+          "1979_1980",
+          "1980_1981",
+          "1981_1982",
+          "1982_1983",
+          "1983_1984",
+          "1984_1985",
+          "1985_1986",
+          "1986_1987",
+          "1987_1988",
+          "1988_1989",
+          "1989_1990",
+          "1990_1991",
+          "1991_1992",
+          "1992_1993",
+          "1993_1994",
+          "1994_1995",
+          "1995_1996",
+          "1996_1997",
+          "1997_1998",
+          "1998_1999",
+          "1999_2000",
+          "2000_2001"
+        ],
+        "val": [
+          "2001_2002",
+          "2002_2003",
+          "2003_2004",
+          "2004_2005",
+          "2005_2006",
+          "2006_2007",
+          "2007_2008"
+        ],
+        "test": [
+          "2008_2009",
+          "2009_2010",
+          "2010_2011",
+          "2011_2012",
+          "2012_2013",
+          "2013_2014",
+          "2014_2015"
+        ]
+      },
+      "variants": {
+        "single_base": {
+          "model_config": {
+            "in_channels": 5,
+            "out_channels": 6,
+            "hidden_channels": 128,
+            "model": "pact",
+            "encoder_type": "GraphSAGE",
+            "temporal_block": "Transformer",
+            "head_type": "single",
+            "num_layers": 2,
+            "dropout": 0.05,
+            "cnn_intermediate_channel": 29,
+            "history_steps": 4,
+            "max_time_steps": 32,
+            "node_read_heads": 8,
+            "time_read_heads": 8,
+            "temporal_layers": 2,
+            "temporal_ff_mult": 4.0,
+            "temporal_dropout": 0.0,
+            "head_dropout": 0.05,
+            "station_feat_dim": 6,
+            "peak_threshold_norm": null,
+            "peak_prior": 0.05,
+            "dual_ablation": "none",
+            "head_hidden": null,
+            "temporal_hidden": null,
+            "excess_formulation": "direct",
+            "target_y_std": null,
+            "severity_shape_eps": 1e-06
+          },
+          "parameters": {
+            "total": 618885,
+            "trainable": 618885,
+            "non_trainable": 0,
+            "head": {
+              "total": 33281,
+              "trainable": 33281,
+              "non_trainable": 0
+            },
+            "backbone": {
+              "total": 585604,
+              "trainable": 585604,
+              "non_trainable": 0
+            },
+            "head_branches": {
+              "regression": {
+                "total": 33281,
+                "trainable": 33281,
+                "non_trainable": 0
+              }
+            }
+          }
+        },
+        "dual_direct_base": {
+          "model_config": {
+            "in_channels": 5,
+            "out_channels": 6,
+            "hidden_channels": 128,
+            "model": "pact",
+            "encoder_type": "GraphSAGE",
+            "temporal_block": "Transformer",
+            "head_type": "dual",
+            "num_layers": 2,
+            "dropout": 0.05,
+            "cnn_intermediate_channel": 29,
+            "history_steps": 4,
+            "max_time_steps": 32,
+            "node_read_heads": 8,
+            "time_read_heads": 8,
+            "temporal_layers": 2,
+            "temporal_ff_mult": 4.0,
+            "temporal_dropout": 0.0,
+            "head_dropout": 0.05,
+            "station_feat_dim": 6,
+            "peak_threshold_norm": [
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "peak_prior": 0.05,
+            "dual_ablation": "none",
+            "head_hidden": null,
+            "temporal_hidden": null,
+            "excess_formulation": "direct",
+            "target_y_std": null,
+            "severity_shape_eps": 1e-06
+          },
+          "parameters": {
+            "total": 685447,
+            "trainable": 685447,
+            "non_trainable": 0,
+            "head": {
+              "total": 99843,
+              "trainable": 99843,
+              "non_trainable": 0
+            },
+            "backbone": {
+              "total": 585604,
+              "trainable": 585604,
+              "non_trainable": 0
+            },
+            "head_branches": {
+              "body": {
+                "total": 33281,
+                "trainable": 33281,
+                "non_trainable": 0
+              },
+              "excess": {
+                "total": 33281,
+                "trainable": 33281,
+                "non_trainable": 0
+              },
+              "gate": {
+                "total": 33281,
+                "trainable": 33281,
+                "non_trainable": 0
+              }
+            }
+          }
+        },
+        "dual_severity_base": {
+          "model_config": {
+            "in_channels": 5,
+            "out_channels": 6,
+            "hidden_channels": 128,
+            "model": "pact",
+            "encoder_type": "GraphSAGE",
+            "temporal_block": "Transformer",
+            "head_type": "dual",
+            "num_layers": 2,
+            "dropout": 0.05,
+            "cnn_intermediate_channel": 29,
+            "history_steps": 4,
+            "max_time_steps": 32,
+            "node_read_heads": 8,
+            "time_read_heads": 8,
+            "temporal_layers": 2,
+            "temporal_ff_mult": 4.0,
+            "temporal_dropout": 0.0,
+            "head_dropout": 0.05,
+            "station_feat_dim": 6,
+            "peak_threshold_norm": [
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "peak_prior": 0.05,
+            "dual_ablation": "none",
+            "head_hidden": null,
+            "temporal_hidden": null,
+            "excess_formulation": "severity_shape",
+            "target_y_std": [
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0
+            ],
+            "severity_shape_eps": 1e-06
+          },
+          "parameters": {
+            "total": 718728,
+            "trainable": 718728,
+            "non_trainable": 0,
+            "head": {
+              "total": 133124,
+              "trainable": 133124,
+              "non_trainable": 0
+            },
+            "backbone": {
+              "total": 585604,
+              "trainable": 585604,
+              "non_trainable": 0
+            },
+            "head_branches": {
+              "body": {
+                "total": 33281,
+                "trainable": 33281,
+                "non_trainable": 0
+              },
+              "severity": {
+                "total": 33281,
+                "trainable": 33281,
+                "non_trainable": 0
+              },
+              "shape": {
+                "total": 33281,
+                "trainable": 33281,
+                "non_trainable": 0
+              },
+              "gate": {
+                "total": 33281,
+                "trainable": 33281,
+                "non_trainable": 0
+              }
+            }
+          }
+        }
+      },
+      "severity_minus_direct": {
+        "total": 33281,
+        "head": 33281,
+        "backbone": 0,
+        "total_percent": 4.85537175011343,
+        "head_percent": 33.333333333333336
+      }
+    },
+    "Battery": {
+      "input_channels": 5,
+      "output_horizons": 6,
+      "available_history_steps": 9,
+      "station_feat_dim": 6,
+      "sample_file": "/media/share/PACT/Data/Grid4_New/NCEP/graphs/1979_1980_Battery_peryear_hist48_graphs.pt",
+      "split_year_groups": {
+        "train": [
+          "1979_1980",
+          "1980_1981",
+          "1981_1982",
+          "1982_1983",
+          "1983_1984",
+          "1984_1985",
+          "1985_1986",
+          "1986_1987",
+          "1987_1988",
+          "1988_1989",
+          "1989_1990",
+          "1990_1991",
+          "1991_1992",
+          "1992_1993",
+          "1993_1994",
+          "1994_1995",
+          "1995_1996",
+          "1996_1997",
+          "1997_1998",
+          "1998_1999",
+          "1999_2000",
+          "2000_2001"
+        ],
+        "val": [
+          "2001_2002",
+          "2002_2003",
+          "2003_2004",
+          "2004_2005",
+          "2005_2006",
+          "2006_2007",
+          "2007_2008"
+        ],
+        "test": [
+          "2008_2009",
+          "2009_2010",
+          "2010_2011",
+          "2011_2012",
+          "2012_2013",
+          "2013_2014",
+          "2014_2015"
+        ]
+      },
+      "variants": {
+        "single_base": {
+          "model_config": {
+            "in_channels": 5,
+            "out_channels": 6,
+            "hidden_channels": 128,
+            "model": "pact",
+            "encoder_type": "GraphSAGE",
+            "temporal_block": "Transformer",
+            "head_type": "single",
+            "num_layers": 2,
+            "dropout": 0.05,
+            "cnn_intermediate_channel": 29,
+            "history_steps": 4,
+            "max_time_steps": 32,
+            "node_read_heads": 8,
+            "time_read_heads": 8,
+            "temporal_layers": 2,
+            "temporal_ff_mult": 4.0,
+            "temporal_dropout": 0.0,
+            "head_dropout": 0.05,
+            "station_feat_dim": 6,
+            "peak_threshold_norm": null,
+            "peak_prior": 0.05,
+            "dual_ablation": "none",
+            "head_hidden": null,
+            "temporal_hidden": null,
+            "excess_formulation": "direct",
+            "target_y_std": null,
+            "severity_shape_eps": 1e-06
+          },
+          "parameters": {
+            "total": 618885,
+            "trainable": 618885,
+            "non_trainable": 0,
+            "head": {
+              "total": 33281,
+              "trainable": 33281,
+              "non_trainable": 0
+            },
+            "backbone": {
+              "total": 585604,
+              "trainable": 585604,
+              "non_trainable": 0
+            },
+            "head_branches": {
+              "regression": {
+                "total": 33281,
+                "trainable": 33281,
+                "non_trainable": 0
+              }
+            }
+          }
+        },
+        "dual_direct_base": {
+          "model_config": {
+            "in_channels": 5,
+            "out_channels": 6,
+            "hidden_channels": 128,
+            "model": "pact",
+            "encoder_type": "GraphSAGE",
+            "temporal_block": "Transformer",
+            "head_type": "dual",
+            "num_layers": 2,
+            "dropout": 0.05,
+            "cnn_intermediate_channel": 29,
+            "history_steps": 4,
+            "max_time_steps": 32,
+            "node_read_heads": 8,
+            "time_read_heads": 8,
+            "temporal_layers": 2,
+            "temporal_ff_mult": 4.0,
+            "temporal_dropout": 0.0,
+            "head_dropout": 0.05,
+            "station_feat_dim": 6,
+            "peak_threshold_norm": [
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "peak_prior": 0.05,
+            "dual_ablation": "none",
+            "head_hidden": null,
+            "temporal_hidden": null,
+            "excess_formulation": "direct",
+            "target_y_std": null,
+            "severity_shape_eps": 1e-06
+          },
+          "parameters": {
+            "total": 685447,
+            "trainable": 685447,
+            "non_trainable": 0,
+            "head": {
+              "total": 99843,
+              "trainable": 99843,
+              "non_trainable": 0
+            },
+            "backbone": {
+              "total": 585604,
+              "trainable": 585604,
+              "non_trainable": 0
+            },
+            "head_branches": {
+              "body": {
+                "total": 33281,
+                "trainable": 33281,
+                "non_trainable": 0
+              },
+              "excess": {
+                "total": 33281,
+                "trainable": 33281,
+                "non_trainable": 0
+              },
+              "gate": {
+                "total": 33281,
+                "trainable": 33281,
+                "non_trainable": 0
+              }
+            }
+          }
+        },
+        "dual_severity_base": {
+          "model_config": {
+            "in_channels": 5,
+            "out_channels": 6,
+            "hidden_channels": 128,
+            "model": "pact",
+            "encoder_type": "GraphSAGE",
+            "temporal_block": "Transformer",
+            "head_type": "dual",
+            "num_layers": 2,
+            "dropout": 0.05,
+            "cnn_intermediate_channel": 29,
+            "history_steps": 4,
+            "max_time_steps": 32,
+            "node_read_heads": 8,
+            "time_read_heads": 8,
+            "temporal_layers": 2,
+            "temporal_ff_mult": 4.0,
+            "temporal_dropout": 0.0,
+            "head_dropout": 0.05,
+            "station_feat_dim": 6,
+            "peak_threshold_norm": [
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "peak_prior": 0.05,
+            "dual_ablation": "none",
+            "head_hidden": null,
+            "temporal_hidden": null,
+            "excess_formulation": "severity_shape",
+            "target_y_std": [
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0
+            ],
+            "severity_shape_eps": 1e-06
+          },
+          "parameters": {
+            "total": 718728,
+            "trainable": 718728,
+            "non_trainable": 0,
+            "head": {
+              "total": 133124,
+              "trainable": 133124,
+              "non_trainable": 0
+            },
+            "backbone": {
+              "total": 585604,
+              "trainable": 585604,
+              "non_trainable": 0
+            },
+            "head_branches": {
+              "body": {
+                "total": 33281,
+                "trainable": 33281,
+                "non_trainable": 0
+              },
+              "severity": {
+                "total": 33281,
+                "trainable": 33281,
+                "non_trainable": 0
+              },
+              "shape": {
+                "total": 33281,
+                "trainable": 33281,
+                "non_trainable": 0
+              },
+              "gate": {
+                "total": 33281,
+                "trainable": 33281,
+                "non_trainable": 0
+              }
+            }
+          }
+        }
+      },
+      "severity_minus_direct": {
+        "total": 33281,
+        "head": 33281,
+        "backbone": 0,
+        "total_percent": 4.85537175011343,
+        "head_percent": 33.333333333333336
+      }
+    },
+    "Boston": {
+      "input_channels": 5,
+      "output_horizons": 6,
+      "available_history_steps": 9,
+      "station_feat_dim": 6,
+      "sample_file": "/media/share/PACT/Data/Grid4_New/NCEP/graphs/1979_1980_Boston_peryear_hist48_graphs.pt",
+      "split_year_groups": {
+        "train": [
+          "1979_1980",
+          "1980_1981",
+          "1981_1982",
+          "1982_1983",
+          "1983_1984",
+          "1984_1985",
+          "1985_1986",
+          "1986_1987",
+          "1987_1988",
+          "1988_1989",
+          "1989_1990",
+          "1990_1991",
+          "1991_1992",
+          "1992_1993",
+          "1993_1994",
+          "1994_1995",
+          "1995_1996",
+          "1996_1997",
+          "1997_1998",
+          "1998_1999",
+          "1999_2000",
+          "2000_2001"
+        ],
+        "val": [
+          "2001_2002",
+          "2002_2003",
+          "2003_2004",
+          "2004_2005",
+          "2005_2006",
+          "2006_2007",
+          "2007_2008"
+        ],
+        "test": [
+          "2008_2009",
+          "2009_2010",
+          "2010_2011",
+          "2011_2012",
+          "2012_2013",
+          "2013_2014",
+          "2014_2015"
+        ]
+      },
+      "variants": {
+        "single_base": {
+          "model_config": {
+            "in_channels": 5,
+            "out_channels": 6,
+            "hidden_channels": 128,
+            "model": "pact",
+            "encoder_type": "GraphSAGE",
+            "temporal_block": "Transformer",
+            "head_type": "single",
+            "num_layers": 2,
+            "dropout": 0.05,
+            "cnn_intermediate_channel": 29,
+            "history_steps": 4,
+            "max_time_steps": 32,
+            "node_read_heads": 8,
+            "time_read_heads": 8,
+            "temporal_layers": 2,
+            "temporal_ff_mult": 4.0,
+            "temporal_dropout": 0.0,
+            "head_dropout": 0.05,
+            "station_feat_dim": 6,
+            "peak_threshold_norm": null,
+            "peak_prior": 0.05,
+            "dual_ablation": "none",
+            "head_hidden": null,
+            "temporal_hidden": null,
+            "excess_formulation": "direct",
+            "target_y_std": null,
+            "severity_shape_eps": 1e-06
+          },
+          "parameters": {
+            "total": 618885,
+            "trainable": 618885,
+            "non_trainable": 0,
+            "head": {
+              "total": 33281,
+              "trainable": 33281,
+              "non_trainable": 0
+            },
+            "backbone": {
+              "total": 585604,
+              "trainable": 585604,
+              "non_trainable": 0
+            },
+            "head_branches": {
+              "regression": {
+                "total": 33281,
+                "trainable": 33281,
+                "non_trainable": 0
+              }
+            }
+          }
+        },
+        "dual_direct_base": {
+          "model_config": {
+            "in_channels": 5,
+            "out_channels": 6,
+            "hidden_channels": 128,
+            "model": "pact",
+            "encoder_type": "GraphSAGE",
+            "temporal_block": "Transformer",
+            "head_type": "dual",
+            "num_layers": 2,
+            "dropout": 0.05,
+            "cnn_intermediate_channel": 29,
+            "history_steps": 4,
+            "max_time_steps": 32,
+            "node_read_heads": 8,
+            "time_read_heads": 8,
+            "temporal_layers": 2,
+            "temporal_ff_mult": 4.0,
+            "temporal_dropout": 0.0,
+            "head_dropout": 0.05,
+            "station_feat_dim": 6,
+            "peak_threshold_norm": [
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "peak_prior": 0.05,
+            "dual_ablation": "none",
+            "head_hidden": null,
+            "temporal_hidden": null,
+            "excess_formulation": "direct",
+            "target_y_std": null,
+            "severity_shape_eps": 1e-06
+          },
+          "parameters": {
+            "total": 685447,
+            "trainable": 685447,
+            "non_trainable": 0,
+            "head": {
+              "total": 99843,
+              "trainable": 99843,
+              "non_trainable": 0
+            },
+            "backbone": {
+              "total": 585604,
+              "trainable": 585604,
+              "non_trainable": 0
+            },
+            "head_branches": {
+              "body": {
+                "total": 33281,
+                "trainable": 33281,
+                "non_trainable": 0
+              },
+              "excess": {
+                "total": 33281,
+                "trainable": 33281,
+                "non_trainable": 0
+              },
+              "gate": {
+                "total": 33281,
+                "trainable": 33281,
+                "non_trainable": 0
+              }
+            }
+          }
+        },
+        "dual_severity_base": {
+          "model_config": {
+            "in_channels": 5,
+            "out_channels": 6,
+            "hidden_channels": 128,
+            "model": "pact",
+            "encoder_type": "GraphSAGE",
+            "temporal_block": "Transformer",
+            "head_type": "dual",
+            "num_layers": 2,
+            "dropout": 0.05,
+            "cnn_intermediate_channel": 29,
+            "history_steps": 4,
+            "max_time_steps": 32,
+            "node_read_heads": 8,
+            "time_read_heads": 8,
+            "temporal_layers": 2,
+            "temporal_ff_mult": 4.0,
+            "temporal_dropout": 0.0,
+            "head_dropout": 0.05,
+            "station_feat_dim": 6,
+            "peak_threshold_norm": [
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "peak_prior": 0.05,
+            "dual_ablation": "none",
+            "head_hidden": null,
+            "temporal_hidden": null,
+            "excess_formulation": "severity_shape",
+            "target_y_std": [
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0
+            ],
+            "severity_shape_eps": 1e-06
+          },
+          "parameters": {
+            "total": 718728,
+            "trainable": 718728,
+            "non_trainable": 0,
+            "head": {
+              "total": 133124,
+              "trainable": 133124,
+              "non_trainable": 0
+            },
+            "backbone": {
+              "total": 585604,
+              "trainable": 585604,
+              "non_trainable": 0
+            },
+            "head_branches": {
+              "body": {
+                "total": 33281,
+                "trainable": 33281,
+                "non_trainable": 0
+              },
+              "severity": {
+                "total": 33281,
+                "trainable": 33281,
+                "non_trainable": 0
+              },
+              "shape": {
+                "total": 33281,
+                "trainable": 33281,
+                "non_trainable": 0
+              },
+              "gate": {
+                "total": 33281,
+                "trainable": 33281,
+                "non_trainable": 0
+              }
+            }
+          }
+        }
+      },
+      "severity_minus_direct": {
+        "total": 33281,
+        "head": 33281,
+        "backbone": 0,
+        "total_percent": 4.85537175011343,
+        "head_percent": 33.333333333333336
+      }
+    }
+  }
+}
