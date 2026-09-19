@@ -73,6 +73,77 @@ class ExceedanceHead(nn.Module):
         return ForecastOutput(prediction, body, excess, gate_logits, self.threshold, probability)
 
 
+class ExceedanceHead_Experiment(nn.Module):
+    """Isolated direct-dual excess-capacity and event-pooling ablations.
+
+    legacy preserves head_hidden (default 2d); the capacity presets use fixed
+    excess widths. Body and gate always retain the production head_hidden.
+    """
+    def __init__(self, hidden, dropout, threshold, prior, fixed_gate=False, head_hidden=None,
+                 *, variant="legacy", pooling="mean"):
+        super().__init__()
+        if variant not in ("legacy", "c1", "c2", "c2r", "c3"):
+            raise ValueError("Unknown exceedance head experiment variant.")
+        if pooling not in ("mean", "learned"):
+            raise ValueError("exceedance_gate_pooling must be mean or learned.")
+        self.variant = variant
+        threshold = torch.as_tensor(threshold, dtype=torch.float32).reshape(1, -1)
+        init_prior = initial_gate_prior(prior)
+        if not torch.isfinite(threshold).all():
+            raise ValueError("Dual head needs finite TRAIN thresholds.")
+        self.register_buffer("threshold", threshold.clone())
+        self.body = head_mlp(hidden, dropout, head_hidden)
+        self.excess_transform = None
+        if variant in ("legacy", "c1"):
+            self.excess = head_mlp(hidden, dropout, 4 * hidden if variant == "c1" else head_hidden)
+        else:
+            self.excess_transform = nn.Sequential(
+                nn.Linear(hidden, 2 * hidden), nn.LeakyReLU(0.1), nn.Dropout(dropout),
+                nn.Linear(2 * hidden, hidden),
+            )
+            self.excess = nn.Sequential(nn.Linear(hidden, 1))
+        self.excess_norm = nn.LayerNorm(hidden) if variant == "c3" else None
+        self.gate = None if fixed_gate else head_mlp(hidden, dropout, head_hidden)
+        if fixed_gate:
+            self.register_buffer("fixed_gate_probability", torch.tensor(float(prior)))
+        else:
+            nn.init.zeros_(self.gate[-1].weight)
+            nn.init.constant_(self.gate[-1].bias, math.log(init_prior / (1 - init_prior)))
+        nn.init.zeros_(self.excess[-1].weight)
+        nn.init.constant_(self.excess[-1].bias, math.log(math.expm1(0.1)))
+        # Fixed-gate ablations need no learned pooling parameters.
+        learned_pooling = pooling == "learned" and not fixed_gate
+        self.event_pool_norm = nn.LayerNorm(hidden) if learned_pooling else None
+        self.event_score = nn.Linear(hidden, 1) if learned_pooling else None
+
+    def _decode_excess(self, context):
+        excess_context = context
+        if self.excess_transform is not None:
+            if self.excess_norm is not None:
+                excess_context = self.excess_norm(excess_context)
+            excess_context = self.excess_transform(excess_context)
+            if self.variant in ("c2r", "c3"):
+                excess_context = context + excess_context
+        return F.softplus(self.excess(excess_context).squeeze(-1).float())
+
+    def _pool_event_context(self, context):
+        if self.event_score is None:
+            return context.mean(dim=1)
+        scores = self.event_score(self.event_pool_norm(context)).squeeze(-1)
+        weights = torch.softmax(scores, dim=1)
+        return torch.sum(weights.unsqueeze(-1) * context, dim=1)
+
+    def forward(self, context):
+        raw_body = self.body(context).squeeze(-1).float()
+        body = self.threshold - F.softplus(self.threshold - raw_body)
+        excess = self._decode_excess(context)
+        gate_logits = self.gate(self._pool_event_context(context)).float() if self.gate is not None else None
+        probability = (gate_logits.sigmoid() if gate_logits is not None
+                       else self.fixed_gate_probability.expand(context.size(0), 1))
+        prediction = body + probability * excess
+        return ForecastOutput(prediction, body, excess, gate_logits, self.threshold, probability)
+
+
 class SeverityShapeHead(nn.Module):
     """Physical excess = window severity (meters) * horizon shape (unitless).
 

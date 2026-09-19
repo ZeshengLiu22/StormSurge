@@ -143,6 +143,8 @@ fi
 : "${BODY_LOSS_WEIGHT:=1}"
 : "${EXCESS_LOSS_WEIGHT:=1}"
 : "${EXCESS_FORMULATION:=direct}"
+: "${EXCEEDANCE_HEAD_EXPERIMENT:=}"  # empty keeps the production direct head
+: "${EXCEEDANCE_GATE_POOLING:=mean}"
 : "${SHAPE_LOSS_WEIGHT:=0}"
 : "${SEVERITY_SHAPE_EPS:=1e-6}"
 : "${EXCESS_AMP_LOSS_WEIGHT:=0}"
@@ -388,6 +390,7 @@ write_resolved_config() {
     BODY_LOSS_WEIGHT EXCESS_LOSS_WEIGHT GATE_LOSS_WEIGHT
     EXCESS_AMP_LOSS_WEIGHT EXCESS_AMP_POOL EXCESS_AMP_BETA
     EXCESS_FORMULATION SHAPE_LOSS_WEIGHT SEVERITY_SHAPE_EPS
+    EXCEEDANCE_HEAD_EXPERIMENT EXCEEDANCE_GATE_POOLING
     PEAK_LOSS_WEIGHT PEAK_POOL PEAK_POOL_BETA
     CHECKPOINT_SELECTION CHECKPOINT_OVERALL_TOL SAVE_AUX_CHECKPOINTS
     X_NORM X_P_LO X_P_HI X_NODES_PER_GRAPH X_CLIP X_AUG X_AUG_PROB
@@ -631,6 +634,7 @@ for LOSS_MODE in "${LOSS_MODE_LIST[@]}"; do
                 --excess_amp_pool "${EXCESS_AMP_POOL}"
                 --excess_amp_beta "${EXCESS_AMP_BETA}"
                 --excess_formulation "${EXCESS_FORMULATION}"
+                --exceedance_gate_pooling "${EXCEEDANCE_GATE_POOLING}"
                 --shape_loss_weight "${SHAPE_LOSS_WEIGHT}"
                 --severity_shape_eps "${SEVERITY_SHAPE_EPS}"
                 --peak_loss_weight "${PEAK_LOSS_WEIGHT}"
@@ -681,6 +685,10 @@ for LOSS_MODE in "${LOSS_MODE_LIST[@]}"; do
               [[ -n "${TEST_ROOT_DIR}" ]] && BASE_CMD+=(--test_root_dir "${TEST_ROOT_DIR}")
               if (( GRAD_ACCUM_STEPS > 1 )); then
                 BASE_CMD+=(--grad_accum_steps "${GRAD_ACCUM_STEPS}")
+              fi
+
+              if [[ -n "${EXCEEDANCE_HEAD_EXPERIMENT}" ]]; then
+                BASE_CMD+=(--exceedance_head_experiment "${EXCEEDANCE_HEAD_EXPERIMENT}")
               fi
 
               # Speed flags

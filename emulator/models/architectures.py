@@ -10,7 +10,7 @@ from torch_geometric.utils import to_dense_batch
 
 from emulator.common.dual import DUAL_ABLATIONS, validate_excess_formulation
 
-from .heads import ExceedanceHead, ForecastOutput, SeverityShapeHead, SingleHead
+from .heads import ExceedanceHead, ExceedanceHead_Experiment, ForecastOutput, SeverityShapeHead, SingleHead
 from .spatial import SpatialEncoder
 from .temporal import TemporalMLP, TemporalRNN, TemporalTransformer
 
@@ -51,6 +51,8 @@ class ModelConfig:
     excess_formulation: str = "direct"
     target_y_std: list[float] | None = None
     severity_shape_eps: float = 1e-6
+    exceedance_head_experiment: str | None = None
+    exceedance_gate_pooling: str = "mean"
 
 
 class PACT(nn.Module):
@@ -95,6 +97,10 @@ class PACT(nn.Module):
                 self.head = SeverityShapeHead(hidden, c.head_dropout, c.peak_threshold_norm, c.peak_prior,
                     c.target_y_std, c.severity_shape_eps, fixed_gate=c.dual_ablation == "fixed_gate",
                     head_hidden=c.head_hidden)
+            elif c.exceedance_head_experiment is not None:
+                self.head = ExceedanceHead_Experiment(hidden, c.head_dropout, c.peak_threshold_norm, c.peak_prior,
+                    fixed_gate=c.dual_ablation == "fixed_gate", head_hidden=c.head_hidden,
+                    variant=c.exceedance_head_experiment, pooling=c.exceedance_gate_pooling)
             else:
                 self.head = ExceedanceHead(hidden, c.head_dropout, c.peak_threshold_norm, c.peak_prior,
                                            fixed_gate=c.dual_ablation == "fixed_gate", head_hidden=c.head_hidden)
@@ -160,6 +166,13 @@ class Baseline(nn.Module):
 
 def build_model(config: ModelConfig):
     validate_excess_formulation(config.excess_formulation, config.severity_shape_eps, config.head_type, config.model)
+    if config.exceedance_head_experiment not in (None, "legacy", "c1", "c2", "c2r", "c3"):
+        raise ValueError("Unknown exceedance_head_experiment.")
+    if config.exceedance_gate_pooling not in ("mean", "learned"):
+        raise ValueError("exceedance_gate_pooling must be mean or learned.")
+    if config.exceedance_head_experiment is not None and (
+            config.model != "pact" or config.head_type != "dual" or config.excess_formulation != "direct"):
+        raise ValueError("exceedance_head_experiment requires a PACT direct dual head.")
     if config.dual_ablation not in DUAL_ABLATIONS:
         raise ValueError(f"Unknown dual ablation: {config.dual_ablation}")
     if config.dual_ablation != "none" and (config.model != "pact" or config.head_type != "dual"):

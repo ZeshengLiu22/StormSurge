@@ -168,6 +168,10 @@ def parse_args(argv=None):
         help="PACT prediction head: single MLP or supervised exceedance dual head.",
     )
     parser.add_argument("--head_dropout", type=float, default=0.0)
+    parser.add_argument("--exceedance_head_experiment", choices=("legacy", "c1", "c2", "c2r", "c3"), default=None,
+                        help="Opt-in direct-dual excess decoder; omitted keeps the production head.")
+    parser.add_argument("--exceedance_gate_pooling", choices=("mean", "learned"), default="mean",
+                        help="Event pooling for exceedance_head_experiment only.")
     parser.add_argument("--gate_mode", choices=["window"], default="window", help="Supervised event probability for the whole forecast window.")
     parser.add_argument("--dual_mode", choices=["exceedance"], default="exceedance", help="Current supervised dual head; single-head runs ignore this setting.")
     parser.add_argument("--dual_loss", type=parse_bool_int, choices=[0, 1], default=1,
@@ -239,6 +243,9 @@ def parse_args(argv=None):
     args.station_json_dir = Path(args.station_json_dir)
     if args.model == "baseline":
         args.head_type = "single"
+    if args.exceedance_head_experiment is not None and (
+            args.model != "perceiver3" or args.head_type != "dual" or args.excess_formulation != "direct"):
+        parser.error("--exceedance_head_experiment requires --model perceiver3 --head_type dual --excess_formulation direct.")
     if args.encoder_type == "GraphSAGE" and args.num_layers < 2:
         parser.error("GraphSAGE requires --num_layers >= 2.")
     if args.encoder_type == "CNN" and (args.num_layers < 1 or args.cnn_intermediate_channel < 1):
