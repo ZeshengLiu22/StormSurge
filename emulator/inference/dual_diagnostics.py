@@ -2,6 +2,38 @@
 
 import numpy as np
 
+from emulator.training.metrics import prediction_window_records, summarize_windows
+
+
+def hard_gate_prediction(body_phys, excess_phys, gate_probability, threshold=0.5):
+    """Offline b + 1[q >= threshold] e; never mutates the normal prediction.
+
+    Branches have shape (N,H); probabilities may be (N,) exports or (N,1)
+    head outputs. F1 reporting always uses the fixed threshold 0.5.
+    """
+    body, excess = np.asarray(body_phys), np.asarray(excess_phys)
+    probability = np.asarray(gate_probability)
+    if probability.ndim == 2 and probability.shape[1] == 1:
+        probability = probability[:, 0]
+    if (body.ndim != 2 or body.shape != excess.shape or body.shape[1] < 1
+            or probability.ndim != 1 or len(probability) != len(body)):
+        raise ValueError("Hard-gate diagnostics require aligned (N,H) branches and N probabilities.")
+    if not all(np.isfinite(value).all() for value in (body, excess, probability)):
+        raise ValueError("Hard-gate diagnostics require finite values.")
+    if np.any((probability < 0) | (probability > 1)):
+        raise ValueError("Gate probabilities must be in [0,1].")
+    if not np.isscalar(threshold) or not np.isfinite(threshold) or not 0 <= threshold <= 1:
+        raise ValueError("Hard-gate threshold must be finite and in [0,1].")
+    gate = probability >= threshold
+    return body + gate[:, None] * excess
+
+
+def summarize_hard_gate(arrays, tau_phys):
+    """F1 trajectory/peak metrics through the normal inference metric path."""
+    prediction = hard_gate_prediction(arrays["body_phys"], arrays["excess_phys"],
+                                      arrays["gate_probability"], threshold=0.5)
+    return summarize_windows(prediction_window_records(prediction, arrays["y_true"]), event_threshold=tau_phys)
+
 
 def summarize_excess_amplitude(excess_phys, target_excess_phys, event):
     """Hard-maximum branch amplitude errors on true TRAIN-threshold events.

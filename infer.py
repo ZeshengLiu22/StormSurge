@@ -18,9 +18,9 @@ from emulator.common.runtime import log_message
 from emulator.data import ForcingGraphStore, ForcingGraphView, build_loader, load_station_json, station_features_from_json
 from emulator.models import ModelConfig, build_model, count_model_parameters, format_parameter_counts
 from emulator.inference import classify_past_future, infer_dataset_tag, parse_year_tag
-from emulator.inference.dual_diagnostics import summarize_dual
+from emulator.inference.dual_diagnostics import summarize_dual, summarize_hard_gate
 from emulator.training import format_metrics, run_epoch
-from emulator.training.metrics import physical_peak_columns, summarize_windows
+from emulator.training.metrics import prediction_window_records, summarize_windows
 
 
 def parse_args(argv=None):
@@ -244,12 +244,7 @@ def main(argv=None):
               for name in yearly_predictions[0]}
     elapsed = sum(results[year]["seconds"] for year in year_to_indices)
     error = arrays["y_pred"].astype(np.float64) - arrays["y_true"].astype(np.float64)
-    records = np.column_stack((np.arange(len(indices)), arrays["y_true"].max(axis=1),
-                               np.mean(error ** 2, axis=1), np.mean(np.abs(error), axis=1)))
-    # Keep the established NumPy trajectory reductions above; reuse the exact
-    # hard-peak feature/metric path used during each validation epoch.
-    peaks = physical_peak_columns(torch.from_numpy(arrays["y_pred"]), torch.from_numpy(arrays["y_true"]))
-    records = np.column_stack((records, peaks.numpy()[:, 1:]))
+    records = prediction_window_records(arrays["y_pred"], arrays["y_true"])
     metrics = summarize_windows(records, event_threshold=event_threshold)
     groups = np.array([classify_past_future(parse_year_tag(tag)[0]) for tag in arrays["tags"]])
     for key, mask, years_label in (
@@ -283,12 +278,20 @@ def main(argv=None):
                  y_pred=arrays["y_pred"], tags=arrays["tags"].astype(object))
     if args.dual_diagnostics:
         tau_phys = dual_metadata["tau_phys"]
-        formulation_metadata = dict(excess_formulation=config.excess_formulation)
+        # Defaults also allow this offline diagnostic to be used independently
+        # of the optional reconstruction and supervision-scope study components.
+        reconstruction = getattr(config, "direct_dual_reconstruction", "soft_gate")
+        supervision_scope = training.get("excess_supervision_scope", "event")
+        formulation_metadata = dict(excess_formulation=config.excess_formulation,
+                                    direct_dual_reconstruction=reconstruction,
+                                    excess_supervision_scope=supervision_scope)
         if config.excess_formulation == "severity_shape":
             formulation_metadata["severity_shape_eps"] = config.severity_shape_eps
         event = np.any(arrays["y_true"].astype(np.float64) > tau_phys, axis=1)
+        contribution = (arrays["excess_phys"] if reconstruction == "additive" else
+                        arrays["gate_probability"][:, None] * arrays["excess_phys"])
         np.savez_compressed(out_dir / "dual_diagnostics.npz", **arrays, event=event,
-                            contribution_phys=arrays["gate_probability"][:, None] * arrays["excess_phys"],
+                            contribution_phys=contribution,
                             tau_phys=tau_phys, event_prior=dual_metadata["event_prior"],
                             dual_ablation=config.dual_ablation, **formulation_metadata)
         diagnostic_report = dict(train=dual_metadata,
@@ -299,6 +302,13 @@ def main(argv=None):
                                           for year, item in zip(sorted(year_to_indices), yearly_predictions)},
                                  metric_note="PR average_precision is stepwise; pr_auc_trapezoid is linearly interpolated. "
                                              "Undefined metrics and empty bins are null. Threshold is fixed from TRAIN.")
+        if (config.excess_formulation == "direct" and reconstruction == "soft_gate"
+                and supervision_scope == "event" and config.exceedance_head_experiment is None
+                and config.dual_ablation == "none"):
+            diagnostic_report["hard_gate_0p5"] = dict(
+                threshold=0.5, overall=summarize_hard_gate(arrays, tau_phys),
+                by_year={year: summarize_hard_gate(item, tau_phys)
+                         for year, item in zip(sorted(year_to_indices), yearly_predictions)})
         (out_dir / "dual_diagnostics.json").write_text(json.dumps(diagnostic_report, indent=2, allow_nan=False))
         log_message(f"Dual diagnostics: {out_dir / 'dual_diagnostics.json'}")
     wall_seconds = time.perf_counter() - wall_start

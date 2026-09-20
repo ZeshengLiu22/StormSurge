@@ -35,6 +35,26 @@ def physical_peak_columns(prediction_phys, target_phys):
                         (pred_index - true_index).abs().double()), dim=1)
 
 
+def prediction_window_records(prediction_phys, target_phys):
+    """Full inference arrays to the established seven-column window records.
+
+    Preserve infer.py's NumPy FP64 trajectory reductions and input-precision
+    hard maxima. summarize_windows retains all metric formulas and selectors.
+    """
+    prediction, truth = np.asarray(prediction_phys), np.asarray(target_phys)
+    if prediction.ndim != 2 or prediction.shape != truth.shape or prediction.shape[1] < 1:
+        raise ValueError("Prediction metrics require aligned (N,H) arrays with at least one horizon.")
+    if not np.isfinite(prediction).all() or not np.isfinite(truth).all():
+        raise ValueError("Cannot report metrics for nonfinite predictions or targets.")
+    if not len(truth):
+        return np.empty((0, 7), dtype=np.float64)
+    error = prediction.astype(np.float64) - truth.astype(np.float64)
+    records = np.column_stack((np.arange(len(truth)), truth.max(axis=1),
+                               np.mean(error ** 2, axis=1), np.mean(np.abs(error), axis=1)))
+    peaks = physical_peak_columns(torch.from_numpy(prediction), torch.from_numpy(truth))
+    return np.column_stack((records, peaks.numpy()[:, 1:]))
+
+
 def unique_rows_and_top5_indices(records, *, validation=False):
     """Restore sample-ID order and return the SAME legacy top5 membership.
 
