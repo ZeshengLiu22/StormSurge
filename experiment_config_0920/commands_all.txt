@@ -1,0 +1,34 @@
+# 12 training submissions and 4 evaluation commands; never run this as a batch script.
+# F1 requires F0_CHECKPOINT set to that station's already-selected F0 checkpoint.
+# train: 0920_CBBT_F0_Soft
+qsub_local train.sh 0920_CBBT_F0_Soft experiment_config_0920/configs/train_config_0920_CBBT_F0_Soft.sh
+# postprocess: 0920_CBBT_F1_Hard
+/media/volume/PACT-Data/conda_envs/torchpyg-cu124/bin/python -B experiment_config_0920/run_f1.py experiment_config_0920/configs/postprocess_config_0920_CBBT_F1_Hard.sh
+# train: 0920_CBBT_F2_AdditiveEvent
+qsub_local train.sh 0920_CBBT_F2_AdditiveEvent experiment_config_0920/configs/train_config_0920_CBBT_F2_AdditiveEvent.sh
+# train: 0920_CBBT_F3_AdditiveAll
+qsub_local train.sh 0920_CBBT_F3_AdditiveAll experiment_config_0920/configs/train_config_0920_CBBT_F3_AdditiveAll.sh
+# train: 0920_Lewes_F0_Soft
+qsub_local train.sh 0920_Lewes_F0_Soft experiment_config_0920/configs/train_config_0920_Lewes_F0_Soft.sh
+# postprocess: 0920_Lewes_F1_Hard
+/media/volume/PACT-Data/conda_envs/torchpyg-cu124/bin/python -B experiment_config_0920/run_f1.py experiment_config_0920/configs/postprocess_config_0920_Lewes_F1_Hard.sh
+# train: 0920_Lewes_F2_AdditiveEvent
+qsub_local train.sh 0920_Lewes_F2_AdditiveEvent experiment_config_0920/configs/train_config_0920_Lewes_F2_AdditiveEvent.sh
+# train: 0920_Lewes_F3_AdditiveAll
+qsub_local train.sh 0920_Lewes_F3_AdditiveAll experiment_config_0920/configs/train_config_0920_Lewes_F3_AdditiveAll.sh
+# train: 0920_Battery_F0_Soft
+qsub_local train.sh 0920_Battery_F0_Soft experiment_config_0920/configs/train_config_0920_Battery_F0_Soft.sh
+# postprocess: 0920_Battery_F1_Hard
+/media/volume/PACT-Data/conda_envs/torchpyg-cu124/bin/python -B experiment_config_0920/run_f1.py experiment_config_0920/configs/postprocess_config_0920_Battery_F1_Hard.sh
+# train: 0920_Battery_F2_AdditiveEvent
+qsub_local train.sh 0920_Battery_F2_AdditiveEvent experiment_config_0920/configs/train_config_0920_Battery_F2_AdditiveEvent.sh
+# train: 0920_Battery_F3_AdditiveAll
+qsub_local train.sh 0920_Battery_F3_AdditiveAll experiment_config_0920/configs/train_config_0920_Battery_F3_AdditiveAll.sh
+# train: 0920_Boston_F0_Soft
+qsub_local train.sh 0920_Boston_F0_Soft experiment_config_0920/configs/train_config_0920_Boston_F0_Soft.sh
+# postprocess: 0920_Boston_F1_Hard
+/media/volume/PACT-Data/conda_envs/torchpyg-cu124/bin/python -B experiment_config_0920/run_f1.py experiment_config_0920/configs/postprocess_config_0920_Boston_F1_Hard.sh
+# train: 0920_Boston_F2_AdditiveEvent
+qsub_local train.sh 0920_Boston_F2_AdditiveEvent experiment_config_0920/configs/train_config_0920_Boston_F2_AdditiveEvent.sh
+# train: 0920_Boston_F3_AdditiveAll
+qsub_local train.sh 0920_Boston_F3_AdditiveAll experiment_config_0920/configs/train_config_0920_Boston_F3_AdditiveAll.sh
