@@ -1,14 +1,114 @@
 # 0920 direct-dual formulation study
 
-**4 stations × 4 formulations = 16 configs: 12 training + 4 post-processing.**
-Stations are CBBT, Lewes, Battery and Boston. Every station has exactly these entries:
+## Study Outcome — Concluded / Archived
 
-| Formulation | Mode | Model reconstruction | Excess supervision | Checkpoint |
-| --- | --- | --- | --- | --- |
-| F0_Soft | train | `b + q e` | event | Selected by overall VAL RMSE |
-| F1_Hard | postprocess | `b_phys + 1[q >= 0.5] e_phys` | Reuses F0 | The corresponding already-selected F0 checkpoint |
-| F2_AdditiveEvent | train | `b + e` | event | Selected by overall VAL RMSE |
-| F3_AdditiveAll | train | `b + e` | all | Selected by overall VAL RMSE |
+**This branch is a completed exploratory study with a negative/mixed scientific
+outcome.**
+
+> Engineering objective: achieved.
+>
+> Scientific formulation hypothesis: not supported strongly enough to continue.
+
+### Achieved
+
+- Implemented the direct-dual formulation study on `study/direct-dual-formulation`
+  without modifying `main`, keeping the experimental changes isolated and reversible.
+- Added and tested the intended F0/F1/F2/F3 formulations, with reconstruction,
+  supervision-scope, checkpoint/inference tests and formulation diagnostics.
+- Added configurations for CBBT, Lewes, Battery and Boston, with a
+  [manifest](manifest.csv), [provenance](provenance.json) and
+  [validation evidence](validation_report.json).
+- Successfully evaluated the principal trained formulation changes (F0, F2 and F3)
+  on CBBT. This screening was sufficient to decide whether the alternative
+  reconstruction and supervision formulations were promising enough to continue.
+
+| Formulation | Mode | Approximate prediction | Excess supervision |
+| --- | --- | --- | --- |
+| **F0** (`F0_Soft`) | Original soft-gated model | `body + q * excess` | Event windows |
+| **F1** (`F1_Hard`) | Post-processing diagnostic derived from F0 | `body_phys + 1[q >= 0.5] * excess_phys` | Reuses F0; no retraining |
+| **F2** (`F2_AdditiveEvent`) | Additive model | `body + excess` | Event windows |
+| **F3** (`F3_AdditiveAll`) | Additive model | `body + excess` | All samples/windows, including zero excess targets on non-events |
+
+Here `q` is the learned window event probability. F2/F3 retain the gate as an
+auxiliary event predictor, but it does not multiply the excess in reconstruction.
+These definitions follow the [heads](../emulator/models/heads.py),
+[supervision scopes](../emulator/training/losses.py) and
+[F1 diagnostic](../emulator/inference/dual_diagnostics.py).
+F0/F2/F3 checkpoints were selected by overall VAL RMSE; F1 reuses the corresponding
+already-selected F0 checkpoint with a fixed, inclusive threshold of 0.5.
+F1 is a diagnostic/post-processing formulation, not evidence of a successful new
+model. No completed F1 scientific result is claimed here.
+
+### Failed / Not Supported
+
+**The scientific objective of improving peak-aware prediction through these
+formulation changes was not achieved.** The main evidence is the completed CBBT
+screening, with the following final TEST metrics:
+
+| Variant | AllRMSE | AllMAE | Top5RMSE | Top5MAE | PeakRMSE | PeakMAE | PeakBias | Under% | TruePeakRMSE | TimingSteps |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| F0 | 0.022430 | 0.016945 | 0.036866 | 0.026565 | 0.042608 | 0.032122 | -0.027928 | 86.01% | 0.044448 | 1.373057 |
+| F2 | 0.022605 | 0.017174 | 0.035999 | 0.026750 | 0.042237 | 0.032391 | -0.028187 | 86.01% | 0.044240 | 1.388601 |
+| F3 | 0.022938 | 0.017343 | 0.037823 | 0.027683 | 0.044286 | 0.034154 | -0.030487 | 86.01% | 0.046638 | 1.290155 |
+
+Error and bias values are in metres. Top5 metrics use the 5% of TEST windows with
+the largest true peaks. PeakRMSE, PeakMAE, PeakBias, Under%, TruePeakRMSE and
+TimingSteps refer to that same top-5% population. TruePeakRMSE evaluates the
+prediction at the true peak time; TimingSteps is mean absolute peak timing error
+in forecast steps.
+
+The values match the final `TEST` log rows and `test` fields in `summary_*.json`
+for these original run directories under the ignored `All_results_0920/` root:
+
+- F0: `0920_CBBT_F0_Soft__20260920_194155/`
+- F2: `0920_CBBT_F2_AdditiveEvent__20260920_200719/`
+- F3: `0920_CBBT_F3_AdditiveAll__20260920_203247/`
+
+F2 produced only small improvements in Top5RMSE and PeakRMSE. These did not
+translate into better overall error, peak bias or underprediction rate. PeakBias
+remained approximately **-0.028 m**, and the reported underprediction rate remained
+exactly **86.01%** for both F0 and F2. Removing the soft gate factor `q` therefore
+did not resolve the primary peak-amplitude underprediction problem in this
+screening.
+
+F3 degraded most relevant metrics relative to F0 and F2. Its improved timing did
+not offset the worse overall and peak-amplitude errors or more negative peak bias.
+The results do not support extending excess supervision to all samples and do
+not justify continuing the F2/F3 formulation sweep.
+
+### Evaluation scope and stopping decision
+
+Other-station runs were intentionally stopped before the planned sweep completed,
+after the CBBT screening showed insufficient evidence to justify further compute
+expenditure. Lewes F0 reached final evaluation, while Lewes F2 was interrupted;
+the other-station formulation comparisons were not completed. **This branch does
+not establish a four-station scientific comparison.** Configuration coverage and
+individual or partial run artifacts must not be interpreted as a completed
+comparison across CBBT, Lewes, Battery and Boston. Missing results are not inferred.
+
+## Branch Disposition
+
+- **Status:** concluded / archived exploratory study.
+- **Merge into `main`:** no.
+- **Reason:** implementation was successful, but the tested direct-dual formulation
+  changes did not provide a sufficiently strong or consistent improvement in
+  peak-aware prediction.
+- **Preserve branch:** yes, for provenance, reproducibility and possible future
+  reference.
+- **Future work:** start future peak-aware work from clean `main` in a new branch
+  rather than extending this branch.
+
+This is a scientific stopping decision, not a software failure.
+
+## Archived experiment setup and commands
+
+The original setup and commands below are retained for provenance and
+reproducibility. The study is concluded; the configuration matrix describes
+implemented coverage, not completed scientific results.
+
+**4 stations × 4 formulations = 16 configs: 12 training + 4 post-processing.**
+Stations are CBBT, Lewes, Battery and Boston. Each station has configurations for
+the four formulations defined above.
 
 Config folder:
 `/home/exouser/media/volume/PACT-Data/StormSurge/experiment_config_0920/configs/`
