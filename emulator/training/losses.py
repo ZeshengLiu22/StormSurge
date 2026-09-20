@@ -69,16 +69,22 @@ def enforce_dual_loss(config):
                     "forcing " + ", ".join(corrections) + ".")
 
 
-def dual_loss_terms(output, target_norm, y_std):
-    """The three dual loss terms: body, conditional excess and event BCE.
+def dual_loss_terms(output, target_norm, y_std, excess_supervision_scope="event"):
+    """The three dual loss terms: body, excess and event BCE.
 
-    Excess risk uses the WHOLE batch denominator. Non-event windows have zero
-    excess auxiliary gradient; rare-event batches never amplify it by 1/p.
+    Both excess scopes use the WHOLE batch denominator. The default event scope
+    preserves zero non-event auxiliary gradient; all explicitly supervises those
+    windows toward zero. Neither scope adds event-prevalence scaling.
     """
+    if excess_supervision_scope not in ("event", "all"):
+        raise ValueError("excess_supervision_scope must be event or all.")
     event, excess_target = dual_excess_target(target_norm, output.threshold)
     body_target = torch.minimum(target_norm, output.threshold)
     body = ((output.body - body_target) * y_std).square().mean()
-    excess = (((output.excess - excess_target) * y_std).square() * event).mean()
+    if excess_supervision_scope == "event":
+        excess = (((output.excess - excess_target) * y_std).square() * event).mean()
+    else:
+        excess = (((output.excess - excess_target) * y_std).square()).mean()
     gate = (F.binary_cross_entropy_with_logits(output.gate_logits, event.float()) * y_std.square().mean()
             if output.gate_logits is not None else body.new_zeros(()))
     return body, excess, gate
@@ -117,11 +123,14 @@ class LossConfig:
     peak_loss_weight: float = 0.0
     peak_pool: str = "max"
     peak_pool_beta: float = 20.0
+    excess_supervision_scope: str = "event"
 
 
 class ForecastLoss(nn.Module):
     def __init__(self, config: LossConfig, stats, peak_threshold, wmse_threshold, event_prior=None, event_threshold=None):
         super().__init__()
+        if config.excess_supervision_scope not in ("event", "all"):
+            raise ValueError("excess_supervision_scope must be event or all.")
         self.config = config
         self.register_buffer("y_mean", stats["y_mean"])
         self.register_buffer("y_std", stats["y_std"])
@@ -179,7 +188,7 @@ class ForecastLoss(nn.Module):
             if not c.dual_loss:
                 return loss
             target_norm = (target - self.y_mean) / self.y_std
-            body, excess, gate = dual_loss_terms(output, target_norm, self.y_std)
+            body, excess, gate = dual_loss_terms(output, target_norm, self.y_std, c.excess_supervision_scope)
             dual_loss = c.body_loss_weight * body + c.excess_loss_weight * excess + c.gate_loss_weight * gate
             loss = loss + dual_loss
             # Leave the historical numerical/RNG path untouched at weight zero.

@@ -182,6 +182,8 @@ def parse_args(argv=None):
                         help="Explicit mechanism experiment; none enforces full branch supervision.")
     parser.add_argument("--body_loss_weight", type=float, default=1.0)
     parser.add_argument("--excess_loss_weight", type=float, default=1.0)
+    parser.add_argument("--excess_supervision_scope", choices=("event", "all"), default="event",
+                        help="Excess auxiliary supervision on event windows (legacy) or all windows.")
     parser.add_argument("--excess_formulation", choices=EXCESS_FORMULATIONS, default="direct",
                         help="Direct normalized excess (legacy) or physical severity times normalized temporal shape.")
     parser.add_argument("--shape_loss_weight", type=float, default=0.0,

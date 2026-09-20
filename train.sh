@@ -142,6 +142,7 @@ fi
 : "${DUAL_ABLATION:=none}"
 : "${BODY_LOSS_WEIGHT:=1}"
 : "${EXCESS_LOSS_WEIGHT:=1}"
+: "${EXCESS_SUPERVISION_SCOPE:=event}"
 : "${EXCESS_FORMULATION:=direct}"
 : "${DIRECT_DUAL_RECONSTRUCTION:=soft_gate}"
 : "${EXCEEDANCE_HEAD_EXPERIMENT:=}"  # empty keeps the production direct head
@@ -389,6 +390,7 @@ write_resolved_config() {
     WARMUP_EPOCHS WARMUP_START_FACTOR MIN_LR MAX_GRAD_NORM
     DETERMINISTIC DUAL_MODE DUAL_LOSS EXCEEDANCE_PERCENTILE DUAL_ABLATION
     BODY_LOSS_WEIGHT EXCESS_LOSS_WEIGHT GATE_LOSS_WEIGHT
+    EXCESS_SUPERVISION_SCOPE
     EXCESS_AMP_LOSS_WEIGHT EXCESS_AMP_POOL EXCESS_AMP_BETA
     EXCESS_FORMULATION SHAPE_LOSS_WEIGHT SEVERITY_SHAPE_EPS
     DIRECT_DUAL_RECONSTRUCTION
@@ -635,6 +637,7 @@ for LOSS_MODE in "${LOSS_MODE_LIST[@]}"; do
                 --excess_amp_loss_weight "${EXCESS_AMP_LOSS_WEIGHT}"
                 --excess_amp_pool "${EXCESS_AMP_POOL}"
                 --excess_amp_beta "${EXCESS_AMP_BETA}"
+                --excess_supervision_scope "${EXCESS_SUPERVISION_SCOPE}"
                 --excess_formulation "${EXCESS_FORMULATION}"
                 --direct_dual_reconstruction "${DIRECT_DUAL_RECONSTRUCTION}"
                 --exceedance_gate_pooling "${EXCEEDANCE_GATE_POOLING}"
