@@ -10,7 +10,8 @@ from torch_geometric.utils import to_dense_batch
 
 from emulator.common.dual import DUAL_ABLATIONS, validate_excess_formulation
 
-from .heads import ExceedanceHead, ExceedanceHead_Experiment, ForecastOutput, SeverityShapeHead, SingleHead
+from .heads import (AdditiveExceedanceHead, ExceedanceHead, ExceedanceHead_Experiment,
+                    ForecastOutput, SeverityShapeHead, SingleHead)
 from .spatial import SpatialEncoder
 from .temporal import TemporalMLP, TemporalRNN, TemporalTransformer
 
@@ -53,6 +54,7 @@ class ModelConfig:
     severity_shape_eps: float = 1e-6
     exceedance_head_experiment: str | None = None
     exceedance_gate_pooling: str = "mean"
+    direct_dual_reconstruction: str = "soft_gate"
 
 
 class PACT(nn.Module):
@@ -101,6 +103,9 @@ class PACT(nn.Module):
                 self.head = ExceedanceHead_Experiment(hidden, c.head_dropout, c.peak_threshold_norm, c.peak_prior,
                     fixed_gate=c.dual_ablation == "fixed_gate", head_hidden=c.head_hidden,
                     variant=c.exceedance_head_experiment, pooling=c.exceedance_gate_pooling)
+            elif c.direct_dual_reconstruction == "additive":
+                self.head = AdditiveExceedanceHead(hidden, c.head_dropout, c.peak_threshold_norm, c.peak_prior,
+                    fixed_gate=c.dual_ablation == "fixed_gate", head_hidden=c.head_hidden)
             else:
                 self.head = ExceedanceHead(hidden, c.head_dropout, c.peak_threshold_norm, c.peak_prior,
                                            fixed_gate=c.dual_ablation == "fixed_gate", head_hidden=c.head_hidden)
@@ -165,6 +170,12 @@ class Baseline(nn.Module):
 
 
 def build_model(config: ModelConfig):
+    if config.direct_dual_reconstruction not in ("soft_gate", "additive"):
+        raise ValueError("direct_dual_reconstruction must be soft_gate or additive.")
+    if config.direct_dual_reconstruction == "additive" and (
+            config.model != "pact" or config.head_type != "dual" or config.excess_formulation != "direct"
+            or config.exceedance_head_experiment is not None):
+        raise ValueError("Additive reconstruction requires a PACT direct dual head without exceedance_head_experiment.")
     validate_excess_formulation(config.excess_formulation, config.severity_shape_eps, config.head_type, config.model)
     if config.exceedance_head_experiment not in (None, "legacy", "c1", "c2", "c2r", "c3"):
         raise ValueError("Unknown exceedance_head_experiment.")

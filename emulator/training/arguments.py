@@ -168,6 +168,8 @@ def parse_args(argv=None):
         help="PACT prediction head: single MLP or supervised exceedance dual head.",
     )
     parser.add_argument("--head_dropout", type=float, default=0.0)
+    parser.add_argument("--direct_dual_reconstruction", choices=("soft_gate", "additive"), default="soft_gate",
+                        help="Production soft gating or additive reconstruction with an auxiliary event gate.")
     parser.add_argument("--exceedance_head_experiment", choices=("legacy", "c1", "c2", "c2r", "c3"), default=None,
                         help="Opt-in direct-dual excess decoder; omitted keeps the production head.")
     parser.add_argument("--exceedance_gate_pooling", choices=("mean", "learned"), default="mean",
@@ -243,6 +245,11 @@ def parse_args(argv=None):
     args.station_json_dir = Path(args.station_json_dir)
     if args.model == "baseline":
         args.head_type = "single"
+    if args.direct_dual_reconstruction == "additive" and (
+            args.model != "perceiver3" or args.head_type != "dual" or args.excess_formulation != "direct"
+            or args.exceedance_head_experiment is not None):
+        parser.error("--direct_dual_reconstruction additive requires --model perceiver3 --head_type dual "
+                     "--excess_formulation direct without --exceedance_head_experiment.")
     if args.exceedance_head_experiment is not None and (
             args.model != "perceiver3" or args.head_type != "dual" or args.excess_formulation != "direct"):
         parser.error("--exceedance_head_experiment requires --model perceiver3 --head_type dual --excess_formulation direct.")

@@ -143,6 +143,7 @@ fi
 : "${BODY_LOSS_WEIGHT:=1}"
 : "${EXCESS_LOSS_WEIGHT:=1}"
 : "${EXCESS_FORMULATION:=direct}"
+: "${DIRECT_DUAL_RECONSTRUCTION:=soft_gate}"
 : "${EXCEEDANCE_HEAD_EXPERIMENT:=}"  # empty keeps the production direct head
 : "${EXCEEDANCE_GATE_POOLING:=mean}"
 : "${SHAPE_LOSS_WEIGHT:=0}"
@@ -390,6 +391,7 @@ write_resolved_config() {
     BODY_LOSS_WEIGHT EXCESS_LOSS_WEIGHT GATE_LOSS_WEIGHT
     EXCESS_AMP_LOSS_WEIGHT EXCESS_AMP_POOL EXCESS_AMP_BETA
     EXCESS_FORMULATION SHAPE_LOSS_WEIGHT SEVERITY_SHAPE_EPS
+    DIRECT_DUAL_RECONSTRUCTION
     EXCEEDANCE_HEAD_EXPERIMENT EXCEEDANCE_GATE_POOLING
     PEAK_LOSS_WEIGHT PEAK_POOL PEAK_POOL_BETA
     CHECKPOINT_SELECTION CHECKPOINT_OVERALL_TOL SAVE_AUX_CHECKPOINTS
@@ -634,6 +636,7 @@ for LOSS_MODE in "${LOSS_MODE_LIST[@]}"; do
                 --excess_amp_pool "${EXCESS_AMP_POOL}"
                 --excess_amp_beta "${EXCESS_AMP_BETA}"
                 --excess_formulation "${EXCESS_FORMULATION}"
+                --direct_dual_reconstruction "${DIRECT_DUAL_RECONSTRUCTION}"
                 --exceedance_gate_pooling "${EXCEEDANCE_GATE_POOLING}"
                 --shape_loss_weight "${SHAPE_LOSS_WEIGHT}"
                 --severity_shape_eps "${SEVERITY_SHAPE_EPS}"
