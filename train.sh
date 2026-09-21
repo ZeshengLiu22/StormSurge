@@ -387,6 +387,7 @@ write_resolved_config() {
     EXCESS_FORMULATION SHAPE_LOSS_WEIGHT SEVERITY_SHAPE_EPS
     EXCEEDANCE_HEAD_EXPERIMENT EXCEEDANCE_GATE_POOLING
     CHECKPOINT_SELECTION CHECKPOINT_OVERALL_TOL SAVE_AUX_CHECKPOINTS
+    TRACK_PEAKAWARE CHECKPOINT_SCORE_REFS CKPT_SCORE_W_ALL CKPT_SCORE_W_TOP5 CKPT_SCORE_W_TRUEPEAK
     X_NORM X_P_LO X_P_HI X_NODES_PER_GRAPH X_CLIP X_AUG X_AUG_PROB
     X_AUG_SCALE X_AUG_BIAS DISABLE_OOD USE_AMP AMP_DTYPE USE_TF32
     TORCH_THREADS NUM_WORKERS PIN_MEMORY PERSISTENT_WORKERS PREFETCH_FACTOR
@@ -669,6 +670,13 @@ for LOSS_MODE in "${LOSS_MODE_LIST[@]}"; do
                 --use_site_elevation "${USE_SITE_ELEVATION}"
                 --use_bathymetry "${USE_BATHYMETRY}"
               )
+
+              # Omit every new option unless explicitly configured: historical CMDs stay identical.
+              if [[ -n "${TRACK_PEAKAWARE:-}" ]]; then BASE_CMD+=(--track_peakaware "${TRACK_PEAKAWARE}"); fi
+              if [[ -n "${CHECKPOINT_SCORE_REFS:-}" ]]; then BASE_CMD+=(--checkpoint_score_refs "${CHECKPOINT_SCORE_REFS}"); fi
+              if [[ -n "${CKPT_SCORE_W_ALL:-}" ]]; then BASE_CMD+=(--ckpt_score_w_all "${CKPT_SCORE_W_ALL}"); fi
+              if [[ -n "${CKPT_SCORE_W_TOP5:-}" ]]; then BASE_CMD+=(--ckpt_score_w_top5 "${CKPT_SCORE_W_TOP5}"); fi
+              if [[ -n "${CKPT_SCORE_W_TRUEPEAK:-}" ]]; then BASE_CMD+=(--ckpt_score_w_truepeak "${CKPT_SCORE_W_TRUEPEAK}"); fi
 
               [[ -n "${STATION}" ]]       && BASE_CMD+=(--station "${STATION}")
               [[ -n "${TEST_ROOT_DIR}" ]] && BASE_CMD+=(--test_root_dir "${TEST_ROOT_DIR}")

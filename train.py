@@ -28,6 +28,7 @@ from emulator.training import ForecastLoss, LossConfig, format_metrics, run_epoc
 from emulator.training.arguments import parse_args
 from emulator.training.checkpoints import (CheckpointSelector, CandidateCheckpointStore, SIMPLE_ROLES,
                                            write_selection_manifest)
+from emulator.training.peakaware_checkpoints import PeakAwareTracker, enabled as peakaware_enabled, read_settings
 
 
 def main(argv=None):
@@ -64,6 +65,8 @@ def train(args, device, distributed, rank, wall_start):
     checkpoint_path = output_dir / f"best_{stem}.pth"
     metrics_path = output_dir / f"metrics_{stem}.jsonl"
     summary_path = output_dir / f"summary_{stem}.json"
+    peak_tracker = (PeakAwareTracker(output_dir, read_settings(args))
+                    if rank == 0 and peakaware_enabled(args) else None)
     if rank == 0:
         output_dir.mkdir(parents=True, exist_ok=True)
         with (output_dir / f"config_{stem}.json").open("x") as handle:
@@ -162,7 +165,8 @@ def train(args, device, distributed, rank, wall_start):
     epoch_options = dict(device=device, stats=stats, station_feat=station_feat, use_amp=use_amp,
                          amp_dtype=amp_dtype, x_clip=args.x_clip, distributed=distributed,
                          event_threshold=fitted["tau_phys"])
-    selection = CheckpointSelector(args.checkpoint_selection, args.checkpoint_overall_tol,
+    legacy_mode = "overall" if args.checkpoint_selection == "peakaware" else args.checkpoint_selection
+    selection = CheckpointSelector(legacy_mode, args.checkpoint_overall_tol,
                                    args.save_aux_checkpoints) if rank == 0 else None
     candidate_store = (CandidateCheckpointStore(checkpoint_path, stem)
                        if rank == 0 and selection.needs_candidates else None)
@@ -184,8 +188,7 @@ def train(args, device, distributed, rank, wall_start):
         if rank == 0:
             log_message(f'Epoch {epoch:03d}/{args.epochs} | {format_metrics("Train", training.metrics)} | '
                         f'{format_metrics("Val", validation.metrics)}')
-            with metrics_path.open("a") as handle:
-                handle.write(json.dumps({"epoch": epoch, "train": training.metrics, "val": validation.metrics}) + "\n")
+            epoch_record = {"epoch": epoch, "train": training.metrics, "val": validation.metrics}
             candidate = selection.observe(epoch, validation.metrics)
 
             def checkpoint_snapshot():
@@ -201,7 +204,7 @@ def train(args, device, distributed, rank, wall_start):
                 candidate_store.retain(selection, candidate, checkpoint_snapshot)
             # Explicit selection mode, never config age or model/loss formulation.
             # The default keeps the original strict-< online canonical save.
-            if args.checkpoint_selection == "overall":
+            if legacy_mode == "overall":
                 primary_improved = validation.metrics["rmse_all"] < best_rmse
             elif args.checkpoint_selection in SIMPLE_ROLES:
                 primary_improved = selection.best[args.checkpoint_selection].epoch == epoch
@@ -210,10 +213,19 @@ def train(args, device, distributed, rank, wall_start):
             if primary_improved:
                 best_rmse, best_epoch = validation.metrics["rmse_all"], epoch
                 checkpoint = checkpoint_snapshot()
-                checkpoint.update(selection.checkpoint_metadata(candidate, [args.checkpoint_selection]))
+                checkpoint.update(selection.checkpoint_metadata(candidate, [legacy_mode]))
                 torch.save(checkpoint, checkpoint_path)
                 log_message(f'[Best] Epoch {epoch:03d}/{args.epochs} | '
                             f'{format_metrics("Val", validation.metrics)}')
+            if peak_tracker is not None:
+                score, improved = peak_tracker.observe(epoch, validation.metrics, checkpoint_snapshot)
+                epoch_record["peakaware_score"] = score
+                for role in improved:
+                    log_message(f'[Best {role}] epoch={epoch} Val AllRMSE={validation.metrics["rmse_all"]:.9f} '
+                                f'Top5RMSE={validation.metrics["rmse_peak5"]:.9f} '
+                                f'TruePeakRMSE={validation.metrics["true_peak_rmse_top5"]:.9f} score={score:.9f}')
+            with metrics_path.open("a") as handle:
+                handle.write(json.dumps(epoch_record) + "\n")
     if distributed:
         dist.barrier()
     elapsed = time.perf_counter() - start
@@ -221,11 +233,18 @@ def train(args, device, distributed, rank, wall_start):
         manifest_path = None
         if candidate_store is not None:
             manifest_path = candidate_store.finalize(selection)
-        elif args.checkpoint_selection != "overall":
+        elif legacy_mode != "overall":
             manifest_path = write_selection_manifest(selection, checkpoint_path, stem,
                                                      {args.checkpoint_selection: checkpoint_path})
         selected, _ = selection.resolve()
         best_epoch, best_rmse = selected.epoch, selected.val["rmse_all"]
+        if peak_tracker is not None and args.checkpoint_selection == "peakaware":
+            # Explicit opt-in only: primary artifact adopts the peak-aware choice;
+            # best_overall.pt permanently preserves the historical overall winner.
+            from emulator.training.checkpoints import atomic_save
+            chosen = torch.load(peak_tracker.paths["peakaware"], map_location="cpu", weights_only=False)
+            atomic_save(chosen, checkpoint_path)
+            best_epoch, best_rmse = chosen["epoch"], chosen["val"]["rmse_all"]
         # Re-evaluate only finalized primary weights, on each full split without DDP padding.
         checkpoint = torch.load(checkpoint_path, map_location=device, weights_only=False)
         network = model.module if distributed else model
@@ -245,13 +264,20 @@ def train(args, device, distributed, rank, wall_start):
                    "loss_thresholds": fitted, "dual_metadata": dual_metadata, "model_parameters": model_parameters,
                    "val": final_validation.metrics, "checkpoint_selection": selection.summary(manifest_path),
                    "test": result.metrics, "test_scope": "external_all_years" if args.test_root_dir else "held_out_years"}
+        if peak_tracker is not None:
+            summary["checkpoint_selection"] = peak_tracker.selection_summary(summary["checkpoint_selection"], args.checkpoint_selection)
+            def evaluate_policy(split):
+                data = val_data if split == "val" else test_data
+                return run_epoch(network, build_loader(data, None, **loader_options), **final_options).metrics
+            summary["checkpoint_policy_comparison"] = peak_tracker.compare(network, args.checkpoint_selection,
+                {"val": final_validation.metrics, "test": result.metrics}, evaluate_policy, log_message)
         if device.type == "cuda":
             torch.cuda.synchronize(device)
         wall_seconds = time.perf_counter() - wall_start
         summary["wall_seconds"] = wall_seconds
         summary["run_tag"] = args.run_tag
         summary_path.write_text(json.dumps(summary, indent=2))
-        log_message(f'Best checkpoint: epoch {best_epoch:03d} | selection={selection.mode}')
+        log_message(f'Best checkpoint: epoch {best_epoch:03d} | selection={args.checkpoint_selection}')
         log_message("FINAL BEST-CHECKPOINT RE-EVALUATION")
         columns = (("AllRMSE", "rmse_all"), ("AllMAE", "mae_all"),
                    ("Top5RMSE", "rmse_peak5"), ("Top5MAE", "mae_peak5"),

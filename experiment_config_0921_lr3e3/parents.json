@@ -1,0 +1,92 @@
+[
+  {
+    "run_name": "0921_CBBT_S0_Single_LR3e3",
+    "config": "train_config_0921_CBBT_S0_Single_LR3e3.sh",
+    "parent_shell": "/media/volume/PACT-Data/StormSurge/experiment_config_0921_true_peak_amp_factorial/configs/train_config_0921_CBBT_S0_Single.sh",
+    "parent_shell_sha256": "6fa6f4a49240fa6a5ebba414b644a1cdb6ce013797a5c0f63c5e4943d22a9534",
+    "parent_json": "/media/share/PACT/Results/All_results_0921_true_peak_amp_factorial/0921_CBBT_S0_Single__20260921_184807/config_perceiver3_mse_d7ed6376e7_0921_CBBT_S0_Single_20260921_184807.json",
+    "parent_json_sha256": "57cd5716a01a44b7fd222b76602057833f9a9f5cf9b938f290964c4bce98c6e4",
+    "parent_run": "/media/share/PACT/Results/All_results_0921_true_peak_amp_factorial/0921_CBBT_S0_Single__20260921_184807"
+  },
+  {
+    "run_name": "0921_CBBT_D0_DualBase_LR3e3",
+    "config": "train_config_0921_CBBT_D0_DualBase_LR3e3.sh",
+    "parent_shell": "/media/volume/PACT-Data/StormSurge/experiment_config_0921_true_peak_amp_factorial/configs/train_config_0921_CBBT_D0_DualBase.sh",
+    "parent_shell_sha256": "3775c3b4f78a68affb52ed9398231aab630b0cb4cb1870594303a6e52313fbb2",
+    "parent_json": "/media/share/PACT/Results/All_results_0921_true_peak_amp_factorial/0921_CBBT_D0_DualBase__20260921_191241/config_perceiver3_mse_abcc45c4fe_0921_CBBT_D0_DualBase_20260921_191241.json",
+    "parent_json_sha256": "443d616950ef5b0034a75277fb3c9b464106ae515025ffa243f9b28addb6f978",
+    "parent_run": "/media/share/PACT/Results/All_results_0921_true_peak_amp_factorial/0921_CBBT_D0_DualBase__20260921_191241"
+  },
+  {
+    "run_name": "0921_CBBT_D1_Tail_LR3e3",
+    "config": "train_config_0921_CBBT_D1_Tail_LR3e3.sh",
+    "parent_shell": "/media/volume/PACT-Data/StormSurge/experiment_config_0921_true_peak_amp_factorial/configs/train_config_0921_CBBT_D1_Tail.sh",
+    "parent_shell_sha256": "ce27a002e67a8bc908824f1d8588d8abe161187061cf5bcdb24648806eb09017",
+    "parent_json": "/media/share/PACT/Results/All_results_0921_true_peak_amp_factorial/0921_CBBT_D1_Tail__20260921_193824/config_perceiver3_mse_tail_de1d06c320_0921_CBBT_D1_Tail_20260921_193824.json",
+    "parent_json_sha256": "57edb0a0788073ee7a4c9151de1689400c15117ab59eef9e992573dac51d10bd",
+    "parent_run": "/media/share/PACT/Results/All_results_0921_true_peak_amp_factorial/0921_CBBT_D1_Tail__20260921_193824"
+  },
+  {
+    "run_name": "0921_CBBT_D2_Amp_LR3e3",
+    "config": "train_config_0921_CBBT_D2_Amp_LR3e3.sh",
+    "parent_shell": "/media/volume/PACT-Data/StormSurge/experiment_config_0921_true_peak_amp_factorial/configs/train_config_0921_CBBT_D2_Amp.sh",
+    "parent_shell_sha256": "5088a56b1cd5b60c729aaf85cce6a3cacc9fae3e3d8777d3bfbe9f89c97cafad",
+    "parent_json": "/media/share/PACT/Results/All_results_0921_true_peak_amp_factorial/0921_CBBT_D2_Amp__20260921_200403/config_perceiver3_mse_944ffe5546_0921_CBBT_D2_Amp_20260921_200403.json",
+    "parent_json_sha256": "a5d1ed1f84bedc855339e6f694017e0e875cfbc713886f82bbb1cfe6c6d105a4",
+    "parent_run": "/media/share/PACT/Results/All_results_0921_true_peak_amp_factorial/0921_CBBT_D2_Amp__20260921_200403"
+  },
+  {
+    "run_name": "0921_CBBT_D3_TailAmp_LR3e3",
+    "config": "train_config_0921_CBBT_D3_TailAmp_LR3e3.sh",
+    "parent_shell": "/media/volume/PACT-Data/StormSurge/experiment_config_0921_true_peak_amp_factorial/configs/train_config_0921_CBBT_D3_TailAmp.sh",
+    "parent_shell_sha256": "5b1e2a6864719688c181cd724f27279205a88d82833119ba16544eb2f094ad22",
+    "parent_json": "/media/share/PACT/Results/All_results_0921_true_peak_amp_factorial/0921_CBBT_D3_TailAmp__20260921_202926/config_perceiver3_mse_tail_774a3515d8_0921_CBBT_D3_TailAmp_20260921_202926.json",
+    "parent_json_sha256": "c033b5ad618b9d43a3149aa5db901e7a1633417a94ff65868096e17b65806ed7",
+    "parent_run": "/media/share/PACT/Results/All_results_0921_true_peak_amp_factorial/0921_CBBT_D3_TailAmp__20260921_202926"
+  },
+  {
+    "run_name": "0921_Lewes_S0_Single_LR3e3",
+    "config": "train_config_0921_Lewes_S0_Single_LR3e3.sh",
+    "parent_shell": "/media/volume/PACT-Data/StormSurge/experiment_config_0921_true_peak_amp_factorial/configs/train_config_0921_Lewes_S0_Single.sh",
+    "parent_shell_sha256": "18923ac89c1eaf2495ca94585162880043f00ab54669d356aaa9a6d73c410e69",
+    "parent_json": "/media/share/PACT/Results/All_results_0921_true_peak_amp_factorial/0921_Lewes_S0_Single__20260921_205445/config_perceiver3_mse_395738b655_0921_Lewes_S0_Single_20260921_205445.json",
+    "parent_json_sha256": "6317ca30ac7ba2cca2ad55271a63efd4df8f49b4b7ab12bb51d9742687a4b49f",
+    "parent_run": "/media/share/PACT/Results/All_results_0921_true_peak_amp_factorial/0921_Lewes_S0_Single__20260921_205445"
+  },
+  {
+    "run_name": "0921_Lewes_D0_DualBase_LR3e3",
+    "config": "train_config_0921_Lewes_D0_DualBase_LR3e3.sh",
+    "parent_shell": "/media/volume/PACT-Data/StormSurge/experiment_config_0921_true_peak_amp_factorial/configs/train_config_0921_Lewes_D0_DualBase.sh",
+    "parent_shell_sha256": "e40eed229ad5ce2ec031041eec6d6d78ca868ffefbcb6ff26a40b086f0231f61",
+    "parent_json": "/media/share/PACT/Results/All_results_0921_true_peak_amp_factorial/0921_Lewes_D0_DualBase__20260921_212018/config_perceiver3_mse_b80bd498d1_0921_Lewes_D0_DualBase_20260921_212018.json",
+    "parent_json_sha256": "f7f2c64befef739d9e142902af26f209288e94bda902a41e81c0bed7dc1f47cb",
+    "parent_run": "/media/share/PACT/Results/All_results_0921_true_peak_amp_factorial/0921_Lewes_D0_DualBase__20260921_212018"
+  },
+  {
+    "run_name": "0921_Lewes_D1_Tail_LR3e3",
+    "config": "train_config_0921_Lewes_D1_Tail_LR3e3.sh",
+    "parent_shell": "/media/volume/PACT-Data/StormSurge/experiment_config_0921_true_peak_amp_factorial/configs/train_config_0921_Lewes_D1_Tail.sh",
+    "parent_shell_sha256": "a0250b18d56cafb6aebb827d6e761bc3fb31e76ab2c9a0b3d7c650d0810cdf47",
+    "parent_json": "/media/share/PACT/Results/All_results_0921_true_peak_amp_factorial/0921_Lewes_D1_Tail__20260921_214617/config_perceiver3_mse_tail_3bfa5aed00_0921_Lewes_D1_Tail_20260921_214617.json",
+    "parent_json_sha256": "695db700dfdc702ac91cac63fdb3c2d555cb628c3f26790ac0834dd2b47b24ed",
+    "parent_run": "/media/share/PACT/Results/All_results_0921_true_peak_amp_factorial/0921_Lewes_D1_Tail__20260921_214617"
+  },
+  {
+    "run_name": "0921_Lewes_D2_Amp_LR3e3",
+    "config": "train_config_0921_Lewes_D2_Amp_LR3e3.sh",
+    "parent_shell": "/media/volume/PACT-Data/StormSurge/experiment_config_0921_true_peak_amp_factorial/configs/train_config_0921_Lewes_D2_Amp.sh",
+    "parent_shell_sha256": "cd2e664aecdba0c94942a258a29d7e33fe279b5c648e36060a30fa72e5feb89e",
+    "parent_json": "/media/share/PACT/Results/All_results_0921_true_peak_amp_factorial/0921_Lewes_D2_Amp__20260921_221141/config_perceiver3_mse_af4f968662_0921_Lewes_D2_Amp_20260921_221141.json",
+    "parent_json_sha256": "7904b9fae24bab812d9f13a2ba04612170420b00dbbab438d5e9162ca98aaf4e",
+    "parent_run": "/media/share/PACT/Results/All_results_0921_true_peak_amp_factorial/0921_Lewes_D2_Amp__20260921_221141"
+  },
+  {
+    "run_name": "0921_Lewes_D3_TailAmp_LR3e3",
+    "config": "train_config_0921_Lewes_D3_TailAmp_LR3e3.sh",
+    "parent_shell": "/media/volume/PACT-Data/StormSurge/experiment_config_0921_true_peak_amp_factorial/configs/train_config_0921_Lewes_D3_TailAmp.sh",
+    "parent_shell_sha256": "b6f55f4a74def10ab0c22fd3d2694256ed9ea962539a5e250872c796e29b17c7",
+    "parent_json": "/media/share/PACT/Results/All_results_0921_true_peak_amp_factorial/0921_Lewes_D3_TailAmp__20260921_225543/config_perceiver3_mse_tail_e6bdc93f90_0921_Lewes_D3_TailAmp_20260921_225543.json",
+    "parent_json_sha256": "7a330c686740b529eecbeb84bb426be42cf8cc6debefc4f848fcb79a10c2e82a",
+    "parent_run": "/media/share/PACT/Results/All_results_0921_true_peak_amp_factorial/0921_Lewes_D3_TailAmp__20260921_225543"
+  }
+]

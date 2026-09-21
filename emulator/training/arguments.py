@@ -205,8 +205,16 @@ def parse_args(argv=None):
     parser.add_argument("--transformer_dropout", type=float, default=0.05)
     parser.add_argument("--max_time_steps", type=int, default=32,
                         help="PACT lag-embedding capacity, including the current step; ignored by baseline.")
-    parser.add_argument("--checkpoint_selection", choices=tuple(SELECTION_METRICS), default="overall",
+    parser.add_argument("--checkpoint_selection", choices=(*SELECTION_METRICS, "peakaware"), default="overall",
                         help="VAL-only primary checkpoint rule; independent of losses and the LR scheduler.")
+    # Suppressed defaults keep historical resolved configs and filenames identical.
+    parser.add_argument("--track_peakaware", type=parse_bool_int, choices=[0, 1], default=argparse.SUPPRESS,
+                        help="Opt in to a second normalized-score tracker while selecting overall.")
+    parser.add_argument("--checkpoint_score_refs", type=str, default=argparse.SUPPRESS,
+                        help="Frozen station-specific S0 VAL reference JSON; default checkpoint_score_refs.json.")
+    for term, weight in (("all", .65), ("top5", .20), ("truepeak", .15)):
+        parser.add_argument(f"--ckpt_score_w_{term}", type=float, default=argparse.SUPPRESS,
+                            help=f"Normalized checkpoint-score weight; default {weight}.")
     parser.add_argument("--checkpoint_overall_tol", type=float, default=.01,
                         help="Relative overall RMSE tolerance for exact constrained peak selection.")
     parser.add_argument("--save_aux_checkpoints", type=parse_bool_int, choices=[0, 1], default=0,
@@ -260,7 +268,13 @@ def parse_args(argv=None):
     try:
         validate_excess_amp_config(args, head_type=args.head_type)
         validate_shape_config(args, head_type=args.head_type, model=args.model)
-        validate_checkpoint_settings(args.checkpoint_selection, args.checkpoint_overall_tol, args.save_aux_checkpoints)
+        validate_checkpoint_settings("overall" if args.checkpoint_selection == "peakaware" else args.checkpoint_selection,
+                                     args.checkpoint_overall_tol, args.save_aux_checkpoints)
+        from .peakaware_checkpoints import enabled, read_settings
+        if enabled(args):
+            read_settings(args)
+        elif any(hasattr(args, key) for key in ("checkpoint_score_refs", "ckpt_score_w_all", "ckpt_score_w_top5", "ckpt_score_w_truepeak")):
+            raise ValueError("Score references/weights require --track_peakaware 1 or --checkpoint_selection peakaware.")
     except ValueError as error:
         parser.error(str(error))
     if args.head_type == "dual":
