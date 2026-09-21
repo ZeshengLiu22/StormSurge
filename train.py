@@ -120,6 +120,7 @@ def train(args, device, distributed, rank, wall_start):
                         if args.head_type == "dual" else None, peak_prior=fitted["event_prior"])
     if dual_metadata is not None:
         dual_metadata["excess_formulation"] = args.excess_formulation
+        dual_metadata["excess_event_normalization"] = args.excess_event_normalization
     if args.excess_formulation == "severity_shape":
         model_values["target_y_std"] = stats_cpu["y_std"].tolist()
         dual_metadata["severity_shape_eps"] = args.severity_shape_eps

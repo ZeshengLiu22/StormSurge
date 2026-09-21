@@ -69,16 +69,33 @@ def enforce_dual_loss(config):
                     "forcing " + ", ".join(corrections) + ".")
 
 
-def dual_loss_terms(output, target_norm, y_std):
+def validate_excess_risk_config(config, *, head_type="dual", model="pact"):
+    """Opt-in aggregation applies only to direct dual excess supervision."""
+    if config.excess_event_normalization not in ("none", "train_prior"):
+        raise ValueError("--excess_event_normalization must be none or train_prior.")
+    if config.excess_event_normalization != "none" and (
+            head_type != "dual" or model not in ("pact", "perceiver3") or config.excess_formulation != "direct"):
+        raise ValueError("Excess-risk aggregation requires --model perceiver3 --head_type dual "
+                         "--excess_formulation direct.")
+
+
+def dual_loss_terms(output, target_norm, y_std, *, excess_event_normalization="none", event_prior=None):
     """The three dual loss terms: body, conditional excess and event BCE.
 
-    Excess risk uses the WHOLE batch denominator. Non-event windows have zero
-    excess auxiliary gradient; rare-event batches never amplify it by 1/p.
+    Excess risk uses the WHOLE batch denominator. Optional normalization uses
+    only the fixed fitted TRAIN prior, never the current batch's event fraction.
+    Non-event windows retain zero excess auxiliary gradient.
     """
+    if excess_event_normalization not in ("none", "train_prior"):
+        raise ValueError("--excess_event_normalization must be none or train_prior.")
+    if excess_event_normalization == "train_prior":
+        validate_event_prior(event_prior)
     event, excess_target = dual_excess_target(target_norm, output.threshold)
     body_target = torch.minimum(target_norm, output.threshold)
     body = ((output.body - body_target) * y_std).square().mean()
     excess = (((output.excess - excess_target) * y_std).square() * event).mean()
+    if excess_event_normalization == "train_prior":
+        excess = excess / event_prior
     gate = (F.binary_cross_entropy_with_logits(output.gate_logits, event.float()) * y_std.square().mean()
             if output.gate_logits is not None else body.new_zeros(()))
     return body, excess, gate
@@ -117,6 +134,7 @@ class LossConfig:
     peak_loss_weight: float = 0.0
     peak_pool: str = "max"
     peak_pool_beta: float = 20.0
+    excess_event_normalization: str = "none"
 
 
 class ForecastLoss(nn.Module):
@@ -127,6 +145,9 @@ class ForecastLoss(nn.Module):
         self.register_buffer("y_std", stats["y_std"])
         self.peak_threshold = peak_threshold
         self.wmse_threshold = wmse_threshold
+        validate_excess_risk_config(config)
+        if config.excess_event_normalization == "train_prior":
+            validate_event_prior(event_prior)
         amp_weight = validate_excess_amp_config(config)
         shape_weight = validate_shape_config(config)
         peak_weight = validate_peak_config(config)
@@ -139,6 +160,8 @@ class ForecastLoss(nn.Module):
 
     def forward(self, output, prediction, target):
         c = self.config
+        if output.body is None and c.excess_event_normalization != "none":
+            raise ValueError("Excess-risk aggregation requires the supervised direct dual exceedance head.")
         if output.body is None and c.excess_amp_loss_weight > 0:
             raise ValueError("Excess-amplitude supervision requires the supervised dual exceedance head.")
         if output.body is None and c.shape_loss_weight > 0:
@@ -179,7 +202,8 @@ class ForecastLoss(nn.Module):
             if not c.dual_loss:
                 return loss
             target_norm = (target - self.y_mean) / self.y_std
-            body, excess, gate = dual_loss_terms(output, target_norm, self.y_std)
+            body, excess, gate = dual_loss_terms(output, target_norm, self.y_std,
+                excess_event_normalization=c.excess_event_normalization, event_prior=self.event_prior)
             dual_loss = c.body_loss_weight * body + c.excess_loss_weight * excess + c.gate_loss_weight * gate
             loss = loss + dual_loss
             # Leave the historical numerical/RNG path untouched at weight zero.

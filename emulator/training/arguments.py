@@ -6,7 +6,7 @@ from pathlib import Path
 
 from emulator.common.cli import head_type_name, parse_bool_int, temporal_block_name
 from emulator.common.dual import DUAL_ABLATIONS, EXCESS_FORMULATIONS
-from .losses import enforce_dual_loss, validate_excess_amp_config, validate_shape_config
+from .losses import enforce_dual_loss, validate_excess_amp_config, validate_shape_config, validate_excess_risk_config
 from .final_peak import validate_peak_config
 from .checkpoints import SELECTION_METRICS, validate_checkpoint_settings
 
@@ -180,6 +180,8 @@ def parse_args(argv=None):
                         help="Explicit mechanism experiment; none enforces full branch supervision.")
     parser.add_argument("--body_loss_weight", type=float, default=1.0)
     parser.add_argument("--excess_loss_weight", type=float, default=1.0)
+    parser.add_argument("--excess_event_normalization", choices=("none", "train_prior"), default="none",
+                        help="Divide horizon-wise excess risk by the exact fitted TRAIN event prior; none preserves production.")
     parser.add_argument("--excess_formulation", choices=EXCESS_FORMULATIONS, default="direct",
                         help="Direct normalized excess (legacy) or physical severity times normalized temporal shape.")
     parser.add_argument("--shape_loss_weight", type=float, default=0.0,
@@ -269,6 +271,7 @@ def parse_args(argv=None):
         if not math.isfinite(getattr(args, name)):
             parser.error(f"--{name} must be finite; small values use the original numerical floor.")
     try:
+        validate_excess_risk_config(args, head_type=args.head_type, model=args.model)
         validate_excess_amp_config(args, head_type=args.head_type)
         validate_shape_config(args, head_type=args.head_type, model=args.model)
         validate_peak_config(args)
