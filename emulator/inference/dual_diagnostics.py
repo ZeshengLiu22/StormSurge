@@ -3,26 +3,29 @@
 import numpy as np
 
 
-def summarize_excess_amplitude(excess_phys, target_excess_phys, event):
-    """Hard-maximum branch amplitude errors on true TRAIN-threshold events.
+def summarize_excess_amplitude(excess_phys, target_excess_phys, target_phys, event):
+    """Branch amplitude errors at the true target peak on TRAIN-threshold events.
 
     Inputs reuse the dual export and its physical excess target. This is a
-    mechanism diagnostic, independent of gate probability and training pool;
+    mechanism diagnostic, independent of gate probability;
     it never fits thresholds or participates in checkpoint selection.
     """
     prediction = np.asarray(excess_phys, dtype=np.float64)
     target = np.asarray(target_excess_phys, dtype=np.float64)
+    truth = np.asarray(target_phys, dtype=np.float64)
     event = np.asarray(event, dtype=bool).reshape(-1)
-    if prediction.ndim != 2 or prediction.shape != target.shape or len(prediction) != len(event):
+    if prediction.ndim != 2 or prediction.shape != target.shape or prediction.shape != truth.shape or len(prediction) != len(event):
         raise ValueError("Excess-amplitude diagnostics require aligned (N,K) excess arrays and N events.")
-    if not np.isfinite(prediction).all() or not np.isfinite(target).all():
+    if not all(np.isfinite(value).all() for value in (prediction, target, truth)):
         raise ValueError("Excess-amplitude diagnostics require finite values.")
-    names = ("excess_amp_rmse", "excess_amp_mae", "excess_amp_bias",
-             "pred_excess_amp_mean", "target_excess_amp_mean")
+    names = ("true_peak_excess_rmse", "true_peak_excess_mae", "true_peak_excess_bias",
+             "pred_true_peak_excess_mean", "target_true_peak_excess_mean")
     if not event.any():
         return dict.fromkeys(names)
-    a_pred = prediction[event].max(axis=1)
-    a_target = target[event].max(axis=1)
+    true_peak = truth[event].argmax(axis=1)
+    rows = np.arange(len(true_peak))
+    a_pred = prediction[event][rows, true_peak]
+    a_target = target[event][rows, true_peak]
     error = a_pred - a_target
     return dict(zip(names, map(float, (np.sqrt(np.mean(error ** 2)), np.mean(np.abs(error)),
                                       np.mean(error), np.mean(a_pred), np.mean(a_target)))))
@@ -87,4 +90,4 @@ def summarize_dual(arrays, tau_phys, bins=10):
                 event_window_rmse=rmse(error, event), non_event_window_rmse=rmse(error, ~event),
                 body_rmse=rmse(body - np.minimum(truth, tau_phys), np.ones(count, dtype=bool)),
                 excess_event_rmse=rmse(excess - excess_target, event),
-                **summarize_excess_amplitude(excess, excess_target, event))
+                **summarize_excess_amplitude(excess, excess_target, truth, event))

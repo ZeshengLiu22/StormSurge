@@ -1,5 +1,11 @@
 # A0 HeadCapacity — NCEP 24 h
 
+> Historical experiment archive: these dated configs, generators, launchers,
+> manifests and validation records describe their original revisions. They are
+> retained as evidence and are not supported launch profiles for current main.
+> Use the root README and `configs/` for current training interfaces. Removed
+> objectives and options are intentionally not migrated.
+
 Compare prediction-head parameterization and excess-branch capacity before adding
 peak-aware auxiliary losses. Exactly **12 runs**: CBBT, Lewes, Battery, and Boston,
 each with these three formulations:

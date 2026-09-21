@@ -1,5 +1,11 @@
 # P1_WeightProbe
 
+> Historical experiment archive: these dated configs, generators, launchers,
+> manifests and validation records describe their original revisions. They are
+> retained as evidence and are not supported launch profiles for current main.
+> Use the root README and `configs/` for current training interfaces. Removed
+> objectives and options are intentionally not migrated.
+
 P1 probes whether **stronger excess supervision and stronger tail supervision
 can materially improve extreme/peak behavior**, before introducing new
 architecture or loss formulations. It adds exactly **eight new settings per

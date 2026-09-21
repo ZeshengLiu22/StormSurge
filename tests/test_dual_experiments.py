@@ -85,7 +85,7 @@ class DualExperimentTests(unittest.TestCase):
                                         torch.ones(1, 2))
                 config = LossConfig(dual_ablation=mode, excess_amp_loss_weight=.7)
                 prediction = output.prediction * stats['y_std'] + stats['y_mean']
-                loss = ForecastLoss(config, stats, 3., 2., event_prior=.2)(output, prediction, target)
+                loss = ForecastLoss(config, stats, 3., 2., event_prior=.2, event_threshold=2.)(output, prediction, target)
                 terms = dual_loss_terms(output, norm_target, stats['y_std'])
                 expected = (prediction - target).square().mean()
                 for name, term in zip(('body_loss_weight', 'excess_loss_weight', 'gate_loss_weight'), terms):
@@ -94,7 +94,7 @@ class DualExperimentTests(unittest.TestCase):
                         expected = expected + term
                 if 'excess_amp_loss_weight' not in disabled:
                     amplitude = excess_amplitude_terms(output.excess, norm_target, output.threshold,
-                                                       stats['y_std'], .2)
+                                                       stats['y_std'], .2, target_phys=target, event_threshold_phys=2.)
                     expected = expected + .7 * amplitude.loss
                 self.assertEqual(config.excess_amp_loss_weight, 0 if 'excess_amp_loss_weight' in disabled else .7)
                 torch.testing.assert_close(loss, expected)
@@ -193,8 +193,8 @@ class DualExperimentTests(unittest.TestCase):
                         report = json.loads((output / 'diagnostics/dual_diagnostics.json').read_text())
                         self.assertAlmostEqual(report['overall']['brier'],
                                                float(np.mean((arrays['gate_probability'].astype(float) - arrays['event']) ** 2)))
-                        self.assertTrue({'excess_amp_rmse', 'excess_amp_mae', 'excess_amp_bias',
-                                         'pred_excess_amp_mean', 'target_excess_amp_mean'} <= report['overall'].keys())
+                        self.assertTrue({'true_peak_excess_rmse', 'true_peak_excess_mae', 'true_peak_excess_bias',
+                                         'pred_true_peak_excess_mean', 'target_true_peak_excess_mean'} <= report['overall'].keys())
                     if mode == 'fixed_gate':
                         repo = Path(__file__).resolve().parents[1]
                         for launcher in ('infer.sh', 'infer_multi.sh'):

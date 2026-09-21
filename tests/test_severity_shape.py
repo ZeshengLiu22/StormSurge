@@ -1,4 +1,4 @@
-"""Severity/shape factorization, fixed-TRAIN-prior shape loss and legacy loading."""
+"""Severity/shape factorization, fixed-TRAIN-prior shape loss and current inference."""
 
 import contextlib
 import copy
@@ -29,7 +29,7 @@ from emulator.data import ForcingGraphStore, fit_loss_thresholds
 from emulator.models import ForecastOutput, ModelConfig, build_model
 from emulator.models.heads import ExceedanceHead, SeverityShapeHead, head_mlp
 from emulator.training import EpochResult, ForecastLoss, LossConfig, dual_loss_terms
-from emulator.training.excess_amplitude import excess_amplitude_terms, peak_pool, physical_excess_target
+from emulator.training.excess_amplitude import excess_amplitude_terms, physical_excess_target
 from emulator.training.excess_shape import excess_shape_loss, excess_shape_target
 from test_config_interfaces import MODES, dry_commands
 import test_excess_amplitude as amplitude_tests
@@ -67,7 +67,7 @@ class LegacyDirectHead(nn.Module):
 def severity_fixture(fixed_gate=False, nonzero=True):
     # Reuse #2's heterogeneous scales, strict event-free rank, and shared context.
     _, context, target, stats = amplitude_tests.ddp_fixture()
-    head = SeverityShapeHead(4, 0, [1., 1.], .25, stats['y_std'].tolist(), fixed_gate=fixed_gate)
+    head = SeverityShapeHead(4, 0, [4., 1.], .25, stats['y_std'].tolist(), fixed_gate=fixed_gate)
     if nonzero:
         with torch.no_grad():
             for branch in (head.severity, head.shape, head.gate):
@@ -84,17 +84,17 @@ def shape_ddp_worker(rank, rendezvous, destination):
         head, context, target, stats = severity_fixture()
         network = DistributedDataParallel(head)
         records = {}
-        for pool in ('max', 'smoothmax'):
+        for step in range(2):
             network.zero_grad(set_to_none=True)
             output = network(context[2 * rank:2 * rank + 2])
             criterion = ForecastLoss(LossConfig(excess_formulation='severity_shape', excess_loss_weight=2.,
-                excess_amp_loss_weight=.7, excess_amp_pool=pool, shape_loss_weight=.3), stats, 1., 1., event_prior=.25)
+                excess_amp_loss_weight=.7, shape_loss_weight=.3), stats, 1., 1., event_prior=.25, event_threshold=2.)
             loss = criterion(output, output.prediction * stats['y_std'], target[2 * rank:2 * rank + 2])
             assert loss.ndim == 0 and torch.isfinite(loss)
             loss.backward()
             average = loss.detach().clone()
             dist.all_reduce(average)
-            records[pool] = dict(loss=average / 2, grads={name: p.grad.clone() for name, p in head.named_parameters()})
+            records[step] = dict(loss=average / 2, grads={name: p.grad.clone() for name, p in head.named_parameters()})
         if rank == 0:
             torch.save(records, destination)
     finally:
@@ -139,41 +139,15 @@ class SeverityShapeTests(unittest.TestCase):
             self.assertIsNone(actual.severity_phys)
             self.assertIsNone(actual.excess_shape)
 
-    def test_legacy_model_config_without_new_fields_loads_strictly_and_matches_explicit_direct(self):
-        legacy = dict(in_channels=3, out_channels=4, hidden_channels=16, peak_threshold_norm=[1.] * 4,
-                      peak_prior=.17, node_read_heads=2, time_read_heads=2)
-        for key in ('excess_formulation', 'target_y_std', 'severity_shape_eps'):
-            self.assertNotIn(key, legacy)
-        for ablation in ('none', 'fixed_gate'):
-            legacy['dual_ablation'] = ablation
-            torch.manual_seed(302)
-            old = build_model(ModelConfig(**legacy)).eval()
-            rng = torch.get_rng_state()
-            torch.manual_seed(302)
-            explicit = build_model(ModelConfig(**legacy, excess_formulation='direct')).eval()
-            self.assertIs(type(old.head), ExceedanceHead)
-            torch.testing.assert_close(torch.get_rng_state(), rng, rtol=0, atol=0)
-            self.assertEqual(list(old.state_dict()), list(explicit.state_dict()))
-            explicit.load_state_dict(old.state_dict(), strict=True)
-            batch = graph_batch()
-            torch.testing.assert_close(old(batch).prediction, explicit(batch).prediction, rtol=0, atol=0)
-        value = ForecastOutput(torch.zeros(2, 3))
-        self.assertIsNone(value.severity_phys)
-        self.assertIsNone(value.excess_shape)
-
-    def test_direct_loss_keeps_post2_path_with_optional_shape_disabled(self):
-        output, z, stats, _ = amplitude_tests.ExcessAmplitudeTests().fixture()
-        target = z * stats['y_std'] + stats['y_mean']
-        prediction = output.prediction * stats['y_std'] + stats['y_mean']
+    def test_direct_loss_skips_optional_shape_when_disabled(self):
+        head, context, target, stats = amplitude_tests.ddp_fixture()
+        output = head(context)
+        prediction = output.prediction * stats['y_std']
         for mode, weight in itertools.product(MODES, (0., .7)):
             config = LossConfig(loss_mode=mode, excess_loss_weight=2., excess_amp_loss_weight=weight)
-            old = asdict(config)
-            for key in ('excess_formulation', 'shape_loss_weight', 'severity_shape_eps'):
-                old.pop(key)
             with patch('emulator.training.losses.excess_shape_loss', side_effect=AssertionError('disabled shape path')):
-                expected = ForecastLoss(LossConfig(**old), stats, 1., 1., event_prior=.2)(output, prediction, target)
-                actual = ForecastLoss(config, stats, 1., 1., event_prior=.2)(output, prediction, target)
-            torch.testing.assert_close(actual, expected, rtol=0, atol=0)
+                loss = ForecastLoss(config, stats, 1., 1., event_prior=.25, event_threshold=2.)(output, prediction, target)
+            self.assertTrue(torch.isfinite(loss))
 
     def test_severity_initialization_is_small_finite_positive_and_preserves_gate_definition(self):
         for fixed, prior in itertools.product((False, True), (0., .17, 1.)):
@@ -230,7 +204,7 @@ class SeverityShapeTests(unittest.TestCase):
         torch.testing.assert_close(output.excess_shape, torch.ones_like(output.excess_shape), rtol=0, atol=0)
         torch.testing.assert_close((output.excess * stats['y_std']).max(dim=1).values, output.severity_phys)
         criterion = ForecastLoss(LossConfig(excess_formulation='severity_shape', excess_amp_loss_weight=.7,
-            shape_loss_weight=.3), stats, 1., 1., event_prior=.25)
+            shape_loss_weight=.3), stats, 1., 1., event_prior=.25, event_threshold=2.)
         loss = criterion(output, output.prediction * stats['y_std'], target)
         loss.backward()
         self.assertTrue(all(p.grad is not None and torch.isfinite(p.grad).all() for p in head.parameters()))
@@ -259,8 +233,8 @@ class SeverityShapeTests(unittest.TestCase):
             with torch.no_grad():
                 head.shape[-1].bias.fill_(bias)
             criterion = ForecastLoss(LossConfig(excess_formulation='severity_shape', excess_amp_loss_weight=.7,
-                                      shape_loss_weight=.3, peak_loss_weight=.4), stats, 1., 1.,
-                                      event_prior=.25, event_threshold=1.).to(device)
+                                      shape_loss_weight=.3), stats, 1., 1.,
+                                      event_prior=.25, event_threshold=2.).to(device)
             with torch.autocast(device_type=device.type, dtype=dtype):
                 output = head(context)
                 loss = criterion(output, output.prediction * stats['y_std'], target)
@@ -440,9 +414,10 @@ class SeverityShapeTests(unittest.TestCase):
     def test_event_free_shape_and_amplitude_losses_are_exact_zero_with_finite_gradients(self):
         head, context, _, stats = severity_fixture()
         output = head(context)
-        z = torch.ones(4, 2)  # Exact threshold equality is not an event.
+        z = output.threshold.expand(4, -1)  # Exact threshold equality is not an event.
         shape_loss = excess_shape_loss(output.excess_shape, z, output.threshold, stats['y_std'], .25)
-        amplitude = excess_amplitude_terms(output.excess, z, output.threshold, stats['y_std'], .25).loss
+        amplitude = excess_amplitude_terms(output.excess, z, output.threshold, stats['y_std'], .25,
+                        target_phys=z * stats['y_std'], event_threshold_phys=2.).loss
         self.assertEqual(shape_loss.item(), 0)
         self.assertEqual(amplitude.item(), 0)
         (shape_loss + amplitude).backward()
@@ -453,7 +428,7 @@ class SeverityShapeTests(unittest.TestCase):
 
     def test_prediction_trajectory_amplitude_and_shape_gradient_routing(self):
         for term, active in [('prediction', {'body', 'gate', 'severity', 'shape'}),
-                             ('trajectory', {'severity', 'shape'}), ('amplitude', {'severity'}), ('shape', {'shape'})]:
+                             ('trajectory', {'severity', 'shape'}), ('amplitude', {'severity', 'shape'}), ('shape', {'shape'})]:
             with self.subTest(term=term):
                 head, context, target, stats = severity_fixture()
                 context.requires_grad_()
@@ -464,7 +439,8 @@ class SeverityShapeTests(unittest.TestCase):
                 elif term == 'trajectory':
                     loss = dual_loss_terms(output, z, stats['y_std'])[1]
                 elif term == 'amplitude':
-                    loss = excess_amplitude_terms(output.excess, z, output.threshold, stats['y_std'], .25).loss
+                    loss = excess_amplitude_terms(output.excess, z, output.threshold, stats['y_std'], .25,
+                        target_phys=z * stats['y_std'], event_threshold_phys=2.).loss
                 else:
                     loss = excess_shape_loss(output.excess_shape, z, output.threshold, stats['y_std'], .25)
                 loss.backward()
@@ -473,32 +449,32 @@ class SeverityShapeTests(unittest.TestCase):
                     norm = sum(g.abs().sum().item() for g in gradients if g is not None)
                     if name in active:
                         self.assertGreater(norm, 1e-8, (term, name))
-                    elif term == 'amplitude' and name == 'shape':
-                        self.assertLess(norm, 1e-5)  # Hard maximum of unit-peak shape is severity.
                     else:
                         self.assertTrue(all(g is None for g in gradients), (term, name))
                 self.assertTrue(torch.isfinite(context.grad).all())
                 self.assertGreater(context.grad.abs().sum().item(), 0.)
 
-    def test_post2_hard_max_supervises_severity_and_smoothmax_keeps_same_trajectory_pool(self):
+    def test_true_peak_amplitude_gathers_severity_times_shape_at_target_peak(self):
         head, context, target, stats = severity_fixture()
         output = head(context)
         z = target / stats['y_std']
-        exact = excess_amplitude_terms(output.excess, z, output.threshold, stats['y_std'], .25)
-        torch.testing.assert_close(exact.a_pred, output.severity_phys)
-        expected = ((output.severity_phys - exact.a_target).square() * exact.event.squeeze(1)).mean() / .25
-        torch.testing.assert_close(exact.loss, expected)
-        smooth = excess_amplitude_terms(output.excess, z, output.threshold, stats['y_std'], .25, 'smoothmax', 2.)
-        torch.testing.assert_close(smooth.a_pred, peak_pool(output.severity_phys[:, None] * output.excess_shape, 'smoothmax', 2.))
-        self.assertTrue((smooth.a_pred < output.severity_phys).all())
+        terms = excess_amplitude_terms(output.excess, z, output.threshold, stats['y_std'], .25,
+                                       target_phys=target, event_threshold_phys=2.)
+        indices = target.argmax(dim=1, keepdim=True)
+        physical_excess = output.severity_phys[:, None] * output.excess_shape
+        expected_prediction = physical_excess.gather(1, indices).squeeze(1)
+        torch.testing.assert_close(terms.a_pred, expected_prediction)
+        expected = ((expected_prediction - terms.a_target).square() * terms.event.squeeze(1)).mean() / .25
+        torch.testing.assert_close(terms.loss, expected)
         target_shape = excess_shape_target(z, output.threshold, stats['y_std'])
-        torch.testing.assert_close(target_shape.a_target, exact.a_target, rtol=0, atol=0)
+        torch.testing.assert_close(target_shape.a_target, terms.a_target, rtol=0, atol=0)
 
     def test_optional_objectives_are_orthogonal_and_trajectory_weight_is_retained(self):
         head, context, target, stats = severity_fixture()
         output = head(context)
         z = target / stats['y_std']
-        amp = excess_amplitude_terms(output.excess, z, output.threshold, stats['y_std'], .25).loss
+        amp = excess_amplitude_terms(output.excess, z, output.threshold, stats['y_std'], .25,
+                        target_phys=z * stats['y_std'], event_threshold_phys=2.).loss
         shape = excess_shape_loss(output.excess_shape, z, output.threshold, stats['y_std'], .25)
         for mode, amp_weight, shape_weight in itertools.product(MODES, (0., .7), (0., .3)):
             c = LossConfig(loss_mode=mode, excess_formulation='severity_shape', excess_loss_weight=5.)
@@ -506,7 +482,7 @@ class SeverityShapeTests(unittest.TestCase):
             base = ForecastLoss(copy.deepcopy(c), stats, 1., 1.)(output, prediction, target)
             c.excess_amp_loss_weight, c.shape_loss_weight = amp_weight, shape_weight
             with patch('emulator.training.losses.excess_shape_loss', wraps=excess_shape_loss) as observed:
-                actual = ForecastLoss(c, stats, 1., 1., event_prior=.25)(output, prediction, target)
+                actual = ForecastLoss(c, stats, 1., 1., event_prior=.25, event_threshold=2.)(output, prediction, target)
             expected = base
             if amp_weight:
                 expected = expected + amp_weight * amp
@@ -527,7 +503,7 @@ class SeverityShapeTests(unittest.TestCase):
             c = LossConfig(excess_formulation='severity_shape', dual_ablation=mode, excess_amp_loss_weight=.7, shape_loss_weight=.3)
             with patch('emulator.training.losses.excess_shape_loss', wraps=excess_shape_loss) as shape_fn, \
                  patch('emulator.training.losses.excess_amplitude_terms', wraps=excess_amplitude_terms) as amp_fn:
-                loss = ForecastLoss(c, stats, 1., 1., event_prior=None if disabled else .25)(
+                loss = ForecastLoss(c, stats, 1., 1., event_prior=None if disabled else .25, event_threshold=2.)(
                     output, output.prediction * stats['y_std'], target)
             self.assertTrue(torch.isfinite(loss))
             self.assertEqual((shape_fn.call_count, amp_fn.call_count), (0, 0) if disabled else (1, 1))
@@ -542,7 +518,7 @@ class SeverityShapeTests(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, 'TRAIN event_prior'):
                 ForecastLoss(LossConfig(excess_formulation='severity_shape', shape_loss_weight=.3), stats, 1., 1., event_prior=prior)
         c = LossConfig(excess_formulation='severity_shape', shape_loss_weight=.3)
-        criterion = ForecastLoss(c, stats, 1., 1., event_prior=.25)
+        criterion = ForecastLoss(c, stats, 1., 1., event_prior=.25, event_threshold=2.)
         direct = ExceedanceHead(4, 0, [1., 1.], .25)(torch.ones(2, 2, 4))
         with self.assertRaisesRegex(ValueError, 'severity_shape dual head'):
             criterion(direct, direct.prediction, torch.zeros(2, 2))
@@ -566,7 +542,7 @@ class SeverityShapeTests(unittest.TestCase):
         for c in (LossConfig(shape_loss_weight=.3), LossConfig(shape_loss_weight=-1),
                   LossConfig(excess_formulation='unknown'), LossConfig(severity_shape_eps=0)):
             with self.assertRaises(ValueError):
-                ForecastLoss(c, stats, 1., 1., event_prior=.25)
+                ForecastLoss(c, stats, 1., 1., event_prior=.25, event_threshold=2.)
 
     def test_model_and_target_scale_validation(self):
         options = dict(in_channels=3, out_channels=2, hidden_channels=8, node_read_heads=2,
@@ -582,14 +558,14 @@ class SeverityShapeTests(unittest.TestCase):
                 build_model(ModelConfig(**options, target_y_std=[1., 2.], severity_shape_eps=eps))
 
     def check_runtime(self, device, dtype):
-        for pool, fixed in itertools.product(('max', 'smoothmax'), (False, True)):
+        for fixed in (False, True):
             head, context, target, stats = severity_fixture(fixed_gate=fixed)
             head, context, target = head.to(device), context.to(device), target.to(device)
             stats = {k: v.to(device) for k, v in stats.items()}
             c = LossConfig(loss_mode='mse_tail', excess_formulation='severity_shape', excess_loss_weight=5.,
-                excess_amp_loss_weight=.7, excess_amp_pool=pool, shape_loss_weight=.3,
+                excess_amp_loss_weight=.7, shape_loss_weight=.3,
                 dual_ablation='fixed_gate' if fixed else 'none')
-            criterion = ForecastLoss(c, stats, 1., 1., event_prior=.25).to(device)
+            criterion = ForecastLoss(c, stats, 1., 1., event_prior=.25, event_threshold=2.).to(device)
             with torch.autocast(device_type=device.type, dtype=dtype):
                 output = head(context)
                 loss = criterion(output, output.prediction * stats['y_std'], target)
@@ -616,16 +592,16 @@ class SeverityShapeTests(unittest.TestCase):
             mp.spawn(shape_ddp_worker, args=(str(path / 'rendezvous'), str(path / 'result.pt')), nprocs=2, join=True)
             records = torch.load(path / 'result.pt', weights_only=True)
         head, context, target, stats = severity_fixture()
-        for pool in ('max', 'smoothmax'):
+        for step in range(2):
             head.zero_grad(set_to_none=True)
             output = head(context)
             c = LossConfig(excess_formulation='severity_shape', excess_loss_weight=2., excess_amp_loss_weight=.7,
-                           excess_amp_pool=pool, shape_loss_weight=.3)
-            loss = ForecastLoss(c, stats, 1., 1., event_prior=.25)(output, output.prediction * stats['y_std'], target)
+                           shape_loss_weight=.3)
+            loss = ForecastLoss(c, stats, 1., 1., event_prior=.25, event_threshold=2.)(output, output.prediction * stats['y_std'], target)
             loss.backward()
-            torch.testing.assert_close(records[pool]['loss'], loss)
+            torch.testing.assert_close(records[step]['loss'], loss)
             for name, p in head.named_parameters():
-                torch.testing.assert_close(records[pool]['grads'][name], p.grad, rtol=2e-5, atol=2e-6)
+                torch.testing.assert_close(records[step]['grads'][name], p.grad, rtol=2e-5, atol=2e-6)
 
     def test_shell_forwards_all_controls_and_preserves_direct_run_tag(self):
         with tempfile.TemporaryDirectory() as temporary:
@@ -634,7 +610,7 @@ class SeverityShapeTests(unittest.TestCase):
                 shape_weight = '.3' if formulation == 'severity_shape' else '0'
                 path.write_text(f'MODEL=perceiver3\nHEAD_TYPE=dual\nEXCESS_FORMULATION={formulation}\n'
                                 f'SHAPE_LOSS_WEIGHT={shape_weight}\nSEVERITY_SHAPE_EPS=2e-6\n'
-                                'EXCESS_AMP_LOSS_WEIGHT=.7\nEXCESS_AMP_POOL=max\nEXCESS_AMP_BETA=20.0\n')
+                                'EXCESS_AMP_LOSS_WEIGHT=.7\n')
                 command = dry_commands(path)[0]
                 args = train.parse_args(command)
                 self.assertEqual((args.excess_formulation, args.shape_loss_weight, args.severity_shape_eps),
@@ -685,12 +661,6 @@ class SeverityShapeTests(unittest.TestCase):
                 else:
                     self.assertIsNone(config.target_y_std)
                     self.assertNotIn('head.target_y_std', saved['model_state'])
-                    # Also exercise a real legacy-style inference reconstruction.
-                    for key in ('excess_formulation', 'target_y_std', 'severity_shape_eps'):
-                        saved['model_config'].pop(key)
-                    for key in ('excess_formulation', 'shape_loss_weight', 'severity_shape_eps'):
-                        saved['training_config'].pop(key)
-                    torch.save(saved, ckpt)
                 snapshot = json.loads(next(destination.glob('config_*.json')).read_text())
                 shell = (destination / 'config_used.sh').read_text()
                 for key, value in dict(excess_formulation=formulation, shape_loss_weight=float(shape_weight),
@@ -716,7 +686,7 @@ class SeverityShapeTests(unittest.TestCase):
                         self.assertNotIn('severity_shape_eps', arrays.files)
                 report = json.loads((destination / 'True/dual_diagnostics.json').read_text())
                 self.assertEqual(report['excess_formulation'], formulation)
-                self.assertIn('excess_amp_rmse', report['overall'])
+                self.assertIn('true_peak_excess_rmse', report['overall'])
                 if formulation == 'severity_shape':
                     self.assertEqual(report['severity_shape_eps'], 2e-6)
 

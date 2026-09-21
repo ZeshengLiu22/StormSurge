@@ -34,44 +34,31 @@ def physical_excess_target(target_norm, threshold, y_std):
     return event, _full_precision(excess_target_norm) * _full_precision(y_std)
 
 
-def peak_pool(values, pool="max", beta=20.0):
-    """Pool physical meters along the horizon axis; beta has inverse-meter units.
-
-    Smoothmax is a bounded softmax-weighted mean. Center before scaling to
-    avoid overflow in beta * values; max pooling never reads beta.
-    """
-    values = _full_precision(values)
-    maximum = values.max(dim=-1, keepdim=True).values
-    if pool == "max":
-        return maximum.squeeze(-1)
-    if pool != "smoothmax":
-        raise ValueError("excess_amp_pool must be max or smoothmax.")
-    if not math.isfinite(beta) or beta <= 0:
-        raise ValueError("excess_amp_beta must be finite and positive for smoothmax (inverse meters).")
-    centered = values - maximum
-    # A finite Python beta can exceed FP32's range. Use FP64 logits only in
-    # that case so the maximum's zero logit cannot become 0 * inf = NaN.
-    logits = centered.double() * beta if beta > torch.finfo(values.dtype).max else centered * beta
-    weights = torch.softmax(logits, dim=-1).to(values.dtype)
-    return (weights * values).sum(dim=-1)
-
-
 def excess_amplitude_terms(excess_pred_norm, target_norm, threshold, y_std,
-                           event_prior, pool="max", beta=20.0):
-    """Return reusable targets, amplitudes and a scalar loss in square meters.
+                           event_prior, *, target_phys, event_threshold_phys):
+    """Supervise excess at the original physical target's first peak horizon.
 
-    Convert EACH horizon to physical units BEFORE pooling. The event and
-    normalized target are shared with the existing trajectory-wise dual loss.
-    event_prior is the exact fixed empirical TRAIN prevalence, never a batch
-    fraction or tail_frac. No host-side event branch or collective is needed,
-    so a rank with no events retains a differentiable, exactly zero loss.
+    For a scalar physical threshold, event target excess has the same peak
+    horizon and amplitude as the original target (up to ordinary ties). Gather
+    BOTH branches at that target horizon, so only the selected predicted excess
+    receives gradient. Body, gate and the predicted argmax never enter the loss.
+
+    Normalize mean(E * amplitude_error**2) by the exact fixed TRAIN event prior,
+    never batch prevalence or tail_frac. Event-free ranks retain differentiable
+    exact zero. Physical products and squares remain FP32 or better.
     """
     validate_event_prior(event_prior)
-    event, r_target_phys = physical_excess_target(target_norm, threshold, y_std)
+    if event_threshold_phys is None or not math.isfinite(event_threshold_phys):
+        raise ValueError("Excess-amplitude supervision requires a finite TRAIN event_threshold (tau_phys).")
+    target_phys = _full_precision(target_phys)
+    true_peak = target_phys.argmax(dim=1, keepdim=True)
+    # Compare in FP64 to preserve the fitted NumPy threshold's strict boundary.
+    event = target_phys.gather(1, true_peak).double() > event_threshold_phys
+    _, r_target_phys = physical_excess_target(
+        _full_precision(target_norm), _full_precision(threshold), y_std)
     r_pred_phys = _full_precision(excess_pred_norm) * _full_precision(y_std)
-    a_pred = peak_pool(r_pred_phys, pool, beta)
-    a_target = peak_pool(r_target_phys, pool, beta)
-    # Mask before squaring; this equals mean(E * amplitude_error**2) / q_E.
+    a_pred = r_pred_phys.gather(1, true_peak).squeeze(1)
+    a_target = r_target_phys.gather(1, true_peak).squeeze(1)
     error = torch.where(event.squeeze(1), a_pred - a_target, 0.0)
     loss = error.square().mean() / event_prior
     return ExcessAmplitudeTerms(event, r_pred_phys, r_target_phys, a_pred, a_target, loss)

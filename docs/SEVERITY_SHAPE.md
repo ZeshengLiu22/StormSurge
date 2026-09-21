@@ -6,19 +6,17 @@ was clean, and its untracked `experiment_config/P1_WeightProbe/` directory was
 preserved. All 95 post-#2 tests passed before any source changes. The existing
 physical excess-amplitude objective remains the canonical amplitude control.
 
-## Defaults and compatibility
+## Defaults
 
 ```bash
 EXCESS_FORMULATION="direct"
 SHAPE_LOSS_WEIGHT="0"
 SEVERITY_SHAPE_EPS="1e-6"
 EXCESS_AMP_LOSS_WEIGHT="0"
-EXCESS_AMP_POOL="max"
-EXCESS_AMP_BETA="20.0"
 ```
 
 The three new CLI options are `--excess_formulation`, `--shape_loss_weight` and
-`--severity_shape_eps`. All #2 CLI options remain available. Shape weight must
+`--severity_shape_eps`. The amplitude control is `--excess_amp_loss_weight`; see [its current definition](EXCESS_AMPLITUDE.md). Shape weight must
 be finite and nonnegative; epsilon must be finite and positive. A positive
 shape weight requires `severity_shape`, which requires `--model perceiver3
 --head_type dual`. Shape supervision is skipped completely at weight zero;
@@ -35,7 +33,7 @@ Legacy `model_config` dictionaries need no migration: the new dataclass fields
 default to `direct`, `target_y_std=None` and `severity_shape_eps=1e-6`. Production
 reconstruction remains `ModelConfig(**saved_config)`, `build_model(config)`, then
 `load_state_dict(saved_state, strict=True)`. The direct prediction/loss paths
-remain unchanged, including direct models with #2 amplitude supervision.
+remain unchanged except for the true-peak-time amplitude supervision described below.
 
 ## Physical factorization and units
 
@@ -70,8 +68,7 @@ only the denominator was floored, allowing maxima below one (or zero) and
 breaking severity's amplitude interpretation. Severity-shape outputs and
 gradients intentionally change with this correction, including small rounding
 changes away from the edge. Existing weight shapes and checkpoint loading
-remain valid. Single/direct arithmetic is unchanged. The old frozen severity
-fixture is preserved as historical evidence; corrected severity-shape training
+remain valid. Single/direct arithmetic is unchanged. Severity-shape training
 is checked for exact equivalence across all five checkpoint-selection modes.
 
 `train.py` supplies `stats_cpu["y_std"].tolist()` only in `severity_shape` mode.
@@ -165,20 +162,9 @@ L_existing_prediction_and_tail_slope
   + shape_loss_weight      * L_shape
 ```
 
-`L_excess` is the unchanged physical trajectory loss on `output.excess`, with
-its existing whole-batch/horizon reduction. `L_excess_amp` is #2's unchanged
-physical amplitude objective in square meters. It receives reconstructed
-normalized excess in either formulation; there is no second severity loss or
-`SEVERITY_LOSS_WEIGHT` control. Under hard-max pooling,
-it supervises `severity_phys` directly. Canonical severity-shape comparisons
-should use `EXCESS_AMP_POOL="max"` for this interpretation. `smoothmax` still
-pools the reconstructed physical trajectory on both sides and remains an
-optional sensitivity mode; it does not redefine the scalar severity target.
+`L_excess` is the unchanged physical trajectory loss on `output.excess`, with its existing whole-batch/horizon reduction. `L_excess_amp` uses the current [true-peak-time amplitude objective](EXCESS_AMPLITUDE.md) in square meters. It gathers reconstructed physical excess at `h* = argmax(y_phys)` in either formulation; there is no separate severity loss or severity-loss weight.
 
-Prediction loss connects body, gate, severity, shape and shared context.
-Trajectory excess loss connects severity and shape. Hard-max amplitude loss
-connects severity, with the unit-peak shape factor canceling. Shape loss directly connects the shape branch. Amplitude/shape objectives
-do not directly supervise body or gate; shared-context coupling is expected.
+Prediction loss connects body, gate, severity, shape and shared context. Trajectory excess loss connects severity and shape. The amplitude term supervises `severity_phys * shape[h*]`, so it can connect both severity and shape through the existing factorization. Shape loss directly connects the shape branch. Amplitude/shape objectives do not directly supervise body or gate; shared-context coupling is expected.
 
 ## Ablations and future configuration capability
 
@@ -192,7 +178,7 @@ The interface supports all six requested comparisons without source edits:
 | Formulation | Amplitude weight | Shape weight | Interpretation |
 |---|---|---|---|
 | direct | 0 | 0 | Existing post-#2 model |
-| direct | positive | 0 | Existing model with #2 amplitude supervision |
+| direct | positive | 0 | Existing model with true-peak-time amplitude supervision |
 | severity_shape | 0 | 0 | Factorization with original trajectory supervision |
 | severity_shape | positive | 0 | Factorization plus amplitude supervision |
 | severity_shape | 0 | positive | Factorization plus shape supervision |
@@ -205,8 +191,7 @@ asymmetric-underprediction objectives are implemented.
 
 ## Checkpoints, run identity and diagnostics
 
-Training snapshots preserve `excess_formulation`, `shape_loss_weight`, all #2
-amplitude options and `severity_shape_eps`. Severity-shape model config also
+Training snapshots preserve `excess_formulation`, `shape_loss_weight`, `excess_amp_loss_weight` and `severity_shape_eps`. Severity-shape model config also
 stores `target_y_std`. Dual metadata identifies the formulation and, for the new
 head, epsilon. These fields survive the existing checkpoint path; no external
 architectural guessing is needed. Automatic shell run tags append
@@ -218,12 +203,12 @@ Normal inference prediction exports still contain only `y_true`, `y_pred` and
 severity-shape additionally exports `severity_phys` (`[N]`, meters) and
 `excess_shape` (`[N,K]`, unitless). Direct checkpoints need neither array.
 Diagnostic JSON/NPZ metadata records `excess_formulation` and includes
-`severity_shape_eps` when relevant. Existing #2 amplitude diagnostics continue
-to use the reconstructed physical excess and the saved strict TRAIN threshold.
+`severity_shape_eps` when relevant. Amplitude diagnostics compare reconstructed physical excess at the true target
+peak horizon, using the saved strict TRAIN threshold.
 No additional forward pass or inference-time fit is introduced. Checkpoint
-selection continues to minimize validation `rmse_all`.
+selection defaults to validation `rmse_all`; see [all supported modes](CHECKPOINT_SELECTION.md).
 
-## Validation results
+## Historical validation results
 
 The [implementation/validation report](audit/evidence/severity_shape_validation.json)
 lists all modified files and the complete checks. The [full test log](audit/evidence/severity_shape_tests.txt)

@@ -1,3 +1,7 @@
+# Historical validation records
+
+These logs and reports describe earlier revisions, including removed objectives and metric names. They do not define or validate the current production interface. See [the audit scope](../README.md).
+
 **验证证据的范围**
 
 最新mag/strip恢复（2026-09-10）见 `mag_strip_validation.json` 和 `mag_strip_tests.txt`：**全量72项测试通过**。mag只校验实际使用的0<p_hi<=100；robust保持上下分位检查；训练/推理head和temporal名称补回首尾strip。18组修改前后单进程CPU训练及6组新增合法mag设置对照均逐位一致，覆盖三种归一化、baseline/PACT single/dual、累积1/2步以及dropout/augmentation。所有config、模型、loss、train.py及engine保持，阈值函数逐字未变。另修正一个随机临时目录末尾下划线触发的旧测试误报，生产目录命名不变。本次未测GPU速度或GPU逐位结果。

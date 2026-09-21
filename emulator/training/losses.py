@@ -12,7 +12,6 @@ from emulator.common.runtime import log_message
 from emulator.common.dual import DUAL_ABLATIONS, dual_excess_target, validate_excess_formulation
 from .excess_amplitude import excess_amplitude_terms, validate_event_prior
 from .excess_shape import excess_shape_loss
-from .final_peak import final_peak_terms, validate_event_threshold, validate_peak_config
 
 
 def validate_shape_config(config, *, head_type="dual", model="pact"):
@@ -29,20 +28,13 @@ def validate_shape_config(config, *, head_type="dual", model="pact"):
 def validate_excess_amp_config(config, *, head_type="dual"):
     """Validate the optional objective and return its effective ablation weight."""
     weight = config.excess_amp_loss_weight
-    pool = config.excess_amp_pool
     if not math.isfinite(weight) or weight < 0:
         raise ValueError("--excess_amp_loss_weight must be finite and nonnegative.")
-    if pool not in ("max", "smoothmax"):
-        raise ValueError("--excess_amp_pool must be max or smoothmax.")
     if weight > 0 and head_type != "dual":
         raise ValueError("Excess-amplitude supervision requires the supervised dual exceedance head "
                          "(--model perceiver3 --head_type dual).")
     if "excess_amp_loss_weight" in DUAL_ABLATIONS.get(config.dual_ablation, ()):
         weight = 0.0
-    if weight > 0 and pool == "smoothmax":
-        beta = config.excess_amp_beta
-        if not math.isfinite(beta) or beta <= 0:
-            raise ValueError("--excess_amp_beta must be finite and positive for smoothmax (inverse meters).")
     return weight
 
 
@@ -109,14 +101,9 @@ class LossConfig:
     gate_loss_weight: float = 1.0
     dual_ablation: str = "none"
     excess_amp_loss_weight: float = 0.0
-    excess_amp_pool: str = "max"
-    excess_amp_beta: float = 20.0
     excess_formulation: str = "direct"
     shape_loss_weight: float = 0.0
     severity_shape_eps: float = 1e-6
-    peak_loss_weight: float = 0.0
-    peak_pool: str = "max"
-    peak_pool_beta: float = 20.0
 
 
 class ForecastLoss(nn.Module):
@@ -129,11 +116,10 @@ class ForecastLoss(nn.Module):
         self.wmse_threshold = wmse_threshold
         amp_weight = validate_excess_amp_config(config)
         shape_weight = validate_shape_config(config)
-        peak_weight = validate_peak_config(config)
-        if amp_weight > 0 or shape_weight > 0 or peak_weight > 0:
+        if amp_weight > 0 or shape_weight > 0:
             validate_event_prior(event_prior)
-        if peak_weight > 0:
-            validate_event_threshold(event_threshold)
+        if amp_weight > 0 and (event_threshold is None or not math.isfinite(event_threshold)):
+            raise ValueError("Excess-amplitude supervision requires a finite TRAIN event_threshold (tau_phys).")
         self.event_prior = event_prior
         self.event_threshold_phys = event_threshold
 
@@ -165,12 +151,6 @@ class ForecastLoss(nn.Module):
                 penalty = (slope_error.square() + max(c.slope_charb_eps, 1e-12) ** 2).sqrt()
             mask = torch.sigmoid((self.wmse_threshold - target.abs().amax(dim=1)) / max(c.slope_mask_s, 1e-6))
             loss = loss + c.slope_lambda * (penalty * mask[:, None]).mean()
-        # Final-output supervision is independent of all dual branch ablations,
-        # including the no_branch_supervision early return below. Skip at zero.
-        if c.peak_loss_weight > 0:
-            peak = final_peak_terms(prediction, target, self.event_threshold_phys, self.event_prior,
-                                    c.peak_pool, c.peak_pool_beta)
-            loss = loss + c.peak_loss_weight * peak.loss
         if output.body is not None:
             if (output.gate_logits is None) != (c.dual_ablation == "fixed_gate"):
                 raise ValueError("The loss and model must select the same fixed_gate ablation.")
@@ -185,7 +165,7 @@ class ForecastLoss(nn.Module):
             # Leave the historical numerical/RNG path untouched at weight zero.
             if c.excess_amp_loss_weight > 0:
                 amplitude = excess_amplitude_terms(output.excess, target_norm, output.threshold, self.y_std,
-                    self.event_prior, c.excess_amp_pool, c.excess_amp_beta)
+                    self.event_prior, target_phys=target, event_threshold_phys=self.event_threshold_phys)
                 loss = loss + c.excess_amp_loss_weight * amplitude.loss
             if c.shape_loss_weight > 0:
                 if output.excess_shape is None:

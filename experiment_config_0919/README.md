@@ -1,5 +1,11 @@
 # 0919 direct-dual excess capacity and gate pooling
 
+> Historical experiment archive: these dated configs, generators, launchers,
+> manifests and validation records describe their original revisions. They are
+> retained as evidence and are not supported launch profiles for current main.
+> Use the root README and `configs/` for current training interfaces. Removed
+> objectives and options are intentionally not migrated.
+
 **4 stations × (1 Single + 5 Dual variants × 2 pooling modes) = 44 runs.**
 CBBT, Lewes, Battery and Boston each have exactly 11 standalone configs:
 

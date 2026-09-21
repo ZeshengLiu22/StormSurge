@@ -1,5 +1,11 @@
 # P0_QuickRun
 
+> Historical experiment archive: these dated configs, generators, launchers,
+> manifests and validation records describe their original revisions. They are
+> retained as evidence and are not supported launch profiles for current main.
+> Use the root README and `configs/` for current training interfaces. Removed
+> objectives and options are intentionally not migrated.
+
 P0 compares the single regression head and the current supervised exceedance
 dual head under four prediction losses, with a fixed architecture and training
 protocol. There are **32 independent configurations: four NCEP stations × eight

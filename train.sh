@@ -148,11 +148,6 @@ fi
 : "${SHAPE_LOSS_WEIGHT:=0}"
 : "${SEVERITY_SHAPE_EPS:=1e-6}"
 : "${EXCESS_AMP_LOSS_WEIGHT:=0}"
-: "${EXCESS_AMP_POOL:=max}"
-: "${EXCESS_AMP_BETA:=20.0}"  # inverse meters; unused by max pooling
-: "${PEAK_LOSS_WEIGHT:=0}"
-: "${PEAK_POOL:=max}"
-: "${PEAK_POOL_BETA:=20.0}"  # inverse meters; training pool only
 : "${CHECKPOINT_SELECTION:=overall}"
 : "${CHECKPOINT_OVERALL_TOL:=0.01}"
 : "${SAVE_AUX_CHECKPOINTS:=0}"
@@ -388,10 +383,9 @@ write_resolved_config() {
     WARMUP_EPOCHS WARMUP_START_FACTOR MIN_LR MAX_GRAD_NORM
     DETERMINISTIC DUAL_MODE DUAL_LOSS EXCEEDANCE_PERCENTILE DUAL_ABLATION
     BODY_LOSS_WEIGHT EXCESS_LOSS_WEIGHT GATE_LOSS_WEIGHT
-    EXCESS_AMP_LOSS_WEIGHT EXCESS_AMP_POOL EXCESS_AMP_BETA
+    EXCESS_AMP_LOSS_WEIGHT
     EXCESS_FORMULATION SHAPE_LOSS_WEIGHT SEVERITY_SHAPE_EPS
     EXCEEDANCE_HEAD_EXPERIMENT EXCEEDANCE_GATE_POOLING
-    PEAK_LOSS_WEIGHT PEAK_POOL PEAK_POOL_BETA
     CHECKPOINT_SELECTION CHECKPOINT_OVERALL_TOL SAVE_AUX_CHECKPOINTS
     X_NORM X_P_LO X_P_HI X_NODES_PER_GRAPH X_CLIP X_AUG X_AUG_PROB
     X_AUG_SCALE X_AUG_BIAS DISABLE_OOD USE_AMP AMP_DTYPE USE_TF32
@@ -631,15 +625,10 @@ for LOSS_MODE in "${LOSS_MODE_LIST[@]}"; do
                 --exceedance_percentile "${EXCEEDANCE_PERCENTILE}"
                 --dual_ablation "${DUAL_ABLATION}"
                 --excess_amp_loss_weight "${EXCESS_AMP_LOSS_WEIGHT}"
-                --excess_amp_pool "${EXCESS_AMP_POOL}"
-                --excess_amp_beta "${EXCESS_AMP_BETA}"
                 --excess_formulation "${EXCESS_FORMULATION}"
                 --exceedance_gate_pooling "${EXCEEDANCE_GATE_POOLING}"
                 --shape_loss_weight "${SHAPE_LOSS_WEIGHT}"
                 --severity_shape_eps "${SEVERITY_SHAPE_EPS}"
-                --peak_loss_weight "${PEAK_LOSS_WEIGHT}"
-                --peak_pool "${PEAK_POOL}"
-                --peak_pool_beta "${PEAK_POOL_BETA}"
                 --checkpoint_selection "${CHECKPOINT_SELECTION}"
                 --checkpoint_overall_tol "${CHECKPOINT_OVERALL_TOL}"
                 --save_aux_checkpoints "${SAVE_AUX_CHECKPOINTS}"

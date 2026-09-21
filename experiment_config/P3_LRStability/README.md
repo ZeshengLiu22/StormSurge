@@ -1,5 +1,11 @@
 # P3 — Learning-rate stability
 
+> Historical experiment archive: these dated configs, generators, launchers,
+> manifests and validation records describe their original revisions. They are
+> retained as evidence and are not supported launch profiles for current main.
+> Use the root README and `configs/` for current training interfaces. Removed
+> objectives and options are intentionally not migrated.
+
 This controlled experiment asks whether the P2 severity-shape degradation
 persists when the initial LR falls from 0.005 to 0.002 or 0.001. It contains
 **31 independent, standalone treatment configs** copied from 12 exact P2

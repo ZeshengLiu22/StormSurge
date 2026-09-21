@@ -91,16 +91,27 @@ Use a named experiment to disable supervision deliberately:
 | `none` | body, excess, BCE | learned |
 | `no_gate_bce` | body, excess | learned through prediction loss |
 | `no_excess_loss` | body, BCE | learned |
-| `no_branch_supervision` | none; final-output objectives remain available | learned |
+| `no_branch_supervision` | none; trajectory prediction loss remains available | learned |
 | `fixed_gate` | body, excess | constant empirical TRAIN prevalence |
 
 Inactive weights are set to 0; active zero weights among the original body/excess/gate terms are restored to 1. These modes require a PACT dual head. Matched ready-to-run profiles are in [`configs/dual_ablations`](configs/dual_ablations), each sourcing Stable Dual. For example: `bash train.sh configs/dual_ablations/train_config_NCEP_Battery_Fixed_Gate.sh`.
 
-Optional [physical excess peak-amplitude supervision](docs/EXCESS_AMPLITUDE.md) adds `EXCESS_AMP_LOSS_WEIGHT` (default `0`), `EXCESS_AMP_POOL` (default `max`) and `EXCESS_AMP_BETA` (default `20.0`, inverse meters for active smoothmax only). It converts each horizon to meters before pooling and uses the exact saved strict-event TRAIN `event_prior` as a fixed normalization. Zero weight skips the new computation; the optional weight is never forced to one. `no_excess_loss` and `no_branch_supervision` disable amplitude supervision too; `no_gate_bce` and `fixed_gate` can retain it. Architecture, inference and checkpoint selection remain unchanged. Dual diagnostic exports also report true-event excess-amplitude RMSE, MAE, bias, and predicted/target amplitude means.
+Optional [true-peak-time physical excess amplitude supervision](docs/EXCESS_AMPLITUDE.md) adds only `EXCESS_AMP_LOSS_WEIGHT` (default `0`). It supervises the ungated excess prediction at `h* = argmax_h y_phys[h]`, using the exact saved strict-event TRAIN `event_prior` as a fixed normalization. Physical products and squared errors use FP32 or better under autocast. Zero weight skips computation; the optional weight is never forced to one. `no_excess_loss` and `no_branch_supervision` disable amplitude supervision too; `no_gate_bce` and `fixed_gate` can retain it. The term directly differentiates only the excess value at the true peak horizon. Dual diagnostics report true-event `true_peak_excess_rmse`, `true_peak_excess_mae`, `true_peak_excess_bias`, `pred_true_peak_excess_mean` and `target_true_peak_excess_mean` using that same horizon.
 
-Optional [severity-shape excess decomposition](docs/SEVERITY_SHAPE.md) is selected with `EXCESS_FORMULATION="severity_shape"`; the default `direct` keeps the post-#2 head, state dict and predictions. The head adds epsilon to the FP32 softplus shape before normalization, retaining a per-window maximum of one even if all softplus values underflow. It predicts physical severity in meters and a nonnegative temporal shape, then divides their product by each horizon's saved TRAIN `y_std`. It reuses #2 amplitude supervision and adds only `SHAPE_LOSS_WEIGHT` (default `0`, dimensionless loss normalized by the fixed TRAIN event prior) and `SEVERITY_SHAPE_EPS` (default `1e-6`). Original trajectory supervision remains available. Both excess-removing ablations also disable shape supervision. New checkpoints record the formulation/scale/epsilon, old checkpoints load as direct, and optional diagnostics export severity and shape only when present.
+Optional [severity-shape excess decomposition](docs/SEVERITY_SHAPE.md) is selected with `EXCESS_FORMULATION="severity_shape"`; the default `direct` keeps the post-#2 head, state dict and predictions. The head adds epsilon to the FP32 softplus shape before normalization, retaining a per-window maximum of one even if all softplus values underflow. It predicts physical severity in meters and a nonnegative temporal shape, then divides their product by each horizon's saved TRAIN `y_std`. It uses the same true-peak-time amplitude supervision and adds only `SHAPE_LOSS_WEIGHT` (default `0`, dimensionless loss normalized by the fixed TRAIN event prior) and `SEVERITY_SHAPE_EPS` (default `1e-6`). Original trajectory supervision remains available. Both excess-removing ablations also disable shape supervision. New checkpoints record the formulation/scale/epsilon, old checkpoints load as direct, and optional diagnostics export severity and shape only when present.
 
-Optional [final-output extreme peak supervision](docs/FINAL_PEAK.md) adds `PEAK_LOSS_WEIGHT` (default `0`), `PEAK_POOL` (default `max`) and `PEAK_POOL_BETA` (default `20.0`, inverse meters). It supervises the peak of the reconstructed final physical prediction on strict TRAIN events, normalized by the exact TRAIN event prior. It works for single, direct dual and severity-shape dual heads and remains active under every branch ablation. Its pool reuses the #2 helper on both truth and prediction. Weight zero skips the loss entirely; exact hard-peak metrics are reported regardless of weight.
+For the production direct-dual model, the objective is:
+
+```text
+L = L_base + tail_lambda * L_tail
+    + body_loss_weight * L_body + excess_loss_weight * L_excess
+    + gate_loss_weight * L_gate + excess_amp_loss_weight * L_amp_true
+L_amp_true = mean_i[E_i * (excess_pred_phys[i,h*_i] - excess_target_phys[i,h*_i])**2] / q_E
+E_i = 1[max_h y_phys[i,h] > tau_phys]
+q_E = TRAIN_event_count / TRAIN_window_count
+```
+
+Optional terms enter only when enabled; existing slope combinations remain available. Tail, body, trajectory excess and gate losses are unchanged. There is no separate final-output peak objective or amplitude pooling control.
 
 Normalization (`zscore`, `robust`, `mag`), augmentation, year splits/shuffling/future filtering, external test roots and station feature switches are retained. `mag` only checks its used upper percentile (`0 < x_p_hi <= 100`) and ignores `x_p_lo`; `robust` still requires `0 <= x_p_lo < x_p_hi <= 100`. The statistics formulas are unchanged. Training and inference strip surrounding whitespace from head and temporal names before recognizing their existing values and the `attn` alias. Forcing inputs use the five-channel `[u,v,p',lon,lat]` layout, with spatial-mean pressure removal during preprocessing.
 
@@ -116,10 +127,10 @@ Cosine with linear warmup remains the configured scheduler. The original `rop` o
 
 All runs use the same resolved `LossConfig`, regardless of config filename, age or `loss_mode`.
 The loss implementation reads explicit fields and does not silently assign zero to missing controls.
-CLI/config defaults remain `EXCESS_AMP_LOSS_WEIGHT=0`, `SHAPE_LOSS_WEIGHT=0`, `PEAK_LOSS_WEIGHT=0`
+CLI/config defaults remain `EXCESS_AMP_LOSS_WEIGHT=0`, `SHAPE_LOSS_WEIGHT=0`
 and `EXCESS_FORMULATION=direct`, as specified by the optional-objective interfaces.
 Any existing loss mode can enable the new objectives with their own controls, subject to the documented
-head requirements and named ablations. Direct peak evaluation metrics are always computed.
+head requirements and named ablations. Canonical true-peak evaluation metrics are always computed.
 
 ## Metrics and artifacts
 
