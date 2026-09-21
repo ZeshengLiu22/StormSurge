@@ -1,5 +1,9 @@
 # Validation: PASS
 
+This is the historical pre-training validation snapshot from 2026-09-21 03:38 UTC.
+Statements below about jobs not yet submitted describe that checkpoint. All 24
+study runs subsequently completed; see the concluded [study outcome](README.md#study-outcome).
+
 Base: `d665a4b0f54700a2564e54187f6c067c470d1df0`. Implementation: `06dd17ecbc527842a70edf6520a123c9edc6975b`.
 
 - Seven focused tests passed; soft output/gradient/RNG parity, exact-cap boundaries, parameter counts, old config defaults, metadata and inference round trips.

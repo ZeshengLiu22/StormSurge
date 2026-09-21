@@ -3,10 +3,45 @@
 This study asks whether a broader TRAIN high-surge regime improves the unchanged
 TEST top 5% extremes. It starts from clean production `main` at
 `d665a4b0f54700a2564e54187f6c067c470d1df0`, on branch
-`study/exceedance-regime-body-cap` in
+`study/exceedance-regime-body-cap`, originally checked out at
 `/home/exouser/StormSurge_exceedance_regime_body_cap`.
 The implementation commit is `06dd17ecbc527842a70edf6520a123c9edc6975b`.
 No changes from `study/excess-risk-weighting` were merged or cherry-picked.
+
+## Study outcome
+
+Status: **concluded** (2026-09-21).
+
+### Achieved
+
+- Successfully implemented and validated the opt-in exact body cap.
+- Completed the full **24-run, four-station Q90 × excess-weight × body-cap study**,
+  including the Q95 reference conditions: six conditions each for CBBT, Lewes,
+  Battery and Boston, all with 300 recorded epochs and final TEST summaries.
+- Exact body cap showed a fairly consistent tendency to reduce peak
+  underprediction: PeakBias moved closer to zero in 9/12 matched exact-versus-soft
+  comparisons and Under% decreased in 10/12. RMSE/MAE effects were mixed.
+- Q90 did not show a consistent cross-station improvement over Q95.
+- Excess weight 2 under Q90 did not show a consistent advantage over weight 1.
+- The study resolved the intended hypotheses and is therefore concluded.
+
+### Scientific outcome
+
+- Exact body cap should remain an **optional ablation**. Production/default
+  behavior should remain the existing **soft body cap**.
+- Q90 should not replace the established **Q95 default** based on this study.
+- Do not carry these experimental choices forward automatically into the next
+  study; any future use requires its own scientific justification.
+- Lewes T4 (Q90, weight 2, soft cap) showed an abnormal optimization trajectory.
+  Treat that run and comparisons involving it cautiously; **no further rerun is
+  required for this branch closeout**.
+
+This closeout changes documentation only, with no model or training behavior
+changes. Keep `origin/study/exceedance-regime-body-cap` as the reproducible archive;
+**do not merge this branch into `main`**. External results remain under
+`/media/share/PACT/Results/All_results_0921_exceedance_regime_body_cap/`.
+
+## Study design and reproduction
 
 Exactly these six conditions are generated for CBBT, Lewes, Battery and Boston:
 
@@ -83,17 +118,28 @@ PeakBias, Under%, TruePeakRMSE and TimingSteps use the existing top-5% subset.
 threshold, and are not the primary extreme metrics. No Q90 evaluation replaces
 the top-5% results.
 
-Validation passed: seven focused tests, all 217 full-suite tests, 24 launcher dry
+Pre-training validation passed: seven focused tests, all 217 full-suite tests, 24 launcher dry
 runs, matched reference settings, real-data threshold/split/initialization checks,
 and all 24 synthetic GPU BF16/TF32 forward/loss/backward checks. GPU smoke checks
-take no optimizer steps. Primary main remained clean at the base SHA. No study
-jobs were submitted, and no training outputs or checkpoints were added to Git.
+take no optimizer steps. Primary main remained clean at the base SHA. At that
+validation checkpoint, no study jobs had been submitted. All 24 runs have since
+completed; training outputs and checkpoints remain external to Git.
 See [validation_report.md](validation_report.md),
 [full numerical evidence](validation_report.json),
 [test transcript](validation/full_tests.txt),
 [manifest](manifest.csv), and [changed files](changed_files.txt).
 
-Regenerate/check or validate without submitting jobs:
+The original local experimental worktree is removed at closeout. To inspect the
+archive or reproduce it later, first restore a detached worktree from the retained
+remote branch (run from the primary repository):
+
+```bash
+git fetch origin study/exceedance-regime-body-cap
+git worktree add --detach /home/exouser/StormSurge_exceedance_regime_body_cap origin/study/exceedance-regime-body-cap
+```
+
+The commands below are retained for reproduction; no additional runs are required
+to close this study. Regenerate/check or validate without submitting jobs:
 
 ```bash
 cd /home/exouser/StormSurge_exceedance_regime_body_cap
