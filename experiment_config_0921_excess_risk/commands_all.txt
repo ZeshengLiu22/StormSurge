@@ -1,0 +1,4 @@
+bash train.sh experiment_config_0921_excess_risk/configs/train_config_0921_CBBT_E0_Uniform.sh
+bash train.sh experiment_config_0921_excess_risk/configs/train_config_0921_CBBT_E1_PriorNorm.sh
+bash train.sh experiment_config_0921_excess_risk/configs/train_config_0921_CBBT_E2_Magnitude.sh
+bash train.sh experiment_config_0921_excess_risk/configs/train_config_0921_CBBT_E3_PriorNorm_Magnitude.sh

@@ -1,0 +1,70 @@
+{
+  "recorded_utc": "2026-09-21T00:52:39.910411+00:00",
+  "implementation_head": "5876c62107b8edbf7a1fe4888a0652cd9a9058d6",
+  "tests": [
+    {
+      "label": "normalization_commit",
+      "command": "PYTHONDONTWRITEBYTECODE=1 CUDA_VISIBLE_DEVICES='' PYTHONPATH=.:tests /media/volume/PACT-Data/conda_envs/torchpyg-cu124/bin/python -m unittest test_excess_risk test_dual_loss test_config_interfaces -v",
+      "total": 22,
+      "passed": 22,
+      "skipped": 0,
+      "failures": 0,
+      "errors": 0,
+      "seconds": 17.246,
+      "skips": [],
+      "log": "/tmp/excess_risk_commit1_tests.log",
+      "log_sha256": "e6b431651b964f1e8d7165154a526f3203cd6077c2bc1b51464f52d53d757c23"
+    },
+    {
+      "label": "magnitude_commit",
+      "command": "PYTHONDONTWRITEBYTECODE=1 CUDA_VISIBLE_DEVICES='' PYTHONPATH=.:tests /media/volume/PACT-Data/conda_envs/torchpyg-cu124/bin/python -m unittest test_excess_risk test_dual_loss test_dual_experiments test_config_interfaces -v",
+      "total": 37,
+      "passed": 37,
+      "skipped": 0,
+      "failures": 0,
+      "errors": 0,
+      "seconds": 19.62,
+      "skips": [],
+      "log": "/tmp/excess_risk_commit2_tests.log",
+      "log_sha256": "2f3c65c982803c39cd81a5147690614a4fdc2dcb36953ea7ca1f0c0ab6dc36a6"
+    },
+    {
+      "label": "full_suite",
+      "command": "PYTHONDONTWRITEBYTECODE=1 CUDA_VISIBLE_DEVICES='' PYTHONPATH=.:tests:/tmp/excess_risk_test_deps /media/volume/PACT-Data/conda_envs/torchpyg-cu124/bin/python -m unittest discover -s tests -v",
+      "total": 222,
+      "passed": 217,
+      "skipped": 5,
+      "failures": 0,
+      "errors": 0,
+      "seconds": 63.077,
+      "skips": [
+        "test_cuda_float16_and_bfloat16_autocast (test_excess_amplitude.ExcessAmplitudeTests.test_cuda_float16_and_bfloat16_autocast) ... skipped 'CUDA is unavailable'",
+        "test_cuda_fp16_and_bfloat16 (test_final_peak.FinalPeakTests.test_cuda_fp16_and_bfloat16) ... skipped 'CUDA required'",
+        "test_cuda_fp16_bfloat16_runtime (test_severity_shape.SeverityShapeTests.test_cuda_fp16_bfloat16_runtime) ... skipped 'CUDA is unavailable'",
+        "test_small_shape_logits_cuda_fp16_bfloat16_autocast (test_severity_shape.SeverityShapeTests.test_small_shape_logits_cuda_fp16_bfloat16_autocast) ... skipped 'CUDA is unavailable'",
+        "test_tiny_target_shape_cuda_fp16_bfloat16_autocast (test_severity_shape.SeverityShapeTests.test_tiny_target_shape_cuda_fp16_bfloat16_autocast) ... skipped 'CUDA is unavailable'"
+      ],
+      "log": "/tmp/excess_risk_full_tests_final.log",
+      "log_sha256": "8a7f6302084e1d1dbd83a3f1f50705fbd4721ad079a7a7affc98656ef32cef32"
+    }
+  ],
+  "python": "3.11.16",
+  "environment": {
+    "torch": "2.6.0+cu124",
+    "torch-geometric": "2.7.0",
+    "numpy": "2.3.5",
+    "pandas": "2.3.3",
+    "netCDF4": "1.7.4",
+    "cftime": "1.6.5",
+    "xarray": "2025.6.1",
+    "python-dateutil": "2.9.0.post0",
+    "pytz": "2025.2",
+    "tzdata": "2025.3",
+    "six": "1.17.0"
+  },
+  "cpu_only": true,
+  "gpu_training_launched": false,
+  "environment_resolution": "The initial sandbox run could not open local sockets for six Gloo tests and lacked preprocessing dependencies. The completed suite ran with local socket access and CUDA_VISIBLE_DEVICES empty. Pinned preprocessing dependencies were installed without dependencies into /tmp/excess_risk_test_deps; the training environment and repository dependency files were not modified.",
+  "syntax_validation": "All edited Python files parsed; bash -n passed for train.sh and all four configs.",
+  "source_validation": "train.py is byte-identical to starting main after removing only the three new dual_metadata assignments. No changes in model/head, common dual target, data/threshold fitting, epoch engine, checkpoint selection, or optional objective files."
+}
