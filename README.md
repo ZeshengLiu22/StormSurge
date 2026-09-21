@@ -23,6 +23,13 @@ The forward pass consumes inputs and station features only. `ForecastOutput.pred
 
 See [the dual-head derivation](docs/DUAL_HEAD_EXPLAINED.md) and [the stability changes](docs/STABILITY_AND_DUAL_HEAD.md).
 
+The production direct dual head accepts `--dual_body_cap {soft,exact}` (shell: `DUAL_BODY_CAP="soft"`).
+The default preserves `body = threshold - softplus(threshold - raw_body)`; `exact` uses
+`min(raw_body, threshold)` with the same parameters, initialization, excess, gate and
+`prediction = body + probability * excess`. The mode is saved in model/training configs
+and dual metadata; checkpoints without the field default to `soft`. Exact mode is
+restricted to the production direct dual head, without a capacity/pooling experiment.
+
 ## Train
 
 The original shell configuration tree and conditional sweeps are retained. All dual-head experiments now use the supervised exceedance head; single-head and baseline controls remain available.

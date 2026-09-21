@@ -101,6 +101,7 @@ def train(args, device, distributed, rank, wall_start):
                           if args.dual_ablation != "fixed_gate" else fitted["event_prior"],
                           event_count=fitted["event_count"], train_windows=fitted["train_windows"],
                           exceedance_percentile=args.exceedance_percentile, dual_ablation=args.dual_ablation,
+                          dual_body_cap=args.dual_body_cap,
                           event_definition="max_h(Y_h) > tau_phys", fitted_on="train")
                      if args.head_type == "dual" else None)
     stats = {key: value.to(device) for key, value in stats_cpu.items()}

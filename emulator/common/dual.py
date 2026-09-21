@@ -14,6 +14,16 @@ DUAL_ABLATIONS = {
 EXCESS_FORMULATIONS = ("direct", "severity_shape")
 
 
+def validate_dual_body_cap(mode, head_type="dual", model="pact", excess_formulation="direct",
+                           exceedance_head_experiment=None):
+    if mode not in ("soft", "exact"):
+        raise ValueError("dual_body_cap must be soft or exact.")
+    if mode == "exact" and (head_type != "dual" or model not in ("pact", "perceiver3")
+                            or excess_formulation != "direct" or exceedance_head_experiment is not None):
+        raise ValueError("dual_body_cap=exact requires the production direct dual head "
+                         "(--model perceiver3 --head_type dual, no exceedance_head_experiment).")
+
+
 def validate_excess_formulation(formulation, eps=1e-6, head_type="dual", model="pact"):
     if formulation not in EXCESS_FORMULATIONS:
         raise ValueError("excess_formulation must be direct or severity_shape.")

@@ -8,7 +8,7 @@ import torch.nn.functional as F
 from torch_geometric.nn import global_mean_pool
 from torch_geometric.utils import to_dense_batch
 
-from emulator.common.dual import DUAL_ABLATIONS, validate_excess_formulation
+from emulator.common.dual import DUAL_ABLATIONS, validate_dual_body_cap, validate_excess_formulation
 
 from .heads import ExceedanceHead, ExceedanceHead_Experiment, ForecastOutput, SeverityShapeHead, SingleHead
 from .spatial import SpatialEncoder
@@ -53,6 +53,7 @@ class ModelConfig:
     severity_shape_eps: float = 1e-6
     exceedance_head_experiment: str | None = None
     exceedance_gate_pooling: str = "mean"
+    dual_body_cap: str = "soft"
 
 
 class PACT(nn.Module):
@@ -103,7 +104,8 @@ class PACT(nn.Module):
                     variant=c.exceedance_head_experiment, pooling=c.exceedance_gate_pooling)
             else:
                 self.head = ExceedanceHead(hidden, c.head_dropout, c.peak_threshold_norm, c.peak_prior,
-                                           fixed_gate=c.dual_ablation == "fixed_gate", head_hidden=c.head_hidden)
+                    fixed_gate=c.dual_ablation == "fixed_gate", head_hidden=c.head_hidden,
+                    dual_body_cap=c.dual_body_cap)
         else:
             raise ValueError(f"Unknown head: {c.head_type}")
 
@@ -165,6 +167,8 @@ class Baseline(nn.Module):
 
 
 def build_model(config: ModelConfig):
+    validate_dual_body_cap(config.dual_body_cap, config.head_type, config.model,
+                           config.excess_formulation, config.exceedance_head_experiment)
     validate_excess_formulation(config.excess_formulation, config.severity_shape_eps, config.head_type, config.model)
     if config.exceedance_head_experiment not in (None, "legacy", "c1", "c2", "c2r", "c3"):
         raise ValueError("Unknown exceedance_head_experiment.")

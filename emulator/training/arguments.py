@@ -5,7 +5,7 @@ import math
 from pathlib import Path
 
 from emulator.common.cli import head_type_name, parse_bool_int, temporal_block_name
-from emulator.common.dual import DUAL_ABLATIONS, EXCESS_FORMULATIONS
+from emulator.common.dual import DUAL_ABLATIONS, EXCESS_FORMULATIONS, validate_dual_body_cap
 from .losses import enforce_dual_loss, validate_excess_amp_config, validate_shape_config
 from .final_peak import validate_peak_config
 from .checkpoints import SELECTION_METRICS, validate_checkpoint_settings
@@ -168,6 +168,8 @@ def parse_args(argv=None):
         help="PACT prediction head: single MLP or supervised exceedance dual head.",
     )
     parser.add_argument("--head_dropout", type=float, default=0.0)
+    parser.add_argument("--dual_body_cap", choices=("soft", "exact"), default="soft",
+                        help="Production direct-dual body cap: soft preserves the original path; exact uses min(raw, threshold).")
     parser.add_argument("--exceedance_head_experiment", choices=("legacy", "c1", "c2", "c2r", "c3"), default=None,
                         help="Opt-in direct-dual excess decoder; omitted keeps the production head.")
     parser.add_argument("--exceedance_gate_pooling", choices=("mean", "learned"), default="mean",
@@ -269,6 +271,8 @@ def parse_args(argv=None):
         if not math.isfinite(getattr(args, name)):
             parser.error(f"--{name} must be finite; small values use the original numerical floor.")
     try:
+        validate_dual_body_cap(args.dual_body_cap, args.head_type, args.model,
+                               args.excess_formulation, args.exceedance_head_experiment)
         validate_excess_amp_config(args, head_type=args.head_type)
         validate_shape_config(args, head_type=args.head_type, model=args.model)
         validate_peak_config(args)

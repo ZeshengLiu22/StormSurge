@@ -42,6 +42,7 @@ ROP_METRIC="val_rmse_phys"
 # Dual prediction head only; ignored when HEAD_TYPE="single".
 GATE_MODE="window"
 DUAL_MODE="exceedance"
+DUAL_BODY_CAP="soft"
 DUAL_LOSS=1
 EXCEEDANCE_PERCENTILE=95
 DUAL_ABLATION="none"

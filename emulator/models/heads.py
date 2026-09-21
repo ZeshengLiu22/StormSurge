@@ -7,7 +7,7 @@ import torch
 from torch import nn
 import torch.nn.functional as F
 
-from emulator.common.dual import initial_gate_prior, validate_excess_formulation
+from emulator.common.dual import initial_gate_prior, validate_dual_body_cap, validate_excess_formulation
 
 
 class ForecastOutput(NamedTuple):
@@ -44,8 +44,11 @@ class ExceedanceHead(nn.Module):
     Labels enter the loss only. The TRAIN-derived threshold is fixed in the
     checkpoint; the window gate and both regression branches are learned.
     """
-    def __init__(self, hidden, dropout, threshold, prior, fixed_gate=False, head_hidden=None):
+    def __init__(self, hidden, dropout, threshold, prior, fixed_gate=False, head_hidden=None,
+                 *, dual_body_cap="soft"):
         super().__init__()
+        validate_dual_body_cap(dual_body_cap)
+        self.dual_body_cap = dual_body_cap
         threshold = torch.as_tensor(threshold, dtype=torch.float32).reshape(1, -1)
         init_prior = initial_gate_prior(prior)
         if not torch.isfinite(threshold).all():
@@ -64,7 +67,8 @@ class ExceedanceHead(nn.Module):
 
     def forward(self, context):
         raw_body = self.body(context).squeeze(-1).float()
-        body = self.threshold - F.softplus(self.threshold - raw_body)
+        body = (torch.minimum(raw_body, self.threshold) if self.dual_body_cap == "exact"
+                else self.threshold - F.softplus(self.threshold - raw_body))
         excess = F.softplus(self.excess(context).squeeze(-1).float())
         gate_logits = self.gate(context.mean(dim=1)).float() if self.gate is not None else None
         probability = (gate_logits.sigmoid() if gate_logits is not None
