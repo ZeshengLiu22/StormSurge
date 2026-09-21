@@ -73,13 +73,33 @@ def validate_excess_risk_config(config, *, head_type="dual", model="pact"):
     """Opt-in aggregation applies only to direct dual excess supervision."""
     if config.excess_event_normalization not in ("none", "train_prior"):
         raise ValueError("--excess_event_normalization must be none or train_prior.")
-    if config.excess_event_normalization != "none" and (
+    if config.excess_horizon_weighting not in ("uniform", "relative_magnitude"):
+        raise ValueError("--excess_horizon_weighting must be uniform or relative_magnitude.")
+    if not math.isfinite(config.excess_magnitude_alpha) or config.excess_magnitude_alpha < 0:
+        raise ValueError("--excess_magnitude_alpha must be finite and nonnegative.")
+    enabled = config.excess_event_normalization != "none" or config.excess_horizon_weighting != "uniform"
+    if enabled and (
             head_type != "dual" or model not in ("pact", "perceiver3") or config.excess_formulation != "direct"):
         raise ValueError("Excess-risk aggregation requires --model perceiver3 --head_type dual "
                          "--excess_formulation direct.")
 
 
-def dual_loss_terms(output, target_norm, y_std, *, excess_event_normalization="none", event_prior=None):
+def relative_excess_weights(excess_target, y_std, alpha=1.0):
+    """Mean-one horizon weights from target excess in physical meters only."""
+    if not math.isfinite(alpha) or alpha < 0:
+        raise ValueError("--excess_magnitude_alpha must be finite and nonnegative.")
+    # Keep physical magnitudes and the zero-window guard representable under AMP.
+    target = excess_target.float() if excess_target.dtype in (torch.float16, torch.bfloat16) else excess_target
+    std = y_std.float() if y_std.dtype in (torch.float16, torch.bfloat16) else y_std
+    physical = target * std
+    maximum = physical.amax(dim=1, keepdim=True)
+    relative = physical / (maximum + torch.finfo(physical.dtype).tiny)
+    raw = 1 + alpha * relative
+    return raw / raw.mean(dim=1, keepdim=True)
+
+
+def dual_loss_terms(output, target_norm, y_std, *, excess_event_normalization="none", event_prior=None,
+                    excess_horizon_weighting="uniform", excess_magnitude_alpha=1.0):
     """The three dual loss terms: body, conditional excess and event BCE.
 
     Excess risk uses the WHOLE batch denominator. Optional normalization uses
@@ -90,10 +110,19 @@ def dual_loss_terms(output, target_norm, y_std, *, excess_event_normalization="n
         raise ValueError("--excess_event_normalization must be none or train_prior.")
     if excess_event_normalization == "train_prior":
         validate_event_prior(event_prior)
+    if excess_horizon_weighting not in ("uniform", "relative_magnitude"):
+        raise ValueError("--excess_horizon_weighting must be uniform or relative_magnitude.")
+    if not math.isfinite(excess_magnitude_alpha) or excess_magnitude_alpha < 0:
+        raise ValueError("--excess_magnitude_alpha must be finite and nonnegative.")
     event, excess_target = dual_excess_target(target_norm, output.threshold)
     body_target = torch.minimum(target_norm, output.threshold)
     body = ((output.body - body_target) * y_std).square().mean()
-    excess = (((output.excess - excess_target) * y_std).square() * event).mean()
+    if excess_horizon_weighting == "uniform":
+        # Preserve the exact production expression; no weights or epsilon here.
+        excess = (((output.excess - excess_target) * y_std).square() * event).mean()
+    else:
+        weights = relative_excess_weights(excess_target, y_std, excess_magnitude_alpha)
+        excess = (((output.excess - excess_target) * y_std).square() * event * weights).mean()
     if excess_event_normalization == "train_prior":
         excess = excess / event_prior
     gate = (F.binary_cross_entropy_with_logits(output.gate_logits, event.float()) * y_std.square().mean()
@@ -135,6 +164,8 @@ class LossConfig:
     peak_pool: str = "max"
     peak_pool_beta: float = 20.0
     excess_event_normalization: str = "none"
+    excess_horizon_weighting: str = "uniform"
+    excess_magnitude_alpha: float = 1.0
 
 
 class ForecastLoss(nn.Module):
@@ -160,7 +191,7 @@ class ForecastLoss(nn.Module):
 
     def forward(self, output, prediction, target):
         c = self.config
-        if output.body is None and c.excess_event_normalization != "none":
+        if output.body is None and (c.excess_event_normalization != "none" or c.excess_horizon_weighting != "uniform"):
             raise ValueError("Excess-risk aggregation requires the supervised direct dual exceedance head.")
         if output.body is None and c.excess_amp_loss_weight > 0:
             raise ValueError("Excess-amplitude supervision requires the supervised dual exceedance head.")
@@ -203,7 +234,8 @@ class ForecastLoss(nn.Module):
                 return loss
             target_norm = (target - self.y_mean) / self.y_std
             body, excess, gate = dual_loss_terms(output, target_norm, self.y_std,
-                excess_event_normalization=c.excess_event_normalization, event_prior=self.event_prior)
+                excess_event_normalization=c.excess_event_normalization, event_prior=self.event_prior,
+                excess_horizon_weighting=c.excess_horizon_weighting, excess_magnitude_alpha=c.excess_magnitude_alpha)
             dual_loss = c.body_loss_weight * body + c.excess_loss_weight * excess + c.gate_loss_weight * gate
             loss = loss + dual_loss
             # Leave the historical numerical/RNG path untouched at weight zero.

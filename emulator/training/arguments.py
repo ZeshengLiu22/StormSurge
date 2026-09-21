@@ -182,6 +182,10 @@ def parse_args(argv=None):
     parser.add_argument("--excess_loss_weight", type=float, default=1.0)
     parser.add_argument("--excess_event_normalization", choices=("none", "train_prior"), default="none",
                         help="Divide horizon-wise excess risk by the exact fitted TRAIN event prior; none preserves production.")
+    parser.add_argument("--excess_horizon_weighting", choices=("uniform", "relative_magnitude"), default="uniform",
+                        help="Optional mean-one per-window horizon weights from relative physical target excess.")
+    parser.add_argument("--excess_magnitude_alpha", type=float, default=1.0,
+                        help="Nonnegative relative-magnitude coefficient; raw weights are 1 + alpha * relative excess.")
     parser.add_argument("--excess_formulation", choices=EXCESS_FORMULATIONS, default="direct",
                         help="Direct normalized excess (legacy) or physical severity times normalized temporal shape.")
     parser.add_argument("--shape_loss_weight", type=float, default=0.0,

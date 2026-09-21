@@ -19,6 +19,7 @@ from emulator.common.dual import dual_excess_target
 from emulator.data import ForcingGraphStore, fit_loss_thresholds
 from emulator.models import ForecastOutput
 from emulator.training import EpochResult, ForecastLoss, LossConfig, dual_loss_terms
+from emulator.training.losses import relative_excess_weights
 from test_config_interfaces import dry_commands
 from test_pipeline import make_fixture
 
@@ -46,7 +47,8 @@ class ExcessRiskTests(unittest.TestCase):
             event, excess_target = dual_excess_target(target, output.threshold)
             expected = (((output.excess - excess_target) * std).square() * event).mean()
             before = torch.get_rng_state().clone()
-            actual = dual_loss_terms(output, target, std)[1]
+            with patch('emulator.training.losses.relative_excess_weights', side_effect=AssertionError('default allocated weights')):
+                actual = dual_loss_terms(output, target, std)[1]
             self.assertTrue(torch.equal(before, torch.get_rng_state()))
             torch.testing.assert_close(actual, expected, rtol=0, atol=0)
             actual_grad = torch.autograd.grad(actual, output.excess, retain_graph=True)[0]
@@ -137,7 +139,8 @@ class ExcessRiskTests(unittest.TestCase):
                       EpochResult(metrics), EpochResult(dict(metrics, rmse_all=.7, rmse_peak5=.1)),
                       EpochResult(metrics), EpochResult(metrics, dict(y_true=np.zeros((0, 4)),
                           y_pred=np.zeros((0, 4)), tags=np.array([], dtype=str)))]
-            settings = dict(excess_event_normalization='train_prior')
+            settings = dict(excess_event_normalization='train_prior', excess_horizon_weighting='relative_magnitude',
+                            excess_magnitude_alpha=1.0)
             options = [part for key, value in settings.items() for part in ('--' + key, str(value))]
             destination = root / 'run'
             with patch.object(train, 'ForecastLoss', wraps=ForecastLoss) as constructor, \
@@ -169,6 +172,8 @@ class ExcessRiskTests(unittest.TestCase):
                     restored = LossConfig(**{f.name: checkpoint['training_config'][f.name]
                         for f in fields(LossConfig) if f.name in checkpoint['training_config']})
                     self.assertEqual(restored.excess_event_normalization, 'none')
+                    self.assertEqual(restored.excess_horizon_weighting, 'uniform')
+                    self.assertEqual(restored.excess_magnitude_alpha, 1.0)
                 path = root / f'checkpoint_{legacy}.pth'
                 torch.save(checkpoint, path)
                 with contextlib.redirect_stdout(io.StringIO()):
@@ -176,6 +181,113 @@ class ExcessRiskTests(unittest.TestCase):
                         '--num_workers', '0', '--out_dir', str(root / f'infer_{legacy}'), '--save_npz'])
             with np.load(root / 'infer_False/predictions.npz') as current, np.load(root / 'infer_True/predictions.npz') as old:
                 np.testing.assert_array_equal(current['y_pred'], old['y_pred'])
+
+    def test_relative_weights_use_physical_ordering_and_mean_one(self):
+        # Normalized ordering [0, 4, 1] differs from physical meters [0, 2, 4].
+        target = torch.tensor([[0., 4., 1.], [0., 0., 0.]], dtype=torch.float64)
+        std = torch.tensor([1., .5, 4.], dtype=torch.float64)
+        weights = relative_excess_weights(target, std)
+        raw = torch.tensor([[1., 1.5, 2.], [1., 1., 1.]], dtype=torch.float64)
+        torch.testing.assert_close(weights, raw / raw.mean(dim=1, keepdim=True), rtol=0, atol=0)
+        self.assertTrue((weights >= 0).all())
+        torch.testing.assert_close(weights.mean(dim=1), torch.ones(2, dtype=weights.dtype))
+        self.assertGreater(weights[0, 2], weights[0, 1])
+        self.assertGreater(weights[0, 1], weights[0, 0])
+        torch.testing.assert_close(relative_excess_weights(target, std * 10), weights)
+
+    def test_alpha_zero_is_exactly_uniform(self):
+        output, target, std = fixture()
+        for mode in ('none', 'train_prior'):
+            options = dict(excess_event_normalization=mode, event_prior=.17)
+            old = dual_loss_terms(output, target, std, **options)[1]
+            new = dual_loss_terms(output, target, std, excess_horizon_weighting='relative_magnitude',
+                                  excess_magnitude_alpha=0., **options)[1]
+            torch.testing.assert_close(new, old, rtol=0, atol=0)
+            torch.testing.assert_close(torch.autograd.grad(new, output.excess, retain_graph=True)[0],
+                                       torch.autograd.grad(old, output.excess, retain_graph=True)[0], rtol=0, atol=0)
+
+    def test_all_four_formulas_and_gradient_isolation(self):
+        output, target, std = fixture(torch.float64)
+        old = dual_loss_terms(output, target, std)
+        event, excess_target = dual_excess_target(target, output.threshold)
+        weights = relative_excess_weights(excess_target, std)
+        squared = ((output.excess - excess_target) * std).square()
+        old_gradient = torch.autograd.grad(old[1], output.excess, retain_graph=True)[0]
+        for normalization in ('none', 'train_prior'):
+            for weighting in ('uniform', 'relative_magnitude'):
+                with self.subTest(normalization=normalization, weighting=weighting):
+                    options = dict(excess_event_normalization=normalization, excess_horizon_weighting=weighting)
+                    terms = dual_loss_terms(output, target, std, event_prior=.17, **options)
+                    scale = .17 if normalization == 'train_prior' else 1.
+                    horizon_weights = weights if weighting == 'relative_magnitude' else torch.ones_like(weights)
+                    expected = (event * horizon_weights * squared).mean() / scale
+                    torch.testing.assert_close(terms[1], expected)
+                    for index in (0, 2):
+                        torch.testing.assert_close(terms[index], old[index], rtol=0, atol=0)
+                    body_grad, excess_grad, gate_grad = torch.autograd.grad(terms[1],
+                        (output.body, output.excess, output.gate_logits), allow_unused=True, retain_graph=True)
+                    self.assertIsNone(body_grad)
+                    self.assertIsNone(gate_grad)
+                    torch.testing.assert_close(excess_grad, old_gradient * horizon_weights / scale)
+                    torch.testing.assert_close(excess_grad[0], torch.zeros_like(std), rtol=0, atol=0)
+                    stats = dict(y_mean=torch.zeros_like(std), y_std=std)
+                    prediction, truth = output.prediction * std, target * std
+                    loss = ForecastLoss(LossConfig(**options), stats, 1., 1., event_prior=.17)(output, prediction, truth)
+                    # Optional terms stay off; the final physical MSE is identical.
+                    reference = (prediction - truth).square().mean() + sum(terms)
+                    torch.testing.assert_close(loss, reference)
+        e2 = dual_loss_terms(output, target, std, excess_horizon_weighting='relative_magnitude')[1]
+        e3 = dual_loss_terms(output, target, std, excess_horizon_weighting='relative_magnitude',
+                            excess_event_normalization='train_prior', event_prior=.17)[1]
+        torch.testing.assert_close(e3, e2 / .17, rtol=0, atol=0)
+
+    def test_event_free_batch_has_finite_zero_weighted_loss_and_gradient(self):
+        output, target, std = fixture()
+        for mode in ('none', 'train_prior'):
+            loss = dual_loss_terms(output, torch.ones_like(target), std,
+                excess_horizon_weighting='relative_magnitude', excess_event_normalization=mode, event_prior=.17)[1]
+            self.assertEqual(loss.item(), 0.)
+            gradient = torch.autograd.grad(loss, output.excess, retain_graph=True)[0]
+            torch.testing.assert_close(gradient, torch.zeros_like(gradient), rtol=0, atol=0)
+
+    def test_cpu_bfloat16_weights_and_loss_are_finite(self):
+        for dtype in (torch.float16, torch.bfloat16):
+            target = torch.tensor([[0., 4., 1.], [0., 0., 0.]], dtype=dtype)
+            std = torch.tensor([1., .5, 4.], dtype=dtype)
+            weights = relative_excess_weights(target, std)
+            self.assertEqual(weights.dtype, torch.float32)
+            self.assertTrue(torch.isfinite(weights).all())
+            torch.testing.assert_close(weights.mean(dim=1), torch.ones(2))
+        output, target, std = fixture()
+        with torch.autocast('cpu', dtype=torch.bfloat16):
+            loss = dual_loss_terms(output, target, std, excess_horizon_weighting='relative_magnitude',
+                                  excess_event_normalization='train_prior', event_prior=.17)[1]
+        self.assertTrue(torch.isfinite(loss))
+        self.assertTrue(torch.isfinite(torch.autograd.grad(loss, output.excess)[0]).all())
+
+    def test_weighting_cli_api_validation_and_shell_forwarding(self):
+        defaults = train.parse_args([])
+        self.assertEqual((defaults.excess_horizon_weighting, defaults.excess_magnitude_alpha), ('uniform', 1.0))
+        for value in (-1., float('nan'), float('inf'), -float('inf')):
+            for weighting in ('uniform', 'relative_magnitude'):
+                with contextlib.redirect_stderr(io.StringIO()), self.assertRaises(SystemExit):
+                    train.parse_args(['--model', 'perceiver3', '--excess_horizon_weighting', weighting,
+                                      f'--excess_magnitude_alpha={value}'])
+                with self.assertRaisesRegex(ValueError, 'finite and nonnegative'):
+                    ForecastLoss(LossConfig(excess_horizon_weighting=weighting, excess_magnitude_alpha=value),
+                                 dict(y_mean=torch.zeros(3), y_std=torch.ones(3)), 1., 1.)
+        for weighting in ('uniform', 'relative_magnitude'):
+            with tempfile.TemporaryDirectory() as temporary:
+                path = Path(temporary) / 'config.sh'
+                path.write_text(f'MODEL=perceiver3\nEXCESS_HORIZON_WEIGHTING={weighting}\nEXCESS_MAGNITUDE_ALPHA=0.5\n')
+                args = train.parse_args(dry_commands(path)[0])
+                self.assertEqual((args.excess_horizon_weighting, args.excess_magnitude_alpha), (weighting, .5))
+        for options in (['--excess_horizon_weighting', 'peak'],
+                        ['--excess_horizon_weighting', 'relative_magnitude'],
+                        ['--model', 'perceiver3', '--excess_formulation', 'severity_shape',
+                         '--excess_horizon_weighting', 'relative_magnitude']):
+            with contextlib.redirect_stderr(io.StringIO()), self.assertRaises(SystemExit):
+                train.parse_args(options)
 
 
 if __name__ == '__main__':

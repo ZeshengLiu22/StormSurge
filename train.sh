@@ -143,6 +143,8 @@ fi
 : "${BODY_LOSS_WEIGHT:=1}"
 : "${EXCESS_LOSS_WEIGHT:=1}"
 : "${EXCESS_EVENT_NORMALIZATION:=none}"
+: "${EXCESS_HORIZON_WEIGHTING:=uniform}"
+: "${EXCESS_MAGNITUDE_ALPHA:=1.0}"
 : "${EXCESS_FORMULATION:=direct}"
 : "${EXCEEDANCE_HEAD_EXPERIMENT:=}"  # empty keeps the production direct head
 : "${EXCEEDANCE_GATE_POOLING:=mean}"
@@ -390,6 +392,7 @@ write_resolved_config() {
     DETERMINISTIC DUAL_MODE DUAL_LOSS EXCEEDANCE_PERCENTILE DUAL_ABLATION
     BODY_LOSS_WEIGHT EXCESS_LOSS_WEIGHT GATE_LOSS_WEIGHT
     EXCESS_EVENT_NORMALIZATION
+    EXCESS_HORIZON_WEIGHTING EXCESS_MAGNITUDE_ALPHA
     EXCESS_AMP_LOSS_WEIGHT EXCESS_AMP_POOL EXCESS_AMP_BETA
     EXCESS_FORMULATION SHAPE_LOSS_WEIGHT SEVERITY_SHAPE_EPS
     EXCEEDANCE_HEAD_EXPERIMENT EXCEEDANCE_GATE_POOLING
@@ -633,6 +636,8 @@ for LOSS_MODE in "${LOSS_MODE_LIST[@]}"; do
                 --exceedance_percentile "${EXCEEDANCE_PERCENTILE}"
                 --dual_ablation "${DUAL_ABLATION}"
                 --excess_event_normalization "${EXCESS_EVENT_NORMALIZATION}"
+                --excess_horizon_weighting "${EXCESS_HORIZON_WEIGHTING}"
+                --excess_magnitude_alpha "${EXCESS_MAGNITUDE_ALPHA}"
                 --excess_amp_loss_weight "${EXCESS_AMP_LOSS_WEIGHT}"
                 --excess_amp_pool "${EXCESS_AMP_POOL}"
                 --excess_amp_beta "${EXCESS_AMP_BETA}"

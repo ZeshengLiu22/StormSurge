@@ -121,6 +121,8 @@ def train(args, device, distributed, rank, wall_start):
     if dual_metadata is not None:
         dual_metadata["excess_formulation"] = args.excess_formulation
         dual_metadata["excess_event_normalization"] = args.excess_event_normalization
+        dual_metadata["excess_horizon_weighting"] = args.excess_horizon_weighting
+        dual_metadata["excess_magnitude_alpha"] = args.excess_magnitude_alpha
     if args.excess_formulation == "severity_shape":
         model_values["target_y_std"] = stats_cpu["y_std"].tolist()
         dual_metadata["severity_shape_eps"] = args.severity_shape_eps
