@@ -1,0 +1,33 @@
+{
+  "command": [
+    "experiment_config_0921_true_peak_amp_factorial/diagnose_loss_weights.py",
+    "--stations",
+    "CBBT",
+    "--output",
+    "experiment_config_0921_true_peak_amp_factorial/diagnosis_cbbt",
+    "--stop-epoch",
+    "50"
+  ],
+  "script_sha256": "c05c9b783f55a5ff74143f1b8817c4994c60048d312b8937e9ed5436aab8b2d9",
+  "commit": "af53de756860765a9809b0c5c44bc828c2a08359",
+  "tracked_changes": "",
+  "options": {
+    "repo": "/media/volume/PACT-Data/StormSurge",
+    "output": "/media/volume/PACT-Data/StormSurge/experiment_config_0921_true_peak_amp_factorial/diagnosis_cbbt",
+    "stations": [
+      "CBBT"
+    ],
+    "stop_epoch": 50,
+    "sample_epochs": [
+      0,
+      5,
+      20,
+      50
+    ],
+    "batches": 16,
+    "batch_seed": 1042,
+    "device": "cuda:0",
+    "report_only": false
+  },
+  "intent": "TRAIN scale diagnosis only; no factorial; no validation/test evaluation"
+}

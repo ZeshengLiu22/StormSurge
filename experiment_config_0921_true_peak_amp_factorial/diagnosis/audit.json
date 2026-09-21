@@ -1,0 +1,89 @@
+{
+  "stations": [
+    {
+      "station": "CBBT",
+      "epochs": [
+        0,
+        5,
+        20,
+        50
+      ],
+      "trajectory_epochs": 50,
+      "optimizer_steps": 650,
+      "train_files": 22,
+      "train_windows": 13224,
+      "fixed_windows": 4096,
+      "fixed_events": 194,
+      "q_E": 0.050060496067755596,
+      "production_objective_verified": true,
+      "no_holdout_graphs_opened": true,
+      "all_state_hashes_unchanged": true,
+      "all_rng_checks_passed": true,
+      "seconds": 238.24571256397758
+    },
+    {
+      "station": "Lewes",
+      "epochs": [
+        50
+      ],
+      "trajectory_epochs": 50,
+      "optimizer_steps": 650,
+      "train_files": 22,
+      "train_windows": 13224,
+      "fixed_windows": 4096,
+      "fixed_events": 205,
+      "q_E": 0.050060496067755596,
+      "production_objective_verified": true,
+      "no_holdout_graphs_opened": true,
+      "all_state_hashes_unchanged": true,
+      "all_rng_checks_passed": true,
+      "seconds": 223.93499849003274
+    },
+    {
+      "station": "Battery",
+      "epochs": [
+        50
+      ],
+      "trajectory_epochs": 50,
+      "optimizer_steps": 650,
+      "train_files": 22,
+      "train_windows": 13224,
+      "fixed_windows": 4096,
+      "fixed_events": 216,
+      "q_E": 0.050060496067755596,
+      "production_objective_verified": true,
+      "no_holdout_graphs_opened": true,
+      "all_state_hashes_unchanged": true,
+      "all_rng_checks_passed": true,
+      "seconds": 221.34289646090474
+    },
+    {
+      "station": "Boston",
+      "epochs": [
+        50
+      ],
+      "trajectory_epochs": 50,
+      "optimizer_steps": 650,
+      "train_files": 22,
+      "train_windows": 13224,
+      "fixed_windows": 4096,
+      "fixed_events": 211,
+      "q_E": 0.050060496067755596,
+      "production_objective_verified": true,
+      "no_holdout_graphs_opened": true,
+      "all_state_hashes_unchanged": true,
+      "all_rng_checks_passed": true,
+      "seconds": 221.13623022509273
+    }
+  ],
+  "snapshot_count": 7,
+  "raw_records": 3920,
+  "candidate_records": 6720,
+  "all_analytical_scaling_verified": true,
+  "maximum_station_mean_spread": 4.313569319913631,
+  "maximum_combined_shared_ratio_bound": 0.1923207379471315,
+  "recommendation": {
+    "tail": 0.025,
+    "amp_true": 0.003
+  }
+}

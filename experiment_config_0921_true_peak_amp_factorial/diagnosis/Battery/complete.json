@@ -1,0 +1,8 @@
+{
+  "station": "Battery",
+  "stop_epoch": 50,
+  "sampled_epochs": [
+    50
+  ],
+  "seconds": 221.34289646090474
+}

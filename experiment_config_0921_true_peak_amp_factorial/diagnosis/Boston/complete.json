@@ -1,0 +1,8 @@
+{
+  "station": "Boston",
+  "stop_epoch": 50,
+  "sampled_epochs": [
+    50
+  ],
+  "seconds": 221.13623022509273
+}
