@@ -1,0 +1,34 @@
+{
+  "focused_tests": 7,
+  "full_tests": 217,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "implementation_sha": "06dd17ecbc527842a70edf6520a123c9edc6975b",
+  "full_test_seconds": 64.307,
+  "focused_command": "/media/volume/PACT-Data/conda_envs/torchpyg-cu124/bin/python -B -m unittest discover -s tests -p test_dual_body_cap.py -v",
+  "full_command": "PYTHONPATH=/tmp/body_cap_test_deps /media/volume/PACT-Data/conda_envs/torchpyg-cu124/bin/python -B -m unittest discover -s tests -v",
+  "test_only_dependencies": {
+    "pandas": "2.3.3",
+    "netCDF4": "1.7.4",
+    "xarray": "2025.6.1",
+    "cftime": "1.6.5",
+    "python_dateutil": "2.9.0.post0",
+    "pytz": "2025.2",
+    "tzdata": "2025.3",
+    "six": "1.17.0"
+  },
+  "environment_note": "Preprocessing dependencies were installed only into /tmp/body_cap_test_deps. The canonical training environment was not modified. Local DDP and GPU tests ran outside the restricted sandbox.",
+  "implementation_file_sha256": {
+    "README.md": "acb1818c0416fbe880bdadff899331b13522d5306d653936070883e68a4820ac",
+    "configs/configs_train/train_config_common.sh": "eba2a4be79754d0a25f69f4b5bb9b69dcab9990716903709926c7f0ee37eaef2",
+    "emulator/common/dual.py": "c9fc9e9c810f8b6a73feec03753441914f15a322ada6a2d6fe137170eb9c1eb5",
+    "emulator/models/architectures.py": "d1aeff557474a0154a271b75b7c1316c1d48cf09462673ee2a126efb7a1a8684",
+    "emulator/models/heads.py": "c0bdb9ac26fd8b3ab1ced51bdc060c17674a14f4a6f420f6f9af97b8165c8898",
+    "emulator/training/arguments.py": "872d81632e91e392e4278576fca2383269492ccd1434e68a7444ed4e86e0453e",
+    "tests/test_dual_body_cap.py": "f80ce20fd4c74a2b4ae87299f6f53446add0b328c9918593fd68ac37a05915c1",
+    "train.py": "b127cc9b0e1a0db016e33c4ecc62837f1b15d73c2c99abe21639d6563c359a5e",
+    "train.sh": "a28d69f322ec5053b304e541fddb8160eecfbcbd75ed3f363be8ccb7aad3c588"
+  },
+  "full_test_transcript_sha256": "c03011022a6e4d392a425a44310870ac2e4c0220041875895624905e81cb8df5"
+}
