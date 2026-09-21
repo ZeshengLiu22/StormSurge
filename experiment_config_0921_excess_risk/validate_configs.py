@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
-"""Validate the four configs on CPU, including actual TRAIN fits; never train."""
+"""Validate four stations x four configs on CPU, including station-specific TRAIN fits; never train."""
 
 import argparse
 from dataclasses import asdict, fields
 from datetime import datetime, timezone
 import hashlib
+import itertools
 import json
 import os
 from pathlib import Path
@@ -15,7 +16,7 @@ import sys
 import tempfile
 
 sys.dont_write_bytecode = True
-from generate_configs import HERE, MODES, PYTHON, REFERENCE, REPO, RESULTS, START, expected_files, reference_text
+from generate_configs import HERE, MODES, PYTHON, REFERENCE, REPO, RESULTS, START, STATIONS, expected_files, reference_text
 
 sys.path.insert(0, str(REPO))
 import torch
@@ -78,8 +79,8 @@ def differences(left, right):
     return {key: [left.get(key), right.get(key)] for key in left.keys() | right.keys() if left.get(key) != right.get(key)}
 
 
-def check_protocol(args):
-    required = dict(station='CBBT', root_dir='/media/share/PACT/Data/Grid4_New/NCEP/graphs',
+def check_protocol(args, station):
+    required = dict(station=station, root_dir='/media/share/PACT/Data/Grid4_New/NCEP/graphs',
         model='perceiver3', encoder_type='GraphSAGE', temporal_block='Transformer', history_hours=24,
         hidden_channels=128, num_layers=2, head_type='dual', head_dropout=.05, dropout=.05,
         transformer_layers=2, transformer_ff_mult=4., transformer_dropout=0.,
@@ -102,7 +103,8 @@ def check_protocol(args):
 
 def data_validation(all_args):
     first = all_args[0]
-    print('Loading the actual CBBT NCEP graph store on CPU...', flush=True)
+    assert len(all_args) == len(MODES) and all(args.station == first.station for args in all_args)
+    print(f'Loading the actual {first.station} NCEP graph store on CPU...', flush=True)
     store = ForcingGraphStore(first.root_dir, first.station)
     split_names = ('train_ratio', 'val_ratio', 'shuffle_years', 'seed', 'future_only', 'future_year_threshold')
     splits = store.split(**{name: getattr(first, name) for name in split_names})
@@ -139,16 +141,16 @@ def data_validation(all_args):
                 event_prior=fitted['event_prior'], event_threshold=fitted['tau_phys'])
             assert criterion.event_prior == fitted['event_prior']
             assert torch.equal(before, torch.get_rng_state())
-            record = dict(mode=mode, fitted=fitted, model_config=asdict(config),
+            record = dict(station=first.station, mode=mode, fitted=fitted, model_config=asdict(config),
                           parameters=count_model_parameters(model), initial_state_sha256=digest.hexdigest())
             if reports:
                 for key in ('fitted', 'model_config', 'parameters', 'initial_state_sha256'):
                     assert record[key] == reports[0][key], f'{mode}: changed {key}'
             reports.append(record)
-            print(f'{mode}: tau_phys={fitted["tau_phys"]:.12g}, prior={fitted["event_prior"]:.12g}, '
+            print(f'{first.station}/{mode}: tau_phys={fitted["tau_phys"]:.12g}, prior={fitted["event_prior"]:.12g}, '
                   f'parameters={record["parameters"]["total"]}', flush=True)
     tags = '\n'.join(store.graph_tags[i] for i in splits['train'])
-    return dict(runs=reports, split_windows={key: len(value) for key, value in splits.items()},
+    return dict(station=first.station, runs=reports, split_windows={key: len(value) for key, value in splits.items()},
                 train_tags_sha256=hashlib.sha256(tags.encode()).hexdigest(),
                 y_mean=stats['y_mean'].tolist(), y_std=stats['y_std'].tolist(),
                 data_source=str(first.root_dir), station_feature_dim=station.numel(),
@@ -166,7 +168,7 @@ def main():
     files, reference_hash = expected_files()
     for relative, content in files.items():
         assert (HERE / relative).read_text() == content, f'Generated file differs: {relative}'
-    assert len(list((HERE / 'configs').glob('*.sh'))) == 4
+    assert len(list((HERE / 'configs').glob('*.sh'))) == len(STATIONS) * len(MODES)
     changed = run(['git', 'diff', '--name-only', START, '--', 'emulator']).splitlines()
     assert set(changed) <= {'emulator/training/losses.py', 'emulator/training/arguments.py'}, changed
     assert run(['git', 'rev-parse', 'main']).strip() == START, 'Local main moved since study creation'
@@ -178,46 +180,52 @@ def main():
         old_args, _ = dry_run(reference_path)
     assert old_shell['DIRECT_DUAL_RECONSTRUCTION'] == 'soft_gate'
     assert old_shell['EXCESS_SUPERVISION_SCOPE'] == 'event'
-    all_args, records = [], []
-    base_shell = base_args = None
-    for mode, normalization, weighting in MODES:
-        path = HERE / 'configs' / f'train_config_0921_CBBT_{mode}.sh'
+    all_args, records = {station: [] for station in STATIONS}, []
+    base_shells, base_args_by_station = {}, {}
+    for station, (mode, normalization, weighting) in itertools.product(STATIONS, MODES):
+        path = HERE / 'configs' / f'train_config_0921_{station}_{mode}.sh'
         run(['bash', '-n', str(path)])
         shell = source_values(path)
         args, command = dry_run(path)
-        check_protocol(args)
+        check_protocol(args, station)
         assert (args.excess_event_normalization, args.excess_horizon_weighting) == (normalization, weighting)
         assert shell['TAIL_LAMBDA_LIST'] == shell['SLOPE_LAMBDA_LIST'] == '0'
         assert shell['DISABLE_OOD'] == '1'
         assert shell['ALL_RESULTS_ROOT'] == RESULTS
         removed = {'DIRECT_DUAL_RECONSTRUCTION', 'EXCESS_SUPERVISION_SCOPE'}
         additions = FACTORS | {'EXCESS_MAGNITUDE_ALPHA', 'EXCEEDANCE_HEAD_EXPERIMENT'}
-        historical = differences({k: v for k, v in old_shell.items() if k not in IDENTITY | removed},
+        station_reference = dict(old_shell, STATION=station)
+        historical = differences({k: v for k, v in station_reference.items() if k not in IDENTITY | removed},
                                  {k: v for k, v in shell.items() if k not in IDENTITY | additions})
         assert not historical, (mode, historical)
         resolved = vars(args)
-        assert set(differences(vars(old_args), resolved)) <= ARG_IDENTITY | ARG_FACTORS
-        if base_shell is None:
-            base_shell, base_args = shell, resolved
-        assert set(differences(base_shell, shell)) <= IDENTITY | FACTORS
-        differences_from_e0 = {k: v for k, v in differences(base_args, resolved).items() if k not in ARG_IDENTITY}
+        assert set(differences(dict(vars(old_args), station=station), resolved)) <= ARG_IDENTITY | ARG_FACTORS
+        if station not in base_shells:
+            base_shells[station], base_args_by_station[station] = shell, resolved
+        assert set(differences(base_shells[station], shell)) <= IDENTITY | FACTORS
+        differences_from_e0 = {k: v for k, v in differences(base_args_by_station[station], resolved).items()
+                               if k not in ARG_IDENTITY}
         expected = {}
         if normalization != 'none':
             expected['excess_event_normalization'] = ['none', normalization]
         if weighting != 'uniform':
             expected['excess_horizon_weighting'] = ['uniform', weighting]
         assert differences_from_e0 == expected, (mode, differences_from_e0)
-        records.append(dict(mode=mode, command=command, shell=shell, resolved=resolved,
+        # Across stations, only station selection and run identity may differ.
+        assert set(differences(base_shells[STATIONS[0]], shell)) <= IDENTITY | FACTORS | {'STATION'}
+        assert set(differences(base_args_by_station[STATIONS[0]], resolved)) <= ARG_IDENTITY | ARG_FACTORS | {'station'}
+        records.append(dict(station=station, mode=mode, command=command, shell=shell, resolved=resolved,
             differences_from_e0=differences_from_e0,
             effective_optional_weights=dict(tail=0., slope=0., excess_amp=0., shape=0., final_peak=0.)))
-        all_args.append(args)
-        print(f'{mode}: dry-run and matched protocol passed; differences={differences_from_e0}', flush=True)
-    data = None if options.config_only else data_validation(all_args)
+        all_args[station].append(args)
+        print(f'{station}/{mode}: dry-run and matched protocol passed; differences={differences_from_e0}', flush=True)
+    assert len({row['resolved']['output_dir'] for row in records}) == len(records), 'Run output directories collide'
+    data = None if options.config_only else {station: data_validation(args) for station, args in all_args.items()}
     assert Path(RESULTS).exists() == results_existed, 'Validation created a results directory'
     report = dict(validated_utc=datetime.now(timezone.utc).isoformat(), starting_main=START,
         implementation_head=run(['git', 'rev-parse', 'HEAD']).strip(), reference=REFERENCE,
         reference_sha256=reference_hash, validation_device='cpu', training_launched=False,
-        config_only=options.config_only, runs=records, data_validation=data,
+        config_only=options.config_only, stations=STATIONS, config_count=len(records), runs=records, data_validation=data,
         loss_only_source_changes=changed, production_default_path='none + uniform',
         checkpoint_selection='overall validation rmse_all; TEST unused for selection',
         caveat='DETERMINISTIC=0: matching initial CPU state does not imply identical training trajectories. '

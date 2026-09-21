@@ -1,9 +1,14 @@
-# CBBT excess-risk 2×2 study
+# Four-station excess-risk 2×2 study
 
 This study changes only aggregation of the production direct-dual horizon-wise
 excess MSE. Stage-0 diagnostics motivate testing excess deficit with two
 independent factors: normalization by the exact TRAIN event prior and relative
 physical excess-magnitude weighting within an event.
+
+The experiment covers **CBBT, Lewes, Battery, and Boston**, with E0/E1/E2/E3
+at each station: **16 standalone configs**. Each station fits its own TRAIN
+threshold and event prior; the four modes at that station share the fitted
+values. Priors and thresholds are never pooled or copied across stations.
 
 Branch: `study/excess-risk-weighting`, based on upstream-verified clean tracked
 `main` at `d665a4b0f54700a2564e54187f6c067c470d1df0`. The original main checkout
@@ -42,7 +47,7 @@ w^{raw}_{ih}=1+\alpha r_{ih},\quad
 
 The implementation uses `torch.finfo(physical.dtype).tiny` as the zero-division
 guard, with FP16/BF16 magnitudes promoted to FP32. Alpha is finite and
-nonnegative; all four configs use **alpha = 1**. Raw weights at zero, half-max,
+nonnegative; all 16 configs use **alpha = 1**. Raw weights at zero, half-max,
 and max physical excess are 1, 1.5, and 2 before mean-one normalization. Every
 window has mean horizon weight one, including event-free windows. Zero-excess
 horizons inside events retain supervision. Mean-one weighting redistributes
@@ -87,7 +92,16 @@ unchanged, including checkpoints without these metadata fields.
 
 Each config is standalone. [manifest.csv](manifest.csv) lists the matrix,
 paths, output directories, and commands. Apart from run identity, the only
-differences across resolved configs are the two factor switches.
+differences within a station are the two factor switches. Between stations,
+only station selection and run identity differ; the shared training protocol
+is identical. Existing CBBT configs remain byte-for-byte unchanged.
+
+| Station | Configs | Filename prefix |
+|---|---|---|
+| CBBT | E0, E1, E2, E3 | `configs/train_config_0921_CBBT_` |
+| Lewes | E0, E1, E2, E3 | `configs/train_config_0921_Lewes_` |
+| Battery | E0, E1, E2, E3 | `configs/train_config_0921_Battery_` |
+| Boston | E0, E1, E2, E3 | `configs/train_config_0921_Boston_` |
 
 ## Matched protocol and historical reference
 
@@ -102,8 +116,11 @@ The archived `DIRECT_DUAL_RECONSTRUCTION=soft_gate` and
 `EXCESS_SUPERVISION_SCOPE=event` selectors are omitted because main's production
 direct-dual implementation already fixes those semantics. Main supplies all
 implementation code. `EXCEEDANCE_HEAD_EXPERIMENT` is explicitly empty.
+The same pinned CBBT F0 protocol is used for all four stations, changing only
+station selection and run identity when extending it to Lewes, Battery, and
+Boston. Each run loads the selected station's existing metadata JSON.
 
-The matched protocol is CBBT/NCEP; PACT (`perceiver3`), GraphSAGE, Transformer;
+The matched protocol is NCEP at all four stations; PACT (`perceiver3`), GraphSAGE, Transformer;
 24-hour history, hidden width 128, two spatial layers; production direct dual
 head and mean gate pooling; exceedance percentile 95; MSE with body/excess/gate
 weights 1/2/0.5. Training uses LR `5e-3`, 300 epochs, batch size 256, accumulation
@@ -139,25 +156,36 @@ PYTHONDONTWRITEBYTECODE=1 "$STUDY_PY" experiment_config_0921_excess_risk/generat
 PYTHONDONTWRITEBYTECODE=1 CUDA_VISIBLE_DEVICES='' "$STUDY_PY" experiment_config_0921_excess_risk/validate_configs.py
 ```
 
-The validator runs all four launcher dry runs, parses the actual commands,
-compares every non-factor setting to E0 and the archived protocol, checks
-optional losses and overall checkpoint selection, fits actual TRAIN thresholds
-four times on the same selected population, and constructs all four models on
-CPU. It verifies equal thresholds, priors, `ModelConfig`, parameter counts, and
-initial parameter/buffer state. It never calls a training epoch or optimizer.
+The validator runs all 16 launcher dry runs, parses the actual commands,
+compares every non-factor setting to that station's E0 and the archived protocol,
+checks that stations differ only in station selection and run identity, and
+checks optional losses, overall checkpoint selection, and unique output paths.
+For each station it fits actual TRAIN thresholds four times on the same selected
+population and constructs all four models on CPU. Within each station it verifies
+equal thresholds, priors, `ModelConfig`, parameter counts, and initial
+parameter/buffer state. It never calls a training epoch or optimizer.
 `--config-only` skips data loading and CPU model construction and writes separate
 evidence. [validation/validation.json](validation/validation.json) records the
-completed full validation; [validation/tests.json](validation/tests.json) records
-the unit-suite outcome and environment. The completed suite ran 222 tests:
+completed four-station validation; [validation/tests.json](validation/tests.json)
+records the unchanged implementation's unit-suite outcome and environment.
+That suite ran 222 tests:
 217 passed, 5 CUDA-only tests skipped, and no failures or errors. Focused
 checks passed 22 tests after normalization and 37 after magnitude weighting.
 
-The actual CBBT validation population contains 13,224 TRAIN windows and 662
-strict events. All four runs fitted:
+All 16 dry runs and actual TRAIN validations passed. The fitted thresholds are
+station-specific and identical across E0/E1/E2/E3 within each station:
 
-- `tau_phys = 0.21263161301612854` meters.
-- `event_prior = 662 / 13224 = 0.050060496067755596`.
-- 685,447 model parameters, including 99,843 head parameters.
+| Station | TRAIN windows | Strict events | `tau_phys` (meters) |
+|---|---:|---:|---:|
+| CBBT | 13,224 | 662 | 0.21263161301612854 |
+| Lewes | 13,224 | 662 | 0.281014084815979 |
+| Battery | 13,224 | 662 | 0.43208199739456177 |
+| Boston | 13,224 | 662 | 0.3491159677505493 |
+
+Each station independently fitted `event_prior = 662 / 13224 = 0.050060496067755596`.
+The equal counts are a result of these data, not a shared or nominal prior.
+All models have 685,447 parameters, including 99,843 head parameters; initial
+CPU model state is identical across the four modes within each station.
 
 Thus E1/E3 apply `1/q_E = 19.97583081570997`; with the fixed coefficient 2, the
 coefficient on the original weighted/unweighted mean is `39.95166163141994`.
@@ -175,13 +203,14 @@ need local sockets; preprocessing tests need the dependencies pinned in
 without changing the training environment; CUDA-only tests are skipped.
 
 Training commands are prepared in [commands_all.txt](commands_all.txt). Execute
-them only after an explicit decision to start GPU training:
+them only after an explicit decision to start GPU training. The file lists all
+16 individual commands; examples for the four E0 controls are:
 
 ```bash
 bash train.sh experiment_config_0921_excess_risk/configs/train_config_0921_CBBT_E0_Uniform.sh
-bash train.sh experiment_config_0921_excess_risk/configs/train_config_0921_CBBT_E1_PriorNorm.sh
-bash train.sh experiment_config_0921_excess_risk/configs/train_config_0921_CBBT_E2_Magnitude.sh
-bash train.sh experiment_config_0921_excess_risk/configs/train_config_0921_CBBT_E3_PriorNorm_Magnitude.sh
+bash train.sh experiment_config_0921_excess_risk/configs/train_config_0921_Lewes_E0_Uniform.sh
+bash train.sh experiment_config_0921_excess_risk/configs/train_config_0921_Battery_E0_Uniform.sh
+bash train.sh experiment_config_0921_excess_risk/configs/train_config_0921_Boston_E0_Uniform.sh
 ```
 
 Each uses the existing tmux launcher on GPU 0; run one at a time, waiting for

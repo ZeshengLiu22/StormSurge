@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
-"""Generate standalone CBBT configs from the read-only, pinned 0920 F0 protocol."""
+"""Generate four-station 2x2 configs from the read-only, pinned 0920 CBBT F0 protocol."""
 
 import argparse
 import csv
 import hashlib
 import io
+import itertools
 from pathlib import Path
 import re
 import shlex
@@ -17,6 +18,7 @@ REFERENCE_COMMIT = '7516f9c5148d3068ad86b984028d417fd226f782'
 REFERENCE = f'{REFERENCE_COMMIT}:experiment_config_0920/configs/train_config_0920_CBBT_F0_Soft.sh'
 RESULTS = '/media/share/PACT/Results/All_results_0921_excess_risk'
 PYTHON = '/media/volume/PACT-Data/conda_envs/torchpyg-cu124/bin/python'
+STATIONS = ('CBBT', 'Lewes', 'Battery', 'Boston')
 MODES = (
     ('E0_Uniform', 'none', 'uniform'),
     ('E1_PriorNorm', 'train_prior', 'uniform'),
@@ -32,9 +34,10 @@ def reference_text():
 def expected_files():
     reference = reference_text()
     files, rows = {}, []
-    for mode, normalization, weighting in MODES:
-        name = f'0921_CBBT_{mode}'
+    for station, (mode, normalization, weighting) in itertools.product(STATIONS, MODES):
+        name = f'0921_{station}_{mode}'
         text = reference.replace('0920_CBBT_F0_Soft', name)
+        text = text.replace('STATION="CBBT"', f'STATION="{station}"')
         text = text.replace('# 0920 direct-dual reconstruction / supervision-scope study.',
                             '# 0921 excess-risk aggregation study.')
         text = text.replace('DIRECT_DUAL_RECONSTRUCTION="soft_gate"\n', '')
@@ -50,7 +53,7 @@ def expected_files():
         command = shlex.join(['bash', 'train.sh', f'{HERE.name}/{path}'])
         rows.append(dict(mode=mode, excess_event_normalization=normalization,
             excess_horizon_weighting=weighting, excess_magnitude_alpha=1.0, excess_loss_weight=2,
-            station='CBBT', model='perceiver3', head_type='dual', excess_formulation='direct',
+            station=station, model='perceiver3', head_type='dual', excess_formulation='direct',
             checkpoint_selection='overall', config_path=f'{HERE.name}/{path}',
             output_dir=f'{RESULTS}/{name}__<TIMESTAMP>', command=command))
     stream = io.StringIO(newline='')
@@ -74,8 +77,9 @@ def main():
         else:
             path.parent.mkdir(parents=True, exist_ok=True)
             path.write_text(content)
-    assert len(list((HERE / 'configs').glob('*.sh'))) == 4
-    print(f'{"Checked" if args.check else "Generated"} four configs; reference SHA256={digest}; no jobs launched.')
+    assert len(list((HERE / 'configs').glob('*.sh'))) == len(STATIONS) * len(MODES)
+    print(f'{"Checked" if args.check else "Generated"} {len(STATIONS) * len(MODES)} configs '
+          f'({len(STATIONS)} stations x {len(MODES)} modes); reference SHA256={digest}; no jobs launched.')
 
 
 if __name__ == '__main__':
