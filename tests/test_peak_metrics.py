@@ -17,7 +17,6 @@ from torch.utils.data.distributed import DistributedSampler
 from emulator.data import build_loader
 from emulator.training import run_epoch
 from emulator.training import engine
-from emulator.training.final_peak import final_peak_terms
 from emulator.training.metrics import (METRIC_NAMES, PEAK_METRIC_NAMES, PEAK_METRIC_STEMS, format_metrics,
     physical_peak_columns, summarize_windows, unique_rows_and_top5_indices)
 import test_training as training_tests
@@ -45,19 +44,12 @@ def numpy_oracle(prediction, truth):
     """Derive every metric directly from arrays without production selectors or reductions."""
     if not len(truth):
         return dict.fromkeys(PEAK_METRIC_STEMS)
-    true_peak, pred_peak = np.max(truth, 1), np.max(prediction, 1)
     true_index, pred_index = np.argmax(truth, 1), np.argmax(prediction, 1)
-    error = pred_peak - true_peak
-    point = prediction[np.arange(len(truth)), true_index] - truth[np.arange(len(truth)), true_index]
-    under, over = pred_peak < true_peak, pred_peak > true_peak
-    return dict(peak_magnitude_rmse=float(np.sqrt(np.average(error ** 2))),
-        peak_magnitude_mae=float(np.average(abs(error))), peak_bias=float(np.average(error)),
-        peak_underprediction_fraction=float(np.count_nonzero(under) / len(truth)),
-        peak_underprediction_mean=float(np.average(true_peak[under] - pred_peak[under])) if under.any() else None,
-        peak_overprediction_fraction=float(np.count_nonzero(over) / len(truth)),
-        peak_overprediction_mean=float(np.average(pred_peak[over] - true_peak[over])) if over.any() else None,
-        true_peak_point_rmse=float(np.sqrt(np.average(point ** 2))), true_peak_point_mae=float(np.average(abs(point))),
-        true_peak_point_bias=float(np.average(point)), peak_timing_mae_steps=float(np.average(abs(pred_index - true_index))))
+    error = prediction[np.arange(len(truth)), true_index] - truth[np.arange(len(truth)), true_index]
+    return dict(true_peak_rmse=float(np.sqrt(np.average(error ** 2))),
+        true_peak_mae=float(np.average(abs(error))), true_peak_bias=float(np.average(error)),
+        true_peak_underprediction_fraction=float(np.count_nonzero(error < 0) / len(truth)),
+        peak_timing_mae_steps=float(np.average(abs(pred_index - true_index))))
 
 
 def metric_ddp_worker(rank, rendezvous, destination):
@@ -105,20 +97,38 @@ class PeakMetricTests(unittest.TestCase):
         truth = np.array([[3., 3., 0.]])
         pred = np.array([[1., 4., 4.]])
         columns = physical_peak_columns(torch.from_numpy(pred), torch.from_numpy(truth))
-        self.assertEqual(columns.tolist(), [[3., 1., -2., 1.]])
+        self.assertEqual(columns.tolist(), [[3., -2., 1.]])
         metrics = summarize_windows(make_records(pred, truth), event_threshold=2.)
         self.assertEqual(metrics['peak_timing_mae_steps_all'], 1.)
-        self.assertEqual(metrics['true_peak_point_bias_all'], -2.)
+        self.assertEqual(metrics['true_peak_bias_all'], -2.)
 
-    def test_equal_magnitude_can_have_wrong_peak_point_and_timing(self):
-        metrics = summarize_windows(make_records(np.array([[0., 3.]]), np.array([[3., 0.]])), event_threshold=2.)
-        self.assertEqual(metrics['peak_magnitude_rmse_all'], 0.)
-        self.assertEqual(metrics['true_peak_point_rmse_all'], 3.)
-        self.assertEqual(metrics['peak_timing_mae_steps_all'], 1.)
+    def test_equal_maxima_still_penalize_amplitude_at_the_wrong_time(self):
+        truth = np.array([[.1, .2, .5, .3]])
+        pred = np.array([[.1, .5, .4, .3]])
+        self.assertEqual(pred.max(), truth.max())
+        metrics = summarize_windows(make_records(pred, truth), event_threshold=.45)
+        for population in ('all', 'top5', 'event'):
+            for name, expected in dict(true_peak_rmse=.1, true_peak_mae=.1, true_peak_bias=-.1,
+                                       true_peak_underprediction_fraction=1., peak_timing_mae_steps=1.).items():
+                self.assertAlmostEqual(metrics[f'{name}_{population}'], expected)
+
+    def test_true_peak_underprediction_ignores_larger_predicted_max_elsewhere(self):
+        truth = np.array([[.1, .2, .5, .3]])
+        pred = np.array([[.1, .8, .4, .3]])
+        self.assertGreater(pred.max(), truth.max())
+        metrics = summarize_windows(make_records(pred, truth), event_threshold=.45)
+        for population in ('all', 'top5', 'event'):
+            self.assertEqual(metrics[f'true_peak_underprediction_fraction_{population}'], 1.)
+            self.assertAlmostEqual(metrics[f'true_peak_bias_{population}'], -.1)
+
+    def test_canonical_peak_family_contains_exactly_five_stems(self):
+        self.assertEqual(PEAK_METRIC_STEMS, ('true_peak_rmse', 'true_peak_mae', 'true_peak_bias',
+                         'true_peak_underprediction_fraction', 'peak_timing_mae_steps'))
+        self.assertEqual(len(PEAK_METRIC_NAMES), 15)
 
     def test_exact_top5_membership_and_legacy_values_with_ties_precision_and_padding(self):
         rng = np.random.default_rng(72)
-        records = rng.uniform(size=(83, 7))
+        records = rng.uniform(size=(83, 6))
         records[:, 0] = np.arange(len(records))
         records[:, 1] = 1. + rng.uniform(0, 1e-9, len(records))  # FP32 tie, FP64 distinct
         records = np.concatenate((records[::2], records[1::2], records[[0, 82, 82]]))
@@ -131,9 +141,9 @@ class PeakMetricTests(unittest.TestCase):
                 new = summarize_windows(records, validation=validation, event_threshold=1.)
             self.assertEqual(selector.call_count, 1)
             self.assertEqual({k: new[k] for k in METRIC_NAMES}, old)
-            self.assertEqual(new['peak_bias_top5'], rows[top, 4].mean())
+            self.assertEqual(new['true_peak_bias_top5'], rows[top, 4].mean())
 
-    def test_saved_compatible_fixture_matches_frozen_prechange_metrics_exactly(self):
+    def test_saved_fixture_preserves_trajectory_metrics_and_reports_true_peaks(self):
         path = Path(__file__).parent / 'fixtures/post3_peak_metrics.json'
         saved = json.loads(path.read_text())
         self.assertEqual(saved['base'], '50ec23fc23866cb225c594bb403e1505704cda79')
@@ -148,6 +158,7 @@ class PeakMetricTests(unittest.TestCase):
         for records, validation, key in ((rows, False, 'inference_metrics'), (padded, True, 'validation_metrics')):
             actual = summarize_windows(records, validation=validation, event_threshold=2.)
             self.assertEqual({k: actual[k] for k in METRIC_NAMES}, saved[key])
+            self.assertEqual({k: actual[k] for k in PEAK_METRIC_NAMES}, saved[f'{key}_true_peak'])
 
     def test_new_populations_deduplicate_all_metrics_while_legacy_val_all_keeps_padding(self):
         truth = np.array([[5., 0.], [4., 1.], [2., 0.]])
@@ -159,42 +170,48 @@ class PeakMetricTests(unittest.TestCase):
         self.assertNotEqual(metrics['rmse_all'], padded['rmse_all'])
         self.assertNotEqual(metrics['mae_all'], padded['mae_all'])
         self.assertEqual({k: metrics[k] for k in PEAK_METRIC_NAMES}, {k: padded[k] for k in PEAK_METRIC_NAMES})
-        self.assertEqual(padded['peak_underprediction_fraction_all'], 2 / 3)
-        self.assertEqual(padded['peak_underprediction_fraction_event'], .5)
+        self.assertEqual(padded['true_peak_underprediction_fraction_all'], 2 / 3)
+        self.assertEqual(padded['true_peak_underprediction_fraction_event'], .5)
 
     def test_event_metrics_use_strict_exact_train_threshold_not_top5_or_test_fit(self):
         truth = np.array([[2., 0.], [3., 0.], [5., 0.]])
         pred = np.array([[100., 0.], [2., 0.], [3., 0.]])
         rows = make_records(pred, truth)
         metrics = summarize_windows(rows, event_threshold=3.)
-        self.assertEqual(metrics['peak_bias_event'], -2.)
-        self.assertEqual(summarize_windows(rows, event_threshold=3. - 1e-8)['peak_bias_event'], -1.5)
+        self.assertEqual(metrics['true_peak_bias_event'], -2.)
+        self.assertEqual(summarize_windows(rows, event_threshold=3. - 1e-8)['true_peak_bias_event'], -1.5)
         for threshold in (None, 5.):
             absent = summarize_windows(rows, event_threshold=threshold)
             self.assertTrue(all(absent[f'{k}_event'] is None for k in PEAK_METRIC_STEMS))
-            self.assertIsNotNone(absent['peak_magnitude_rmse_all'])
+            self.assertIsNotNone(absent['true_peak_rmse_all'])
 
     def test_empty_and_undefined_metrics_are_json_null_not_nan(self):
-        empty = summarize_windows(np.empty((0, 7)), event_threshold=1.)
+        empty = summarize_windows(np.empty((0, 6)), event_threshold=1.)
         self.assertEqual(empty, dict.fromkeys(METRIC_NAMES + PEAK_METRIC_NAMES))
         rows = make_records(np.array([[1., 2.]]), np.array([[1., 2.]]))
         exact = summarize_windows(rows, event_threshold=1.)
         for pop in ('all', 'top5', 'event'):
-            for direction in ('under', 'over'):
-                self.assertEqual(exact[f'peak_{direction}prediction_fraction_{pop}'], 0.)
-                self.assertIsNone(exact[f'peak_{direction}prediction_mean_{pop}'])
+            self.assertEqual(exact[f'true_peak_underprediction_fraction_{pop}'], 0.)
         json.dumps([empty, exact], allow_nan=False)
 
-    def test_hard_metrics_stay_independent_of_training_pool(self):
-        truth = torch.tensor([[3., 2., 1.]])
-        pred = torch.tensor([[2., 1., 0.]])
-        hard = summarize_windows(make_records(pred.numpy(), truth.numpy()), event_threshold=2.)
-        self.assertEqual(hard['peak_magnitude_rmse_all'], 1.)
-        for pool in ('max', 'smoothmax'):
-            final_peak_terms(pred, truth, 2., .17, pool, .1)
-            self.assertEqual(summarize_windows(make_records(pred.numpy(), truth.numpy()), event_threshold=2.), hard)
+    def test_top5_membership_depends_only_on_true_peaks(self):
+        truth = np.column_stack((np.arange(41.), np.zeros(41)))
+        pred = truth.copy()
+        changed = truth.copy()
+        changed[:39, 1] = 1000.  # Huge peaks elsewhere, including just one selected window.
+        for validation in (False, True):
+            original = make_records(pred, truth)
+            modified = make_records(changed, truth)
+            rows, selected = unique_rows_and_top5_indices(modified, validation=validation)
+            np.testing.assert_array_equal(rows[selected, 0], [38, 39, 40])
+            old, expected_ids = legacy_summary(original[:, :4], validation)
+            np.testing.assert_array_equal(rows[selected, 0], expected_ids)
+            expected, _ = legacy_summary(modified[:, :4], validation)
+            actual = summarize_windows(modified, validation=validation)
+            self.assertEqual({key: actual[key] for key in METRIC_NAMES}, expected)
+            self.assertNotEqual(actual['rmse_peak5'], old['rmse_peak5'])
 
-    def test_validation_retains_seven_scalars_and_only_one_forward_per_batch(self):
+    def test_validation_retains_six_scalars_and_only_one_forward_per_batch(self):
         fixture = training_tests.TrainingTests()
         fixture.setUp()
         model = training_tests.CountingModel()
@@ -202,21 +219,21 @@ class PeakMetricTests(unittest.TestCase):
             result = run_epoch(model, fixture.loader(), torch.device('cpu'), fixture.stats, event_threshold=30.)
         self.assertEqual(model.calls, 6)
         self.assertIsNone(result.predictions)
-        self.assertEqual(summary.call_args.args[0].shape, (41, 7))
+        self.assertEqual(summary.call_args.args[0].shape, (41, 6))
         self.assertFalse(torch.is_tensor(summary.call_args.args[0]))
         self.assertEqual(tuple(result.metrics), METRIC_NAMES + PEAK_METRIC_NAMES)
-        self.assertIsNotNone(result.metrics['peak_magnitude_rmse_top5'])
+        self.assertIsNotNone(result.metrics['true_peak_rmse_top5'])
 
     def test_console_keeps_four_core_metrics_and_one_peak_metric_with_extended_mode(self):
         metrics = dict.fromkeys(METRIC_NAMES + PEAK_METRIC_NAMES, 1.)
         text = format_metrics('Val', metrics)
         self.assertEqual(len(text.split()), 6)
-        for name in (*METRIC_NAMES, 'peak_magnitude_rmse_top5'):
+        for name in (*METRIC_NAMES, 'true_peak_rmse_top5'):
             self.assertIn(f'{name}=1.000000', text)
         extended = format_metrics('Val', metrics, extended=True)
         for name in metrics:
             self.assertIn(f'{name}=1.000000', extended)
-        self.assertIn('peak_magnitude_rmse_top5=NA', format_metrics('Val', dict.fromkeys(PEAK_METRIC_NAMES)))
+        self.assertIn('true_peak_rmse_top5=NA', format_metrics('Val', dict.fromkeys(PEAK_METRIC_NAMES)))
 
     def test_ddp_sampler_padding_counts_each_peak_window_once(self):
         with tempfile.TemporaryDirectory() as temporary:

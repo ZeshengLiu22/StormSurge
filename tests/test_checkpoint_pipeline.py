@@ -23,7 +23,7 @@ import train
 from emulator.training import checkpoints as cp
 from emulator.training.engine import EpochResult
 from test_checkpoints import CONFLICTING, WINNERS
-from test_config_interfaces import dry_commands, MODES, REPO
+from test_config_interfaces import dry_commands, REPO
 from test_pipeline import make_fixture
 
 
@@ -120,7 +120,7 @@ def trajectory_run(root, variant, mode="overall", auxiliary=0, scheduler="cosine
     torch.manual_seed(824)
     graphs, stations = make_fixture(root)
     args = arguments(graphs, stations, root / "run", variant)
-    args += ["--checkpoint_selection", mode, "--save_aux_checkpoints", str(auxiliary), "--peak_loss_weight", ".4",
+    args += ["--checkpoint_selection", mode, "--save_aux_checkpoints", str(auxiliary),
              "--batch_size", "2", "--grad_accum_steps", "2", "--dropout", ".13", "--head_dropout", ".17",
              "--scheduler", scheduler, "--rop_metric", rop_metric, "--rop_patience", "0", "--warmup_epochs", "2"]
     history, scheduler_metrics = [], []
@@ -209,7 +209,7 @@ def checkpoint_ddp_worker(rank, rendezvous, root_string):
             "--output_dir", str(root / "run"), "--model", "baseline", "--head_type", "single",
             "--encoder_type", "CNN", "--temporal_block", "MLP", "--history_hours", "0", "--hidden_channels", "16",
             "--epochs", "3", "--batch_size", "2", "--num_workers", "0", "--device", "cpu", "--run_tag", "ddp",
-            "--checkpoint_selection", "constrained_peak_magnitude", "--save_aux_checkpoints", "1"])
+            "--checkpoint_selection", "constrained_true_peak", "--save_aux_checkpoints", "1"])
         train.configure_runtime(args.seed + rank, 1, True, False)
         with contextlib.redirect_stdout(io.StringIO()), patch.object(train, "run_epoch", side_effect=epoch), \
                 patch.object(torch, "save", side_effect=save), patch.object(cp, "write_selection_manifest", side_effect=manifest), \
@@ -221,7 +221,7 @@ def checkpoint_ddp_worker(rank, rendezvous, root_string):
 
 
 class CheckpointPipelineTests(unittest.TestCase):
-    def test_frozen_post6_default_selects_same_epoch_weights_outputs_and_test(self):
+    def test_default_selects_same_epoch_weights_outputs_and_test(self):
         reference = json.loads((FIXTURES / "post6_checkpoint_selection.json").read_text())
         with tempfile.TemporaryDirectory() as tmp, patch.object(train, "CandidateCheckpointStore", side_effect=AssertionError("default must stay direct")):
             output, state = recorded_run(Path(tmp))
@@ -282,12 +282,39 @@ class CheckpointPipelineTests(unittest.TestCase):
                             torch.testing.assert_close(artifact["model_state"][key], tensor, rtol=0, atol=0)
                     self.assertEqual(len(list(output.rglob("*.pth"))), 5 if auxiliary else 1)
 
+    def test_extreme_test_scores_never_enter_checkpoint_selection(self):
+        real_epoch, real_selector = train.run_epoch, train.CheckpointSelector
+        for mode, test_score in itertools.product(cp.SELECTION_METRICS, (0., 1e12)):
+            with self.subTest(mode=mode, test_score=test_score), tempfile.TemporaryDirectory() as tmp:
+                observed = []
+
+                class ObservedSelector(real_selector):
+                    def observe(self, epoch, val):
+                        observed.append(dict(val))
+                        return super().observe(epoch, val)
+
+                def epoch(model, *args, **kwargs):
+                    result = real_epoch(model, *args, **kwargs)
+                    if kwargs.get("save_predictions"):
+                        result.metrics.update({key: test_score for key in set(cp.SELECTION_METRICS.values())})
+                    return result
+
+                with patch.object(train, "run_epoch", side_effect=epoch), \
+                        patch.object(train, "CheckpointSelector", ObservedSelector):
+                    output, state = recorded_run(Path(tmp), mode)
+                summary = json.loads(next(output.glob("summary_*.json")).read_text())
+                self.assertEqual(observed, CONFLICTING)
+                self.assertEqual(summary["checkpoint_selection"]["selected_epoch"], WINNERS[mode])
+                self.assertEqual(summary["test"]["true_peak_rmse_top5"], test_score)
+                self.assertEqual(state["test_calls"], 1)
+
     def test_final_table_matches_fresh_summary_including_empty_test(self):
         columns = (("AllRMSE", "rmse_all"), ("AllMAE", "mae_all"),
                    ("Top5RMSE", "rmse_peak5"), ("Top5MAE", "mae_peak5"),
-                   ("PeakRMSE", "peak_magnitude_rmse_top5"), ("PeakMAE", "peak_magnitude_mae_top5"),
-                   ("PeakBias", "peak_bias_top5"), ("Under%", "peak_underprediction_fraction_top5"),
-                   ("TruePeakRMSE", "true_peak_point_rmse_top5"), ("TimingSteps", "peak_timing_mae_steps_top5"))
+                   ("TruePeakRMSE", "true_peak_rmse_top5"), ("TruePeakMAE", "true_peak_mae_top5"),
+                   ("TruePeakBias", "true_peak_bias_top5"),
+                   ("TruePeakUnder%", "true_peak_underprediction_fraction_top5"),
+                   ("TimingSteps", "peak_timing_mae_steps_top5"))
         for empty_test in (False, True):
             with self.subTest(empty_test=empty_test), tempfile.TemporaryDirectory() as tmp:
                 output, state = recorded_run(Path(tmp), years=2 if empty_test else 5)
@@ -304,7 +331,7 @@ class CheckpointPipelineTests(unittest.TestCase):
                         expected = summary[split][key]
                         if expected is None:
                             self.assertEqual(value, "NA")
-                        elif key == "peak_underprediction_fraction_top5":
+                        elif key == "true_peak_underprediction_fraction_top5":
                             self.assertTrue(value.endswith("%"))
                             self.assertAlmostEqual(float(value[:-1]), expected * 100, delta=.005)
                         else:
@@ -312,22 +339,6 @@ class CheckpointPipelineTests(unittest.TestCase):
                 if empty_test:
                     self.assertTrue(all(value is None for value in summary["test"].values()))
                 self.assertEqual(state["final_splits"], ["val", "test"])
-
-    def test_frozen_trajectory_with_legacy_loader_rng_unchanged_for_all_modes(self):
-        reference = json.loads((FIXTURES / "post6_checkpoint_trajectories.json").read_text())
-        real_loader = train.build_loader
-
-        def legacy_loader(*args, **kwargs):
-            # Keep the historical fixture: only undo the intentional shuffle-RNG
-            # change so it still guards losses, updates, dropout and scheduling.
-            kwargs.pop("generator", None)
-            return real_loader(*args, **kwargs)
-
-        for variant, mode in itertools.product(("single", "direct"), cp.SELECTION_METRICS):
-            with self.subTest(variant=variant, mode=mode), tempfile.TemporaryDirectory() as tmp, \
-                    patch.object(train, "build_loader", side_effect=legacy_loader):
-                observed = trajectory_run(Path(tmp), variant, mode, auxiliary=1)
-                self.assertEqual(observed, reference["variants"][variant])
 
     def test_current_trajectory_is_independent_of_selection_mode(self):
         for variant in ("single", "direct", "severity_shape"):
@@ -353,7 +364,7 @@ class CheckpointPipelineTests(unittest.TestCase):
             root = Path(tmp)
             output, state = recorded_run(root, "constrained_peak5", 1, "severity_shape")
             manifest = json.loads(next(output.glob("checkpoint_selection_*.json")).read_text())
-            auxiliary = manifest["roles"]["peak_magnitude"]["path"]
+            auxiliary = manifest["roles"]["true_peak"]["path"]
             with contextlib.redirect_stdout(io.StringIO()), patch.object(infer, "run_epoch", wraps=infer.run_epoch) as inference:
                 infer.main(["--ckpt", auxiliary, "--root_dir", str(root / "graphs"), "--out_dir", str(root / "infer"),
                             "--device", "cpu", "--num_workers", "0", "--save_npz"])
@@ -402,26 +413,16 @@ class CheckpointConfigTests(unittest.TestCase):
                 with self.subTest(flag=flag, value=value), contextlib.redirect_stderr(io.StringIO()), self.assertRaises(SystemExit):
                     train.parse_args([f"--{flag}={value}"])
 
-    def test_selection_and_peak_loss_are_independent_for_every_loss_mode(self):
-        for loss, selection, weight in itertools.product(MODES, cp.SELECTION_METRICS, (0., .4)):
-            args = train.parse_args(["--model", "perceiver3", "--head_type", "dual", "--loss_mode", loss,
-                "--excess_formulation", "severity_shape", "--excess_amp_loss_weight", ".3", "--shape_loss_weight", ".2",
-                "--peak_loss_weight", str(weight), "--checkpoint_selection", selection])
-            self.assertEqual(args.checkpoint_selection, selection)
-            self.assertEqual(args.peak_loss_weight, weight)
-            self.assertEqual(args.loss_mode, loss)
-        self.assertEqual(train.parse_args(["--peak_loss_weight", ".4"]).checkpoint_selection, "overall")
-
     def test_existing_shell_config_forwards_explicit_checkpoint_settings(self):
-        config = REPO / "experiment_config/P0_QuickRun/train_config_NCEP_Battery_24h_single_mse.sh"
+        config = REPO / "configs/train_config_NCEP_Battery_Stable_Single.sh"
         original = config.read_bytes()
-        with patch.dict(os.environ, CHECKPOINT_SELECTION="constrained_peak_magnitude", CHECKPOINT_OVERALL_TOL="0.025", SAVE_AUX_CHECKPOINTS="true"):
+        with patch.dict(os.environ, CHECKPOINT_SELECTION="constrained_true_peak", CHECKPOINT_OVERALL_TOL="0.025", SAVE_AUX_CHECKPOINTS="true"):
             commands = dry_commands(config)
         self.assertTrue(commands)
         for command in commands:
             args = train.parse_args(command)
             self.assertEqual((args.checkpoint_selection, args.checkpoint_overall_tol, args.save_aux_checkpoints),
-                             ("constrained_peak_magnitude", .025, 1))
+                             ("constrained_true_peak", .025, 1))
         self.assertEqual(config.read_bytes(), original)
 
 

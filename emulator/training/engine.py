@@ -66,7 +66,7 @@ def run_epoch(model, loader, device, stats, *, station_feat=None, optimizer=None
                 else:
                     optimizer.step()
                 optimizer.zero_grad(set_to_none=True)
-            # Seven scalars per window; no full validation predictions or extra forward pass.
+            # Six scalars per window; no full validation predictions or extra forward pass.
             error = prediction.detach() - target
             if not training:
                 evaluation_sums[0] += error.square().mean().double() * target.size(0)
@@ -75,7 +75,7 @@ def run_epoch(model, loader, device, stats, *, station_feat=None, optimizer=None
             peaks = physical_peak_columns(prediction.detach(), target)
             windows.append(torch.stack((batch.sample_id.double(), peaks[:, 0],
                                         error.square().mean(dim=1).double(), error.abs().mean(dim=1).double(),
-                                        peaks[:, 1], peaks[:, 2], peaks[:, 3]), dim=1))
+                                        peaks[:, 1], peaks[:, 2]), dim=1))
             if save_predictions:
                 truth.append(target.cpu())
                 predictions.append(prediction.detach().cpu())
@@ -88,7 +88,7 @@ def run_epoch(model, loader, device, stats, *, station_feat=None, optimizer=None
                 if output.severity_phys is not None:
                     dual_arrays.setdefault("severity_phys", []).append(output.severity_phys.float().reshape(-1).cpu())
                     dual_arrays.setdefault("excess_shape", []).append(output.excess_shape.float().cpu())
-    records = torch.cat(windows).cpu().numpy() if windows else np.empty((0, 7))
+    records = torch.cat(windows).cpu().numpy() if windows else np.empty((0, 6))
     if distributed:
         gathered = [None] * dist.get_world_size()
         dist.all_gather_object(gathered, records)
@@ -105,7 +105,7 @@ def run_epoch(model, loader, device, stats, *, station_feat=None, optimizer=None
             arrays.update({name: torch.cat(values).numpy() if values else
                            np.empty((0,) if name in ("gate_probability", "severity_phys") else (0, width), np.float32)
                            for name, values in dual_arrays.items()})
-    # Legacy Val All includes padding; all direct peak metrics use unique windows.
+    # Legacy Val All includes padding; all true-peak metrics use unique windows.
     metrics = summarize_windows(records, validation=not training, event_threshold=event_threshold)
     if not training:
         if distributed:

@@ -37,8 +37,8 @@ class PeakReportingTests(unittest.TestCase):
             prediction = truth / 2
             metrics = summarize_windows(make_records(prediction, truth), event_threshold=1.)
             # Contradictory synthetic VAL rankings explicitly guard the production selection rule.
-            first = dict(metrics, rmse_all=2., peak_magnitude_rmse_top5=.1)
-            second = dict(metrics, rmse_all=1., peak_magnitude_rmse_top5=.9)
+            first = dict(metrics, rmse_all=2., true_peak_rmse_top5=.1)
+            second = dict(metrics, rmse_all=1., true_peak_rmse_top5=.9)
             arrays = dict(y_true=truth, y_pred=prediction, tags=np.array(['a', 'b']))
             for formulation in ('single', 'direct', 'severity_shape'):
                 with self.subTest(formulation=formulation):
@@ -50,14 +50,13 @@ class PeakReportingTests(unittest.TestCase):
                          patch.object(train, 'run_epoch', side_effect=epochs) as evaluated, \
                          patch.object(train.torch.optim.Adam, 'step', side_effect=AssertionError('no training')), \
                          patch.object(train.torch.optim.lr_scheduler.LambdaLR, 'step'), \
-                         contextlib.redirect_stdout(io.StringIO()):
+                         contextlib.redirect_stdout(io.StringIO()) as console:
                         train.main(['--root_dir', str(graphs), '--station', 'Battery', '--station_json_dir', str(stations),
                             '--output_dir', str(destination), '--model', 'perceiver3',
                             '--head_type', 'single' if formulation == 'single' else 'dual',
                             '--excess_formulation', 'direct' if formulation == 'single' else formulation,
                             '--excess_amp_loss_weight', '0' if formulation == 'single' else '.7',
                             '--shape_loss_weight', '.3' if formulation == 'severity_shape' else '0',
-                            '--peak_loss_weight', '.4', '--peak_pool', 'smoothmax', '--peak_pool_beta', '2.5',
                             '--tail_frac', '.4', '--exceedance_percentile', '75', '--epochs', '2', '--device', 'cpu',
                             '--num_workers', '0', '--hidden_channels', '16', '--history_hours', '12'])
                     self.assertEqual(criterion.call_args.kwargs,
@@ -74,11 +73,19 @@ class PeakReportingTests(unittest.TestCase):
                         self.assertIsNone(saved['dual_metadata'])
                     config = json.loads(next(destination.glob('config_*.json')).read_text())
                     shell = (destination / 'config_used.sh').read_text()
-                    for key, value in dict(peak_loss_weight=.4, peak_pool='smoothmax', peak_pool_beta=2.5).items():
-                        self.assertEqual(saved['training_config'][key], value)
-                        self.assertEqual(config[key], value)
-                        self.assertIn(f'{key.upper()}={value}', shell)
-                        self.assertNotIn(key, saved['model_config'])
+                    amp_weight = 0. if formulation == 'single' else .7
+                    self.assertEqual(saved['training_config']['excess_amp_loss_weight'], amp_weight)
+                    self.assertEqual(config['excess_amp_loss_weight'], amp_weight)
+                    self.assertIn(f'EXCESS_AMP_LOSS_WEIGHT={amp_weight}', shell)
+                    self.assertNotIn('excess_amp_loss_weight', saved['model_config'])
+                    lines = console.getvalue().splitlines()
+                    header_index = next(i for i, line in enumerate(lines) if 'Split' in line)
+                    expected_columns = ['Split', 'AllRMSE', 'AllMAE', 'Top5RMSE', 'Top5MAE',
+                                        'TruePeakRMSE', 'TruePeakMAE', 'TruePeakBias', 'TruePeakUnder%', 'TimingSteps']
+                    self.assertEqual(lines[header_index].split('] ', 1)[1].split(), expected_columns)
+                    for line in lines[header_index + 1:header_index + 3]:
+                        self.assertEqual(len(line.split('] ', 1)[1].split()), len(expected_columns))
+                        self.assertIn('100.00%', line)
                     logs = [json.loads(line) for line in next(destination.glob('metrics_*.jsonl')).read_text().splitlines()]
                     self.assertEqual([r['val'] for r in logs], [first, second])
                     summary = json.loads(next(destination.glob('summary_*.json')).read_text())
@@ -104,20 +111,22 @@ class PeakReportingTests(unittest.TestCase):
                         event = exported['y_true'].astype(np.float64).max(axis=1) > fitted['tau_phys']
                         expected_event = numpy_oracle(exported['y_pred'][event].astype(np.float64),
                                                      exported['y_true'][event].astype(np.float64))
+                        true_peaks = exported['y_true'].max(axis=1)
+                        top5 = np.argsort(true_peaks, kind='stable')[-max(1, int(np.ceil(.05 * len(true_peaks)))):]
+                        expected_top5 = numpy_oracle(exported['y_pred'][top5].astype(np.float64),
+                                                    exported['y_true'][top5].astype(np.float64))
                     for key in PEAK_METRIC_STEMS:
                         self.assertEqual(report['metrics'][f'{key}_all'], expected[key])
                         self.assertEqual(report['metrics'][f'{key}_event'], expected_event[key])
+                        self.assertEqual(report['metrics'][f'{key}_top5'], expected_top5[key])
                     for year in report['years']:
                         self.assertTrue(all(key in report['results'][year] for key in PEAK_METRIC_NAMES))
 
-    def test_legacy_single_inference_uses_saved_train_threshold_or_reports_unavailable(self):
+    def test_single_inference_uses_saved_train_threshold_or_reports_unavailable(self):
         fixture = reporting_tests.InferenceReportingTests()
         fixture.setUp()
         self.addCleanup(fixture.doCleanups)
         saved = torch.load(fixture.ckpt, weights_only=False)
-        # A genuinely old checkpoint omits all three new controls and dual metadata.
-        for key in ('peak_loss_weight', 'peak_pool', 'peak_pool_beta'):
-            saved['training_config'].pop(key)
         before = None
         for threshold in (None, 3., 100.):
             with self.subTest(threshold=threshold):
@@ -126,7 +135,7 @@ class PeakReportingTests(unittest.TestCase):
                 else:
                     saved['loss_thresholds'] = dict(tau_phys=threshold, tail_threshold=-999.)
                 torch.save(saved, fixture.ckpt)
-                _, directory = fixture.evaluate(f'legacy_{threshold}', ['--scope', 'all'])
+                _, directory = fixture.evaluate(f'threshold_{threshold}', ['--scope', 'all'])
                 report = json.loads((directory / 'metrics.json').read_text())
                 yearly = json.loads(next(directory.glob('metrics_per_year_*.json')).read_text())
                 self.assertEqual(yearly['metrics'], report['metrics'])
@@ -135,7 +144,7 @@ class PeakReportingTests(unittest.TestCase):
                 if threshold in (None, 100.):
                     self.assertTrue(all(report['metrics'][f'{k}_event'] is None for k in PEAK_METRIC_STEMS))
                 else:
-                    self.assertIsNotNone(report['metrics']['peak_magnitude_rmse_event'])
+                    self.assertIsNotNone(report['metrics']['true_peak_rmse_event'])
                 unchanged = {k: v for k, v in report['metrics'].items() if not k.endswith('_event')}
                 if before is not None:
                     self.assertEqual(unchanged, before)

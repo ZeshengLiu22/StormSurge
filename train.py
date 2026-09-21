@@ -255,16 +255,17 @@ def train(args, device, distributed, rank, wall_start):
         log_message("FINAL BEST-CHECKPOINT RE-EVALUATION")
         columns = (("AllRMSE", "rmse_all"), ("AllMAE", "mae_all"),
                    ("Top5RMSE", "rmse_peak5"), ("Top5MAE", "mae_peak5"),
-                   ("PeakRMSE", "peak_magnitude_rmse_top5"), ("PeakMAE", "peak_magnitude_mae_top5"),
-                   ("PeakBias", "peak_bias_top5"), ("Under%", "peak_underprediction_fraction_top5"),
-                   ("TruePeakRMSE", "true_peak_point_rmse_top5"), ("TimingSteps", "peak_timing_mae_steps_top5"))
+                   ("TruePeakRMSE", "true_peak_rmse_top5"), ("TruePeakMAE", "true_peak_mae_top5"),
+                   ("TruePeakBias", "true_peak_bias_top5"),
+                   ("TruePeakUnder%", "true_peak_underprediction_fraction_top5"),
+                   ("TimingSteps", "peak_timing_mae_steps_top5"))
         table = [["Split", *[label for label, _ in columns]]]
         for split in ("val", "test"):
             values = []
             for _, key in columns:
                 value = summary[split].get(key)
                 values.append("NA" if value is None else
-                              format(value, ".2%" if key == "peak_underprediction_fraction_top5" else ".6f"))
+                              format(value, ".2%" if key == "true_peak_underprediction_fraction_top5" else ".6f"))
             table.append([split.upper(), *values])
         widths = [max(map(len, column)) for column in zip(*table)]
         for row in table:

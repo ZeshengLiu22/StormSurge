@@ -12,12 +12,12 @@ import torch
 SELECTION_METRICS = {
     "overall": "rmse_all",
     "peak5": "rmse_peak5",
-    "peak_magnitude": "peak_magnitude_rmse_top5",
+    "true_peak": "true_peak_rmse_top5",
     "constrained_peak5": "rmse_peak5",
-    "constrained_peak_magnitude": "peak_magnitude_rmse_top5",
+    "constrained_true_peak": "true_peak_rmse_top5",
 }
-SIMPLE_ROLES = ("overall", "peak5", "peak_magnitude")
-PEAK_ROLES = ("peak5", "peak_magnitude")
+SIMPLE_ROLES = ("overall", "peak5", "true_peak")
+PEAK_ROLES = ("peak5", "true_peak")
 
 
 def validate_checkpoint_settings(mode, overall_tol, save_aux):
@@ -141,7 +141,7 @@ class CheckpointSelector:
                       checkpoint_overall_tol=self.overall_tol, save_aux_checkpoints=self.save_aux,
                       selected_epoch=selected.epoch, selected_val_rmse_all=selected.val["rmse_all"],
                       selected_val_rmse_peak5=selected.val["rmse_peak5"],
-                      selected_val_peak_magnitude_rmse_top5=selected.val["peak_magnitude_rmse_top5"])
+                      selected_val_true_peak_rmse_top5=selected.val["true_peak_rmse_top5"])
         for role, c in self.best.items():
             result[f"best_{role}_epoch"] = c.epoch
             result[f"best_{role}_val_{SELECTION_METRICS[role]}"] = c.val[SELECTION_METRICS[role]]
@@ -174,7 +174,7 @@ def write_selection_manifest(selector, canonical, stem, role_paths):
         path = role_paths[role]
         shared = [other for other, other_path in role_paths.items() if other_path == path]
         roles[role] = dict(epoch=candidate.epoch, path=str(path), val=candidate.val,
-                           **{name: candidate.val[name] for name in ("rmse_all", "rmse_peak5", "peak_magnitude_rmse_top5")},
+                           **{name: candidate.val[name] for name in ("rmse_all", "rmse_peak5", "true_peak_rmse_top5")},
                            selection_metric_key=SELECTION_METRICS[role], shared_roles=shared, **constraint)
     document = dict(checkpoint_selection_mode=selector.mode, checkpoint_overall_tol=selector.overall_tol,
                     save_aux_checkpoints=selector.save_aux,

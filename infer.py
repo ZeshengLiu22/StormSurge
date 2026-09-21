@@ -247,7 +247,7 @@ def main(argv=None):
     records = np.column_stack((np.arange(len(indices)), arrays["y_true"].max(axis=1),
                                np.mean(error ** 2, axis=1), np.mean(np.abs(error), axis=1)))
     # Keep the established NumPy trajectory reductions above; reuse the exact
-    # hard-peak feature/metric path used during each validation epoch.
+    # true-peak feature/metric path used during each validation epoch.
     peaks = physical_peak_columns(torch.from_numpy(arrays["y_pred"]), torch.from_numpy(arrays["y_true"]))
     records = np.column_stack((records, peaks.numpy()[:, 1:]))
     metrics = summarize_windows(records, event_threshold=event_threshold)
@@ -326,7 +326,8 @@ def main(argv=None):
                   results=results, metrics=metrics, event_threshold_phys=event_threshold,
                   event_threshold_source=event_threshold_source,
                   metric_space="physical", metric_note="RMSE/MAE on denormalized predictions in original y units. "
-                      "Direct peak metrics use hard maxima, first-occurrence argmax ties, and timing in forecast steps. "
+                      "Peak amplitude errors evaluate the prediction at the true target peak horizon. "
+                      "Argmax ties use the first occurrence; timing is in forecast steps. "
                       "Event metrics use saved TRAIN tau_phys, or null if unavailable.",
                   x_clip=training["x_clip"], dual_metadata=dual_metadata, dual_ablation=config.dual_ablation)
     (out_dir / f"metrics_per_year_{report_stem}.json").write_text(json.dumps(report, indent=2, default=str))

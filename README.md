@@ -123,7 +123,7 @@ head requirements and named ablations. Direct peak evaluation metrics are always
 
 ## Metrics and artifacts
 
-Each epoch prints `[YYYY-MM-DD|HH:MM:SS]`, followed by the four historical trajectory errors below for Train and Val in physical units (surge **meters**), plus `peak_magnitude_rmse_top5` for each split:
+Each epoch prints `[YYYY-MM-DD|HH:MM:SS]`, followed by the four historical trajectory errors below for Train and Val in physical units (surge **meters**), plus `true_peak_rmse_top5` for each split:
 
 | Split | All windows | Top 5% peak windows |
 |---|---|---|
@@ -134,11 +134,29 @@ Top 5% means the `ceil(0.05 × N)` windows with the largest true maximum over th
 
 Train metrics reuse online training predictions, including dropout/augmentation and changing weights; Val uses eval mode. There is no second diagnostic validation pass. DDP validation restores DistributedSampler padding: Val All includes duplicate padding samples, as in the original trainer; Val Peak counts each sample once. Val All also retains the original FP32 batch means and FP64 weighted accumulation. Training uses padding for synchronized updates, but its reported metrics count each sample once.
 
-Direct peak metrics add 33 keys: eleven measures for `_all`, `_top5` and `_event` populations. They cover peak magnitude RMSE/MAE/bias, underprediction and overprediction fractions/conditional magnitudes, true-peak-point RMSE/MAE/bias, and timing MAE in forecast steps. They always use hard physical maxima and first-occurrence argmax ties. All new metrics deduplicate sample IDs, and share exactly the legacy top5 membership. Event metrics use the strict fixed TRAIN threshold. Empty or undefined populations are JSON `null`. Only seven scalars per window are retained; no full VAL prediction archive is added.
+The four trajectory metrics remain AllRMSE (`rmse_all`), AllMAE (`mae_all`), Top5RMSE (`rmse_peak5`) and Top5MAE (`mae_peak5`). The top-5% count is `max(1, ceil(0.05 * N))` for nonempty splits, with the existing sorting and tie behavior.
 
-[Checkpoint selection](docs/CHECKPOINT_SELECTION.md) is configured independently through `CHECKPOINT_SELECTION` / `--checkpoint_selection`: `overall` (default), `peak5`, `peak_magnitude`, `constrained_peak5`, or `constrained_peak_magnitude`. The direct peak modes use exactly `peak_magnitude_rmse_top5`. Constrained modes minimize their peak metric subject to `rmse_all <= (1 + CHECKPOINT_OVERALL_TOL) * final_best_rmse_all`; the tolerance defaults to `0.01` and is a relative fraction. Separate Pareto frontiers retain the exact candidates until final resolution. `SAVE_AUX_CHECKPOINTS=1` retains all five VAL-selected roles from the same run with shared files for shared epochs. Default `overall` with auxiliary saving disabled preserves the strict-`<` online canonical save and creates no candidate or auxiliary directory. Scheduler settings remain independent.
+Canonical peak metrics evaluate the prediction at the observed physical peak horizon, `h* = argmax_h y_h`, with PyTorch's first-occurrence tie behavior. The signed amplitude error is `delta = y_pred[h*] - y_true[h*]`. The difference `max_h y_pred[h] - max_h y_true[h]` is no longer a canonical amplitude error because those maxima can occur at different forecast horizons.
 
-After training, rank 0 prints the best epoch's concise **Val and Test** metrics together; full dictionaries are saved in JSON. Val is read from that checkpoint, using the same metrics and sampler-padding convention that selected it; it is not the last epoch's Val. Test evaluates the reloaded best weights once over each actual test sample and exports those predictions. Reporting Val adds no forward pass or diagnostics.
+| Display | Metric stem | Definition over selected windows |
+|---|---|---|
+| TruePeakRMSE | `true_peak_rmse` | `sqrt(mean(delta**2))` |
+| TruePeakMAE | `true_peak_mae` | `mean(abs(delta))` |
+| TruePeakBias | `true_peak_bias` | `mean(delta)`; negative means underprediction |
+| TruePeakUnder% | `true_peak_underprediction_fraction` | `mean(delta < 0)`; displayed as a percentage |
+| TimingSteps | `peak_timing_mae_steps` | `mean(abs(argmax(y_pred) - h*))` |
+
+These five stems produce 15 keys with `_all`, `_top5` and `_event` suffixes. Timing alone uses the predicted argmax. Peak metrics deduplicate sample IDs and share exactly the trajectory top5 membership. Events use the strict saved TRAIN threshold, with no VAL/TEST threshold fitting. Empty or undefined populations are JSON `null`. The six per-window record columns are sample ID, true window peak, trajectory MSE, trajectory MAE, signed true-peak error and timing error; no full VAL prediction archive is added.
+
+[Checkpoint selection](docs/CHECKPOINT_SELECTION.md) is configured independently through `CHECKPOINT_SELECTION` / `--checkpoint_selection`: `overall` (default), `peak5`, `true_peak`, `constrained_peak5`, or `constrained_true_peak`. The direct peak modes use exactly `true_peak_rmse_top5`. Constrained modes minimize their peak metric subject to `rmse_all <= (1 + CHECKPOINT_OVERALL_TOL) * final_best_rmse_all`; the tolerance defaults to `0.01` and is a relative fraction. Separate Pareto frontiers retain the exact candidates until final resolution. `SAVE_AUX_CHECKPOINTS=1` retains all five VAL-selected roles from the same run with shared files for shared epochs. Default `overall` with auxiliary saving disabled preserves the strict-`<` online canonical save and creates no candidate or auxiliary directory. Scheduler settings remain independent.
+
+After training, rank 0 reloads the selected checkpoint and evaluates **Val and Test** for the final table; full dictionaries are saved in JSON. The final Val pass uses the existing validation metric and sampler-padding conventions. Test evaluates the selected weights once over each actual test sample and exports those predictions. Both final passes occur after checkpoint selection. The final table is:
+
+```text
+Split | AllRMSE | AllMAE | Top5RMSE | Top5MAE | TruePeakRMSE | TruePeakMAE | TruePeakBias | TruePeakUnder% | TimingSteps
+```
+
+Its five peak columns use the `_top5` metrics; ordinary inference saves all three peak populations. TEST never participates in checkpoint selection.
 
 A launcher run can contain many combinations. Each has a unique stem in its artifact filenames:
 

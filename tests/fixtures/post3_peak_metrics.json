@@ -576,5 +576,39 @@
     "mae_all": 0.5795705375991098,
     "rmse_peak5": 1.745965600013733,
     "mae_peak5": 1.1735539436340332
+  },
+  "inference_metrics_true_peak": {
+    "true_peak_rmse_all": 1.4755453930297648,
+    "true_peak_mae_all": 0.9735610476413439,
+    "true_peak_bias_all": -0.8956720501531003,
+    "true_peak_underprediction_fraction_all": 0.8837209302325582,
+    "peak_timing_mae_steps_all": 0.4418604651162791,
+    "true_peak_rmse_top5": 3.3401983008507163,
+    "true_peak_mae_top5": 3.3043575435876846,
+    "true_peak_bias_top5": -3.3043575435876846,
+    "true_peak_underprediction_fraction_top5": 1.0,
+    "peak_timing_mae_steps_top5": 0.0,
+    "true_peak_rmse_event": 3.1320659354981477,
+    "true_peak_mae_event": 2.8362345611676574,
+    "true_peak_bias_event": -2.8362345611676574,
+    "true_peak_underprediction_fraction_event": 1.0,
+    "peak_timing_mae_steps_event": 0.25
+  },
+  "validation_metrics_true_peak": {
+    "true_peak_rmse_all": 1.4755453930297648,
+    "true_peak_mae_all": 0.9735610476413439,
+    "true_peak_bias_all": -0.8956720501531003,
+    "true_peak_underprediction_fraction_all": 0.8837209302325582,
+    "peak_timing_mae_steps_all": 0.4418604651162791,
+    "true_peak_rmse_top5": 3.3401983008507163,
+    "true_peak_mae_top5": 3.3043575435876846,
+    "true_peak_bias_top5": -3.3043575435876846,
+    "true_peak_underprediction_fraction_top5": 1.0,
+    "peak_timing_mae_steps_top5": 0.0,
+    "true_peak_rmse_event": 3.1320659354981477,
+    "true_peak_mae_event": 2.8362345611676574,
+    "true_peak_bias_event": -2.8362345611676574,
+    "true_peak_underprediction_fraction_event": 1.0,
+    "peak_timing_mae_steps_event": 0.25
   }
 }

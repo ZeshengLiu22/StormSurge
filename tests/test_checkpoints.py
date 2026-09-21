@@ -13,14 +13,14 @@ import torch
 from emulator.training import checkpoints as cp
 
 
-def metrics(overall, peak5, magnitude):
-    return dict(rmse_all=overall, rmse_peak5=peak5, peak_magnitude_rmse_top5=magnitude,
+def metrics(overall, peak5, true_peak):
+    return dict(rmse_all=overall, rmse_peak5=peak5, true_peak_rmse_top5=true_peak,
                 mae_all=overall / 2, mae_peak5=peak5 / 2)
 
 
 CONFLICTING = [metrics(*row) for row in ((1.04, .5, .9), (1.02, .6, .4), (1., .8, .8),
                                         (1.005, .7, .6), (1.008, .9, .5), (1., .85, .75))]
-WINNERS = dict(overall=3, peak5=1, peak_magnitude=2, constrained_peak5=4, constrained_peak_magnitude=5)
+WINNERS = dict(overall=3, peak5=1, true_peak=2, constrained_peak5=4, constrained_true_peak=5)
 
 
 def observe_all(selector, values):
@@ -35,6 +35,17 @@ def snapshot(candidate):
 
 
 class SelectorTests(unittest.TestCase):
+    def test_exact_supported_modes_and_validation_source_metrics(self):
+        self.assertEqual(cp.SELECTION_METRICS, {
+            "overall": "rmse_all",
+            "peak5": "rmse_peak5",
+            "true_peak": "true_peak_rmse_top5",
+            "constrained_peak5": "rmse_peak5",
+            "constrained_true_peak": "true_peak_rmse_top5",
+        })
+        self.assertEqual(cp.SIMPLE_ROLES, ("overall", "peak5", "true_peak"))
+        self.assertEqual(cp.PEAK_ROLES, ("peak5", "true_peak"))
+
     def test_all_five_distinct_winners_and_summary_source_keys(self):
         for mode, epoch in WINNERS.items():
             with self.subTest(mode=mode):
@@ -203,7 +214,7 @@ class CheckpointStoreTests(unittest.TestCase):
     def test_all_roles_sharing_one_epoch_only_write_one_final_model(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
-            selector = cp.CheckpointSelector("constrained_peak_magnitude", save_aux=True)
+            selector = cp.CheckpointSelector("constrained_true_peak", save_aux=True)
             store = cp.CandidateCheckpointStore(root / "best_run.pth", "run")
             self.add(store, selector, 1, metrics(2., 2., 2.))
             self.add(store, selector, 2, metrics(1., 1., 1.))
