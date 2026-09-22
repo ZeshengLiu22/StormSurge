@@ -35,6 +35,12 @@ ExceedanceAmp for CBBT, Lewes, Battery and Boston. Add
 `--include-severity-shape` to generate the optional excess parameterization.
 Config generation and launcher dry runs do not start training.
 
+For the independent global/excess WQE experiment, run
+`python tools/generate_configs.py --family wqe`. This adds W1 GlobalWQE,
+W2 ExcessWQE, and W3 BothWQE for all four stations under `configs/wqe`;
+existing D0 is the MSE/MSE control. See [Losses](docs/LOSSES.md) for the
+shared published parameters, TRAIN scale handling, and experiment matrix.
+
 Launch an explicitly chosen configuration:
 
 ```bash
@@ -44,6 +50,8 @@ USE_TMUX=0 bash train.sh configs/current/train_config_NCEP_CBBT_D0_DualBase.sh
 The core shell controls are:
 
 ```bash
+LOSS_MODE_LIST=("mse")
+EXCESS_LOSS_MODE="mse"
 EXCEEDANCE_PERCENTILE=95
 EXCEEDANCE_LOSS_WEIGHT=0.025
 EXCESS_AMP_LOSS_WEIGHT=0.003

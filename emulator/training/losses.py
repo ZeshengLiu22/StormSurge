@@ -14,6 +14,47 @@ from .excess_amplitude import excess_amplitude_terms, physical_excess_target, va
 from .excess_shape import excess_shape_loss
 
 
+def _validate_wqe_parameters(quantile_tau, expectile_tau, quantile_weight, expectile_weight):
+    for name, tau in (("quantile_tau", quantile_tau), ("expectile_tau", expectile_tau)):
+        if not math.isfinite(tau) or not 0 < tau < 1:
+            raise ValueError(f"WQE {name} must be finite and strictly between 0 and 1.")
+    for name, weight in (("quantile_weight", quantile_weight), ("expectile_weight", expectile_weight)):
+        if not math.isfinite(weight) or weight < 0:
+            raise ValueError(f"WQE {name} must be finite and nonnegative.")
+    if not math.isclose(quantile_weight + expectile_weight, 1.0, rel_tol=1e-6, abs_tol=1e-7):
+        raise ValueError("WQE weights must sum to 1 within floating-point tolerance.")
+
+
+def validate_wqe_config(config):
+    if config.loss_mode not in ("mse", "wqe", "wmse", "mse_slope", "wqe_slope", "wmse_slope"):
+        raise ValueError("loss_mode must be mse, wqe, wmse, mse_slope, wqe_slope or wmse_slope.")
+    if config.excess_loss_mode not in ("mse", "wqe"):
+        raise ValueError("excess_loss_mode must be mse or wqe.")
+    _validate_wqe_parameters(config.wqe_quantile_tau, config.wqe_expectile_tau,
+                             config.wqe_quantile_weight, config.wqe_expectile_weight)
+
+
+def wqe_penalty(prediction, target, scale, *, quantile_tau=0.25, expectile_tau=0.82,
+                quantile_weight=1.0 / 6.0, expectile_weight=5.0 / 6.0):
+    """Pointwise weighted quantile/expectile penalty in physical squared units.
+
+    Positive residuals mean underprediction. A scalar or per-horizon TRAIN scale
+    broadcasts over [B, K] and is always treated as a fixed statistic.
+    """
+    _validate_wqe_parameters(quantile_tau, expectile_tau, quantile_weight, expectile_weight)
+    scale_dtype = scale.dtype if torch.is_tensor(scale) else torch.promote_types(prediction.dtype, target.dtype)
+    scale = torch.as_tensor(scale, dtype=scale_dtype, device=prediction.device).detach()
+    if not torch.isfinite(scale).all() or not (scale > 0).all():
+        raise ValueError("WQE scale must be finite and positive.")
+    # Standardize for the published WQE geometry, then rescale to retain the
+    # physical-loss scale used by MSE and the existing branch coefficients.
+    epsilon = (target - prediction) / scale
+    quantile = torch.where(epsilon >= 0, quantile_tau * epsilon, (quantile_tau - 1.0) * epsilon)
+    squared = epsilon.square()
+    expectile = torch.where(epsilon >= 0, expectile_tau * squared, (1.0 - expectile_tau) * squared)
+    return scale.square() * (quantile_weight * quantile + expectile_weight * expectile)
+
+
 def validate_shape_config(config, *, head_type="dual", model="pact"):
     formulation = config.excess_formulation
     validate_excess_formulation(formulation, config.severity_shape_eps, head_type, model)
@@ -61,12 +102,16 @@ def enforce_dual_loss(config):
                     "forcing " + ", ".join(corrections) + ".")
 
 
-def dual_loss_terms(output, target_norm, y_std, *, target_phys=None, tau_physical=None):
+def dual_loss_terms(output, target_norm, y_std, *, target_phys=None, tau_physical=None,
+                    excess_loss_mode="mse", wqe_quantile_tau=0.25, wqe_expectile_tau=0.82,
+                    wqe_quantile_weight=1.0 / 6.0, wqe_expectile_weight=5.0 / 6.0):
     """The three dual loss terms: body, conditional excess and event BCE.
 
     Excess risk uses the WHOLE batch denominator. Non-event windows have zero
     excess auxiliary gradient; rare-event batches never amplify it by 1/p.
     """
+    if excess_loss_mode == "wqe":
+        y_std = y_std.detach()
     if target_phys is None:
         event, excess_target = dual_excess_target(target_norm, output.threshold)
     else:
@@ -75,7 +120,15 @@ def dual_loss_terms(output, target_norm, y_std, *, target_phys=None, tau_physica
         excess_target = physical_excess / y_std
     body_target = target_norm - excess_target
     body = ((output.body - body_target) * y_std).square().mean()
-    excess = (((output.excess - excess_target) * y_std).square() * event).mean()
+    if excess_loss_mode == "mse":
+        excess = (((output.excess - excess_target) * y_std).square() * event).mean()
+    elif excess_loss_mode == "wqe":
+        pointwise = wqe_penalty(output.excess * y_std, excess_target * y_std, y_std,
+            quantile_tau=wqe_quantile_tau, expectile_tau=wqe_expectile_tau,
+            quantile_weight=wqe_quantile_weight, expectile_weight=wqe_expectile_weight)
+        excess = (pointwise * event).mean()
+    else:
+        raise ValueError("excess_loss_mode must be mse or wqe.")
     gate = (F.binary_cross_entropy_with_logits(output.gate_logits, event.float()) * y_std.square().mean()
             if output.gate_logits is not None else body.new_zeros(()))
     return body, excess, gate
@@ -107,6 +160,11 @@ class LossConfig:
     excess_formulation: str = "direct"
     shape_loss_weight: float = 0.0
     severity_shape_eps: float = 1e-6
+    excess_loss_mode: str = "mse"
+    wqe_quantile_tau: float = 0.25
+    wqe_expectile_tau: float = 0.82
+    wqe_quantile_weight: float = 1.0 / 6.0
+    wqe_expectile_weight: float = 5.0 / 6.0
 
 
 class ForecastLoss(nn.Module):
@@ -114,11 +172,13 @@ class ForecastLoss(nn.Module):
         super().__init__()
         self.config = config
         self.register_buffer("y_mean", stats["y_mean"])
-        self.register_buffer("y_std", stats["y_std"])
+        self.register_buffer("y_std", stats["y_std"].detach())
         if tau_physical is None or not math.isfinite(tau_physical):
             raise ValueError("ForecastLoss requires finite TRAIN tau_physical.")
-        if config.loss_mode not in ("mse", "wmse", "mse_slope", "wmse_slope"):
-            raise ValueError("loss_mode must be mse, wmse, mse_slope or wmse_slope.")
+        validate_wqe_config(config)
+        if (config.loss_mode.removesuffix("_slope") == "wqe" or config.excess_loss_mode == "wqe"):
+            if not torch.isfinite(self.y_std).all() or not (self.y_std > 0).all():
+                raise ValueError("WQE scale must be finite and positive.")
         if not math.isfinite(config.exceedance_loss_weight) or config.exceedance_loss_weight < 0:
             raise ValueError("exceedance_loss_weight must be finite and nonnegative.")
         if config.exceedance_loss_weight > 0 and (extreme_hour_prior is None
@@ -143,7 +203,12 @@ class ForecastLoss(nn.Module):
         if core == "wmse":
             weight = 1 + c.wmse_alpha * torch.sigmoid((target - self.tau_physical) / max(c.wmse_s, 1e-6))
             weighted_error = weight * error
-        loss = weighted_error.mean() if core == "wmse" else error.mean()
+        if core == "wqe":
+            loss = wqe_penalty(prediction, target, self.y_std,
+                quantile_tau=c.wqe_quantile_tau, expectile_tau=c.wqe_expectile_tau,
+                quantile_weight=c.wqe_quantile_weight, expectile_weight=c.wqe_expectile_weight).mean()
+        else:
+            loss = weighted_error.mean() if core == "wmse" else error.mean()
         if c.exceedance_loss_weight:
             # Compare in FP64: a fitted threshold must not round to a target tie.
             mask = target.double() > self.tau_physical
@@ -166,7 +231,10 @@ class ForecastLoss(nn.Module):
                 return loss
             target_norm = (target - self.y_mean) / self.y_std
             body, excess, gate = dual_loss_terms(output, target_norm, self.y_std,
-                target_phys=target, tau_physical=self.tau_physical)
+                target_phys=target, tau_physical=self.tau_physical,
+                excess_loss_mode=c.excess_loss_mode,
+                wqe_quantile_tau=c.wqe_quantile_tau, wqe_expectile_tau=c.wqe_expectile_tau,
+                wqe_quantile_weight=c.wqe_quantile_weight, wqe_expectile_weight=c.wqe_expectile_weight)
             dual_loss = c.body_loss_weight * body + c.excess_loss_weight * excess + c.gate_loss_weight * gate
             loss = loss + dual_loss
             if c.excess_amp_loss_weight > 0:

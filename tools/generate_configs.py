@@ -1,11 +1,12 @@
 #!/usr/bin/env python3
-"""Generate matched S0/D0/D1/D2/D3 configs without launching training."""
+"""Generate matched current or opt-in WQE placement configs without training."""
 
 import argparse
 import csv
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parents[1]
+WQE_RESULTS_ROOT = "/home/exouser/media/share/PACT/WQE_Results"
 STATIONS = ("CBBT", "Lewes", "Battery", "Boston")
 VARIANTS = (
     ("S0", "Single", "single", 0.0, 0.0),
@@ -13,6 +14,11 @@ VARIANTS = (
     ("D1", "Exceedance", "dual", 0.025, 0.0),
     ("D2", "Amp", "dual", 0.0, 0.003),
     ("D3", "ExceedanceAmp", "dual", 0.025, 0.003),
+)
+WQE_VARIANTS = (
+    ("W1", "GlobalWQE", "wqe", "mse"),
+    ("W2", "ExcessWQE", "mse", "wqe"),
+    ("W3", "BothWQE", "wqe", "wqe"),
 )
 
 TEMPLATE = '''#!/usr/bin/env bash
@@ -122,8 +128,56 @@ PACT_RUN_NAME="{run_name}"
 PYTHON_RUN_TAG_BASE="{run_name}"
 '''
 
+WQE_TEMPLATE = TEMPLATE.replace(
+    "# Matched hourly exceedance formulation:",
+    "# WQE placement experiment (existing D0 is the MSE/MSE control):",
+).replace('LOSS_MODE_LIST=("mse")', '''LOSS_MODE_LIST=("{loss_mode}")
+EXCESS_LOSS_MODE="{excess_loss_mode}"
+WQE_QUANTILE_TAU=0.25
+WQE_EXPECTILE_TAU=0.82
+WQE_QUANTILE_WEIGHT=0.16666666666666667
+WQE_EXPECTILE_WEIGHT=0.83333333333333333''')
 
-def generate(output, *, include_severity_shape=False, results_root="./All_Results"):
+
+def generate_wqe(output, *, results_root=WQE_RESULTS_ROOT):
+    """Use unchanged D0 settings to isolate global versus raw-excess WQE."""
+    output = Path(output)
+    output.mkdir(parents=True, exist_ok=True)
+    rows = []
+    for station in STATIONS:
+        for condition, label, loss_mode, excess_loss_mode in WQE_VARIANTS:
+            name = f"NCEP_{station}_{condition}_{label}"
+            config = output / f"train_config_{name}.sh"
+            config.write_text(WQE_TEMPLATE.format(
+                station=station, condition=condition, head="dual",
+                loss_mode=loss_mode, excess_loss_mode=excess_loss_mode,
+                exceedance_weight=0.0, amp_weight=0.0, formulation="direct",
+                shape_weight=0, dual_loss=1, excess_weight=2, gate_weight=0.5,
+                results_root=results_root, run_name=name))
+            rows.append(dict(station=station, variant=condition, head_type="dual",
+                loss_mode=loss_mode, excess_loss_mode=excess_loss_mode,
+                wqe_quantile_tau=0.25, wqe_expectile_tau=0.82,
+                wqe_quantile_weight=1.0 / 6.0, wqe_expectile_weight=5.0 / 6.0,
+                excess_formulation="direct", exceedance_loss_weight=0.0,
+                excess_amp_loss_weight=0.0, shape_loss_weight=0,
+                body_loss_weight=1, excess_loss_weight=2, gate_loss_weight=0.5,
+                config=config.name))
+    with (output / "manifest.csv").open("w", newline="") as handle:
+        writer = csv.DictWriter(handle, fieldnames=rows[0], lineterminator="\n")
+        writer.writeheader()
+        writer.writerows(rows)
+    return rows
+
+
+def generate(output, *, include_severity_shape=False, results_root=None, family="current"):
+    if results_root is None:
+        results_root = WQE_RESULTS_ROOT if family == "wqe" else "./All_Results"
+    if family == "wqe":
+        if include_severity_shape:
+            raise ValueError("WQE placement configs use the direct D0 excess formulation only.")
+        return generate_wqe(output, results_root=results_root)
+    if family != "current":
+        raise ValueError(f"Unknown config family: {family!r}")
     output = Path(output)
     output.mkdir(parents=True, exist_ok=True)
     rows = []
@@ -156,13 +210,20 @@ def generate(output, *, include_severity_shape=False, results_root="./All_Result
 
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--output", type=Path, default=REPO / "configs/current")
+    parser.add_argument("--family", choices=("current", "wqe"), default="current",
+                        help="WQE adds W1/W2/W3 for each station; existing D0 supplies the control.")
+    parser.add_argument("--output", type=Path,
+                        help="Defaults to configs/current or configs/wqe for the selected family.")
     parser.add_argument("--include-severity-shape", action="store_true")
-    parser.add_argument("--results-root", default="./All_Results")
+    parser.add_argument("--results-root",
+                        help=f"Defaults to {WQE_RESULTS_ROOT} for WQE, otherwise ./All_Results.")
     args = parser.parse_args(argv)
-    rows = generate(args.output, include_severity_shape=args.include_severity_shape,
-                    results_root=args.results_root)
-    print(f"Generated {len(rows)} configs in {args.output}. No training launched.")
+    if args.family == "wqe" and args.include_severity_shape:
+        parser.error("--family wqe cannot be combined with --include-severity-shape.")
+    output = args.output or REPO / "configs" / args.family
+    rows = generate(output, include_severity_shape=args.include_severity_shape,
+                    results_root=args.results_root, family=args.family)
+    print(f"Generated {len(rows)} configs in {output}. No training launched.")
 
 
 if __name__ == "__main__":

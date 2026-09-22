@@ -6,7 +6,8 @@ from pathlib import Path
 
 from emulator.common.cli import head_type_name, parse_bool_int, temporal_block_name
 from emulator.common.dual import DUAL_ABLATIONS, EXCESS_FORMULATIONS
-from .losses import enforce_dual_loss, validate_excess_amp_config, validate_shape_config
+from .losses import (enforce_dual_loss, validate_excess_amp_config,
+                     validate_shape_config, validate_wqe_config)
 
 
 def parse_args(argv=None):
@@ -93,9 +94,17 @@ def parse_args(argv=None):
         "--loss_mode",
         type=str,
         default="mse",
-        choices=["mse", "wmse", "mse_slope", "wmse_slope"],
-        help="Physical MSE or smooth tau-weighted MSE; suffix *_slope adds slope matching.",
+        choices=["mse", "wqe", "wmse", "mse_slope", "wqe_slope", "wmse_slope"],
+        help="Global physical MSE, TRAIN-scale WQE, or smooth tau-weighted MSE; suffix *_slope adds slope matching.",
     )
+    parser.add_argument("--wqe_quantile_tau", type=float, default=0.25,
+                        help="Shared global/excess WQE quantile level, strictly between 0 and 1.")
+    parser.add_argument("--wqe_expectile_tau", type=float, default=0.82,
+                        help="Shared global/excess WQE expectile level, strictly between 0 and 1.")
+    parser.add_argument("--wqe_quantile_weight", type=float, default=1.0 / 6.0,
+                        help="Nonnegative quantile weight; WQE weights must sum to 1.")
+    parser.add_argument("--wqe_expectile_weight", type=float, default=5.0 / 6.0,
+                        help="Nonnegative expectile weight; WQE weights must sum to 1.")
     parser.add_argument("--wmse_alpha", type=float, default=4.0,
                         help="alpha in w(y)=1+alpha*sigmoid((y-tau)/s).")
     parser.add_argument("--wmse_s", type=float, default=0.10,
@@ -172,6 +181,8 @@ def parse_args(argv=None):
                         help="Explicit mechanism experiment; none enforces full branch supervision.")
     parser.add_argument("--body_loss_weight", type=float, default=1.0)
     parser.add_argument("--excess_loss_weight", type=float, default=1.0)
+    parser.add_argument("--excess_loss_mode", choices=["mse", "wqe"], default="mse",
+                        help="Dual conditional raw-excess objective only; independent of --loss_mode and inactive for Single.")
     parser.add_argument("--excess_formulation", choices=EXCESS_FORMULATIONS, default="direct",
                         help="Direct normalized excess or physical severity times normalized temporal shape.")
     parser.add_argument("--shape_loss_weight", type=float, default=0.0,
@@ -250,6 +261,7 @@ def parse_args(argv=None):
         if not math.isfinite(getattr(args, name)):
             parser.error(f"--{name} must be finite; small values use the original numerical floor.")
     try:
+        validate_wqe_config(args)
         validate_excess_amp_config(args, head_type=args.head_type)
         validate_shape_config(args, head_type=args.head_type, model=args.model)
         from .eventaware_checkpoints import validate_score_weights

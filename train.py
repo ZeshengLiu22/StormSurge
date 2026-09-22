@@ -69,6 +69,11 @@ def train(args, device, distributed, rank, wall_start):
     tracker = (EventAwareTracker(output_dir, (args.ckpt_w_all, args.ckpt_w_exceedance, args.ckpt_w_peak))
                if rank == 0 else None)
     if rank == 0:
+        log_message(f"Global prediction loss: {args.loss_mode}")
+        log_message(f"Dual excess loss: {args.excess_loss_mode}"
+                    if args.head_type == "dual" else "Dual excess loss: inactive (head_type=single)")
+        log_message(f"WQE: q_tau={args.wqe_quantile_tau:g} e_tau={args.wqe_expectile_tau:g} "
+                    f"q_weight={args.wqe_quantile_weight:.6f} e_weight={args.wqe_expectile_weight:.6f}")
         output_dir.mkdir(parents=True, exist_ok=True)
         with (output_dir / f"config_{stem}.json").open("x") as handle:
             json.dump(vars(args), handle, indent=2, default=str)

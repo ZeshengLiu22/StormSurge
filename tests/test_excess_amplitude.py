@@ -217,7 +217,7 @@ class ExcessAmplitudeTests(unittest.TestCase):
             reference = ForecastLoss(config, stats, 2.)(ForecastOutput(output.prediction), output.prediction, target)
             if not single:
                 body, excess, gate = dual_loss_terms(output, target, stats['y_std'])
-                reference = reference + body + 2 * excess + .5 * gate
+                reference = reference + (body + 2 * excess + .5 * gate)
             expected_grads = torch.autograd.grad(reference, tuple(head.parameters()), retain_graph=True)
             rng = torch.get_rng_state()
             with patch('emulator.training.losses.excess_amplitude_terms', side_effect=AssertionError('disabled computation')):

@@ -1,0 +1,13 @@
+station,variant,head_type,loss_mode,excess_loss_mode,wqe_quantile_tau,wqe_expectile_tau,wqe_quantile_weight,wqe_expectile_weight,excess_formulation,exceedance_loss_weight,excess_amp_loss_weight,shape_loss_weight,body_loss_weight,excess_loss_weight,gate_loss_weight,config
+CBBT,W1,dual,wqe,mse,0.25,0.82,0.16666666666666666,0.8333333333333334,direct,0.0,0.0,0,1,2,0.5,train_config_NCEP_CBBT_W1_GlobalWQE.sh
+CBBT,W2,dual,mse,wqe,0.25,0.82,0.16666666666666666,0.8333333333333334,direct,0.0,0.0,0,1,2,0.5,train_config_NCEP_CBBT_W2_ExcessWQE.sh
+CBBT,W3,dual,wqe,wqe,0.25,0.82,0.16666666666666666,0.8333333333333334,direct,0.0,0.0,0,1,2,0.5,train_config_NCEP_CBBT_W3_BothWQE.sh
+Lewes,W1,dual,wqe,mse,0.25,0.82,0.16666666666666666,0.8333333333333334,direct,0.0,0.0,0,1,2,0.5,train_config_NCEP_Lewes_W1_GlobalWQE.sh
+Lewes,W2,dual,mse,wqe,0.25,0.82,0.16666666666666666,0.8333333333333334,direct,0.0,0.0,0,1,2,0.5,train_config_NCEP_Lewes_W2_ExcessWQE.sh
+Lewes,W3,dual,wqe,wqe,0.25,0.82,0.16666666666666666,0.8333333333333334,direct,0.0,0.0,0,1,2,0.5,train_config_NCEP_Lewes_W3_BothWQE.sh
+Battery,W1,dual,wqe,mse,0.25,0.82,0.16666666666666666,0.8333333333333334,direct,0.0,0.0,0,1,2,0.5,train_config_NCEP_Battery_W1_GlobalWQE.sh
+Battery,W2,dual,mse,wqe,0.25,0.82,0.16666666666666666,0.8333333333333334,direct,0.0,0.0,0,1,2,0.5,train_config_NCEP_Battery_W2_ExcessWQE.sh
+Battery,W3,dual,wqe,wqe,0.25,0.82,0.16666666666666666,0.8333333333333334,direct,0.0,0.0,0,1,2,0.5,train_config_NCEP_Battery_W3_BothWQE.sh
+Boston,W1,dual,wqe,mse,0.25,0.82,0.16666666666666666,0.8333333333333334,direct,0.0,0.0,0,1,2,0.5,train_config_NCEP_Boston_W1_GlobalWQE.sh
+Boston,W2,dual,mse,wqe,0.25,0.82,0.16666666666666666,0.8333333333333334,direct,0.0,0.0,0,1,2,0.5,train_config_NCEP_Boston_W2_ExcessWQE.sh
+Boston,W3,dual,wqe,wqe,0.25,0.82,0.16666666666666666,0.8333333333333334,direct,0.0,0.0,0,1,2,0.5,train_config_NCEP_Boston_W3_BothWQE.sh
