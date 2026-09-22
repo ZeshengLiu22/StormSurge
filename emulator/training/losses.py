@@ -10,7 +10,7 @@ import torch.nn.functional as F
 
 from emulator.common.runtime import log_message
 from emulator.common.dual import DUAL_ABLATIONS, dual_excess_target, validate_excess_formulation
-from .excess_amplitude import excess_amplitude_terms, validate_event_prior
+from .excess_amplitude import excess_amplitude_terms, physical_excess_target, validate_event_prior
 from .excess_shape import excess_shape_loss
 
 
@@ -61,14 +61,19 @@ def enforce_dual_loss(config):
                     "forcing " + ", ".join(corrections) + ".")
 
 
-def dual_loss_terms(output, target_norm, y_std):
+def dual_loss_terms(output, target_norm, y_std, *, target_phys=None, tau_physical=None):
     """The three dual loss terms: body, conditional excess and event BCE.
 
     Excess risk uses the WHOLE batch denominator. Non-event windows have zero
     excess auxiliary gradient; rare-event batches never amplify it by 1/p.
     """
-    event, excess_target = dual_excess_target(target_norm, output.threshold)
-    body_target = torch.minimum(target_norm, output.threshold)
+    if target_phys is None:
+        event, excess_target = dual_excess_target(target_norm, output.threshold)
+    else:
+        event, physical_excess = physical_excess_target(target_norm, output.threshold, y_std,
+            target_phys=target_phys, tau_physical=tau_physical)
+        excess_target = physical_excess / y_std
+    body_target = target_norm - excess_target
     body = ((output.body - body_target) * y_std).square().mean()
     excess = (((output.excess - excess_target) * y_std).square() * event).mean()
     gate = (F.binary_cross_entropy_with_logits(output.gate_logits, event.float()) * y_std.square().mean()
@@ -87,9 +92,7 @@ class LossConfig:
     loss_mode: str = "mse"
     wmse_alpha: float = 4.0
     wmse_s: float = 0.1
-    wmse_use_abs: bool = True
-    tail_lambda: float = 0.1
-    tail_frac: float = 0.05
+    exceedance_loss_weight: float = 0.0
     slope_lambda: float = 0.01
     slope_mask_s: float = 0.1
     slope_robust: str = "charb"
@@ -107,21 +110,27 @@ class LossConfig:
 
 
 class ForecastLoss(nn.Module):
-    def __init__(self, config: LossConfig, stats, peak_threshold, wmse_threshold, event_prior=None, event_threshold=None):
+    def __init__(self, config: LossConfig, stats, tau_physical, event_prior=None, extreme_hour_prior=None):
         super().__init__()
         self.config = config
         self.register_buffer("y_mean", stats["y_mean"])
         self.register_buffer("y_std", stats["y_std"])
-        self.peak_threshold = peak_threshold
-        self.wmse_threshold = wmse_threshold
+        if tau_physical is None or not math.isfinite(tau_physical):
+            raise ValueError("ForecastLoss requires finite TRAIN tau_physical.")
+        if config.loss_mode not in ("mse", "wmse", "mse_slope", "wmse_slope"):
+            raise ValueError("loss_mode must be mse, wmse, mse_slope or wmse_slope.")
+        if not math.isfinite(config.exceedance_loss_weight) or config.exceedance_loss_weight < 0:
+            raise ValueError("exceedance_loss_weight must be finite and nonnegative.")
+        if config.exceedance_loss_weight > 0 and (extreme_hour_prior is None
+                or not math.isfinite(extreme_hour_prior) or not 0 < extreme_hour_prior <= 1):
+            raise ValueError("Exceedance supervision requires a positive TRAIN extreme_hour_prior.")
+        self.tau_physical = float(tau_physical)
+        self.extreme_hour_prior = extreme_hour_prior
         amp_weight = validate_excess_amp_config(config)
         shape_weight = validate_shape_config(config)
         if amp_weight > 0 or shape_weight > 0:
             validate_event_prior(event_prior)
-        if amp_weight > 0 and (event_threshold is None or not math.isfinite(event_threshold)):
-            raise ValueError("Excess-amplitude supervision requires a finite TRAIN event_threshold (tau_phys).")
         self.event_prior = event_prior
-        self.event_threshold_phys = event_threshold
 
     def forward(self, output, prediction, target):
         c = self.config
@@ -131,25 +140,22 @@ class ForecastLoss(nn.Module):
             raise ValueError("Shape supervision requires the severity_shape dual head.")
         error = (prediction - target).square()
         core = c.loss_mode.removesuffix("_slope")
-        if core in ("wmse", "wmse_tail", "mse_wtail"):
-            magnitude = target.abs() if c.wmse_use_abs else target
-            weight = 1 + c.wmse_alpha * torch.sigmoid((magnitude - self.wmse_threshold) / max(c.wmse_s, 1e-6))
+        if core == "wmse":
+            weight = 1 + c.wmse_alpha * torch.sigmoid((target - self.tau_physical) / max(c.wmse_s, 1e-6))
             weighted_error = weight * error
-        loss = weighted_error.mean() if core in ("wmse", "wmse_tail") else error.mean()
-        if core in ("mse_tail", "wmse_tail", "mse_wtail") and c.tail_lambda:
-            tail_error = weighted_error if core in ("wmse_tail", "mse_wtail") else error
-            per_sample_tail_error = tail_error.mean(dim=1)
-            event = (target.amax(dim=1) >= self.peak_threshold).to(tail_error.dtype)
-            # Fixed TRAIN fraction keeps each event's weight independent of batch composition.
-            tail_loss = (per_sample_tail_error * event).mean() / c.tail_frac
-            loss = loss + c.tail_lambda * tail_loss
+        loss = weighted_error.mean() if core == "wmse" else error.mean()
+        if c.exceedance_loss_weight:
+            # Compare in FP64: a fitted threshold must not round to a target tie.
+            mask = target.double() > self.tau_physical
+            exceedance = torch.where(mask, error, 0.0).mean() / self.extreme_hour_prior
+            loss = loss + c.exceedance_loss_weight * exceedance
         if c.loss_mode.endswith("_slope") and c.slope_lambda and target.size(1) > 1:
             slope_error = prediction.diff(dim=1) - target.diff(dim=1)
             if c.slope_robust == "huber":
                 penalty = F.huber_loss(slope_error, torch.zeros_like(slope_error), reduction="none", delta=max(c.slope_huber_delta, 1e-12))
             else:
                 penalty = (slope_error.square() + max(c.slope_charb_eps, 1e-12) ** 2).sqrt()
-            mask = torch.sigmoid((self.wmse_threshold - target.abs().amax(dim=1)) / max(c.slope_mask_s, 1e-6))
+            mask = torch.sigmoid((self.tau_physical - target.amax(dim=1)) / max(c.slope_mask_s, 1e-6))
             loss = loss + c.slope_lambda * (penalty * mask[:, None]).mean()
         if output.body is not None:
             if (output.gate_logits is None) != (c.dual_ablation == "fixed_gate"):
@@ -159,18 +165,19 @@ class ForecastLoss(nn.Module):
             if not c.dual_loss:
                 return loss
             target_norm = (target - self.y_mean) / self.y_std
-            body, excess, gate = dual_loss_terms(output, target_norm, self.y_std)
+            body, excess, gate = dual_loss_terms(output, target_norm, self.y_std,
+                target_phys=target, tau_physical=self.tau_physical)
             dual_loss = c.body_loss_weight * body + c.excess_loss_weight * excess + c.gate_loss_weight * gate
             loss = loss + dual_loss
-            # Leave the historical numerical/RNG path untouched at weight zero.
             if c.excess_amp_loss_weight > 0:
                 amplitude = excess_amplitude_terms(output.excess, target_norm, output.threshold, self.y_std,
-                    self.event_prior, target_phys=target, event_threshold_phys=self.event_threshold_phys)
+                    self.event_prior, target_phys=target, tau_physical=self.tau_physical)
                 loss = loss + c.excess_amp_loss_weight * amplitude.loss
             if c.shape_loss_weight > 0:
                 if output.excess_shape is None:
                     raise ValueError("Shape supervision requires the severity_shape dual head.")
                 shape_loss = excess_shape_loss(output.excess_shape, target_norm, output.threshold,
-                    self.y_std, self.event_prior, c.severity_shape_eps)
+                    self.y_std, self.event_prior, c.severity_shape_eps,
+                    target_phys=target, tau_physical=self.tau_physical)
                 loss = loss + c.shape_loss_weight * shape_loss
         return loss

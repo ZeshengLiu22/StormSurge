@@ -73,11 +73,11 @@ class ExceedanceExperimentTests(unittest.TestCase):
     def test_all_ten_variants_forward_loss_backward_and_checkpoint(self):
         batch = graph_batch(steps=1)
         stats = dict(y_mean=torch.zeros(4), y_std=torch.tensor([.25, .5, 2., 5.]))
-        criterion = ForecastLoss(LossConfig(), stats, 1., 1.)
+        criterion = ForecastLoss(LossConfig(), stats, 1.)
         for variant, pooling in itertools.product(VARIANTS, POOLS):
             with self.subTest(variant=variant, pooling=pooling):
                 config = ModelConfig(3, 4, hidden_channels=16, history_steps=0,
-                    peak_threshold_norm=[-.4, .2, 1., 2.], peak_prior=.17,
+                    peak_threshold_norm=(1. / stats["y_std"]).tolist(), peak_prior=.17,
                     exceedance_head_experiment=variant, exceedance_gate_pooling=pooling)
                 model = build_model(config).eval()
                 self.assertIs(type(model.head), ExceedanceHead_Experiment)

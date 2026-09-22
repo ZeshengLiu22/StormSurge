@@ -1,4 +1,4 @@
-"""Dimensionless temporal shape supervision using the post-#2 physical target."""
+"""Dimensionless temporal shape supervision using canonical hourly excess."""
 
 from typing import NamedTuple
 
@@ -15,7 +15,7 @@ class ExcessShapeTarget(NamedTuple):
     shape_target: torch.Tensor
 
 
-def excess_shape_target(target_norm, threshold, y_std, eps=1e-6):
+def excess_shape_target(target_norm, threshold, y_std, eps=1e-6, *, target_phys=None, tau_physical=None):
     """Targets depend only on the existing TRAIN-threshold excess, never the body.
 
     a_target is the hard maximum in meters. Every event is normalized by its positive
@@ -23,7 +23,8 @@ def excess_shape_target(target_norm, threshold, y_std, eps=1e-6):
     The shared eps setting is validated but does not floor target amplitudes.
     """
     validate_excess_formulation("severity_shape", eps)
-    event, physical = physical_excess_target(target_norm, threshold, y_std)
+    event, physical = physical_excess_target(target_norm, threshold, y_std,
+        target_phys=target_phys, tau_physical=tau_physical)
     amplitude = physical.max(dim=-1).values
     # Strict events have positive physical amplitude. A unit denominator for
     # non-events avoids 0/0 while retaining their exactly zero physical target.
@@ -32,9 +33,11 @@ def excess_shape_target(target_norm, threshold, y_std, eps=1e-6):
     return ExcessShapeTarget(event, physical, amplitude, shape)
 
 
-def excess_shape_loss(shape_pred, target_norm, threshold, y_std, event_prior, eps=1e-6):
+def excess_shape_loss(shape_pred, target_norm, threshold, y_std, event_prior, eps=1e-6,
+                      *, target_phys=None, tau_physical=None):
     """mean_i[E_i * mean_h((shape_pred - shape_target)**2)] / fixed TRAIN q_E."""
     validate_event_prior(event_prior)
-    target = excess_shape_target(target_norm, threshold, y_std, eps)
+    target = excess_shape_target(target_norm, threshold, y_std, eps,
+        target_phys=target_phys, tau_physical=tau_physical)
     error = torch.where(target.event, _full_precision(shape_pred) - target.shape_target, 0.0)
     return error.square().mean(dim=1).mean() / event_prior

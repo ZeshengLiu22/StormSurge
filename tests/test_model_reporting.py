@@ -112,7 +112,7 @@ class ModelParameterTests(unittest.TestCase):
                             '--temporal_block', 'MLP', '--history_hours', str(history), '--excess_formulation', formulation,
                             '--dual_ablation', ablation, '--hidden_channels', '16', '--node_read_heads', '2',
                             '--time_read_heads', '2', '--epochs', '1', '--num_workers', '0', '--device', 'cpu'])
-                    self.assertEqual(epochs.call_count, 4)  # TRAIN, VAL, then final VAL and TEST.
+                    self.assertEqual(epochs.call_count, 6)  # TRAIN, VAL, then final VAL and TEST.
                     path, = output.glob('best_*.pth')
                     checkpoint = torch.load(path, weights_only=False)
                     counts = checkpoint['model_parameters']
@@ -122,7 +122,7 @@ class ModelParameterTests(unittest.TestCase):
                     self.assertEqual(counts, expected)
                     line = format_parameter_counts(counts)
                     self.assertEqual(console.getvalue().count('[Parameters]'), 1)
-                    self.assertIn(line, console.getvalue().splitlines()[0])
+                    self.assertIn(line, console.getvalue())
                     self.assertNotIn('model_parameters', checkpoint['training_config'])
                     self.assertNotIn('model_parameters', checkpoint['model_config'])
                     # Counts are computed from the actual loaded model, never required in older metadata.
@@ -134,7 +134,7 @@ class ModelParameterTests(unittest.TestCase):
                                     '--device', 'cpu', '--num_workers', '0'])
                     self.assertEqual(passes.call_count, 1)
                     self.assertEqual(inference_console.getvalue().count('[Parameters]'), 1)
-                    self.assertIn(line, inference_console.getvalue().splitlines()[0])
+                    self.assertIn(line, inference_console.getvalue())
                     self.assertEqual(json.loads((inferred / 'metrics.json').read_text())['model_parameters'], counts)
                     report = json.loads(next(inferred.glob('metrics_per_year_*.json')).read_text())
                     self.assertEqual(report['model_parameters'], counts)

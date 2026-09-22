@@ -2,6 +2,8 @@
 
 import numpy as np
 
+from emulator.training.metrics import evaluate_metrics
+
 
 def summarize_excess_amplitude(excess_phys, target_excess_phys, target_phys, event):
     """Branch amplitude errors at the true target peak on TRAIN-threshold events.
@@ -18,14 +20,14 @@ def summarize_excess_amplitude(excess_phys, target_excess_phys, target_phys, eve
         raise ValueError("Excess-amplitude diagnostics require aligned (N,K) excess arrays and N events.")
     if not all(np.isfinite(value).all() for value in (prediction, target, truth)):
         raise ValueError("Excess-amplitude diagnostics require finite values.")
-    names = ("true_peak_excess_rmse", "true_peak_excess_mae", "true_peak_excess_bias",
-             "pred_true_peak_excess_mean", "target_true_peak_excess_mean")
+    names = ("gt_aligned_raw_excess_peak_rmse", "gt_aligned_raw_excess_peak_mae", "gt_aligned_raw_excess_peak_bias",
+             "gt_aligned_raw_excess_peak_pred_mean", "gt_aligned_raw_excess_peak_target_mean")
     if not event.any():
         return dict.fromkeys(names)
-    true_peak = truth[event].argmax(axis=1)
-    rows = np.arange(len(true_peak))
-    a_pred = prediction[event][rows, true_peak]
-    a_target = target[event][rows, true_peak]
+    gt_peak_index = truth[event].argmax(axis=1)
+    rows = np.arange(len(gt_peak_index))
+    a_pred = prediction[event][rows, gt_peak_index]
+    a_target = target[event][rows, gt_peak_index]
     error = a_pred - a_target
     return dict(zip(names, map(float, (np.sqrt(np.mean(error ** 2)), np.mean(np.abs(error)),
                                       np.mean(error), np.mean(a_pred), np.mean(a_target)))))
@@ -87,7 +89,7 @@ def summarize_dual(arrays, tau_phys, bins=10):
                 brier=float(np.mean((probability - event) ** 2)) if count else None,
                 average_precision=average_precision, pr_auc_trapezoid=pr_auc,
                 precision=precision, recall=recall, reliability=reliability, gate_groups=gate_groups,
-                event_window_rmse=rmse(error, event), non_event_window_rmse=rmse(error, ~event),
+                event_window_rmse=evaluate_metrics(prediction, truth, tau_phys)["event_window_rmse"], non_event_window_rmse=rmse(error, ~event),
                 body_rmse=rmse(body - np.minimum(truth, tau_phys), np.ones(count, dtype=bool)),
                 excess_event_rmse=rmse(excess - excess_target, event),
                 **summarize_excess_amplitude(excess, excess_target, truth, event))

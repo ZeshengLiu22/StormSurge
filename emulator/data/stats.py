@@ -4,6 +4,8 @@ import numpy as np
 import torch
 import torch.distributed as dist
 
+from .targets import supervised_targets, threshold_population
+
 
 def fit_statistics(store, indices, x_norm="zscore", p_lo=1.0, p_hi=99.0,
                    nodes_per_graph=256, seed=42, device=None):
@@ -83,21 +85,29 @@ def fit_statistics(store, indices, x_norm="zscore", p_lo=1.0, p_hi=99.0,
     return stats
 
 
-def fit_loss_thresholds(store, indices, tail_frac=0.05, wmse_percentile=95.0, wmse_use_abs=True,
-                        exceedance_percentile=95.0):
-    """Fit independent tail/weighted-loss thresholds and a strict dual event on TRAIN."""
-    if not indices:
-        raise ValueError("Cannot fit loss thresholds on an empty training split.")
-    if not 0 < tail_frac < 1 or not 0 <= wmse_percentile <= 100 or not 0 < exceedance_percentile < 100:
-        raise ValueError("Invalid TRAIN loss percentile settings.")
-    y = torch.stack([store.graphs[i].y.reshape(-1).float() for i in indices]).numpy()
-    if not np.isfinite(y).all():
-        raise ValueError("TRAIN labels must be finite to fit event thresholds.")
-    peaks = y.max(axis=1)
-    peak_threshold = float(np.percentile(peaks, 100 * (1 - tail_frac)))
-    wmse_threshold = float(np.percentile(np.abs(y) if wmse_use_abs else y, wmse_percentile))
-    tau_phys = float(np.percentile(peaks, exceedance_percentile))
-    event_count = int(np.count_nonzero(peaks.astype(np.float64) > tau_phys))
-    return dict(tail_threshold=peak_threshold, wmse_threshold=wmse_threshold, tau_phys=tau_phys,
-                event_prior=event_count / len(indices), event_count=event_count,
-                train_windows=len(indices), exceedance_percentile=exceedance_percentile)
+def fit_loss_thresholds(store, indices, exceedance_percentile=95.0, stats=None):
+    """Fit the one canonical threshold from unique TRAIN physical target hours.
+
+    ``indices`` must contain only the source TRAIN split. All validation, test and
+    transfer datasets reuse the returned threshold without calling this fitter.
+    Normalization is per horizon, so ``tau_normalized`` is a length-K vector.
+    """
+    if not 0 < exceedance_percentile < 100:
+        raise ValueError("TRAIN exceedance_percentile must lie strictly between 0 and 100.")
+    labels, timestamps = supervised_targets(store, indices)
+    chronological = np.argsort(timestamps, axis=None, kind="stable")
+    hourly_values = labels.reshape(-1)[chronological]
+    tau = float(np.quantile(hourly_values, exceedance_percentile / 100., method="linear"))
+    population = threshold_population(labels, timestamps, tau)
+    normalized = None
+    if stats is not None:
+        center = torch.as_tensor(stats["y_mean"], dtype=torch.float64).detach().cpu().numpy()
+        scale = torch.as_tensor(stats["y_std"], dtype=torch.float64).detach().cpu().numpy()
+        if center.size != labels.shape[1] or scale.size != labels.shape[1] or not np.isfinite(center).all() or not np.isfinite(scale).all() or np.any(scale <= 0):
+            raise ValueError("Target normalization requires one finite mean and positive scale per horizon.")
+        normalized = ((tau - center) / scale).reshape(-1).tolist()
+    return dict(metric_schema="hourly_q95_v1", threshold_schema="train_hourly_q95_v1",
+                exceedance_percentile=float(exceedance_percentile), quantile_method="linear",
+                tau_physical=tau, tau_normalized=normalized, fitted_on="train",
+                event_prior=population["event_window_rate"], train_windows=len(labels),
+                **{f"train_{key}": value for key, value in population.items()})

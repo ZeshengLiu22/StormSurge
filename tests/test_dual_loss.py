@@ -23,7 +23,7 @@ from test_pipeline import make_fixture
 
 class DualLossTests(unittest.TestCase):
     def test_dual_loss_cannot_be_disabled_in_any_prediction_mode(self):
-        cores = ("mse", "wmse", "mse_tail", "wmse_tail", "mse_wtail")
+        cores = ("mse", "wmse")
         for mode in (*cores, *(core + "_slope" for core in cores)):
             with self.subTest(mode=mode), patch.dict(os.environ, RANK="0"):
                 console = io.StringIO()
@@ -69,7 +69,7 @@ class DualLossTests(unittest.TestCase):
                                        "--body_loss_weight", "0", "--excess_loss_weight", "0", "--gate_loss_weight", "0"])
                     config = LossConfig(dual_loss=bool(args.dual_loss), body_loss_weight=0,
                                         excess_loss_weight=0, gate_loss_weight=0)
-                    criterion = ForecastLoss(config, dict(y_mean=torch.zeros(2), y_std=torch.ones(2)), 1, 1)
+                    criterion = ForecastLoss(config, dict(y_mean=torch.zeros(2), y_std=torch.ones(2)), 1)
                     pred = torch.tensor([[.2, .6]], requires_grad=True)
                     target = torch.tensor([[.4, .1]])
                     loss = criterion(ForecastOutput(pred), pred, target)
@@ -85,13 +85,13 @@ class DualLossTests(unittest.TestCase):
         stats = dict(y_mean=torch.tensor([.1, -.2]), y_std=torch.tensor([2., 3.]))
         target = torch.tensor([[2., 0.], [0., 0.]]) * stats["y_std"] + stats["y_mean"]
         config = LossConfig(dual_loss=False, body_loss_weight=0, excess_loss_weight=0, gate_loss_weight=0)
-        criterion = ForecastLoss(config, stats, 1, 1)
+        criterion = ForecastLoss(config, stats, 1)
         prediction = output.prediction * stats["y_std"] + stats["y_mean"]
         console = io.StringIO()
         with patch.dict(os.environ, RANK="0"), contextlib.redirect_stdout(console):
             actual = criterion(output, prediction, target)
             criterion(output, prediction, target)  # A resolved config does not warn every batch.
-        expected = ForecastLoss(LossConfig(), stats, 1, 1)(reference,
+        expected = ForecastLoss(LossConfig(), stats, 1)(reference,
             reference.prediction * stats["y_std"] + stats["y_mean"], target)
         torch.testing.assert_close(actual, expected, rtol=0, atol=0)
         actual.backward()

@@ -36,29 +36,26 @@ class DualExperimentTests(unittest.TestCase):
     def setUpClass(cls):
         torch.set_num_threads(1)
 
-    def test_train_prevalence_uses_strict_events_ties_and_independent_thresholds(self):
-        store = SimpleNamespace(graphs=[Data(y=torch.tensor([float(peak), -1.]))
-                                        for peak in (0, 1, 2, 2, 2, 5, 10000)])
+    def test_train_hourly_threshold_and_strict_event_prevalence_with_ties(self):
+        store = SimpleNamespace(graphs=[Data(y=torch.tensor([float(peak), -1.]),
+                                            center_time=f'2001-01-01T{index * 2:02}:00:00')
+                                        for index, peak in enumerate((0, 1, 2, 2, 2, 5, 10000))])
         indices = list(range(6))
-        fitted = fit_loss_thresholds(store, indices, tail_frac=.5, exceedance_percentile=75)
-        self.assertEqual(fitted['tau_phys'], 2.)
-        self.assertEqual(fitted['event_count'], 1)
+        fitted = fit_loss_thresholds(store, indices, exceedance_percentile=75)
+        self.assertEqual(fitted['tau_physical'], 2.)
+        self.assertEqual(fitted['train_event_window_count'], 1)
         self.assertEqual(fitted['event_prior'], 1 / 6)
-        other_tail = fit_loss_thresholds(store, indices, tail_frac=.05, exceedance_percentile=75)
-        self.assertNotEqual(fitted['tail_threshold'], other_tail['tail_threshold'])
-        self.assertEqual(fitted['tau_phys'], other_tail['tau_phys'])
-        self.assertEqual(fitted['event_prior'], other_tail['event_prior'])
-        other_event = fit_loss_thresholds(store, indices, tail_frac=.5, exceedance_percentile=20)
-        self.assertEqual(fitted['tail_threshold'], other_event['tail_threshold'])
-        self.assertEqual(other_event['tau_phys'], 1.)
-        self.assertEqual(other_event['event_prior'], 4 / 6)
+        self.assertEqual(fitted['train_extreme_hour_rate'], 1 / 12)
+        other_event = fit_loss_thresholds(store, indices, exceedance_percentile=20)
+        self.assertEqual(other_event['tau_physical'], -1.)
+        self.assertEqual(other_event['event_prior'], 1.)
         store.graphs[-1].y.fill_(-1e6)
-        self.assertEqual(fitted, fit_loss_thresholds(store, indices, tail_frac=.5, exceedance_percentile=75))
+        self.assertEqual(fitted, fit_loss_thresholds(store, indices, exceedance_percentile=75))
 
     def test_zero_prevalence_is_saved_exactly_and_learned_logits_stay_finite(self):
-        store = SimpleNamespace(graphs=[Data(y=torch.ones(2)) for _ in range(4)])
+        store = SimpleNamespace(graphs=[Data(y=torch.ones(2), center_time=f'2001-01-01T{index * 2:02}:00:00') for index in range(4)])
         fitted = fit_loss_thresholds(store, list(range(4)))
-        self.assertEqual((fitted['tau_phys'], fitted['event_prior'], fitted['event_count']), (1., 0., 0))
+        self.assertEqual((fitted['tau_physical'], fitted['event_prior'], fitted['train_event_window_count']), (1., 0., 0))
         for prior in (0., 1 / 6, 1.):
             learned = ExceedanceHead(8, 0, [1., 1.], prior)
             result = learned(torch.randn(3, 2, 8))
@@ -82,11 +79,11 @@ class DualExperimentTests(unittest.TestCase):
                                         torch.zeros(2, 2, requires_grad=True),
                                         torch.ones(2, 2, requires_grad=True),
                                         None if mode == 'fixed_gate' else torch.zeros(2, 1, requires_grad=True),
-                                        torch.ones(1, 2))
+                                        ((2.-stats['y_mean'])/stats['y_std'])[None,:])
                 config = LossConfig(dual_ablation=mode, excess_amp_loss_weight=.7)
                 prediction = output.prediction * stats['y_std'] + stats['y_mean']
-                loss = ForecastLoss(config, stats, 3., 2., event_prior=.2, event_threshold=2.)(output, prediction, target)
-                terms = dual_loss_terms(output, norm_target, stats['y_std'])
+                loss = ForecastLoss(config, stats, 2., event_prior=.2)(output, prediction, target)
+                terms = dual_loss_terms(output, norm_target, stats['y_std'], target_phys=target, tau_physical=2.)
                 expected = (prediction - target).square().mean()
                 for name, term in zip(('body_loss_weight', 'excess_loss_weight', 'gate_loss_weight'), terms):
                     self.assertEqual(getattr(config, name), 0 if name in disabled else 1)
@@ -94,7 +91,7 @@ class DualExperimentTests(unittest.TestCase):
                         expected = expected + term
                 if 'excess_amp_loss_weight' not in disabled:
                     amplitude = excess_amplitude_terms(output.excess, norm_target, output.threshold,
-                                                       stats['y_std'], .2, target_phys=target, event_threshold_phys=2.)
+                                                       stats['y_std'], .2, target_phys=target, tau_physical=2.)
                     expected = expected + .7 * amplitude.loss
                 self.assertEqual(config.excess_amp_loss_weight, 0 if 'excess_amp_loss_weight' in disabled else .7)
                 torch.testing.assert_close(loss, expected)
@@ -117,7 +114,7 @@ class DualExperimentTests(unittest.TestCase):
         torch.testing.assert_close(output.prediction, model(batch).prediction)
         stats = dict(y_mean=torch.zeros(4), y_std=torch.ones(4))
         with self.assertRaisesRegex(ValueError, 'same fixed_gate'):
-            ForecastLoss(LossConfig(), stats, 1., 1.)(output, output.prediction, torch.zeros(2, 4))
+            ForecastLoss(LossConfig(), stats, 1.)(output, output.prediction, torch.zeros(2, 4))
         restored = build_model(ModelConfig(**asdict(ModelConfig(3, 4, hidden_channels=16,
             node_read_heads=2, time_read_heads=2, peak_threshold_norm=[1.] * 4,
             peak_prior=.2, dual_ablation='fixed_gate')))).eval()
@@ -131,19 +128,17 @@ class DualExperimentTests(unittest.TestCase):
             with self.subTest(args=args), contextlib.redirect_stderr(io.StringIO()), self.assertRaises(SystemExit):
                 train.parse_args(args)
 
-    def test_ablation_profiles_reach_cli_and_keep_the_matched_protocol(self):
+    def test_ablation_options_reach_cli_and_keep_the_matched_protocol(self):
         root = Path(__file__).resolve().parents[1]
-        modes = set()
-        full = train.parse_args(dry_commands(root / 'configs/train_config_NCEP_Battery_Stable_Dual.sh')[0])
-        for path in sorted((root / 'configs/dual_ablations').glob('*.sh')):
-            args = train.parse_args(dry_commands(path)[0])
-            modes.add(args.dual_ablation)
+        command = dry_commands(root / 'configs/current/train_config_NCEP_Battery_D0_DualBase.sh')[0]
+        full = train.parse_args(command)
+        for mode in DUAL_ABLATIONS:
+            args = train.parse_args([*command, '--dual_ablation', mode])
             for key in ('history_hours', 'lr', 'batch_size', 'grad_accum_steps', 'epochs',
-                        'encoder_type', 'temporal_block', 'exceedance_percentile', 'tail_frac', 'seed'):
+                        'encoder_type', 'temporal_block', 'exceedance_percentile', 'seed'):
                 self.assertEqual(getattr(full, key), getattr(args, key), key)
-            for key in DUAL_ABLATIONS[args.dual_ablation]:
+            for key in DUAL_ABLATIONS[mode]:
                 self.assertEqual(getattr(args, key), 0)
-        self.assertEqual(modes, set(DUAL_ABLATIONS) - {'none'})
 
     def test_every_mode_trains_reloads_and_exports_aligned_physical_diagnostics(self):
         with tempfile.TemporaryDirectory() as temporary:
@@ -151,7 +146,7 @@ class DualExperimentTests(unittest.TestCase):
             torch.manual_seed(83)
             graphs, stations = make_fixture(root)
             store = ForcingGraphStore(graphs, 'Battery')
-            reference = fit_loss_thresholds(store, store.split()['train'], tail_frac=.4, exceedance_percentile=75)
+            reference = fit_loss_thresholds(store, store.split()['train'], exceedance_percentile=75)
             for mode in DUAL_ABLATIONS:
                 with self.subTest(mode=mode):
                     output = root / mode
@@ -159,19 +154,20 @@ class DualExperimentTests(unittest.TestCase):
                         train.main(['--root_dir', str(graphs), '--station', 'Battery',
                                     '--station_json_dir', str(stations), '--output_dir', str(output),
                                     '--model', 'perceiver3', '--head_type', 'dual', '--dual_ablation', mode,
-                                    '--exceedance_percentile', '75', '--tail_frac', '.4', '--loss_mode', 'mse_tail',
+                                    '--exceedance_percentile', '75', '--exceedance_loss_weight', '.025',
                                     '--epochs', '1', '--warmup_epochs', '0', '--device', 'cpu', '--num_workers', '0',
                                     '--batch_size', '4', '--hidden_channels', '16', '--history_hours', '12'])
                     checkpoint_path = next(output.glob('best_*.pth'))
                     checkpoint = torch.load(checkpoint_path, weights_only=False)
                     meta = checkpoint['dual_metadata']
-                    self.assertEqual(meta['tau_phys'], reference['tau_phys'])
+                    self.assertEqual(meta['tau_physical'], reference['tau_physical'])
                     self.assertEqual(meta['event_prior'], reference['event_prior'])
                     self.assertEqual(checkpoint['model_config']['peak_prior'], reference['event_prior'])
-                    self.assertEqual(checkpoint['loss_thresholds'], reference)
+                    self.assertEqual({k:v for k,v in checkpoint['threshold_metadata'].items() if k != 'tau_normalized'},
+                                     {k:v for k,v in reference.items() if k != 'tau_normalized'})
                     self.assertEqual(checkpoint['model_config']['dual_ablation'], mode)
                     logs = [json.loads(line) for line in next(output.glob('metrics_*.jsonl')).read_text().splitlines()]
-                    self.assertEqual(set(logs[0]), {'epoch', 'train', 'val'})
+                    self.assertEqual(set(logs[0]), {'epoch', 'train', 'val', 'eventaware_score'})
                     for diagnostics in (False, True):
                         destination = output / ('diagnostics' if diagnostics else 'plain')
                         with contextlib.redirect_stdout(io.StringIO()):
@@ -184,17 +180,19 @@ class DualExperimentTests(unittest.TestCase):
                     with np.load(output / 'diagnostics/dual_diagnostics.npz') as arrays:
                         np.testing.assert_allclose(arrays['y_pred'], arrays['body_phys'] + arrays['contribution_phys'],
                                                    rtol=1e-5, atol=1e-6)
-                        np.testing.assert_array_equal(arrays['event'], (arrays['y_true'].astype(float) > meta['tau_phys']).any(axis=1))
+                        np.testing.assert_array_equal(arrays['event'], (arrays['y_true'].astype(float) > meta['tau_physical']).any(axis=1))
                         np.testing.assert_array_equal(arrays['tags'], checkpoint['split_tags']['test'])
                         if mode == 'fixed_gate':
                             np.testing.assert_allclose(arrays['gate_probability'], meta['event_prior'])
                         with np.load(output / 'plain/predictions.npz') as plain:
                             np.testing.assert_array_equal(arrays['y_pred'], plain['y_pred'])
                         report = json.loads((output / 'diagnostics/dual_diagnostics.json').read_text())
+                        self.assertEqual(report['threshold_metadata'], checkpoint['threshold_metadata'])
+                        self.assertIn('strict exceedance y > tau', report['method'])
                         self.assertAlmostEqual(report['overall']['brier'],
                                                float(np.mean((arrays['gate_probability'].astype(float) - arrays['event']) ** 2)))
-                        self.assertTrue({'true_peak_excess_rmse', 'true_peak_excess_mae', 'true_peak_excess_bias',
-                                         'pred_true_peak_excess_mean', 'target_true_peak_excess_mean'} <= report['overall'].keys())
+                        self.assertTrue({'gt_aligned_raw_excess_peak_rmse', 'gt_aligned_raw_excess_peak_mae', 'gt_aligned_raw_excess_peak_bias',
+                                         'gt_aligned_raw_excess_peak_pred_mean', 'gt_aligned_raw_excess_peak_target_mean'} <= report['overall'].keys())
                     if mode == 'fixed_gate':
                         repo = Path(__file__).resolve().parents[1]
                         for launcher in ('infer.sh', 'infer_multi.sh'):

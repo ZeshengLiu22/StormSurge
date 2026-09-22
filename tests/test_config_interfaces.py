@@ -1,4 +1,4 @@
-"""Exercise the original shell sweep and compare the loss-mode definitions."""
+"""Current shell/config interface and physical objective definitions."""
 
 import contextlib
 from dataclasses import asdict
@@ -22,8 +22,7 @@ from emulator.training import ForecastLoss, LossConfig
 from test_models import graph_batch
 
 REPO = Path(__file__).resolve().parents[1]
-MODES = ('mse', 'wmse', 'mse_tail', 'wmse_tail', 'mse_wtail',
-         'mse_slope', 'wmse_slope', 'mse_tail_slope', 'wmse_tail_slope', 'mse_wtail_slope')
+MODES = ('mse', 'wmse', 'mse_slope', 'wmse_slope')
 
 
 def dry_commands(config):
@@ -41,9 +40,9 @@ class ConfigInterfaceTests(unittest.TestCase):
             values = asdict(LossConfig())
             values.pop(missing)
             with self.subTest(missing=missing), self.assertRaisesRegex(AttributeError, missing):
-                ForecastLoss(SimpleNamespace(**values), stats, 1., 1.)
+                ForecastLoss(SimpleNamespace(**values), stats, 1.)
             # Every input uses the same explicit config-resolution step, without age/version checks.
-            ForecastLoss(LossConfig(**values), stats, 1., 1.)
+            ForecastLoss(LossConfig(**values), stats, 1.)
 
     def test_every_loss_mode_keeps_explicit_amplitude_and_shape_controls(self):
         for mode in MODES:
@@ -92,91 +91,86 @@ class ConfigInterfaceTests(unittest.TestCase):
                 with self.subTest(flag=flag, invalid=invalid), self.assertRaises(SystemExit), contextlib.redirect_stderr(io.StringIO()):
                     parser([*prefix, flag, invalid])
 
-    def test_every_training_profile_generates_valid_commands(self):
-        configs = sorted([*REPO.glob('configs/configs_train*/*/*.sh'),
-                          *REPO.glob('configs/train_config_*_Stable_*.sh')])
-        self.assertEqual(len(configs), 114)
-        count = 0
-        for config in configs:
-            with self.subTest(config=config.relative_to(REPO)):
-                commands = dry_commands(config)
-                self.assertTrue(commands)
-                for command in commands:
-                    args = train.parse_args(command)
-                    self.assertEqual(args.dual_mode, 'exceedance')
-                    self.assertFalse(hasattr(args, 'stable_arch'))
-                    self.assertNotIn('--stable_arch', command)
-                    if 'configs_train_single' in config.parts:
-                        self.assertEqual(args.grad_accum_steps, 4)
-                    if args.model == 'perceiver3':
-                        self.assertEqual(args.head_type, 'single' if 'Stable_Single' in config.name else 'dual')
-                    count += 1
-        self.assertGreaterEqual(count, 114)
+    def test_current_generator_emits_matched_valid_configs(self):
+        from tools.generate_configs import generate, VARIANTS
+        with tempfile.TemporaryDirectory() as temporary:
+            generated = Path(temporary)
+            rows = generate(generated)
+            self.assertEqual(len(rows), 20)
+            for row in rows:
+                commands = dry_commands(generated / row['config'])
+                self.assertEqual(len(commands), 1)
+                args = train.parse_args(commands[0])
+                self.assertEqual(args.head_type, row['head_type'])
+                self.assertEqual(args.exceedance_loss_weight, row['exceedance_loss_weight'])
+                self.assertEqual(args.excess_amp_loss_weight, row['excess_amp_loss_weight'])
+                self.assertEqual((args.hidden_channels,args.lr,args.grad_accum_steps), (128,.005,4))
+                self.assertEqual(args.exceedance_percentile,95.)
+                self.assertEqual((args.ckpt_w_all,args.ckpt_w_exceedance,args.ckpt_w_peak),(.65,.2,.15))
+                checked_in = REPO / 'configs/current' / row['config']
+                self.assertEqual((generated/row['config']).read_text(),checked_in.read_text())
+            self.assertEqual(len(generate(generated,include_severity_shape=True)),36)
+            for path in generated.glob('*SeverityShape.sh'):
+                args = train.parse_args(dry_commands(path)[0])
+                self.assertEqual(args.excess_formulation,'severity_shape')
 
-    def test_original_conditional_cartesian_sweep_has_all_390_combinations(self):
+    def test_conditional_cartesian_sweep(self):
         with tempfile.TemporaryDirectory() as temporary:
             config = Path(temporary) / 'sweep.sh'
-            config.write_text('''MODEL=perceiver3
-HEAD_TYPE=dual
-LOSS_MODE_LIST=(mse wmse mse_tail wmse_tail mse_wtail mse_slope wmse_slope mse_tail_slope wmse_tail_slope mse_wtail_slope)
-LR_LIST=(.001 .005)
-HISTORY_HOURS_LIST=(0 12 48)
-WMSE_Q_LIST=(90 95)
-TAIL_LAMBDA_LIST=(.1 .2)
-SLOPE_LAMBDA_LIST=(.01 .02)
-SLOPE_MASK_S_LIST=(.1 .2)
-ALL_RESULTS_ROOT="'''+str(Path(temporary) / 'results')+'"\n')
-            commands = dry_commands(config)
-            actual = set()
+            config.write_text('MODEL=perceiver3\nHEAD_TYPE=dual\n'
+                'LOSS_MODE_LIST=(mse wmse mse_slope wmse_slope)\n'
+                'LR_LIST=(.001 .005)\nHISTORY_HOURS_LIST=(0 12 48)\n'
+                'EXCEEDANCE_LOSS_WEIGHT=.2\nSLOPE_LAMBDA_LIST=(.01 .02)\n'
+                'SLOPE_MASK_S_LIST=(.1 .2)\nALL_RESULTS_ROOT="'+str(Path(temporary)/'results')+'"\n')
+            commands=dry_commands(config)
+            actual=set()
             for command in commands:
-                args = train.parse_args(command)
-                actual.add((args.loss_mode, args.lr, args.history_hours, args.wmse_q,
-                            args.tail_lambda, args.slope_lambda, args.slope_mask_s))
-            expected = set()
-            for mode, lr, history in itertools.product(MODES, (.001, .005), (0, 12, 48)):
-                q = (90., 95.) if mode.startswith('wmse') or 'wtail' in mode else (90.,)
-                tail = (.1, .2) if 'tail' in mode else (.1,)
-                slope = (.01, .02) if mode.endswith('_slope') else (.01,)
-                mask = (.1, .2) if mode.endswith('_slope') else (.1,)
-                expected.update((mode, lr, history, *values) for values in itertools.product(q, tail, slope, mask))
-            self.assertEqual(len(commands), 390)
-            self.assertEqual(actual, expected)
-            self.assertFalse((Path(temporary) / 'results').exists())
+                args=train.parse_args(command)
+                actual.add((args.loss_mode,args.lr,args.history_hours,args.slope_lambda,args.slope_mask_s))
+                self.assertEqual(args.exceedance_loss_weight,.2)
+            expected=set()
+            for mode,lr,history in itertools.product(MODES,(.001,.005),(0,12,48)):
+                slope=(.01,.02) if mode.endswith('_slope') else (.01,)
+                mask=(.1,.2) if mode.endswith('_slope') else (.1,)
+                expected.update((mode,lr,history,*values) for values in itertools.product(slope,mask))
+            self.assertEqual(len(commands),60)
+            self.assertEqual(actual,expected)
+            self.assertFalse((Path(temporary)/'results').exists())
 
-    def test_loss_modes_match_physical_unit_reference_and_gradients(self):
-        # Different pointwise and window thresholds catch the previous slope-threshold regression.
-        target = torch.tensor([[-.8, .2, .3], [.1, 1.2, .7], [.3, .25, .2]], dtype=torch.float64)
-        initial = torch.tensor([[-.6, .15, .6], [.2, 1., .5], [.4, .1, .35]], dtype=torch.float64)
-        stats = dict(y_mean=torch.zeros(3), y_std=torch.ones(3))
-        base_weighted = {'wmse', 'wmse_tail'}
-        tail_weighted = {'wmse_tail', 'mse_wtail'}
-        for mode, robust, use_abs, threshold in itertools.product(MODES, ('charb', 'huber'), (False, True), (.9, 2.)):
-            with self.subTest(mode=mode, robust=robust, use_abs=use_abs, threshold=threshold):
-                pred = initial.clone().requires_grad_()
-                c = LossConfig(loss_mode=mode, slope_robust=robust, wmse_use_abs=use_abs,
-                               tail_lambda=.2, tail_frac=.2, slope_lambda=.3, wmse_s=.13, slope_mask_s=.21)
-                actual = ForecastLoss(c, stats, threshold, .4)(ForecastOutput(pred), pred, target)
-                reference_pred = initial.clone().requires_grad_()
-                squared = (reference_pred - target).square()
-                weight = 1 + 4 * torch.sigmoid(((target.abs() if use_abs else target) - .4) / .13)
-                core = mode.removesuffix('_slope')
-                expected = (squared * weight).mean() if core in base_weighted else squared.mean()
-                selected = target.max(dim=1).values >= threshold
-                if 'tail' in core:
-                    tail_error = (squared * weight) if core in tail_weighted else squared
-                    expected += .2 * tail_error[selected].sum() / (c.tail_frac * target.numel())
+    def test_loss_modes_match_physical_reference_and_gradients(self):
+        target=torch.tensor([[-.8,.2,.3],[.1,1.2,.7],[.3,.25,.2]],dtype=torch.float64)
+        initial=torch.tensor([[-.6,.15,.6],[.2,1.,.5],[.4,.1,.35]],dtype=torch.float64)
+        stats=dict(y_mean=torch.zeros(3),y_std=torch.ones(3))
+        for mode,robust,tau in itertools.product(MODES,('charb','huber'),(.9,2.)):
+            with self.subTest(mode=mode,robust=robust,tau=tau):
+                pred=initial.clone().requires_grad_()
+                config=LossConfig(loss_mode=mode,slope_robust=robust,exceedance_loss_weight=.2,
+                                  slope_lambda=.3,wmse_s=.13,slope_mask_s=.21)
+                actual=ForecastLoss(config,stats,tau,extreme_hour_prior=.2)(ForecastOutput(pred),pred,target)
+                reference=initial.clone().requires_grad_()
+                squared=(reference-target).square()
+                weight=1+4*torch.sigmoid((target-tau)/.13)
+                expected=(squared*weight).mean() if mode.startswith('wmse') else squared.mean()
+                expected+=.2*(squared*(target>tau)).mean()/.2
                 if mode.endswith('_slope'):
-                    difference = (reference_pred[:, 1:] - reference_pred[:, :-1]) - (target[:, 1:] - target[:, :-1])
-                    if robust == 'charb':
-                        penalty = torch.sqrt(difference**2 + .001**2)
+                    difference=reference.diff(dim=1)-target.diff(dim=1)
+                    if robust=='charb':
+                        penalty=torch.sqrt(difference.square()+.001**2)
                     else:
-                        penalty = torch.where(difference.abs() <= .05, .5 * difference**2, .05 * (difference.abs() - .025))
-                    mask = torch.sigmoid((.4 - target.abs().max(dim=1).values) / .21)
-                    expected += .3 * (penalty * mask[:, None]).mean()
-                torch.testing.assert_close(actual, expected, rtol=1e-12, atol=1e-12)
-                actual.backward()
-                expected.backward()
-                torch.testing.assert_close(pred.grad, reference_pred.grad, rtol=1e-12, atol=1e-12)
+                        penalty=torch.where(difference.abs()<=.05,.5*difference.square(),.05*(difference.abs()-.025))
+                    mask=torch.sigmoid((tau-target.max(dim=1).values)/.21)
+                    expected+=.3*(penalty*mask[:,None]).mean()
+                torch.testing.assert_close(actual,expected,rtol=1e-12,atol=1e-12)
+                actual.backward(); expected.backward()
+                torch.testing.assert_close(pred.grad,reference.grad,rtol=1e-12,atol=1e-12)
+
+    def test_removed_scientific_options_are_rejected(self):
+        for arguments in (['--tail_frac','.05'],['--tail_lambda','.1'],['--wmse_q','95'],
+                          ['--wmse_use_abs','1'],['--loss_mode','mse_tail'],
+                          ['--checkpoint_selection','peakaware'],['--save_aux_checkpoints','1'],
+                          ['--track_peakaware','1'],['--checkpoint_score_refs','unused.json']):
+            with self.subTest(arguments=arguments),self.assertRaises(SystemExit),contextlib.redirect_stderr(io.StringIO()):
+                train.parse_args(arguments)
 
     def test_lag_embedding_capacity_covers_the_history_window(self):
         torch.set_num_threads(1)
@@ -201,7 +195,7 @@ ALL_RESULTS_ROOT="'''+str(Path(temporary) / 'results')+'"\n')
             graphs, stations = make_fixture(root)
             config = root / 'rop.sh'
             config.write_text(f"ROOT_DIR={graphs}\nSTATION=Battery\nSTATION_JSON_DIR={stations}\n"
-                              "SCHEDULER=rop\nROP_METRIC=val_rmse_peak\nROP_FACTOR=.3\nROP_PATIENCE=7\n"
+                              "SCHEDULER=rop\nROP_METRIC=val_exceedance_rmse\nROP_FACTOR=.3\nROP_PATIENCE=7\n"
                               "ROP_THRESHOLD=.02\nROP_COOLDOWN=4\nROP_MIN_LR=.00002\n")
             command = dry_commands(config)[0]
             # Do not create artifacts in the default sweep directory during this test.

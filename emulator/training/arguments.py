@@ -7,7 +7,6 @@ from pathlib import Path
 from emulator.common.cli import head_type_name, parse_bool_int, temporal_block_name
 from emulator.common.dual import DUAL_ABLATIONS, EXCESS_FORMULATIONS
 from .losses import enforce_dual_loss, validate_excess_amp_config, validate_shape_config
-from .checkpoints import SELECTION_METRICS, validate_checkpoint_settings
 
 
 def parse_args(argv=None):
@@ -94,23 +93,17 @@ def parse_args(argv=None):
         "--loss_mode",
         type=str,
         default="mse",
-        choices=["mse", "wmse", "mse_tail", "wmse_tail", "mse_wtail", "mse_slope", "wmse_slope", "mse_tail_slope", "wmse_tail_slope", "mse_wtail_slope"],
-        help="Base modes: mse, wmse, mse_tail, wmse_tail, mse_wtail. Suffix *_slope adds slope-matching smoothness with a soft mask (see --slope_* args).",
+        choices=["mse", "wmse", "mse_slope", "wmse_slope"],
+        help="Physical MSE or smooth tau-weighted MSE; suffix *_slope adds slope matching.",
     )
-    parser.add_argument("--wmse_q", type=float, default=95.0,
-                        help="Percentile for q threshold computed on TRAIN (over |y| across all horizons).")
     parser.add_argument("--wmse_alpha", type=float, default=4.0,
-                        help="alpha in w(y)=1+alpha*sigmoid((|y|-q)/s).")
+                        help="alpha in w(y)=1+alpha*sigmoid((y-tau)/s).")
     parser.add_argument("--wmse_s", type=float, default=0.10,
                         help="s in meters (softness) for weighted MSE. Typical: 0.05~0.2.")
-    parser.add_argument("--wmse_use_abs", type=int, default=1, choices=[0, 1],
-                        help="1: use |y| in weight; 0: use y directly.")
-    parser.add_argument("--tail_frac", type=float, default=0.05,
-                        help="Top fraction by GT peak (max over horizons) for tail auxiliary loss.")
     parser.add_argument("--exceedance_percentile", type=float, default=95.0,
-                        help="TRAIN window-maximum percentile defining the dual event; independent of tail_frac.")
-    parser.add_argument("--tail_lambda", type=float, default=0.10,
-                        help="Weight for tail auxiliary loss. Start small: 0.05~0.2.")
+                        help="Linear quantile percentile of unique physical TRAIN target hours; reused for every split.")
+    parser.add_argument("--exceedance_loss_weight", type=float, default=0.0,
+                        help="Extra MSE on strict hourly y > TRAIN tau, divided by fixed TRAIN extreme-hour prevalence.")
     parser.add_argument("--slope_lambda", type=float, default=0.01,
                         help="Weight for slope-matching smoothness loss. Typical: 0.001~0.05. Used only for *_slope modes.")
     parser.add_argument("--slope_mask_s", type=float, default=0.10,
@@ -131,9 +124,9 @@ def parse_args(argv=None):
     parser.add_argument("--rop_threshold", type=float, default=1e-4)
     parser.add_argument("--rop_cooldown", type=int, default=0)
     parser.add_argument("--rop_min_lr", type=float, default=1e-6)
-    parser.add_argument("--rop_metric", type=str, default="val_rmse_phys",
-                        choices=["val_rmse_phys", "val_rmse_peak"],
-                        help="Metric used for ROP stepping. val_rmse_peak is global top5%% GT peak RMSE from the validation pass.")
+    parser.add_argument("--rop_metric", type=str, default="val_all_rmse",
+                        choices=["val_all_rmse", "val_exceedance_rmse"],
+                        help="Physical VAL RMSE used for ReduceLROnPlateau stepping.")
     parser.add_argument("--num_workers", type=int, default=4)
     parser.add_argument("--pin_memory", action="store_true")
     parser.add_argument("--persistent_workers", action="store_true")
@@ -180,11 +173,11 @@ def parse_args(argv=None):
     parser.add_argument("--body_loss_weight", type=float, default=1.0)
     parser.add_argument("--excess_loss_weight", type=float, default=1.0)
     parser.add_argument("--excess_formulation", choices=EXCESS_FORMULATIONS, default="direct",
-                        help="Direct normalized excess (legacy) or physical severity times normalized temporal shape.")
+                        help="Direct normalized excess or physical severity times normalized temporal shape.")
     parser.add_argument("--shape_loss_weight", type=float, default=0.0,
                         help="Optional dimensionless temporal shape supervision; requires severity_shape.")
     parser.add_argument("--severity_shape_eps", type=float, default=1e-6,
-                        help="Positive floor for per-window raw-shape and physical target-amplitude normalization.")
+                        help="Positive epsilon added before predicted shape maximum normalization; GT amplitudes are not floored.")
     parser.add_argument("--excess_amp_loss_weight", type=float, default=0.0,
                         help="Optional physical excess amplitude loss at the true target peak time; requires the supervised dual head.")
     parser.add_argument("--gate_loss_weight", type=float, default=1.0)
@@ -205,20 +198,11 @@ def parse_args(argv=None):
     parser.add_argument("--transformer_dropout", type=float, default=0.05)
     parser.add_argument("--max_time_steps", type=int, default=32,
                         help="PACT lag-embedding capacity, including the current step; ignored by baseline.")
-    parser.add_argument("--checkpoint_selection", choices=(*SELECTION_METRICS, "peakaware"), default="overall",
-                        help="VAL-only primary checkpoint rule; independent of losses and the LR scheduler.")
-    # Suppressed defaults keep historical resolved configs and filenames identical.
-    parser.add_argument("--track_peakaware", type=parse_bool_int, choices=[0, 1], default=argparse.SUPPRESS,
-                        help="Opt in to a second normalized-score tracker while selecting overall.")
-    parser.add_argument("--checkpoint_score_refs", type=str, default=argparse.SUPPRESS,
-                        help="Frozen station-specific S0 VAL reference JSON; default checkpoint_score_refs.json.")
-    for term, weight in (("all", .65), ("top5", .20), ("truepeak", .15)):
-        parser.add_argument(f"--ckpt_score_w_{term}", type=float, default=argparse.SUPPRESS,
-                            help=f"Normalized checkpoint-score weight; default {weight}.")
-    parser.add_argument("--checkpoint_overall_tol", type=float, default=.01,
-                        help="Relative overall RMSE tolerance for exact constrained peak selection.")
-    parser.add_argument("--save_aux_checkpoints", type=parse_bool_int, choices=[0, 1], default=0,
-                        help="Retain all five VAL-only checkpoint roles from the same training run.")
+    parser.add_argument("--checkpoint_selection", choices=("overall", "eventaware"), default="overall",
+                        help="Primary checkpoint role; both VAL-only roles are always retained.")
+    for term, weight in (("all", .65), ("exceedance", .20), ("peak", .15)):
+        parser.add_argument(f"--ckpt_w_{term}", type=float, default=weight,
+                            help=f"Event-aware score coefficient in physical meters; default {weight}.")
     parser.add_argument("--run_tag", type=str, default=None)
     parser.add_argument(
         "--output_dir",
@@ -257,9 +241,9 @@ def parse_args(argv=None):
         parser.error("Invalid learning-rate or warmup settings.")
     if args.warmup_epochs < 0:
         parser.error("--warmup_epochs must be nonnegative.")
-    if not 0 < args.tail_frac < 1 or not 0 <= args.wmse_q <= 100 or not 0 < args.exceedance_percentile < 100:
+    if not math.isfinite(args.exceedance_percentile) or not 0 < args.exceedance_percentile < 100:
         parser.error("Invalid TRAIN loss percentile settings.")
-    for name in ("max_grad_norm", "body_loss_weight", "excess_loss_weight", "gate_loss_weight", "tail_lambda", "slope_lambda"):
+    for name in ("max_grad_norm", "body_loss_weight", "excess_loss_weight", "gate_loss_weight", "exceedance_loss_weight", "wmse_alpha", "slope_lambda"):
         if not math.isfinite(getattr(args, name)) or getattr(args, name) < 0:
             parser.error(f"--{name} must be finite and nonnegative.")
     for name in ("wmse_s", "slope_mask_s", "slope_charb_eps", "slope_huber_delta"):
@@ -268,13 +252,8 @@ def parse_args(argv=None):
     try:
         validate_excess_amp_config(args, head_type=args.head_type)
         validate_shape_config(args, head_type=args.head_type, model=args.model)
-        validate_checkpoint_settings("overall" if args.checkpoint_selection == "peakaware" else args.checkpoint_selection,
-                                     args.checkpoint_overall_tol, args.save_aux_checkpoints)
-        from .peakaware_checkpoints import enabled, read_settings
-        if enabled(args):
-            read_settings(args)
-        elif any(hasattr(args, key) for key in ("checkpoint_score_refs", "ckpt_score_w_all", "ckpt_score_w_top5", "ckpt_score_w_truepeak")):
-            raise ValueError("Score references/weights require --track_peakaware 1 or --checkpoint_selection peakaware.")
+        from .eventaware_checkpoints import validate_score_weights
+        validate_score_weights(getattr(args, f"ckpt_w_{term}") for term in ("all", "exceedance", "peak"))
     except ValueError as error:
         parser.error(str(error))
     if args.head_type == "dual":

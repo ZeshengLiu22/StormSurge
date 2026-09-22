@@ -3,5 +3,6 @@ from .loaders import build_loader
 from .normalization import normalize_inputs
 from .station_metadata import load_station_json, station_features_from_json
 from .stats import fit_loss_thresholds, fit_statistics
+from .targets import supervised_targets, target_timestamps_from_graph, threshold_population, validate_target_timestamps
 
-__all__ = ['ForcingGraphStore', 'ForcingGraphView', 'build_loader', 'normalize_inputs', 'load_station_json', 'station_features_from_json', 'fit_loss_thresholds', 'fit_statistics']
+__all__ = ['ForcingGraphStore', 'ForcingGraphView', 'build_loader', 'normalize_inputs', 'load_station_json', 'station_features_from_json', 'fit_loss_thresholds', 'fit_statistics', 'supervised_targets', 'target_timestamps_from_graph', 'threshold_population', 'validate_target_timestamps']

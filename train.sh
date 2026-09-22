@@ -22,9 +22,9 @@ trap cleanup INT TERM
 #   bash train.sh configs/train_config_*.sh
 #   USE_TMUX=1 bash train.sh configs/train_config_*.sh
 #
-CONFIG_PATH="${1:-configs/train_config.sh}"
+CONFIG_PATH="${1:-configs/current/train_config_NCEP_Battery_D0_DualBase.sh}"
 if [[ "${CONFIG_PATH}" == "--_tmux_inner" ]]; then
-  CONFIG_PATH="configs/train_config.example.sh"
+  CONFIG_PATH="configs/current/train_config_NCEP_Battery_D0_DualBase.sh"
 fi
 if [[ ! -f "${CONFIG_PATH}" ]]; then
   echo "[FATAL] config not found: ${CONFIG_PATH}"
@@ -38,7 +38,7 @@ source "${CONFIG_PATH}"
 set -u
 
 # =========================
-# Safe defaults (so older/partial configs don't break)
+# Resolved configuration defaults
 # =========================
 : "${TRAIN_PY:=train.py}"
 : "${num_gpus:=1}"
@@ -110,12 +110,9 @@ if [[ -z "${HISTORY_HOURS_LIST+x}" ]]; then HISTORY_HOURS_LIST=(24); fi
 if [[ -z "${LOSS_MODE_LIST+x}" ]]; then LOSS_MODE_LIST=("mse"); fi
 
 # Loss knobs
-: "${TAIL_FRAC:=0.05}"
-if [[ -z "${TAIL_LAMBDA_LIST+x}" ]]; then TAIL_LAMBDA_LIST=("0.10"); fi
-if [[ -z "${WMSE_Q_LIST+x}" ]]; then WMSE_Q_LIST=("95"); fi
+: "${EXCEEDANCE_LOSS_WEIGHT:=0}"
 : "${WMSE_ALPHA:=4.0}"
 : "${WMSE_S:=0.10}"
-: "${WMSE_USE_ABS:=1}"
 
 # Slope knobs (only used for *_slope modes)
 if [[ -z "${SLOPE_LAMBDA_LIST+x}" ]]; then SLOPE_LAMBDA_LIST=("0.01"); fi
@@ -129,7 +126,7 @@ if [[ -z "${SLOPE_MASK_S_LIST+x}" ]]; then SLOPE_MASK_S_LIST=("0.10"); fi
 : "${WARMUP_EPOCHS:=5}"
 : "${WARMUP_START_FACTOR:=0.1}"
 : "${MIN_LR:=1e-6}"
-# Removed experiment knobs must not silently change a historical command.
+# Reject removed architecture settings.
 if [[ "${STABILITY_GUARD:-0}" != "0" || -n "${STABLE_ARCH_VERSION:-}" ]]; then
   echo "Old guard/version settings were removed from v2; remove them from this config." >&2
   exit 2
@@ -149,10 +146,11 @@ fi
 : "${SEVERITY_SHAPE_EPS:=1e-6}"
 : "${EXCESS_AMP_LOSS_WEIGHT:=0}"
 : "${CHECKPOINT_SELECTION:=overall}"
-: "${CHECKPOINT_OVERALL_TOL:=0.01}"
-: "${SAVE_AUX_CHECKPOINTS:=0}"
+: "${CKPT_W_ALL:=0.65}"
+: "${CKPT_W_EXCEEDANCE:=0.20}"
+: "${CKPT_W_PEAK:=0.15}"
 : "${GATE_LOSS_WEIGHT:=1}"
-: "${ROP_METRIC:=val_rmse_phys}"   # val_rmse_phys | val_rmse_peak
+: "${ROP_METRIC:=val_all_rmse}"   # val_all_rmse | val_exceedance_rmse
 
 : "${ROP_FACTOR:=.5}"
 : "${ROP_PATIENCE:=20}"
@@ -207,9 +205,9 @@ fi
 
 # Unified training-artifact root. Relative paths are resolved from WORKDIR.
 : "${ALL_RESULTS_ROOT:=}"
-# Opt in per config; historical configs retain timestamp-first directory names.
+# Configuration controls artifact directory ordering.
 : "${RUN_DIR_NAME_STYLE:=timestamp_runname}"
-# Optional Python metadata tag; empty preserves historical automatic tags.
+# Optional Python metadata tag; empty uses the automatic run description.
 : "${PYTHON_RUN_TAG_BASE:=}"
 
 : "${DRY_RUN:=0}"
@@ -376,8 +374,8 @@ write_resolved_config() {
     BATCH_SIZE GRAD_ACCUM_STEPS
     EPOCHS HIDDEN_CHANNELS NUM_LAYERS DROPOUT HEAD_DROPOUT SEED TRAIN_RATIO
     VAL_RATIO SHUFFLE_YEARS FUTURE_ONLY FUTURE_YEAR_THRESHOLD LR_LIST
-    HISTORY_HOURS_LIST LOSS_MODE_LIST TAIL_FRAC TAIL_LAMBDA_LIST WMSE_Q_LIST
-    WMSE_ALPHA WMSE_S WMSE_USE_ABS SLOPE_LAMBDA_LIST SLOPE_MASK_S_LIST
+    HISTORY_HOURS_LIST LOSS_MODE_LIST EXCEEDANCE_LOSS_WEIGHT
+    WMSE_ALPHA WMSE_S SLOPE_LAMBDA_LIST SLOPE_MASK_S_LIST
     SLOPE_ROBUST SLOPE_CHARB_EPS SLOPE_HUBER_DELTA SCHEDULER ROP_METRIC ROP_FACTOR ROP_PATIENCE
     ROP_THRESHOLD ROP_COOLDOWN ROP_MIN_LR
     WARMUP_EPOCHS WARMUP_START_FACTOR MIN_LR MAX_GRAD_NORM
@@ -386,8 +384,7 @@ write_resolved_config() {
     EXCESS_AMP_LOSS_WEIGHT
     EXCESS_FORMULATION SHAPE_LOSS_WEIGHT SEVERITY_SHAPE_EPS
     EXCEEDANCE_HEAD_EXPERIMENT EXCEEDANCE_GATE_POOLING
-    CHECKPOINT_SELECTION CHECKPOINT_OVERALL_TOL SAVE_AUX_CHECKPOINTS
-    TRACK_PEAKAWARE CHECKPOINT_SCORE_REFS CKPT_SCORE_W_ALL CKPT_SCORE_W_TOP5 CKPT_SCORE_W_TRUEPEAK
+    CHECKPOINT_SELECTION CKPT_W_ALL CKPT_W_EXCEEDANCE CKPT_W_PEAK
     X_NORM X_P_LO X_P_HI X_NODES_PER_GRAPH X_CLIP X_AUG X_AUG_PROB
     X_AUG_SCALE X_AUG_BIAS DISABLE_OOD USE_AMP AMP_DTYPE USE_TF32
     TORCH_THREADS NUM_WORKERS PIN_MEMORY PERSISTENT_WORKERS PREFETCH_FACTOR
@@ -456,7 +453,7 @@ echo "TRAIN_DATA_TAG:${TRAIN_DATA_TAG}"
 echo "TEST_DATA_TAG: ${TEST_DATA_TAG}"
 echo "LR_LIST:       ${LR_LIST[*]}"
 echo "Loss modes:    ${LOSS_MODE_LIST[*]}"
-echo "Loss weights:  body=${BODY_LOSS_WEIGHT} excess=${EXCESS_LOSS_WEIGHT} gate=${GATE_LOSS_WEIGHT} tail=${TAIL_LAMBDA_LIST[*]} slope=${SLOPE_LAMBDA_LIST[*]} (terms enabled by head/loss mode)"
+echo "Loss weights:  body=${BODY_LOSS_WEIGHT} excess=${EXCESS_LOSS_WEIGHT} gate=${GATE_LOSS_WEIGHT} exceedance=${EXCEEDANCE_LOSS_WEIGHT} amplitude=${EXCESS_AMP_LOSS_WEIGHT} shape=${SHAPE_LOSS_WEIGHT} slope=${SLOPE_LAMBDA_LIST[*]} (terms enabled by head/loss mode)"
 echo "H_LIST:        ${HISTORY_HOURS_LIST[*]}"
 echo "Split:         train=${TRAIN_RATIO} val=${VAL_RATIO} shuffle_years=${SHUFFLE_YEARS} future_only=${FUTURE_ONLY} future_year_threshold=${FUTURE_YEAR_THRESHOLD} seed=${SEED}"
 echo "MASTER_ADDR:   ${MASTER_ADDR}"
@@ -524,19 +521,19 @@ if [[ "${FUTURE_ONLY}" == "1" ]]; then
   SPLIT_TAG+="_futuregt${FUTURE_YEAR_THRESHOLD}"
 fi
 
-# Keep historical GraphSAGE run names stable; label only the new CNN variant.
+# Label the optional CNN encoder in automatic run names.
 ENCODER_TAG=""
 if [[ "${ENCODER_TYPE}" == "CNN" ]]; then
   ENCODER_TAG="_encCNN"
 fi
 
-# Keep historical Transformer run names stable; label only new PACT variants.
+# Label temporal blocks other than the Transformer.
 TEMPORAL_TAG=""
 if [[ "${MODEL}" == "perceiver3" && "${TEMPORAL_BLOCK}" != "Transformer" ]]; then
   TEMPORAL_TAG="_t${TEMPORAL_BLOCK}"
 fi
 
-# Keep historical run names stable when accumulation is disabled.
+# Record accumulation when more than one microbatch is used.
 ACCUM_TAG=""
 if (( GRAD_ACCUM_STEPS > 1 )); then
   ACCUM_TAG="_ga${GRAD_ACCUM_STEPS}"
@@ -549,33 +546,9 @@ SWEEP_START_SECONDS=${SECONDS}
 for LOSS_MODE in "${LOSS_MODE_LIST[@]}"; do
   for LR_CUR in "${LR_LIST[@]}"; do
     for H in "${HISTORY_HOURS_LIST[@]}"; do
-      for WMSE_Q_CUR in "${WMSE_Q_LIST[@]}"; do
-
-        # WMSE knobs only matter for wmse* or *wtail modes
-        if [[ "${LOSS_MODE}" != wmse* && "${LOSS_MODE}" != *wtail* ]]; then
-          [[ "${WMSE_Q_CUR}" != "${WMSE_Q_LIST[0]}" ]] && continue
-        fi
-
-        for TLAMBDA in "${TAIL_LAMBDA_LIST[@]}"; do
-          # tail_lambda only matters for *tail*/*wtail modes
-          if [[ "${LOSS_MODE}" != *tail* && "${LOSS_MODE}" != *wtail* ]]; then
-            [[ "${TLAMBDA}" != "${TAIL_LAMBDA_LIST[0]}" ]] && continue
-          fi
-
-          LOSS_TAG="_loss${LOSS_MODE}"
-          LOSS_ARGS=(--loss_mode "${LOSS_MODE}")
-
-          # WMSE shaping
-          LOSS_ARGS+=(--wmse_q "${WMSE_Q_CUR}" --wmse_alpha "${WMSE_ALPHA}" --wmse_s "${WMSE_S}" --wmse_use_abs "${WMSE_USE_ABS}")
-          if [[ "${LOSS_MODE}" == wmse* || "${LOSS_MODE}" == *wtail* ]]; then
-            LOSS_TAG+="_q${WMSE_Q_CUR}_a${WMSE_ALPHA}_s${WMSE_S}_abs${WMSE_USE_ABS}"
-          fi
-
-          # Tail auxiliary loss
-          if [[ "${LOSS_MODE}" == *tail* || "${LOSS_MODE}" == *wtail* ]]; then
-            LOSS_ARGS+=(--tail_frac "${TAIL_FRAC}" --tail_lambda "${TLAMBDA}")
-            LOSS_TAG+="_tf${TAIL_FRAC}_tl${TLAMBDA}"
-          fi
+          LOSS_TAG="_loss${LOSS_MODE}_ex${EXCEEDANCE_LOSS_WEIGHT}"
+          LOSS_ARGS=(--loss_mode "${LOSS_MODE}" --exceedance_loss_weight "${EXCEEDANCE_LOSS_WEIGHT}"
+                     --wmse_alpha "${WMSE_ALPHA}" --wmse_s "${WMSE_S}")
 
           # Slope smoothness sweep (only used for *_slope modes)
           for SLOPE_LAMBDA in "${SLOPE_LAMBDA_LIST[@]}"; do
@@ -631,8 +604,9 @@ for LOSS_MODE in "${LOSS_MODE_LIST[@]}"; do
                 --shape_loss_weight "${SHAPE_LOSS_WEIGHT}"
                 --severity_shape_eps "${SEVERITY_SHAPE_EPS}"
                 --checkpoint_selection "${CHECKPOINT_SELECTION}"
-                --checkpoint_overall_tol "${CHECKPOINT_OVERALL_TOL}"
-                --save_aux_checkpoints "${SAVE_AUX_CHECKPOINTS}"
+                --ckpt_w_all "${CKPT_W_ALL}"
+                --ckpt_w_exceedance "${CKPT_W_EXCEEDANCE}"
+                --ckpt_w_peak "${CKPT_W_PEAK}"
                 --encoder_type "${ENCODER_TYPE}"
                 --cnn_intermediate_channel "${CNN_INTERMEDIATE_CHANNEL}"
                 --batch_size "${BATCH_SIZE}"
@@ -671,13 +645,6 @@ for LOSS_MODE in "${LOSS_MODE_LIST[@]}"; do
                 --use_bathymetry "${USE_BATHYMETRY}"
               )
 
-              # Omit every new option unless explicitly configured: historical CMDs stay identical.
-              if [[ -n "${TRACK_PEAKAWARE:-}" ]]; then BASE_CMD+=(--track_peakaware "${TRACK_PEAKAWARE}"); fi
-              if [[ -n "${CHECKPOINT_SCORE_REFS:-}" ]]; then BASE_CMD+=(--checkpoint_score_refs "${CHECKPOINT_SCORE_REFS}"); fi
-              if [[ -n "${CKPT_SCORE_W_ALL:-}" ]]; then BASE_CMD+=(--ckpt_score_w_all "${CKPT_SCORE_W_ALL}"); fi
-              if [[ -n "${CKPT_SCORE_W_TOP5:-}" ]]; then BASE_CMD+=(--ckpt_score_w_top5 "${CKPT_SCORE_W_TOP5}"); fi
-              if [[ -n "${CKPT_SCORE_W_TRUEPEAK:-}" ]]; then BASE_CMD+=(--ckpt_score_w_truepeak "${CKPT_SCORE_W_TRUEPEAK}"); fi
-
               [[ -n "${STATION}" ]]       && BASE_CMD+=(--station "${STATION}")
               [[ -n "${TEST_ROOT_DIR}" ]] && BASE_CMD+=(--test_root_dir "${TEST_ROOT_DIR}")
               if (( GRAD_ACCUM_STEPS > 1 )); then
@@ -706,7 +673,6 @@ for LOSS_MODE in "${LOSS_MODE_LIST[@]}"; do
               if [[ "${MODEL}" == "perceiver3" ]]; then
                 BASE_CMD+=(--head_type "${HEAD_TYPE}"
                            --dual_mode "${DUAL_MODE}"
-                           --tail_frac "${TAIL_FRAC}"
                            --temporal_block "${TEMPORAL_BLOCK}"
                            --node_read_heads "${NODE_READ_HEADS}"
                            --time_read_heads "${TIME_READ_HEADS}"
@@ -749,8 +715,6 @@ for LOSS_MODE in "${LOSS_MODE_LIST[@]}"; do
             done
           done
 
-        done
-      done
     done
   done
 done

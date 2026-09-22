@@ -1,234 +1,91 @@
-# Optional severity-aware excess decomposition
+# Severity–Shape excess parameterization
 
-This upgrade starts from the completed Instruction #2 revision
-`e2846dd9e6a83397640cb6f39401e03d2bc9d84a`. The tracked production working tree
-was clean, and its untracked `experiment_config/P1_WeightProbe/` directory was
-preserved. All 95 post-#2 tests passed before any source changes. The existing
-physical excess-amplitude objective remains the canonical amplitude control.
+`SeverityShapeHead` in [heads.py](../emulator/models/heads.py) is a supported experimental Dual formulation. It replaces the excess branch with a physical severity factor and a dimensionless horizon shape. The upstream [backbone](BACKBONE.md), capped body, and Event Window gate retain the interfaces defined in [DUAL_EXCEEDANCE.md](DUAL_EXCEEDANCE.md).
 
-## Defaults
+<!-- choices excess_formulation: direct,severity_shape -->
 
-```bash
-EXCESS_FORMULATION="direct"
-SHAPE_LOSS_WEIGHT="0"
-SEVERITY_SHAPE_EPS="1e-6"
-EXCESS_AMP_LOSS_WEIGHT="0"
-```
+The default is `EXCESS_FORMULATION=direct`. Select `EXCESS_FORMULATION=severity_shape` / `--excess_formulation severity_shape` with `MODEL=perceiver3` and `HEAD_TYPE=dual`. This parameterization supports both spatial encoders and every supported PACT temporal block.
 
-The three new CLI options are `--excess_formulation`, `--shape_loss_weight` and
-`--severity_shape_eps`. The amplitude control is `--excess_amp_loss_weight`; see [its current definition](EXCESS_AMPLITUDE.md). Shape weight must
-be finite and nonnegative; epsilon must be finite and positive. A positive
-shape weight requires `severity_shape`, which requires `--model perceiver3
---head_type dual`. Shape supervision is skipped completely at weight zero;
-neither optional amplitude nor shape supervision is ever forced on.
+## Context and branch networks
 
-`direct` still builds the original `ExceedanceHead`, with the same `body`,
-`excess`, `gate`, `threshold` and optional fixed-gate buffer, construction order,
-parameter sizes and initialization. It creates no severity/shape modules or
-target-scale buffer. All existing `ForecastOutput` fields retain their meaning;
-two trailing optional diagnostic fields, `severity_phys` and `excess_shape`,
-default to `None`. Existing positional construction remains supported.
+The head receives horizon contexts C ∈ ℝᴮˣᴷˣᵈ. It forms a shared window context c̄ᵢ = (1/K)Σₕ Cᵢₕ ∈ ℝᵈ. Severity and the learned gate use c̄ᵢ; shape and body use each Cᵢₕ. The production head uses arithmetic mean pooling.
 
-Legacy `model_config` dictionaries need no migration: the new dataclass fields
-default to `direct`, `target_y_std=None` and `severity_shape_eps=1e-6`. Production
-reconstruction remains `ModelConfig(**saved_config)`, `build_model(config)`, then
-`load_state_dict(saved_state, strict=True)`. The direct prediction/loss paths
-remain unchanged except for the true-peak-time amplitude supervision described below.
+Each branch uses `head_mlp`: Linear(d,2d) → LeakyReLU(0.1) → Dropout(`head_dropout`) → Linear(2d,1). A supplied internal `head_hidden` changes the intermediate width. Severity and shape outputs are cast to FP32 before their positive activations and normalization.
 
-## Physical factorization and units
+## Severity
 
-The optional `SeverityShapeHead` consumes the unchanged PACT forecast context
-`C` of shape `[B,K,hidden]`, after the existing horizon readout and LayerNorm.
-Let `C_bar = mean_h(C)` and `eps = SEVERITY_SHAPE_EPS`:
+For raw scalar severity score aᵢ:
 
-```text
-body_norm       = threshold - softplus(threshold - body(C))
-p_event         = sigmoid(gate(C_bar))           # same event branch as direct
-severity_phys   = softplus(severity(C_bar))       # [B], meters
-shape_raw       = softplus(shape(C)) + eps        # [B,K], unitless
-shape           = shape_raw / max_h(shape_raw)
-excess_phys     = severity_phys[:,None] * shape   # [B,K], meters
-output.excess   = excess_phys / target_y_std      # [B,K], normalized excess
-prediction_norm = body_norm + p_event * output.excess
-prediction_phys = body_phys + p_event * severity_phys[:,None] * shape
-```
+    Âᵢ = softplus(aᵢ),        shape [B], units m.                 (1)
 
-The gate remains window-level and unitless; `fixed_gate` still uses the exact
-empirical TRAIN prevalence. Epsilon is added to the FP32 softplus output
-before dividing by the per-window maximum. Shape has maximum exactly one,
-including when every softplus value is smaller than the default epsilon or
-underflows to zero. In the all-underflow case shape is uniformly one, so
-severity still equals the physical maximum excess. Adding epsilon retains
-below-epsilon gradients until softplus itself underflows; there is no clamp
-on the predicted shape. No normalization crosses the batch axis, and no label
-enters any prediction branch.
+The factor is nonnegative and represents the maximum physical raw excess over the forecast horizons because predicted shape has unit maximum. The corresponding GT interpretation is A*ᵢ = maxₕ max(yᵢₕ−τ,0), using the canonical hourly TRAIN τ from [FORMULATION.md](FORMULATION.md).
 
-This corrects the normalization edge case reviewed at `f673555a`. Previously
-only the denominator was floored, allowing maxima below one (or zero) and
-breaking severity's amplitude interpretation. Severity-shape outputs and
-gradients intentionally change with this correction, including small rounding
-changes away from the edge. Existing weight shapes and checkpoint loading
-remain valid. Single/direct arithmetic is unchanged. Severity-shape training
-is checked for exact equivalence across all five checkpoint-selection modes.
+The severity branch's final linear weights are initialized to zero and its bias to log(exp(0.1)−1). Initial severity is therefore 0.1 m for every window. No label-derived severity scale is fitted. There is no standalone loss comparing Â directly with A*.
 
-`train.py` supplies `stats_cpu["y_std"].tolist()` only in `severity_shape` mode.
-`ModelConfig.target_y_std` saves this TRAIN vector, and the new head registers
-it as an FP32 `[1,K]` `target_y_std` buffer. Its length must equal `out_channels`,
-and every entry must be finite and strictly positive. Each entry is a physical
-target standard deviation in meters. The head divides physical excess by
-each horizon's own scale; no scalar or averaged scale is substituted. Both
-the configuration vector and model-state buffer survive checkpoint loading.
+## Temporal shape
 
-Branch logits are converted to FP32 before softplus, normalization and physical
-reconstruction, retaining the direct head's AMP policy. The body and gate use
-the existing small MLP architecture; severity and shape use the same MLP
-width/dropout convention (`head_hidden` or twice the context width).
+For raw shape scores sᵢₕ and positive `SEVERITY_SHAPE_EPS` / `severity_shape_eps`:
 
-## Initialization
+    uᵢₕ = softplus(sᵢₕ) + ε
+    ŝᵢₕ = uᵢₕ / maxⱼ uᵢⱼ,    shape [B,K], dimensionless.         (2)
 
-Severity and shape final-layer weights are zero. Their biases are respectively
-`log(expm1(0.1))` and `log(expm1(1.0))`. Thus initial severity is approximately
-**0.1 meters** and softplus shape is one, so raw shape is `1 + eps`.
-Normalized shape is exactly one and initial physical event contribution is `p_event * 0.1 m` at
-each horizon. Earlier MLP layers retain the existing initialization. The gate
-keeps zero final weights and the existing clipped-prior logit bias; fixed gate
-keeps the unclipped empirical prior. No new severity statistic is fitted.
+The default ε is 10⁻⁶. It is added before maximum normalization, ensuring a positive denominator even when softplus underflows. For finite branch scores, ŝᵢₕ > 0 and maxₕ ŝᵢₕ = 1. There is no sum-to-one constraint: Σₕ ŝᵢₕ may range above 1 up to K. The maximum operation is a hard maximum, with PyTorch's first-index gradient behavior at tied maxima.
 
-The severity-shape head has one more regression MLP than direct, since one
-trajectory branch is replaced by two branches. This is an explicit architecture
-comparison, with unchanged backbone and existing trajectory supervision.
-[Parameter reporting](MODEL_PARAMETERS.md) now records total/trainable/head
-counts for every model and individual head branches in JSON. At context width
-128 and head width 256 the extra MLP contains exactly 33,281 parameters; the
-report counts actual modules without constructing an extra comparison model.
-Zero final weights initially block that branch's gradient to shared context;
-this is expected initialization behavior. Gradient-routing tests use nonzero
-synthetic final weights to verify every intended connection.
+Shape final linear weights initialize to zero and the bias to log(exp(1)−1). Thus u is initially constant at approximately 1+ε and every normalized horizon shape initially equals 1.
 
-## Shared targets and independent losses
+GT shape uses e*ᵢₕ = max(yᵢₕ−τ,0). In a GT Event Window, s*ᵢₕ = e*ᵢₕ / maxⱼ e*ᵢⱼ, giving maximum 1 and exact zeros at normal hours. Any positive GT excess amplitude is used exactly, including amplitudes below ε. Non-event target shape is zero. The positive architectural ε does not floor target amplitudes.
 
-Instruction #2's strict event/physical target operations are extracted without
-arithmetic changes into `physical_excess_target` in
-`emulator/training/excess_amplitude.py`. Both amplitude and shape helpers reuse
-it, and both reuse the same `validate_event_prior`:
+## Reconstructed excess and final prediction
 
-```text
-z            = (y_phys - y_mean) / y_std
-E_i          = any_h(z_i,h > threshold_h)         # strict TRAIN event
-r_target     = clamp_min(z - threshold, 0) * y_std
-a_target     = max_h(r_target)                   # meters; always hard max
-denominator  = where(E_i, a_target, 1)
-shape_target = r_target / denominator[:,None]
-L_shape      = mean_i[E_i * mean_h((shape_i,h - shape_target_i,h)^2)] / q_E
-```
+The registered `target_y_std` buffer contains TRAIN physical target scales σ in shape [1,K]. It must be finite, positive, and match the number of horizons. Reconstruction is:
 
-The physical target is the same as `clamp_min(y_phys - tau_train, 0)` within
-floating-point tolerance. It never uses the predicted body. A valid event has
-positive physical amplitude, so every event target is divided by its exact
-amplitude and has maximum one, including when `0 < a_target < eps`.
-Non-events use a denominator of one and retain an exactly zero target, avoiding
-`0/0`. Multiplying the unit-peak target by its amplitude reconstructs the
-physical excess. The predicted dimensionless shape continues to use additive
-epsilon before max normalization.
+    êᵖʰʸˢᵢₕ = Âᵢ ŝᵢₕ                   [B,K], m
+    êⁿᵢₕ = Âᵢ ŝᵢₕ / σₕ                  [B,K], normalized
+    ŷⁿᵢₕ = b̂ⁿᵢₕ + gᵢ êⁿᵢₕ               [B,K]
+    ŷᵖʰʸˢᵢₕ = μₕ + σₕ b̂ⁿᵢₕ + gᵢ Âᵢ ŝᵢₕ.                  (3)
 
-This target-side correction follows the review of `be8a851`. It removes the
-previous target amplitude floor, which could force a tiny event's target peak
-below the prediction's unit peak. Ordinary events above the old floor and
-non-events retain their prior values. The shared `eps` argument remains
-validated, but does not set a minimum target amplitude. The strict event
-helper, physical target, event prior, loss weights and reduction are unchanged.
-Checkpoint selection continues to default to `overall` with auxiliary saving
-disabled; no transfer protocol or experiment configuration is changed.
-The [target normalization validation](audit/evidence/target_shape_validation.json)
-records **198 passing tests**, including CPU/CUDA autocast and DDP; the
-[complete test output](audit/evidence/target_shape_tests.txt) is retained.
+Target means μ enter physical body reconstruction; excess is a difference and uses only σ. The raw physical excess has maximum Âᵢ. The window scalar gate multiplies every reconstructed excess horizon, making the gated contribution's maximum gᵢÂᵢ. This need not equal the maximum final prediction because body also varies across horizons.
 
-`q_E` remains exactly `fit_loss_thresholds(...)["event_prior"]`, the strict
-TRAIN `event_count / train_windows`, passed by `train.py` to `ForecastLoss`.
-Neither `tail_frac`, the nominal percentile fraction, current batch prevalence,
-nor gate-initialization clipping changes it. A missing/nonfinite/nonpositive
-prior fails clearly if amplitude or shape supervision is active. `L_shape` is
-dimensionless and is not amplitude-weighted. It uses the whole batch denominator
-and has exactly zero loss/gradients on event-free batches, including DDP ranks.
+The learned gate is gᵢ = sigmoid(gate(c̄ᵢ)), shape [B,1]. Its final weights initialize to zero, and its bias is the logit of TRAIN Event Window prevalence clipped to [10⁻⁶,1−10⁻⁶]. With `DUAL_ABLATION=fixed_gate`, g is the unmodified empirical TRAIN prevalence and there is no gate network.
 
-The total objective adds independently controlled terms:
+`ForecastOutput` stores normalized `prediction`, `body`, `excess`, and `threshold`; window `gate_logits` and `gate_probability`; physical `severity_phys` [B]; and dimensionless `excess_shape` [B,K]. `gate_logits` is `None` for a fixed gate. Inference performs the same reconstruction with fitted buffers and learned network outputs. GT labels are used only for supervision and evaluation.
 
-```text
-L_existing_prediction_and_tail_slope
-  + body_loss_weight       * L_body
-  + excess_loss_weight     * L_excess
-  + gate_loss_weight       * L_gate
-  + excess_amp_loss_weight * L_excess_amp
-  + shape_loss_weight      * L_shape
-```
+## Direct and Severity–Shape comparison
 
-`L_excess` is the unchanged physical trajectory loss on `output.excess`, with its existing whole-batch/horizon reduction. `L_excess_amp` uses the current [true-peak-time amplitude objective](EXCESS_AMPLITUDE.md) in square meters. It gathers reconstructed physical excess at `h* = argmax(y_phys)` in either formulation; there is no separate severity loss or severity-loss weight.
+| Feature | Direct | Severity–Shape |
+| --- | --- | --- |
+| Production class | `ExceedanceHead` | `SeverityShapeHead` |
+| Excess branch input | Context at each horizon | Window mean for severity; each horizon for shape |
+| Learned excess outputs | K positive normalized excess values | One physical severity and K shape scores |
+| Physical excess | σₕ softplus(rawᵢₕ) | Âᵢ ŝᵢₕ |
+| Cross-horizon normalization | None in excess output | Shape divided by its hard maximum |
+| Shape constraint | No explicit factor | Nonnegative with maximum 1 |
+| Initial excess | 0.1 normalized units at each horizon | 0.1 m at each horizon |
+| Extra fixed buffer | None beyond τ | TRAIN target standard deviations |
+| Body and gate | Capped body and scalar Event Window gate | Same production definitions |
+| Backbone | PACT contexts | Same PACT contexts |
+| Default formulation | Yes | No; experimental option |
 
-Prediction loss connects body, gate, severity, shape and shared context. Trajectory excess loss connects severity and shape. The amplitude term supervises `severity_phys * shape[h*]`, so it can connect both severity and shape through the existing factorization. Shape loss directly connects the shape branch. Amplitude/shape objectives do not directly supervise body or gate; shared-context coupling is expected.
+Direct excess-capacity experiments are separate options described in [DUAL_EXCEEDANCE.md](DUAL_EXCEEDANCE.md). Their configuration is restricted to Direct.
 
-## Ablations and future configuration capability
+## Loss interaction
 
-`no_excess_loss` now disables trajectory excess, amplitude and shape weights.
-`no_branch_supervision` disables those three plus body and gate supervision.
-`no_gate_bce` and `fixed_gate` may retain both optional terms. Historical
-body/excess/gate enforcement is unchanged; optional weights can always stay zero.
+The complete equations, populations, reductions, units, and coefficients are defined in [LOSSES.md](LOSSES.md). Their effects on the factors are:
 
-The interface supports all six requested comparisons without source edits:
+| Objective | Severity direct path | Shape direct path | Supervised quantity |
+| --- | --- | --- | --- |
+| Prediction MSE/WMSE | Yes | Yes | Final physical prediction |
+| Hourly exceedance | Yes | Yes | Final prediction at GT Extreme Hours |
+| Slope | Yes | Yes | Adjacent final prediction increments |
+| Excess trajectory | Yes | Yes | Reconstructed raw excess over GT Event Windows |
+| GT-aligned amplitude | Yes | Yes | Âᵢ ŝᵢ,h*ᵢ at the first GT target maximum |
+| Shape | No | Yes | Dimensionless normalized shape over GT Event Windows |
+| Body / gate BCE | No | No | Their respective body / gate outputs |
 
-| Formulation | Amplitude weight | Shape weight | Interpretation |
-|---|---|---|---|
-| direct | 0 | 0 | Existing post-#2 model |
-| direct | positive | 0 | Existing model with true-peak-time amplitude supervision |
-| severity_shape | 0 | 0 | Factorization with original trajectory supervision |
-| severity_shape | positive | 0 | Factorization plus amplitude supervision |
-| severity_shape | 0 | positive | Factorization plus shape supervision |
-| severity_shape | positive | positive | Both optional objectives |
+All enabled objectives also reach the shared backbone through their active branch paths. Amplitude supervision gathers shape at the GT peak, and the hard maximum in (2) may propagate gradients through the shape denominator. It is therefore not a standalone severity-target comparison.
 
-Here `positive` is a placeholder for a later scientific choice. This upgrade
-chooses neither loss weight, creates no experiment configs and starts no
-experiments. No VAL/TEST tuning or future peak-output, checkpoint-selection or
-asymmetric-underprediction objectives are implemented.
+`SHAPE_LOSS_WEIGHT` defaults to 0; a positive value enables dimensionless shape supervision. Generated optional Severity–Shape D0–D3 configs retain the same prediction/branch/exceedance/amplitude coefficients as their Direct counterparts and keep shape weight 0. Named Dual ablations apply the same effective loss removals to either parameterization.
 
-## Checkpoints, run identity and diagnostics
+## Source and configuration checks
 
-Training snapshots preserve `excess_formulation`, `shape_loss_weight`, `excess_amp_loss_weight` and `severity_shape_eps`. Severity-shape model config also
-stores `target_y_std`. Dual metadata identifies the formulation and, for the new
-head, epsilon. These fields survive the existing checkpoint path; no external
-architectural guessing is needed. Automatic shell run tags append
-`_efseverity_shape` only for the new formulation, preserving old direct names.
-
-Normal inference prediction exports still contain only `y_true`, `y_pred` and
-`tags`. With `--dual_diagnostics`, the existing pass exports `gate_probability`,
-`body_phys`, `excess_phys`, final prediction and existing target/event arrays;
-severity-shape additionally exports `severity_phys` (`[N]`, meters) and
-`excess_shape` (`[N,K]`, unitless). Direct checkpoints need neither array.
-Diagnostic JSON/NPZ metadata records `excess_formulation` and includes
-`severity_shape_eps` when relevant. Amplitude diagnostics compare reconstructed physical excess at the true target
-peak horizon, using the saved strict TRAIN threshold.
-No additional forward pass or inference-time fit is introduced. Checkpoint
-selection defaults to validation `rmse_all`; see [all supported modes](CHECKPOINT_SELECTION.md).
-
-## Historical validation results
-
-The [implementation/validation report](audit/evidence/severity_shape_validation.json)
-lists all modified files and the complete checks. The [full test log](audit/evidence/severity_shape_tests.txt)
-records **120 passed, zero failures/errors/skips**, including the six requested
-regression modules, all 23 Instruction #2 amplitude tests and 25 new
-severity-shape tests. CPU BF16, H100 CUDA FP16/BF16 and two-rank Gloo DDP passed.
-Pyflakes on changed Python files, `git diff --check` and `bash -n train.sh` passed.
-
-Before editing, six PACT references were saved from the post-#2 implementation:
-single, learned dual and fixed-gate dual, each with zero and positive history.
-The updated default matches their initialization, state keys/values, strict
-reconstruction, original outputs and constructor/forward RNG bit for bit.
-An independent frozen direct-head reference also verifies exact gradients.
-
-All **32 P0_QuickRun + 32 P1_WeightProbe** configs were compared under
-`DRY_RUN=1` with the pre-change commands. Old parsed values and run tags match
-exactly, the three new defaults are inactive/direct, #2 amplitude weights stay
-zero, and all source hashes are unchanged. No new experiment config was created.
-Representative checks include P0 Battery dual MSE, P0 Boston dual tail+slope,
-P0 Lewes single MSE, P1 Battery excess-5/tail-0.10 and P1 CBBT excess-10/no-tail.
-Training exercised by the pre-existing regression suite uses temporary synthetic
-fixtures; new checkpoint tests mock epochs and do not run an optimizer. No
-real-data training, tuning or experiment was launched.
+This description follows `SeverityShapeHead`, `ForecastOutput`, and `head_mlp` in [heads.py](../emulator/models/heads.py), the formulation checks in [dual.py](../emulator/common/dual.py), the physical loss targets in [excess_shape.py](../emulator/training/excess_shape.py), the parser in [arguments.py](../emulator/training/arguments.py), and model construction/checkpoint buffers in [train.py](../train.py). [test_severity_shape.py](../tests/test_severity_shape.py) verifies reconstruction, initial values, constraints, gradient paths, low-precision arithmetic, and checkpoint/inference round trips.

@@ -1,4 +1,4 @@
-"""True-peak-time excess supervision with an exact fixed TRAIN event prior."""
+"""GT-aligned peak-time excess supervision with an exact fixed TRAIN event prior."""
 
 import contextlib
 import copy
@@ -56,7 +56,7 @@ def ddp_worker(rank, rendezvous, destination):
             model.zero_grad(set_to_none=True)
             output = model(context[2 * rank:2 * rank + 2])
             criterion = ForecastLoss(LossConfig(excess_loss_weight=2., gate_loss_weight=.5,
-                excess_amp_loss_weight=.7), stats, 1., 1., event_prior=.25, event_threshold=2.)
+                excess_amp_loss_weight=.7), stats, 2., event_prior=.25)
             loss = criterion(output, output.prediction * stats['y_std'], target[2 * rank:2 * rank + 2])
             loss.backward()
             average = loss.detach().clone()
@@ -85,7 +85,7 @@ class ExcessAmplitudeTests(unittest.TestCase):
         output = ForecastOutput(body + gate.sigmoid() * excess, body, excess, gate, threshold)
         return output, target_norm, stats, tau
 
-    def test_wrong_time_equal_maximum_has_error_and_only_true_peak_gradient(self):
+    def test_wrong_time_equal_maximum_has_error_and_only_gt_aligned_peak_gradient(self):
         target_excess = torch.tensor([[.02, .04, .15, .08]])
         target = target_excess + 1.
         predicted = torch.tensor([[.02, .15, .10, .08]], requires_grad=True)
@@ -93,7 +93,7 @@ class ExcessAmplitudeTests(unittest.TestCase):
         gate = torch.zeros(1, 1, requires_grad=True)
         output = ForecastOutput(body + gate.sigmoid() * predicted, body, predicted, gate, torch.ones(1, 4))
         terms = excess_amplitude_terms(output.excess, target, output.threshold, torch.ones(4), 1.,
-                                       target_phys=target, event_threshold_phys=1.)
+                                       target_phys=target, tau_physical=1.)
         self.assertAlmostEqual(terms.loss.item(), (.10 - .15) ** 2)
         excess_grad, body_grad, gate_grad = torch.autograd.grad(
             terms.loss, (predicted, body, gate), allow_unused=True)
@@ -108,7 +108,7 @@ class ExcessAmplitudeTests(unittest.TestCase):
         normalized = (target - mean) / std
         predicted = torch.tensor([[12., 1.25, 8.], [50., 50., 50.]], requires_grad=True)
         terms = excess_amplitude_terms(predicted, normalized, threshold, std, .2,
-                                       target_phys=target, event_threshold_phys=tau)
+                                       target_phys=target, tau_physical=tau)
         self.assertNotEqual(normalized[0].argmax(), target[0].argmax())
         torch.testing.assert_close(terms.r_target_phys, (target - tau).clamp_min(0))
         self.assertEqual(terms.event.flatten().tolist(), [True, False])
@@ -126,22 +126,22 @@ class ExcessAmplitudeTests(unittest.TestCase):
         tau = 1. - 1e-10
         predicted = torch.ones(1, 2, requires_grad=True)
         terms = excess_amplitude_terms(predicted, target, torch.ones(2), torch.ones(2), .2,
-                                       target_phys=target, event_threshold_phys=tau)
+                                       target_phys=target, tau_physical=tau)
         self.assertTrue(terms.event.item())
         self.assertEqual(terms.loss.item(), 5.)
         terms.loss.backward()
         self.assertEqual(predicted.grad.tolist(), [[10., 0.]])
 
     def test_exact_train_prior_batch_additivity_and_gradient_accumulation(self):
-        store = SimpleNamespace(graphs=[SimpleNamespace(y=torch.tensor([float(y), -1.]))
-                                        for y in (0, 1, 2, 2, 2, 5, 10000)])
-        fitted = fit_loss_thresholds(store, list(range(6)), tail_frac=.5, exceedance_percentile=75)
-        self.assertEqual((fitted['tau_phys'], fitted['event_prior']), (2., 1 / 6))
+        store = SimpleNamespace(graphs=[SimpleNamespace(y=torch.tensor([float(y), -1.]), center_time=f'2001-01-01T{i*2:02}:00:00')
+                                        for i,y in enumerate((0, 1, 2, 2, 2, 5, 10000))])
+        fitted = fit_loss_thresholds(store, list(range(6)), exceedance_percentile=75)
+        self.assertEqual((fitted['tau_physical'], fitted['event_prior']), (2., 1 / 6))
         target = torch.tensor([[5., -1.], [2., -1.], [1., 2.], [3., -1.]])
         predicted = torch.ones(4, 2, requires_grad=True)
         def loss(excess, truth):
             return excess_amplitude_terms(excess, truth, torch.full((2,), 2.), torch.ones(2),
-                fitted['event_prior'], target_phys=truth, event_threshold_phys=fitted['tau_phys']).loss
+                fitted['event_prior'], target_phys=truth, tau_physical=fitted['tau_physical']).loss
         full = loss(predicted, target)
         full.backward()
         expected_gradient = predicted.grad.clone()
@@ -154,7 +154,7 @@ class ExcessAmplitudeTests(unittest.TestCase):
         torch.testing.assert_close(predicted.grad, expected_gradient, rtol=0, atol=0)
         self.assertTrue(predicted.grad[1:3].eq(0).all())
         store.graphs[-1].y.fill_(-1e6)
-        self.assertEqual(fitted, fit_loss_thresholds(store, list(range(6)), tail_frac=.5, exceedance_percentile=75))
+        self.assertEqual(fitted, fit_loss_thresholds(store, list(range(6)), exceedance_percentile=75))
 
     def test_per_event_weight_is_independent_of_batch_event_count(self):
         gradients, losses = [], []
@@ -163,7 +163,7 @@ class ExcessAmplitudeTests(unittest.TestCase):
             target = torch.zeros(4, 2)
             target[:count, 0] = 2.
             loss = excess_amplitude_terms(predicted, target, torch.ones(2), torch.ones(2), .2,
-                                          target_phys=target, event_threshold_phys=1.).loss
+                                          target_phys=target, tau_physical=1.).loss
             loss.backward()
             gradients.append(predicted.grad[0].clone())
             losses.append(loss.item())
@@ -176,7 +176,7 @@ class ExcessAmplitudeTests(unittest.TestCase):
         predicted = torch.tensor([[1., 3.], [4., 2.]], requires_grad=True)
         target = torch.tensor([[1., 1.], [0., .5]])
         terms = excess_amplitude_terms(predicted, target, torch.ones(2), torch.ones(2), .17,
-                                       target_phys=target, event_threshold_phys=1.)
+                                       target_phys=target, tau_physical=1.)
         self.assertEqual(terms.loss.item(), 0.)
         terms.loss.backward()
         torch.testing.assert_close(predicted.grad, torch.zeros_like(predicted), rtol=0, atol=0)
@@ -186,7 +186,7 @@ class ExcessAmplitudeTests(unittest.TestCase):
         context.requires_grad_()
         output = head(context)
         excess_amplitude_terms(output.excess, target / stats['y_std'], output.threshold,
-            stats['y_std'], .25, target_phys=target, event_threshold_phys=2.).loss.backward()
+            stats['y_std'], .25, target_phys=target, tau_physical=2.).loss.backward()
         self.assertGreater(context.grad.abs().sum().item(), 0.)
         self.assertTrue(all(p.grad is None for p in head.body.parameters()))
         self.assertTrue(all(p.grad is None for p in head.gate.parameters()))
@@ -196,32 +196,32 @@ class ExcessAmplitudeTests(unittest.TestCase):
         output = head(context)
         prediction = output.prediction * stats['y_std']
         amp = excess_amplitude_terms(output.excess, target / stats['y_std'], output.threshold,
-            stats['y_std'], .25, target_phys=target, event_threshold_phys=2.).loss
+            stats['y_std'], .25, target_phys=target, tau_physical=2.).loss
         for mode, weight in itertools.product(MODES, (.3, .7)):
             config = LossConfig(loss_mode=mode, excess_loss_weight=2., gate_loss_weight=.5)
-            base = ForecastLoss(config, stats, 2., 1.)(output, prediction, target)
+            base = ForecastLoss(config, stats, 2.)(output, prediction, target)
             enabled = copy.deepcopy(config)
             enabled.excess_amp_loss_weight = weight
-            actual = ForecastLoss(enabled, stats, 2., 1., event_prior=.25, event_threshold=2.)(output, prediction, target)
+            actual = ForecastLoss(enabled, stats, 2., event_prior=.25)(output, prediction, target)
             torch.testing.assert_close(actual, base + weight * amp, rtol=0, atol=0)
 
     def test_zero_weight_skips_amp_and_preserves_outputs_gradients_rng(self):
         for mode, single in itertools.product(MODES, (False, True)):
             torch.manual_seed(35)
-            head = SingleHead(4, .3) if single else ExceedanceHead(4, .3, [1., 1.], .25)
+            head = SingleHead(4, .3) if single else ExceedanceHead(4, .3, [2., 2.], .25)
             context = torch.randn(3, 2, 4)
             target = torch.tensor([[2., 5.], [0., 1.], [1., -1.]])
             stats = dict(y_mean=torch.zeros(2), y_std=torch.ones(2))
             config = LossConfig(loss_mode=mode, excess_loss_weight=2., gate_loss_weight=.5)
             output = head(context)
-            reference = ForecastLoss(config, stats, 2., 1.)(ForecastOutput(output.prediction), output.prediction, target)
+            reference = ForecastLoss(config, stats, 2.)(ForecastOutput(output.prediction), output.prediction, target)
             if not single:
                 body, excess, gate = dual_loss_terms(output, target, stats['y_std'])
                 reference = reference + body + 2 * excess + .5 * gate
             expected_grads = torch.autograd.grad(reference, tuple(head.parameters()), retain_graph=True)
             rng = torch.get_rng_state()
             with patch('emulator.training.losses.excess_amplitude_terms', side_effect=AssertionError('disabled computation')):
-                actual = ForecastLoss(config, stats, 2., 1.)(output, output.prediction, target)
+                actual = ForecastLoss(config, stats, 2.)(output, output.prediction, target)
             torch.testing.assert_close(actual, reference, rtol=0, atol=0)
             actual_grads = torch.autograd.grad(actual, tuple(head.parameters()))
             for actual_grad, expected in zip(actual_grads, expected_grads):
@@ -235,12 +235,12 @@ class ExcessAmplitudeTests(unittest.TestCase):
             with contextlib.redirect_stderr(io.StringIO()), self.assertRaises(SystemExit):
                 train.parse_args(['--model', 'perceiver3', '--excess_amp_loss_weight', value])
         for prior in (None, 0., -1., float('nan'), float('inf')):
-            ForecastLoss(LossConfig(), stats, 1., 1., event_prior=prior)
+            ForecastLoss(LossConfig(), stats, 1., event_prior=prior)
             with self.assertRaisesRegex(ValueError, 'TRAIN event_prior'):
-                ForecastLoss(LossConfig(excess_amp_loss_weight=1.), stats, 1., 1., event_prior=prior, event_threshold=1.)
+                ForecastLoss(LossConfig(excess_amp_loss_weight=1.), stats, 1., event_prior=prior)
         for tau in (None, float('nan'), float('inf')):
-            with self.assertRaisesRegex(ValueError, 'TRAIN event_threshold'):
-                ForecastLoss(LossConfig(excess_amp_loss_weight=1.), stats, 1., 1., event_prior=.2, event_threshold=tau)
+            with self.assertRaisesRegex(ValueError, 'TRAIN tau_physical'):
+                ForecastLoss(LossConfig(excess_amp_loss_weight=1.), stats, tau, event_prior=.2)
         for mode in DUAL_ABLATIONS:
             disabled = mode in ('no_excess_loss', 'no_branch_supervision')
             args = train.parse_args(['--model', 'perceiver3', '--dual_ablation', mode, '--excess_amp_loss_weight', '.7'])
@@ -251,8 +251,7 @@ class ExcessAmplitudeTests(unittest.TestCase):
                 output = output._replace(gate_logits=None)
             config = LossConfig(dual_ablation=mode, excess_amp_loss_weight=.7)
             with patch('emulator.training.losses.excess_amplitude_terms', wraps=excess_amplitude_terms) as observed:
-                ForecastLoss(config, stats, 1., 1., event_prior=None if disabled else .25,
-                             event_threshold=None if disabled else 2.)(output, output.prediction * stats['y_std'], target)
+                ForecastLoss(config, stats, 2., event_prior=None if disabled else .25)(output, output.prediction * stats['y_std'], target)
             self.assertEqual(observed.call_count, 0 if disabled else 1)
         for model in ('baseline', 'perceiver3'):
             with contextlib.redirect_stderr(io.StringIO()), self.assertRaises(SystemExit):
@@ -265,7 +264,7 @@ class ExcessAmplitudeTests(unittest.TestCase):
             std = torch.tensor([300., 400.], dtype=dtype)
             target = torch.ones(1, 2, dtype=dtype)
             terms = excess_amplitude_terms(predicted, target, torch.zeros(2, dtype=dtype), std, .2,
-                                           target_phys=target.float() * std.float(), event_threshold_phys=0.)
+                                           target_phys=target.float() * std.float(), tau_physical=0.)
             self.assertEqual(terms.loss.dtype, torch.float32)
             self.assertTrue(torch.isfinite(terms.loss))
             self.assertEqual(terms.r_pred_phys.dtype, torch.float32)
@@ -278,12 +277,12 @@ class ExcessAmplitudeTests(unittest.TestCase):
             self.check_runtime(torch.device('cuda'), torch.bfloat16)
 
     def check_runtime(self, device, dtype):
-        for mode in ('mse', 'mse_tail', 'mse_tail_slope'):
+        for mode in ('mse', 'wmse', 'mse_slope'):
             head, context, target, stats = ddp_fixture()
             head, context, target = head.to(device), context.to(device), target.to(device)
             stats = {key: value.to(device) for key, value in stats.items()}
             criterion = ForecastLoss(LossConfig(loss_mode=mode, excess_loss_weight=5., gate_loss_weight=.5,
-                excess_amp_loss_weight=.7), stats, 1., 1., event_prior=.25, event_threshold=2.).to(device)
+                excess_amp_loss_weight=.7), stats, 2., event_prior=.25).to(device)
             with torch.autocast(device_type=device.type, dtype=dtype):
                 output = head(context)
                 loss = criterion(output, output.prediction * stats['y_std'], target)
@@ -301,7 +300,7 @@ class ExcessAmplitudeTests(unittest.TestCase):
         head, context, target, stats = ddp_fixture()
         output = head(context)
         criterion = ForecastLoss(LossConfig(excess_loss_weight=2., gate_loss_weight=.5,
-            excess_amp_loss_weight=.7), stats, 1., 1., event_prior=.25, event_threshold=2.)
+            excess_amp_loss_weight=.7), stats, 2., event_prior=.25)
         loss = criterion(output, output.prediction * stats['y_std'], target)
         loss.backward()
         for record in records.values():
@@ -327,14 +326,14 @@ class ExcessAmplitudeTests(unittest.TestCase):
 
 
 class ExcessAmplitudeDiagnosticTests(unittest.TestCase):
-    def test_true_peak_diagnostic_ignores_larger_wrong_time_peak(self):
+    def test_gt_aligned_peak_diagnostic_ignores_larger_wrong_time_peak(self):
         truth = np.array([[2., 5.], [4., 1.], [2., 2.], [0., 1.]])
         excess = np.array([[30., 2.], [5., 20.], [100., 100.], [100., 100.]])
         arrays = dict(y_true=truth, y_pred=np.zeros_like(truth), body_phys=np.zeros_like(truth),
                       excess_phys=excess, gate_probability=np.zeros(4))
         report = summarize_dual(arrays, tau_phys=2.)
-        expected = dict(true_peak_excess_rmse=np.sqrt(5), true_peak_excess_mae=2., true_peak_excess_bias=1.,
-                        pred_true_peak_excess_mean=3.5, target_true_peak_excess_mean=2.5)
+        expected = dict(gt_aligned_raw_excess_peak_rmse=np.sqrt(5), gt_aligned_raw_excess_peak_mae=2., gt_aligned_raw_excess_peak_bias=1.,
+                        gt_aligned_raw_excess_peak_pred_mean=3.5, gt_aligned_raw_excess_peak_target_mean=2.5)
         for key, value in expected.items():
             self.assertAlmostEqual(report[key], value)
         self.assertEqual(summarize_excess_amplitude(excess, np.maximum(truth - 2., 0), truth,

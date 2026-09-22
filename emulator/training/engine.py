@@ -9,7 +9,7 @@ import torch.distributed as dist
 from torch.nn.parallel import DistributedDataParallel
 
 from emulator.data.normalization import normalize_inputs
-from .metrics import physical_peak_columns, summarize_windows
+from .metrics import evaluate_metrics
 
 
 @dataclass
@@ -21,7 +21,9 @@ class EpochResult:
 def run_epoch(model, loader, device, stats, *, station_feat=None, optimizer=None,
               criterion=None, scaler=None, grad_accum_steps=1, max_grad_norm=0.0, use_amp=False,
               amp_dtype=torch.bfloat16, x_clip=0.0, augmentation=None,
-              save_predictions=False, distributed=False, save_dual_diagnostics=False, event_threshold=None):
+              save_predictions=False, distributed=False, save_dual_diagnostics=False, tau_physical=None):
+    if tau_physical is None or not np.isfinite(tau_physical):
+        raise ValueError("Evaluation requires the saved finite TRAIN tau_physical.")
     training = optimizer is not None
     if save_dual_diagnostics and (training or distributed or not save_predictions):
         raise ValueError("Dual diagnostics require a single-process prediction export in evaluation mode.")
@@ -30,14 +32,14 @@ def run_epoch(model, loader, device, stats, *, station_feat=None, optimizer=None
     network = model.module if not training and isinstance(model, DistributedDataParallel) else model
     if training:
         optimizer.zero_grad(set_to_none=True)
-    windows, truth, predictions, tags = [], [], [], []
-    dual_arrays = {name: [] for name in ("gate_probability", "body_phys", "excess_phys")} if save_dual_diagnostics else None
-    # Original evaluation: FP32 batch means, weighted/accumulated in FP64.
-    evaluation_sums = torch.zeros(3, dtype=torch.float64, device=device) if not training else None
+    truth, predictions, ids, timestamps, tags = [], [], [], [], []
+    dual_arrays = {name: [] for name in ("gate_probability", "gate_logits", "body_phys", "excess_phys")} if save_dual_diagnostics else None
     with torch.set_grad_enabled(training):
         for step, batch in enumerate(loader):
             if save_predictions:
                 tags.extend(batch.tag)
+            ids.append(batch.sample_id.detach().cpu().reshape(-1))
+            timestamps.append(batch.target_timestamps.detach().cpu())
             batch = batch.to(device, non_blocking=True)
             normalize_inputs(batch, stats, x_clip, augmentation if training else None)
             target = batch.y.float()
@@ -66,52 +68,47 @@ def run_epoch(model, loader, device, stats, *, station_feat=None, optimizer=None
                 else:
                     optimizer.step()
                 optimizer.zero_grad(set_to_none=True)
-            # Six scalars per window; no full validation predictions or extra forward pass.
-            error = prediction.detach() - target
-            if not training:
-                evaluation_sums[0] += error.square().mean().double() * target.size(0)
-                evaluation_sums[1] += error.abs().mean().double() * target.size(0)
-                evaluation_sums[2] += target.size(0)
-            peaks = physical_peak_columns(prediction.detach(), target)
-            windows.append(torch.stack((batch.sample_id.double(), peaks[:, 0],
-                                        error.square().mean(dim=1).double(), error.abs().mean(dim=1).double(),
-                                        peaks[:, 1], peaks[:, 2]), dim=1))
-            if save_predictions:
-                truth.append(target.cpu())
-                predictions.append(prediction.detach().cpu())
+            truth.append(target.detach().cpu())
+            predictions.append(prediction.detach().cpu())
             if save_dual_diagnostics:
                 if output.body is None or output.excess is None or output.gate_probability is None:
                     raise ValueError("Dual diagnostics require a dual-head model.")
                 dual_arrays["gate_probability"].append(output.gate_probability.float().reshape(-1).cpu())
+                logits = (output.gate_logits.float().reshape(-1) if output.gate_logits is not None
+                          else torch.logit(output.gate_probability.float().reshape(-1)))
+                dual_arrays["gate_logits"].append(logits.cpu())
                 dual_arrays["body_phys"].append((output.body.float() * stats["y_std"] + stats["y_mean"]).cpu())
                 dual_arrays["excess_phys"].append((output.excess.float() * stats["y_std"]).cpu())
                 if output.severity_phys is not None:
                     dual_arrays.setdefault("severity_phys", []).append(output.severity_phys.float().reshape(-1).cpu())
                     dual_arrays.setdefault("excess_shape", []).append(output.excess_shape.float().cpu())
-    records = torch.cat(windows).cpu().numpy() if windows else np.empty((0, 6))
+    width = stats["y_mean"].numel()
+    records = {
+        "sample_id": torch.cat(ids).numpy() if ids else np.empty(0, np.int64),
+        "y_true": torch.cat(truth).numpy() if truth else np.empty((0, width), np.float32),
+        "y_pred": torch.cat(predictions).numpy() if predictions else np.empty((0, width), np.float32),
+        "target_timestamps": torch.cat(timestamps).numpy() if timestamps else np.empty((0, width), np.int64),
+    }
     if distributed:
         gathered = [None] * dist.get_world_size()
         dist.all_gather_object(gathered, records)
-        records = np.concatenate(gathered)
+        records = {key: np.concatenate([part[key] for part in gathered]) for key in records}
+        # DistributedSampler pads the sample stream. Remove only sampler copies;
+        # dataset timestamp uniqueness is checked separately, before the loader.
+        _, first = np.unique(records["sample_id"], return_index=True)
+        records = {key: value[first] for key, value in records.items()}
+    metrics = evaluate_metrics(records["y_pred"], records["y_true"], tau_physical,
+                              target_timestamps=records["target_timestamps"] if save_predictions else None)
     arrays = None
     if save_predictions:
         if distributed:
             raise ValueError("Save predictions in a single-process pass, not a distributed epoch.")
-        width = stats["y_mean"].numel()
-        arrays = {"y_true": torch.cat(truth).numpy() if truth else np.empty((0, width), np.float32),
-                  "y_pred": torch.cat(predictions).numpy() if predictions else np.empty((0, width), np.float32),
-                  "tags": np.asarray(tags, dtype=str)}
+        arrays = dict(records, tags=np.asarray(tags, dtype=str))
         if save_dual_diagnostics:
             arrays.update({name: torch.cat(values).numpy() if values else
-                           np.empty((0,) if name in ("gate_probability", "severity_phys") else (0, width), np.float32)
+                           np.empty((0,) if name in ("gate_probability", "gate_logits", "severity_phys") else (0, width), np.float32)
                            for name, values in dual_arrays.items()})
-    # Legacy Val All includes padding; all true-peak metrics use unique windows.
-    metrics = summarize_windows(records, validation=not training, event_threshold=event_threshold)
-    if not training:
-        if distributed:
-            for value in evaluation_sums:
-                dist.all_reduce(value)
-        square, absolute, count = evaluation_sums.tolist()
-        if count:
-            metrics.update(rmse_all=float(np.sqrt(square / count)), mae_all=absolute / count)
+            reconstruction = arrays["body_phys"] + arrays["gate_probability"][:, None] * arrays["excess_phys"]
+            if not np.allclose(reconstruction, arrays["y_pred"], rtol=2e-5, atol=2e-6):
+                raise ValueError("Dual branch reconstruction does not match the physical prediction.")
     return EpochResult(metrics, arrays)

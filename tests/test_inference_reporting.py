@@ -31,7 +31,8 @@ class InferenceReportingTests(unittest.TestCase):
         for index, (year, count) in enumerate(((1979, 1), (2014, 2), (2050, 3), (2070, 4), (2099, 1), (2100, 2))):
             values = [[index + 1., -(i + .25)] for i in range(count)]
             data = [Data(x=torch.ones(4, 3), y=torch.tensor(value),
-                         edge_index=torch.tensor([[0, 1, 2, 3], [1, 2, 3, 0]])) for value in values]
+                         edge_index=torch.tensor([[0, 1, 2, 3], [1, 2, 3, 0]]),
+                         center_time=f"{year}-11-01 {j*2:02d}:00:00") for j, value in enumerate(values)]
             torch.save(data, self.graphs / f'{year}_{year + 1}_Battery_fixture_graphs.pt')
             self.truth[f'{year}_{year + 1}'] = np.array(values, dtype=np.float32)
         config = ModelConfig(3, 2, model='baseline', hidden_channels=8, head_type='single', history_steps=0)
@@ -44,6 +45,8 @@ class InferenceReportingTests(unittest.TestCase):
         self.ckpt = self.root / 'model.pth'
         torch.save(dict(model_config=asdict(config), model_state=model.state_dict(), training_config=training,
                         station='Battery', station_feat=None, split_tags=dict(test=test_tags),
+                        threshold_metadata=dict(tau_physical=3., exceedance_percentile=95.,
+                            metric_schema='hourly_q95_v1', threshold_schema='train_hourly_q95_v1'),
                         normalization=dict(x_center=torch.zeros(3), x_scale=torch.ones(3),
                                            y_mean=torch.tensor([.25, -.5]), y_std=torch.ones(2))), self.ckpt)
 
@@ -65,7 +68,7 @@ class InferenceReportingTests(unittest.TestCase):
         error = np.array([.25, -.5]) - np.concatenate([self.truth[year] for year in years])
         self.assertAlmostEqual(metrics['rmse'], float(np.sqrt(np.mean(error ** 2))), places=6)
         self.assertAlmostEqual(metrics['mae'], float(np.mean(np.abs(error))), places=6)
-        self.assertEqual(metrics['unit'], 'physical')
+        self.assertEqual(metrics['unit'], 'meters')
 
     def test_all_years_past_future_sample_weighting_and_original_files(self):
         options = ['--test_root_dir', str(self.graphs)]
@@ -86,16 +89,16 @@ class InferenceReportingTests(unittest.TestCase):
         expected_seconds = np.mean([plain['results'][year]['seconds'] for year in self.truth if year != '2014_2015'])
         self.assertEqual(timing['seconds'], expected_seconds)
         self.assertFalse(list(plain_dir.glob('*.npz')))
-        exported = saved_dir / f'preds_{self.root.name}_Battery_baseline_ALLYEARS.npz'
+        exported = saved_dir / 'predictions.npz'
         self.assertTrue(exported.exists())
-        with np.load(exported, allow_pickle=True) as arrays:
-            self.assertEqual(set(arrays.files), {'y_true', 'y_pred', 'tags'})
-            self.assertEqual(arrays['tags'].dtype, object)
+        with np.load(exported) as arrays:
+            self.assertTrue({'y_true', 'y_pred', 'tags', 'target_timestamps', 'tau_physical'}.issubset(arrays.files))
             np.testing.assert_array_equal(arrays['y_true'], np.concatenate(list(self.truth.values())))
             self.assertEqual(len(arrays['tags']), 13)
+            self.assertEqual(arrays['tau_physical'].item(), 3.)
         current = json.loads((plain_dir / 'metrics.json').read_text())
         self.assertEqual(current['samples'], 13)
-        self.assertAlmostEqual(current['metrics']['rmse_all'], plain['results']['_overall']['rmse'])
+        self.assertAlmostEqual(current['metrics']['all_rmse'], plain['results']['_overall']['rmse'])
 
     def test_saved_scope_year_filter_and_empty_group(self):
         report, out = self.evaluate('held_out')
@@ -104,12 +107,12 @@ class InferenceReportingTests(unittest.TestCase):
         self.assertEqual(report['evaluation_scope'], 'held_out_years')
         filtered, _ = self.evaluate('filtered', ['--years', '1979_1980'])
         self.assertEqual(filtered['years_evaluated'], ['1979_1980'])
-        self.assertTrue(math.isnan(filtered['results']['_overall_future']['rmse']))
+        self.assertIsNone(filtered['results']['_overall_future']['rmse'])
         boundary, _ = self.evaluate('boundary', ['--scope', 'all', '--years', '2014_2015'])
         self.check_metrics(boundary['results']['_overall'], ['2014_2015'])
         timing = boundary['results']['_avg_time_per_year_excl_2014_2015']
         self.assertEqual(timing['n_years'], 0)
-        self.assertTrue(math.isnan(timing['seconds']))
+        self.assertIsNone(timing['seconds'])
 
     def test_original_automatic_directory_and_dataset_labels(self):
         from emulator.inference import infer_dataset_tag
@@ -127,3 +130,29 @@ class InferenceReportingTests(unittest.TestCase):
         report = json.loads(next((directory / 'outputs').glob('metrics_per_year_*.json')).read_text())
         self.assertEqual(report['model_label'], 'P3_Best')
         self.assertEqual(report['inference_args']['model_label'], 'P3_Best')
+
+    def test_scope_all_keeps_saved_split_boundaries_and_external_uses_own_series(self):
+        graphs = self.root / 'contiguous'
+        graphs.mkdir()
+        for year, center in ((2000, '2000-12-31 22:00:00'), (2001, '2001-01-01 00:00:00')):
+            graph = Data(x=torch.ones(4, 3), y=torch.tensor([5., 5.]),
+                         edge_index=torch.tensor([[0, 1, 2, 3], [1, 2, 3, 0]]), center_time=center)
+            torch.save([graph], graphs / f'{year}_{year+1}_Battery_fixture_graphs.pt')
+        checkpoint = torch.load(self.ckpt, weights_only=False)
+        checkpoint['split_tags'] = dict(train=['2000_2001_Battery_fixture_0'],
+                                        val=['2001_2002_Battery_fixture_0'], test=[])
+        torch.save(checkpoint, self.ckpt)
+        for external, expected in ((False, 2), (True, 1)):
+            out = self.root / f'boundary_{external}'
+            args = ['--ckpt', str(self.ckpt), '--root_dir', str(graphs), '--out_dir', str(out),
+                    '--device', 'cpu', '--num_workers', '0', '--save_npz']
+            args += ['--test_root_dir', str(graphs)] if external else ['--scope', 'all']
+            with contextlib.redirect_stdout(io.StringIO()):
+                infer.main(args)
+            report = json.loads((out / 'metrics.json').read_text())
+            self.assertEqual(report['metrics']['episode_n'], expected)
+            self.assertEqual(report['scope'], 'external_all_years' if external else 'source_all_years')
+            self.assertEqual(report['tau_physical'], 3.)
+            with np.load(out / 'predictions.npz') as data:
+                self.assertEqual(data['split'].item(), 'external' if external else 'mixed')
+                self.assertEqual(set(data['split_ids']), {'external'} if external else {'train', 'val'})

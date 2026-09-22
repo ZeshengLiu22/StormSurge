@@ -20,7 +20,8 @@ from emulator.models import ModelConfig, build_model, count_model_parameters, fo
 from emulator.inference import classify_past_future, infer_dataset_tag, parse_year_tag
 from emulator.inference.dual_diagnostics import summarize_dual
 from emulator.training import format_metrics, run_epoch
-from emulator.training.metrics import physical_peak_columns, summarize_windows
+from emulator.training.metrics import evaluate_metrics
+from emulator.training.reporting import metric_report, threshold_label
 
 
 def parse_args(argv=None):
@@ -141,12 +142,12 @@ def main(argv=None):
     checkpoint = torch.load(args.ckpt, map_location="cpu", weights_only=False)
     config = ModelConfig(**checkpoint["model_config"])
     dual_metadata = checkpoint.get("dual_metadata")
-    event_threshold = (dual_metadata or {}).get("tau_phys")
-    event_threshold_source = "dual_metadata.tau_phys" if event_threshold is not None else None
-    if event_threshold is None:
-        event_threshold = (checkpoint.get("loss_thresholds") or {}).get("tau_phys")
-        if event_threshold is not None:
-            event_threshold_source = "loss_thresholds.tau_phys"
+    threshold_metadata = checkpoint["threshold_metadata"]
+    if (threshold_metadata["metric_schema"] != "hourly_q95_v1"
+            or threshold_metadata["threshold_schema"] != "train_hourly_q95_v1"):
+        raise ValueError("Inference requires the current hourly TRAIN threshold schema.")
+    tau_physical = threshold_metadata["tau_physical"]
+    log_message(threshold_label(threshold_metadata))
     if args.dual_diagnostics and (config.head_type != "dual" or dual_metadata is None):
         raise ValueError("--dual_diagnostics requires a dual checkpoint with TRAIN event metadata.")
     training = checkpoint["training_config"]
@@ -179,11 +180,13 @@ def main(argv=None):
                                                   use_bathymetry=training["use_bathymetry"])
     if station_feat is not None:
         station_feat = station_feat.to(device)
-    external = bool(args.test_root_dir) or args.scope == "all"
+    external = bool(args.test_root_dir)
+    all_years = external or args.scope == "all"
+    evaluation_scope = "external_all_years" if external else ("source_all_years" if all_years else "held_out_years")
     root = args.test_root_dir or args.root_dir
     # Station filtering is always strict; missing station data never selects other stations.
     store = ForcingGraphStore(root, station)
-    if external:
+    if all_years:
         indices = list(range(len(store.graphs)))
     else:
         expected_tags = set(checkpoint["split_tags"]["test"])
@@ -228,14 +231,14 @@ def main(argv=None):
                            use_amp=args.amp and cuda,
                            amp_dtype={"bf16": torch.bfloat16, "fp16": torch.float16}[args.amp_dtype],
                            save_predictions=True, save_dual_diagnostics=args.dual_diagnostics,
-                           event_threshold=event_threshold)
+                           tau_physical=tau_physical)
         if cuda and args.gpu_sync_timing:
             torch.cuda.synchronize()
         seconds = time.perf_counter() - start
-        results[year] = dict(samples=len(dataset), rmse=result.metrics["rmse_all"],
-                             mae=result.metrics["mae_all"], seconds=seconds, unit="physical", **result.metrics)
+        results[year] = dict(samples=len(dataset), rmse=result.metrics["all_rmse"],
+                             mae=result.metrics["all_mae"], seconds=seconds, unit="meters", **result.metrics)
         log_message(f'[Year {year} | physical] samples={len(dataset)} '
-                    f'rmse={result.metrics["rmse_all"]:.6e} mae={result.metrics["mae_all"]:.6e} time={seconds:.2f}s')
+                    f'rmse={result.metrics["all_rmse"]:.6e} mae={result.metrics["all_mae"]:.6e} time={seconds:.2f}s')
         if parse_year_tag(year) != (2014, 2015):
             timing_year_seconds.append(seconds)
         # Reports always use the evaluated predictions; save_npz controls disk I/O only.
@@ -244,13 +247,13 @@ def main(argv=None):
               for name in yearly_predictions[0]}
     elapsed = sum(results[year]["seconds"] for year in year_to_indices)
     error = arrays["y_pred"].astype(np.float64) - arrays["y_true"].astype(np.float64)
-    records = np.column_stack((np.arange(len(indices)), arrays["y_true"].max(axis=1),
-                               np.mean(error ** 2, axis=1), np.mean(np.abs(error), axis=1)))
-    # Keep the established NumPy trajectory reductions above; reuse the exact
-    # true-peak feature/metric path used during each validation epoch.
-    peaks = physical_peak_columns(torch.from_numpy(arrays["y_pred"]), torch.from_numpy(arrays["y_true"]))
-    records = np.column_stack((records, peaks.numpy()[:, 1:]))
-    metrics = summarize_windows(records, event_threshold=event_threshold)
+    saved_split_by_tag = {tag: split for split, split_tags in checkpoint["split_tags"].items()
+                          for tag in split_tags}
+    arrays["split_ids"] = np.asarray([
+        saved_split_by_tag.get(tag, "evaluation") if not args.test_root_dir and station == checkpoint["station"]
+        else "external" for tag in arrays["tags"]], dtype=str)
+    metrics = evaluate_metrics(arrays["y_pred"], arrays["y_true"], tau_physical,
+                               target_timestamps=arrays["target_timestamps"], split_ids=arrays["split_ids"])
     groups = np.array([classify_past_future(parse_year_tag(tag)[0]) for tag in arrays["tags"]])
     for key, mask, years_label in (
         ("_overall", np.ones(len(indices), dtype=bool), None),
@@ -258,16 +261,17 @@ def main(argv=None):
         ("_overall_future", groups == "future", "2070-2099"),
     ):
         selected = error[mask]
-        rmse = float(np.sqrt(np.mean(selected ** 2))) if selected.size else float("nan")
-        mae = float(np.mean(np.abs(selected))) if selected.size else float("nan")
-        results[key] = dict(rmse=rmse, mae=mae, unit="physical")
+        group_metrics = evaluate_metrics(arrays["y_pred"][mask], arrays["y_true"][mask], tau_physical,
+                                         target_timestamps=arrays["target_timestamps"][mask], split_ids=arrays["split_ids"][mask])
+        rmse, mae = group_metrics["all_rmse"], group_metrics["all_mae"]
+        results[key] = dict(rmse=rmse, mae=mae, unit="meters", **group_metrics)
         if years_label is not None:
             results[key]["years"] = years_label
         log_message(f'[{key.removeprefix("_")} {years_label or "ALL"} | physical] '
-                    f'rmse={rmse:.6e} mae={mae:.6e} (n_graphs={int(mask.sum())})')
-    average = float(np.mean(timing_year_seconds)) if timing_year_seconds else float("nan")
+                    f'AllRMSE={rmse} AllMAE={mae} (n_graphs={int(mask.sum())})')
+    average = float(np.mean(timing_year_seconds)) if timing_year_seconds else None
     results["_avg_time_per_year_excl_2014_2015"] = dict(seconds=average, n_years=len(timing_year_seconds), excluded="2014-2015")
-    log_message(f"[Timing | excl 2014-2015] avg_time_per_year={average:.2f}s over {len(timing_year_seconds)} years")
+    log_message(f"[Timing | excl 2014-2015] avg_time_per_year={average}s over {len(timing_year_seconds)} years")
 
     test_tag = target
     model_file_tag = "" if config.encoder_type == "GraphSAGE" else f"_{config.encoder_type}"
@@ -277,23 +281,27 @@ def main(argv=None):
         if config.head_type != "dual":
             model_file_tag += f"_{config.head_type}"
     report_stem = f"{test_tag}_{station_tag}_{model_name}{model_file_tag}"
+    export_metadata = dict(tau_physical=tau_physical,
+                           exceedance_percentile=threshold_metadata["exceedance_percentile"],
+                           metric_schema=threshold_metadata["metric_schema"],
+                           threshold_schema=threshold_metadata["threshold_schema"],
+                           station=station_tag, split="external" if external else ("mixed" if all_years else "test"))
     if args.save_npz:
-        np.savez_compressed(out_dir / "predictions.npz", **{name: arrays[name] for name in ("y_true", "y_pred", "tags")})
-        np.savez(out_dir / f"preds_{report_stem}_ALLYEARS.npz", y_true=arrays["y_true"],
-                 y_pred=arrays["y_pred"], tags=arrays["tags"].astype(object))
+        np.savez_compressed(out_dir / "predictions.npz", **arrays, **export_metadata)
     if args.dual_diagnostics:
-        tau_phys = dual_metadata["tau_phys"]
+        tau_phys = tau_physical
         formulation_metadata = dict(excess_formulation=config.excess_formulation)
         if config.excess_formulation == "severity_shape":
             formulation_metadata["severity_shape_eps"] = config.severity_shape_eps
         event = np.any(arrays["y_true"].astype(np.float64) > tau_phys, axis=1)
         np.savez_compressed(out_dir / "dual_diagnostics.npz", **arrays, event=event,
                             contribution_phys=arrays["gate_probability"][:, None] * arrays["excess_phys"],
-                            tau_phys=tau_phys, event_prior=dual_metadata["event_prior"],
+                            **export_metadata, event_prior=dual_metadata["event_prior"],
                             dual_ablation=config.dual_ablation, **formulation_metadata)
         diagnostic_report = dict(train=dual_metadata,
+                                 threshold_metadata=threshold_metadata, method=threshold_label(threshold_metadata),
                                  **formulation_metadata,
-                                 scope="external_all_years" if external else "held_out_years",
+                                 scope=evaluation_scope,
                                  years=sorted(year_to_indices), overall=summarize_dual(arrays, tau_phys),
                                  by_year={year: summarize_dual(item, tau_phys)
                                           for year, item in zip(sorted(year_to_indices), yearly_predictions)},
@@ -303,9 +311,9 @@ def main(argv=None):
         log_message(f"Dual diagnostics: {out_dir / 'dual_diagnostics.json'}")
     wall_seconds = time.perf_counter() - wall_start
     metadata = {"metrics": metrics, "model_parameters": model_parameters, "runtime_seconds": elapsed, "wall_seconds": wall_seconds,
-                "samples": len(indices), "scope": "external_all_years" if external else "held_out_years",
+                "samples": len(indices), "scope": evaluation_scope, "method": threshold_label(threshold_metadata),
                 "years": sorted(year_to_indices), "results": results, "dual_metadata": dual_metadata,
-                "event_threshold_phys": event_threshold, "event_threshold_source": event_threshold_source}
+                "threshold_metadata": threshold_metadata, **threshold_metadata}
     (out_dir / "metrics.json").write_text(json.dumps(metadata, indent=2))
     report = dict(timestamp=datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S UTC"),
                   test_tag=test_tag, source_tag=source, target_tag=target, station=station_tag,
@@ -323,15 +331,16 @@ def main(argv=None):
                                         future_year_threshold=training["future_year_threshold"], split_seed=training["seed"])
                   if not external else None,
                   years_evaluated=metadata["years"], inference_args=vars(args).copy(), checkpoint_args=training,
-                  results=results, metrics=metrics, event_threshold_phys=event_threshold,
-                  event_threshold_source=event_threshold_source,
+                  results=results, metrics=metrics, threshold_metadata=threshold_metadata, method=threshold_label(threshold_metadata),
                   metric_space="physical", metric_note="RMSE/MAE on denormalized predictions in original y units. "
-                      "Peak amplitude errors evaluate the prediction at the true target peak horizon. "
+                      "WindowPeak compares maxima; GTAlignedPeak samples the first GT maximum. "
+                      "Episode metrics use fixed GT hourly episodes within each evaluation split. "
                       "Argmax ties use the first occurrence; timing is in forecast steps. "
-                      "Event metrics use saved TRAIN tau_phys, or null if unavailable.",
+                      "All extreme populations use the saved TRAIN hourly tau_physical.",
                   x_clip=training["x_clip"], dual_metadata=dual_metadata, dual_ablation=config.dual_ablation)
     (out_dir / f"metrics_per_year_{report_stem}.json").write_text(json.dumps(report, indent=2, default=str))
-    log_message(format_metrics("External" if external else "Test", metrics))
+    (out_dir / "metrics.md").write_text(metric_report(metrics, threshold_metadata))
+    log_message(format_metrics("External" if external else ("SourceAll" if all_years else "Test"), metrics))
     log_message(f"Wall time: {wall_seconds:.3f} s | Outputs: {out_dir}")
 
 

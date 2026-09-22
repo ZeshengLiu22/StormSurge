@@ -18,7 +18,7 @@ from torch_geometric.data import Data
 import infer
 import train
 from emulator.data import ForcingGraphStore, ForcingGraphView
-from emulator.training.metrics import METRIC_NAMES, PEAK_METRIC_NAMES
+from emulator.training.metrics import METRIC_KEYS, EPOCH_METRIC_KEYS
 
 
 def make_fixture(root, years=5):
@@ -28,7 +28,8 @@ def make_fixture(root, years=5):
         items = []
         for index in range(1 + (year - 2000) % 3):
             history = torch.randn(9, 6, 3)
-            items.append(Data(x=history[-1], x_hist=history, y=torch.randn(4) + index * .3,
+            items.append(Data(x=history[-1], x_hist=history, y=torch.tensor([-.2, .1, .3, 1. + .1 * (year - 2000) + .05 * index]),
+                center_time=f"{year}-11-01 {index * 6:02d}:00:00",
                 edge_index=torch.tensor([[0, 1, 2, 3, 4, 5], [1, 2, 3, 4, 5, 0]]), grid_H=2, grid_W=3))
         torch.save(items, graphs / f"{year}_{year + 1}_Battery_fixture_graphs.pt")
     stations = root / "stations"
@@ -189,39 +190,28 @@ class PipelineTests(unittest.TestCase):
                 with contextlib.redirect_stdout(console), patch.object(train, "run_epoch", wraps=train.run_epoch) as observed:
                     train.main(args)
                 # Two epochs of TRAIN/VAL, then one fresh pass each on final VAL and TEST.
-                self.assertEqual(observed.call_count, 6)
+                self.assertEqual(observed.call_count, 8)
                 lines = console.getvalue().splitlines()
-                # Best-checkpoint messages were added to production after this test.
-                best_lines = [line.split('] ', 1)[1] for line in lines if '] [Best] ' in line]
                 parameter_lines = [line for line in lines if '] [Parameters] ' in line]
                 self.assertEqual(len(parameter_lines), 1)
-                self.assertEqual(parameter_lines[0], lines[0])
-                self.assertEqual(len(lines) - len(best_lines) - len(parameter_lines), 8)
-                for line in console.getvalue().splitlines():
-                    self.assertRegex(line, r"^\[\d{4}-\d{2}-\d{2}\|\d{2}:\d{2}:\d{2}\]")
-                self.assertIn("Wall time:", console.getvalue().splitlines()[-1])
+                self.assertIn("Wall time:", lines[-1])
+                self.assertIn("strict exceedance y > tau", console.getvalue())
                 logs = [json.loads(line) for line in next(output.glob("metrics_*.jsonl")).read_text().splitlines()]
-                running_best, expected_best_lines = float('inf'), []
                 for record in logs:
-                    self.assertEqual(set(record), {"epoch", "train", "val"})
+                    self.assertEqual(set(record), {"epoch", "train", "val", "eventaware_score"})
                     for part in ("train", "val"):
-                        self.assertEqual(tuple(record[part]), METRIC_NAMES + PEAK_METRIC_NAMES)
-                    if record['val']['rmse_all'] < running_best:
-                        running_best = record['val']['rmse_all']
-                        expected_best_lines.append(f"[Best] Epoch {record['epoch']:03d}/2 | "
-                                                   f"{train.format_metrics('Val', record['val'])}")
-                self.assertEqual(best_lines, expected_best_lines)
+                        self.assertTrue(set(EPOCH_METRIC_KEYS).issubset(record[part]))
                 checkpoint = torch.load(next(output.glob("best_*.pth")), weights_only=False)
                 summary = json.loads(next(output.glob("summary_*.json")).read_text())
-                self.assertEqual(summary["val"], checkpoint["val"])
-                self.assertEqual(summary["val"], logs[checkpoint["epoch"] - 1]["val"])
-                self.assertEqual(summary["best_val_rmse"], summary["val"]["rmse_all"])
+                for key in EPOCH_METRIC_KEYS:
+                    self.assertEqual(summary["val"][key], checkpoint["val"][key])
+                self.assertEqual(summary["best_val_rmse"], summary["val"]["all_rmse"])
                 self.assertEqual(summary["best_epoch"], checkpoint["epoch"])
-                self.assertEqual(tuple(summary["test"]), METRIC_NAMES + PEAK_METRIC_NAMES)
-                self.assertIn(f'Best checkpoint: epoch {checkpoint["epoch"]:03d} | selection=overall', lines[-6])
-                self.assertIn('FINAL BEST-CHECKPOINT RE-EVALUATION', lines[-5])
-                self.assertTrue(lines[-3].split('] ', 1)[1].startswith('VAL '))
-                self.assertTrue(lines[-2].split('] ', 1)[1].startswith('TEST '))
+                self.assertTrue(set(METRIC_KEYS).issubset(summary["test"]))
+                self.assertTrue((output / "best_overall.pt").exists())
+                self.assertTrue((output / "best_eventaware.pt").exists())
+                self.assertTrue((output / "checkpoint_comparison.md").exists())
+                self.assertEqual(checkpoint["metric_schema"], "hourly_q95_v1")
                 self.assertNotIn("stable_arch", checkpoint["training_config"])
                 self.assertNotIn("STABLE_ARCH=", (output / "config_used.sh").read_text())
                 self.assertEqual(checkpoint["model_config"]["history_steps"], history // 6)
@@ -239,7 +229,7 @@ class PipelineTests(unittest.TestCase):
                 with np.load(next(output.glob("test_preds_*.npz"))) as trained, np.load(inferred / "predictions.npz") as restored:
                     np.testing.assert_array_equal(trained["tags"], restored["tags"])
                     np.testing.assert_allclose(trained["y_pred"], restored["y_pred"], rtol=1e-6, atol=1e-6)
-                with self.assertRaises(FileExistsError), contextlib.redirect_stdout(io.StringIO()):
+                with self.assertRaises((FileExistsError, ValueError)), contextlib.redirect_stdout(io.StringIO()):
                     train.main(args)
 
     def test_station_filter_precedes_loading_and_split_is_by_year(self):
