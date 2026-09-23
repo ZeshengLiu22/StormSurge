@@ -3,6 +3,8 @@
 
 TRAIN_PY="train.py"
 DO_CONDA=0
+# Explicit runtime survives queue workers and tmux shell initialization.
+PYTHON_BIN="${WQEF_PYTHON_BIN:-/home/exouser/.conda/envs/torchpyg-cu12x/bin/python}"
 num_gpus=1
 USE_TMUX="${USE_TMUX:-1}"
 

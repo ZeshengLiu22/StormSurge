@@ -5,6 +5,8 @@ fi
 set -euo pipefail
 cd /home/exouser/StormSurge
 
+bash /home/exouser/StormSurge/configs/0922_wqe_factorial_multickpt/preflight.sh configs/0922_wqe_factorial_multickpt/train_config_NCEP_CBBT_G1_E1_T1.sh
+
 qsub_local train.sh WQEF_CBBT_G1E1T1 configs/0922_wqe_factorial_multickpt/train_config_NCEP_CBBT_G1_E1_T1.sh
 qsub_local train.sh WQEF_Boston_G1E1T1 configs/0922_wqe_factorial_multickpt/train_config_NCEP_Boston_G1_E1_T1.sh
 qsub_local train.sh WQEF_Battery_G1E1T1 configs/0922_wqe_factorial_multickpt/train_config_NCEP_Battery_G1_E1_T1.sh

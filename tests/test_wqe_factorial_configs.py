@@ -14,7 +14,7 @@ import unittest
 from unittest.mock import patch
 
 from emulator.training.eventaware_checkpoints import ROLES
-from tools.generate_configs import (FACTORIAL_CONFIG_DIR, FACTORIAL_RESULTS_ROOT,
+from tools.generate_configs import (FACTORIAL_CONFIG_DIR, FACTORIAL_RESULTS_ROOT, FACTORIAL_PYTHON,
                                     generate, main)
 from test_wqe_configs import PARAMETERS, REPO, dry_run
 
@@ -84,7 +84,11 @@ class WQEFactorialConfigTests(unittest.TestCase):
             queue.write_text('#!/usr/bin/env python3\nimport json, os, sys\n'
                              'print(json.dumps(dict(args=sys.argv[1:], cwd=os.getcwd())))\n')
             queue.chmod(0o755)
-            environment = dict(os.environ, PATH=str(root) + os.pathsep + os.environ['PATH'])
+            runtime = root / 'python'
+            runtime.write_text('#!/bin/sh\ncat >/dev/null\nexit 0\n')
+            runtime.chmod(0o755)
+            environment = dict(os.environ, PATH=str(root) + os.pathsep + os.environ['PATH'],
+                               WQEF_PYTHON_BIN=str(runtime))
             for name, selected_rows in [('launch_all.sh', rows),
                     *((f'launch_{cell.replace("_", "")}.sh', [row for row in rows if row['cell'] == cell]) for cell in CELLS)]:
                 script = output / name
@@ -108,6 +112,39 @@ class WQEFactorialConfigTests(unittest.TestCase):
                     self.assertEqual(call['cwd'], str(REPO))
                     self.assertEqual(call['args'], ['train.sh', f'WQEF_{row["station"]}_{row["cell"].replace("_", "")}',
                                                   str(output / row['config'])])
+
+    def test_configs_ignore_base_python_and_allow_explicit_runtime_override(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            output = Path(temporary)
+            rows = generate(output, family=FAMILY)
+            environment = dict(os.environ, PYTHON_BIN='/wrong/base/python', CONDA_PREFIX='/wrong/base')
+            environment.pop('WQEF_PYTHON_BIN', None)
+            for row in rows:
+                command = ['bash', '-c', 'source "$1"; printf "%s" "$PYTHON_BIN"', '_', str(output / row['config'])]
+                result = subprocess.run(command, cwd=REPO, env=environment, text=True, capture_output=True, check=True)
+                self.assertEqual(result.stdout, FACTORIAL_PYTHON)
+            environment['WQEF_PYTHON_BIN'] = '/explicit/training/python'
+            result = subprocess.run(command, cwd=REPO, env=environment, text=True, capture_output=True, check=True)
+            self.assertEqual(result.stdout, environment['WQEF_PYTHON_BIN'])
+
+    def test_failed_runtime_preflight_submits_no_jobs(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            output = root / 'configs'
+            generate(output, family=FAMILY)
+            queue = root / 'qsub_local'
+            queue.write_text('#!/bin/sh\necho SHOULD_NOT_SUBMIT\n')
+            queue.chmod(0o755)
+            runtime = root / 'broken_python'
+            runtime.write_text('#!/bin/sh\ncat >/dev/null\necho missing_torch >&2\nexit 23\n')
+            runtime.chmod(0o755)
+            environment = dict(os.environ, PATH=str(root) + os.pathsep + os.environ['PATH'],
+                               WQEF_PYTHON_BIN=str(runtime))
+            for script in output.glob('launch_*.sh'):
+                result = subprocess.run([str(script)], cwd=REPO, env=environment, text=True, capture_output=True)
+                self.assertEqual(result.returncode, 23)
+                self.assertIn('missing_torch', result.stderr)
+                self.assertEqual(result.stdout, '')
 
     def test_cli_default_directory_and_explicit_overrides(self):
         with patch('tools.generate_configs.generate', return_value=[{}] * 32) as generated, contextlib.redirect_stdout(io.StringIO()):

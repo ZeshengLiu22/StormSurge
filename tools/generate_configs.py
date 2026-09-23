@@ -10,6 +10,7 @@ from pathlib import Path
 REPO = Path(__file__).resolve().parents[1]
 WQE_RESULTS_ROOT = "/home/exouser/media/share/PACT/WQE_Results"
 FACTORIAL_RESULTS_ROOT = "/home/exouser/media/share/PACT/All_results_0922_wqe_factorial_multickpt"
+FACTORIAL_PYTHON = "/home/exouser/.conda/envs/torchpyg-cu12x/bin/python"
 FACTORIAL_CONFIG_DIR = "0922_wqe_factorial_multickpt"
 FACTORIAL_STATIONS = ("CBBT", "Boston", "Battery", "Lewes")
 STATIONS = ("CBBT", "Lewes", "Battery", "Boston")
@@ -180,7 +181,9 @@ def generate_wqe_factorial_multickpt(output, *, results_root=FACTORIAL_RESULTS_R
     output.mkdir(parents=True, exist_ok=True)
     template = WQE_TEMPLATE.replace(
         "WQE placement experiment (existing D0 is the MSE/MSE control)",
-        "Fresh WQE/Tail factorial (six VAL-only checkpoint roles)")
+        "Fresh WQE/Tail factorial (six VAL-only checkpoint roles)").replace(
+        "DO_CONDA=0", 'DO_CONDA=0\n# Explicit runtime survives queue workers and tmux shell initialization.\n'
+        'PYTHON_BIN="${{WQEF_PYTHON_BIN:-{python_bin}}}"')
     rows, all_commands = [], []
     # qsub_local is a shell function on the local host; load the interactive
     # shell initialization only when it is unavailable to the script.
@@ -191,9 +194,28 @@ def generate_wqe_factorial_multickpt(output, *, results_root=FACTORIAL_RESULTS_R
               "set -euo pipefail\n"
               f"cd {shlex.quote(str(REPO))}\n\n")
 
+    preflight = output / "preflight.sh"
+    preflight.write_text("""#!/usr/bin/env bash
+set -euo pipefail
+# Use the same config-selected interpreter as train.sh, before submitting jobs.
+source "$1"
+"$PYTHON_BIN" - <<'PY'
+import sys
+import torch
+import torch_geometric
+import train
+if not torch.cuda.is_available():
+    raise SystemExit("WQE factorial requires an available CUDA device; no jobs submitted.")
+print(f"[Preflight OK] Python={sys.executable}; torch={torch.__version__}; GPU={torch.cuda.get_device_name(0)}")
+PY
+""")
+    preflight.chmod(0o755)
+
     def write_launcher(name, commands):
         path = output / name
-        path.write_text(header + "\n".join(commands) + "\n")
+        first_config = shlex.split(commands[0])[-1]
+        check = f"bash {shlex.quote(str(preflight.resolve()))} {shlex.quote(first_config)}\n\n"
+        path.write_text(header + check + "\n".join(commands) + "\n")
         path.chmod(0o755)
 
     for g, e, t in itertools.product((0, 1), repeat=3):
@@ -209,7 +231,7 @@ def generate_wqe_factorial_multickpt(output, *, results_root=FACTORIAL_RESULTS_R
                 loss_mode=global_loss, excess_loss_mode=excess_loss,
                 exceedance_weight=tail_weight, amp_weight=0, formulation="direct",
                 shape_weight=0, dual_loss=1, excess_weight=2, gate_weight=0.5,
-                results_root=results_root, run_name=name))
+                results_root=results_root, run_name=name, python_bin=FACTORIAL_PYTHON))
             rows.append(dict(station=station, cell=cell, global_loss=global_loss,
                 excess_loss=excess_loss, tail_enabled=t, exceedance_loss_weight=tail_weight,
                 body_loss_weight=1, excess_loss_weight=2, gate_loss_weight=0.5,
