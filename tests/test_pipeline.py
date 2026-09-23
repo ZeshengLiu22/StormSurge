@@ -189,8 +189,8 @@ class PipelineTests(unittest.TestCase):
                 console = io.StringIO()
                 with contextlib.redirect_stdout(console), patch.object(train, "run_epoch", wraps=train.run_epoch) as observed:
                     train.main(args)
-                # Two epochs of TRAIN/VAL, then one fresh pass each on final VAL and TEST.
-                self.assertEqual(observed.call_count, 8)
+                # Two TRAIN/VAL epochs, then six fresh final VAL/TEST pairs.
+                self.assertEqual(observed.call_count, 16)
                 lines = console.getvalue().splitlines()
                 parameter_lines = [line for line in lines if '] [Parameters] ' in line]
                 self.assertEqual(len(parameter_lines), 1)
@@ -198,7 +198,7 @@ class PipelineTests(unittest.TestCase):
                 self.assertIn("strict exceedance y > tau", console.getvalue())
                 logs = [json.loads(line) for line in next(output.glob("metrics_*.jsonl")).read_text().splitlines()]
                 for record in logs:
-                    self.assertEqual(set(record), {"epoch", "train", "val", "eventaware_score"})
+                    self.assertEqual(set(record), {"epoch", "train", "val", "eventaware_score", "equal_score", "peak_priority_score"})
                     for part in ("train", "val"):
                         self.assertTrue(set(EPOCH_METRIC_KEYS).issubset(record[part]))
                 checkpoint = torch.load(next(output.glob("best_*.pth")), weights_only=False)

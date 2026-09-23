@@ -12,8 +12,9 @@ forcing/history + graph → spatial encoder → station readout → temporal mod
 
 All extreme populations use one physical threshold fitted on unique TRAIN hourly
 targets. The default is Q95 with strict `y > tau`; VAL, TEST and OOD reuse that
-threshold. Every run retains `best_overall.pt` and `best_eventaware.pt`, selected
-from the same trajectory using VAL metrics. Both are reevaluated on VAL and TEST.
+threshold. Every run retains six [checkpoint roles](docs/CHECKPOINT_SELECTION.md):
+overall, exceedance, aligned peak, equal composite, peak priority, and legacy
+event-aware. All are selected using VAL and reevaluated on VAL and TEST.
 
 ## Run
 
@@ -40,6 +41,13 @@ For the independent global/excess WQE experiment, run
 W2 ExcessWQE, and W3 BothWQE for all four stations under `configs/wqe`;
 existing D0 is the MSE/MSE control. See [Losses](docs/LOSSES.md) for the
 shared published parameters, TRAIN scale handling, and experiment matrix.
+
+For a fresh 32-run global/excess WQE × Tail-MSE factorial, run
+`python tools/generate_configs.py --family wqe_factorial_multickpt`.
+Configs, manifest, and launch scripts go to `configs/0922_wqe_factorial_multickpt`;
+results go to `/home/exouser/media/share/PACT/All_results_0922_wqe_factorial_multickpt`.
+The primary role is `overall`; every run retains and evaluates all six roles.
+Generation does not submit jobs.
 
 Launch an explicitly chosen configuration:
 
@@ -100,6 +108,6 @@ bash -n train.sh infer.sh infer_multi.sh
 ```
 
 The suite includes numerical metric oracles, timestamp/leakage checks, branch
-objectives, both checkpoint roles, train/inference round trips, distributed
+objectives, all six checkpoint roles, train/inference round trips, distributed
 reductions, preprocessing and documentation consistency. Real experiment
 training is a separate explicit launch.

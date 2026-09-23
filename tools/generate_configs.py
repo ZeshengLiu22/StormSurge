@@ -1,12 +1,17 @@
 #!/usr/bin/env python3
-"""Generate matched current or opt-in WQE placement configs without training."""
+"""Generate matched current, WQE placement, or fresh WQE/Tail factorial configs without training."""
 
 import argparse
 import csv
+import itertools
+import shlex
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parents[1]
 WQE_RESULTS_ROOT = "/home/exouser/media/share/PACT/WQE_Results"
+FACTORIAL_RESULTS_ROOT = "/home/exouser/media/share/PACT/All_results_0922_wqe_factorial_multickpt"
+FACTORIAL_CONFIG_DIR = "0922_wqe_factorial_multickpt"
+FACTORIAL_STATIONS = ("CBBT", "Boston", "Battery", "Lewes")
 STATIONS = ("CBBT", "Lewes", "Battery", "Boston")
 VARIANTS = (
     ("S0", "Single", "single", 0.0, 0.0),
@@ -169,9 +174,68 @@ def generate_wqe(output, *, results_root=WQE_RESULTS_ROOT):
     return rows
 
 
+def generate_wqe_factorial_multickpt(output, *, results_root=FACTORIAL_RESULTS_ROOT):
+    """Fresh 4-station × global WQE × excess WQE × strict Tail-MSE factorial."""
+    output = Path(output)
+    output.mkdir(parents=True, exist_ok=True)
+    template = WQE_TEMPLATE.replace(
+        "WQE placement experiment (existing D0 is the MSE/MSE control)",
+        "Fresh WQE/Tail factorial (six VAL-only checkpoint roles)")
+    rows, all_commands = [], []
+    # qsub_local is a shell function on the local host; load the interactive
+    # shell initialization only when it is unavailable to the script.
+    header = ("#!/usr/bin/env bash\n"
+              'if ! command -v qsub_local >/dev/null 2>&1 && [[ $- != *i* ]]; then\n'
+              '  exec bash -i "$0" "$@"\n'
+              'fi\n'
+              "set -euo pipefail\n"
+              f"cd {shlex.quote(str(REPO))}\n\n")
+
+    def write_launcher(name, commands):
+        path = output / name
+        path.write_text(header + "\n".join(commands) + "\n")
+        path.chmod(0o755)
+
+    for g, e, t in itertools.product((0, 1), repeat=3):
+        cell = f"G{g}_E{e}_T{t}"
+        global_loss, excess_loss = ("mse", "wqe")[g], ("mse", "wqe")[e]
+        tail_weight = 0.025 if t else 0
+        commands = []
+        for station in FACTORIAL_STATIONS:
+            name = f"NCEP_{station}_{cell}"
+            config = output / f"train_config_{name}.sh"
+            config.write_text(template.format(
+                station=station, condition=cell, head="dual",
+                loss_mode=global_loss, excess_loss_mode=excess_loss,
+                exceedance_weight=tail_weight, amp_weight=0, formulation="direct",
+                shape_weight=0, dual_loss=1, excess_weight=2, gate_weight=0.5,
+                results_root=results_root, run_name=name))
+            rows.append(dict(station=station, cell=cell, global_loss=global_loss,
+                excess_loss=excess_loss, tail_enabled=t, exceedance_loss_weight=tail_weight,
+                body_loss_weight=1, excess_loss_weight=2, gate_loss_weight=0.5,
+                excess_amp_loss_weight=0, shape_loss_weight=0,
+                config=config.name, result_root=str(results_root)))
+            resolved = config.resolve()
+            config_arg = resolved.relative_to(REPO) if resolved.is_relative_to(REPO) else resolved
+            commands.append(f"qsub_local train.sh WQEF_{station}_G{g}E{e}T{t} {shlex.quote(str(config_arg))}")
+        write_launcher(f"launch_G{g}E{e}T{t}.sh", commands)
+        all_commands.extend(commands)
+    write_launcher("launch_all.sh", all_commands)
+    with (output / "manifest.csv").open("w", newline="") as handle:
+        writer = csv.DictWriter(handle, fieldnames=rows[0], lineterminator="\n")
+        writer.writeheader()
+        writer.writerows(rows)
+    return rows
+
+
 def generate(output, *, include_severity_shape=False, results_root=None, family="current"):
     if results_root is None:
-        results_root = WQE_RESULTS_ROOT if family == "wqe" else "./All_Results"
+        results_root = {"wqe": WQE_RESULTS_ROOT,
+                        "wqe_factorial_multickpt": FACTORIAL_RESULTS_ROOT}.get(family, "./All_Results")
+    if family == "wqe_factorial_multickpt":
+        if include_severity_shape:
+            raise ValueError("WQE factorial configs use the direct D0 excess formulation only.")
+        return generate_wqe_factorial_multickpt(output, results_root=results_root)
     if family == "wqe":
         if include_severity_shape:
             raise ValueError("WQE placement configs use the direct D0 excess formulation only.")
@@ -210,17 +274,18 @@ def generate(output, *, include_severity_shape=False, results_root=None, family=
 
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--family", choices=("current", "wqe"), default="current",
-                        help="WQE adds W1/W2/W3 for each station; existing D0 supplies the control.")
+    parser.add_argument("--family", choices=("current", "wqe", "wqe_factorial_multickpt"), default="current",
+                        help="WQE adds W1/W2/W3; wqe_factorial_multickpt adds 32 fresh WQE/Tail runs.")
     parser.add_argument("--output", type=Path,
-                        help="Defaults to configs/current or configs/wqe for the selected family.")
+                        help="Defaults to configs/current, configs/wqe, or configs/0922_wqe_factorial_multickpt.")
     parser.add_argument("--include-severity-shape", action="store_true")
     parser.add_argument("--results-root",
-                        help=f"Defaults to {WQE_RESULTS_ROOT} for WQE, otherwise ./All_Results.")
+                        help=f"Defaults to {FACTORIAL_RESULTS_ROOT} for the factorial, {WQE_RESULTS_ROOT} for WQE, otherwise ./All_Results.")
     args = parser.parse_args(argv)
-    if args.family == "wqe" and args.include_severity_shape:
-        parser.error("--family wqe cannot be combined with --include-severity-shape.")
-    output = args.output or REPO / "configs" / args.family
+    if args.family != "current" and args.include_severity_shape:
+        parser.error(f"--family {args.family} cannot be combined with --include-severity-shape.")
+    directory = FACTORIAL_CONFIG_DIR if args.family == "wqe_factorial_multickpt" else args.family
+    output = args.output or REPO / "configs" / directory
     rows = generate(output, include_severity_shape=args.include_severity_shape,
                     results_root=args.results_root, family=args.family)
     print(f"Generated {len(rows)} configs in {output}. No training launched.")

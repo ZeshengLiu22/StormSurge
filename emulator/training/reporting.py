@@ -1,6 +1,7 @@
 """Human-readable physical metric tables, using the canonical metric dictionary."""
 
 from .metrics import METRIC_GROUPS, METRIC_LABELS
+from .eventaware_checkpoints import ROLES
 
 
 def threshold_label(metadata):
@@ -24,17 +25,23 @@ def metric_report(metrics, metadata):
 
 
 def comparison_report(evaluations, metadata):
-    lines = [threshold_label(metadata), "", "Delta = eventaware minus overall.", "",
-             f'Overall epoch: {evaluations["overall"]["epoch"]}; '
-             f'event-aware epoch: {evaluations["eventaware"]["epoch"]}.', ""]
+    labels = ("Overall", "Exceedance", "Aligned-peak", "Equal-composite", "Peak-priority", "Legacy event-aware")
+    lines = [threshold_label(metadata), ""]
+    lines.extend(f'{label} epoch: {evaluations[role]["epoch"]}' for role, label in zip(ROLES, labels))
+    lines.append("")
     for split in ("val", "test"):
-        for group, entries in METRIC_GROUPS.items():
+        groups = dict(METRIC_GROUPS)
+        # Include per-lead diagnostics as well as every canonical metric group.
+        extra = sorted({key for role in ROLES for key in evaluations[role][split]} - set(METRIC_LABELS))
+        if extra:
+            groups["Additional diagnostics"] = extra
+        for group, entries in groups.items():
             lines.extend([f"{split.upper()} — {group}", "",
-                          "| Metric | Overall | Event-aware | Delta |", "| --- | ---: | ---: | ---: |"])
+                          "| Metric | Overall | Exceedance | AlignedPeak | Equal | PeakPriority | EventAware |",
+                          "| --- | ---: | ---: | ---: | ---: | ---: | ---: |"])
             for key in entries:
-                label = METRIC_LABELS[key]
-                a, b = (evaluations[role][split].get(key) for role in ("overall", "eventaware"))
-                delta = None if a is None or b is None else b - a
-                lines.append(f"| {label} | {display(a)} | {display(b)} | {display(delta)} |")
+                label = METRIC_LABELS.get(key, key)
+                values = " | ".join(display(evaluations[role][split].get(key)) for role in ROLES)
+                lines.append(f"| {label} | {values} |")
             lines.append("")
     return "\n".join(lines) + "\n"

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Train one trajectory with the fixed TRAIN hourly threshold and two VAL checkpoint roles."""
+"""Train one trajectory with the fixed TRAIN hourly threshold and six VAL checkpoint roles."""
 
 from dataclasses import asdict, fields
 import json
@@ -27,7 +27,7 @@ from emulator.models import ModelConfig, build_model, count_model_parameters, fo
 from emulator.training import ForecastLoss, LossConfig, format_metrics, run_epoch
 from emulator.training.arguments import parse_args
 from emulator.training.checkpoints import atomic_save
-from emulator.training.eventaware_checkpoints import EventAwareTracker
+from emulator.training.eventaware_checkpoints import ROLES, EventAwareTracker
 from emulator.training.reporting import comparison_report, threshold_label
 
 
@@ -69,6 +69,7 @@ def train(args, device, distributed, rank, wall_start):
     tracker = (EventAwareTracker(output_dir, (args.ckpt_w_all, args.ckpt_w_exceedance, args.ckpt_w_peak))
                if rank == 0 else None)
     if rank == 0:
+        log_message(f"Checkpoint roles (VAL-only): {', '.join(ROLES)}; primary={args.checkpoint_selection}")
         log_message(f"Global prediction loss: {args.loss_mode}")
         log_message(f"Dual excess loss: {args.excess_loss_mode}"
                     if args.head_type == "dual" else "Dual excess loss: inactive (head_type=single)")
@@ -205,6 +206,10 @@ def train(args, device, distributed, rank, wall_start):
 
             score, improved = tracker.observe(epoch, validation.metrics, checkpoint_snapshot)
             epoch_record["eventaware_score"] = score
+            epoch_record["equal_score"] = tracker.last_scores["equal"]
+            epoch_record["peak_priority_score"] = tracker.last_scores["peak_priority"]
+            log_message(f'VAL checkpoint scores: EqualScore={epoch_record["equal_score"]:.9f} '
+                        f'PeakPriorityScore={epoch_record["peak_priority_score"]:.9f} EventAwareScore={score:.9f}')
             for role in improved:
                 log_message(f'[Best {role}] epoch={epoch} Val AllRMSE={validation.metrics["all_rmse"]:.9f} '
                             f'ExceedanceRMSE={validation.metrics["exceedance_rmse"]:.9f} '
@@ -229,10 +234,13 @@ def train(args, device, distributed, rank, wall_start):
             test_store, test_indices = store, splits["test"]
         test_data = ForcingGraphView(test_store, test_indices, history_steps)
         evaluations = {}
-        for role in ("overall", "eventaware"):
+        for role in ROLES:
             checkpoint = torch.load(tracker.paths[role], map_location=device, weights_only=False)
             network.load_state_dict(checkpoint["model_state"], strict=True)
-            evaluations[role] = dict(epoch=checkpoint["epoch"], path=str(tracker.paths[role]))
+            evaluations[role] = dict(epoch=checkpoint["epoch"], path=str(tracker.paths[role]),
+                                     selection_split=checkpoint["selection_split"],
+                                     selection_metric_key=checkpoint["selection_metric_key"],
+                                     selection_metric_value=checkpoint["selection_metric_value"])
             for split, data in (("val", val_data), ("test", test_data)):
                 result = run_epoch(network, build_loader(data, None, **loader_options),
                                    save_predictions=True, save_dual_diagnostics=args.head_type == "dual", **final_options)
@@ -264,7 +272,7 @@ def train(args, device, distributed, rank, wall_start):
         summary["run_tag"] = args.run_tag
         summary_path.write_text(json.dumps(summary, indent=2))
         log_message(f'Best checkpoint: epoch {best_epoch:03d} | selection={args.checkpoint_selection}')
-        log_message("FINAL BOTH-CHECKPOINT RE-EVALUATION")
+        log_message("FINAL MULTI-CHECKPOINT RE-EVALUATION")
         for line in comparison.splitlines():
             log_message(line)
         hours, remainder = divmod(wall_seconds, 3600)

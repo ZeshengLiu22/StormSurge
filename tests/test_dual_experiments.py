@@ -167,7 +167,7 @@ class DualExperimentTests(unittest.TestCase):
                                      {k:v for k,v in reference.items() if k != 'tau_normalized'})
                     self.assertEqual(checkpoint['model_config']['dual_ablation'], mode)
                     logs = [json.loads(line) for line in next(output.glob('metrics_*.jsonl')).read_text().splitlines()]
-                    self.assertEqual(set(logs[0]), {'epoch', 'train', 'val', 'eventaware_score'})
+                    self.assertEqual(set(logs[0]), {'epoch', 'train', 'val', 'eventaware_score', 'equal_score', 'peak_priority_score'})
                     for diagnostics in (False, True):
                         destination = output / ('diagnostics' if diagnostics else 'plain')
                         with contextlib.redirect_stdout(io.StringIO()):

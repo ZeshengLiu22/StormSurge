@@ -1,26 +1,27 @@
 # Checkpoint selection
 
-[`EventAwareTracker`](../emulator/training/eventaware_checkpoints.py) always retains two checkpoint roles from **one training trajectory**:
-
-- `best_overall.pt`: earliest epoch with the smallest VAL AllRMSE.
-- `best_eventaware.pt`: earliest epoch with the smallest VAL EventAwareScore.
+[`EventAwareTracker`](../emulator/training/eventaware_checkpoints.py) always retains six checkpoint roles from **one training trajectory**. Each role keeps the earliest strict minimum (`<`) of its score; ties never use a secondary ranking.
 
 Selection observes the completed VAL pass once per epoch. TEST is evaluated after training and never enters checkpoint selection. Every metric uses the same physical threshold fitted on TRAIN target hours; see [Formulation](FORMULATION.md) and [Metrics](METRICS.md).
 
 ## Exact scores
 
-$$
-e_{\mathrm{overall}}=\operatorname*{argmin}_{e}\operatorname{ValAllRMSE}(e).
-$$
+Let A = VAL AllRMSE, E = VAL ExceedanceRMSE, and P = VAL GTAlignedPeakRMSE, all in physical meters.
 
-$$
-S_{\mathrm{event}}(e)=w_{\mathrm{all}}\operatorname{ValAllRMSE}(e)
-+w_{\mathrm{exc}}\operatorname{ValExceedanceRMSE}(e)
-+w_{\mathrm{peak}}\operatorname{ValGTAlignedPeakRMSE}(e),
-\qquad e_{\mathrm{eventaware}}=\operatorname*{argmin}_{e}S_{\mathrm{event}}(e).
-$$
+| Role | Checkpoint | Selection score |
+| --- | --- | --- |
+| Overall | `best_overall.pt` | A |
+| Exceedance | `best_exceedance.pt` | E |
+| Aligned peak | `best_aligned_peak.pt` | P |
+| Equal composite | `best_equal.pt` | (A + E + P) / 3 |
+| Peak priority | `best_peak_priority.pt` | (A + 2E + 4P) / 7 |
+| Legacy event-aware | `best_eventaware.pt` | 0.65A + 0.20E + 0.15P by default |
 
-This is the **raw weighted sum of physical RMSE values**, in meters. The default weights are 0.65, 0.20, and 0.15. There is no reference normalization or score rescaling.
+Exceedance minimizes error over strict hourly exceedances above the fixed TRAIN Q95 threshold. Aligned peak minimizes prediction error at the ground-truth peak-aligned time in each GT Event Window.
+
+Composites use **raw physical RMSE values**, with no normalization, reference-model scaling, running minima, or future-epoch information. Each score can be calculated immediately. The 1:2:4 peak-priority weights are a deliberate sensitivity selector, not a claim of statistical optimality.
+
+Only the legacy event-aware weights are configurable:
 
 | Term | Canonical metric key | CLI argument | Shell variable | Default |
 | --- | --- | --- | --- | ---: |
@@ -28,36 +29,37 @@ This is the **raw weighted sum of physical RMSE values**, in meters. The default
 | Extreme hours | `exceedance_rmse` | `--ckpt_w_exceedance` | `CKPT_W_EXCEEDANCE` | 0.20 |
 | GT-aligned event-window peak | `gt_aligned_peak_rmse` | `--ckpt_w_peak` | `CKPT_W_PEAK` | 0.15 |
 
-Weights must be finite, nonnegative, and sum to one within absolute tolerance $10^{-12}$. All three VAL components must be present, finite, and nonnegative, even if a weight is zero. An empty VAL extreme population produces undefined conditional RMSE and therefore an informative selection error. There is no automatic fallback to another score or checkpoint policy.
+Legacy weights must be finite, nonnegative, and sum to one within absolute tolerance $10^{-12}$. All three VAL components must be present, finite, and nonnegative, even if a legacy weight is zero. An empty VAL extreme population produces undefined conditional RMSE and an informative selection error, as before. There is no automatic fallback.
 
-Bias and underprediction percentages remain diagnostics: signed bias can cancel across examples, and reducing underprediction alone can reward overprediction. Precision, recall, F1, timing, and episode metrics also remain outside the checkpoint score.
-
-## Ties and a three-epoch example
-
-Each role updates only on strict improvement (`<`). Equal overall RMSE retains the earliest overall epoch; equal EventAwareScore retains the earliest event-aware epoch. Neither rule introduces a secondary tie-breaking metric.
-
-| Epoch | VAL AllRMSE (m) | VAL ExceedanceRMSE (m) | VAL GTAlignedPeakRMSE (m) | EventAwareScore (m) | Retained roles after epoch |
-| --- | ---: | ---: | ---: | ---: | --- |
-| 1 | 0.100 | 0.200 | 0.400 | 0.1650 | Overall: 1; event-aware: 1 |
-| 2 | 0.102 | 0.100 | 0.200 | 0.1163 | Overall: 1; event-aware: 2 |
-| 3 | 0.102 | 0.100 | 0.200 | 0.1163 | Overall: 1; event-aware: 2 |
-
-For epoch 2, $0.65(0.102)+0.20(0.100)+0.15(0.200)=0.1163$. The two roles therefore select different epochs of the same training run. Epoch 3 changes neither artifact because it ties epoch 2.
+Bias, underprediction percentages, precision, recall, F1, timing, and episode metrics remain diagnostics outside checkpoint selection.
 
 ## Primary role and saved artifacts
 
-<!-- choices checkpoint_selection: overall,eventaware -->
+<!-- choices checkpoint_selection: overall,exceedance,aligned_peak,equal,peak_priority,eventaware -->
 
-`CHECKPOINT_SELECTION` / `--checkpoint_selection` supports exactly `overall` and `eventaware`, with default `overall`. It selects which retained role is copied into the primary aliases `best.pt` and `best_<run-stem>.pth`, and which role supplies the top-level final summary and primary TEST prediction export. It does not change model construction, losses, optimizer updates, data order, or scheduler configuration.
+`CHECKPOINT_SELECTION` / `--checkpoint_selection` supports all six roles, with default `overall`. It selects which retained role is copied into `best.pt` and `best_<run-stem>.pth`, and which supplies `best_epoch`, the top-level final VAL/TEST summary, and `test_preds_<run-stem>.npz`. Existing `overall` and `eventaware` configurations keep their behavior.
 
-Both role files are always retained, including when they point to the same epoch. When both roles improve at an epoch, the tracker invokes its checkpoint factory once, so both artifacts contain identical model state from that epoch. Role metadata identifies its selection metric and value. The saved threshold, normalization, model configuration, split tags, and validation metrics travel with the model. Role replacement uses [atomic persistence](../emulator/training/checkpoints.py); a run requires a fresh output directory.
+All six role files are retained even when several select the same epoch. The tracker invokes its checkpoint factory once for an improving epoch, so all winning roles contain the same training state. Each role records its selected epoch, VAL metrics, selection metric key and value, and artifact path. Thresholds, normalization, model configuration, and split tags travel with the model. Role replacement uses [atomic persistence](../emulator/training/checkpoints.py); a run requires a fresh output directory.
 
-Epoch JSONL records include TRAIN metrics, VAL metrics, and `eventaware_score`. Checkpoints record `eventaware_settings`, including all weights and `selection_split="val"`. The summary records the selected epoch and both retained role paths.
+Epoch JSONL records contain TRAIN metrics, VAL metrics, `equal_score`, `peak_priority_score`, and the existing `eventaware_score`. Checkpoints preserve `eventaware_settings` and `selection_split="val"`. For backward compatibility, the historical `score` field in the selection summary remains the legacy event-aware score for that epoch; `selection_metric_value` is the actual score minimized by each role.
+
+Checkpoint bookkeeping does not change model construction, losses, optimizer updates, data order, scheduler configuration, or training RNG. The primary role changes aliases and reporting only.
 
 ## Final evaluation
 
-After training, [`train.py`](../train.py) loads each retained model and evaluates the complete VAL and TEST datasets: **four final evaluation passes**, including when both roles chose the same epoch. These frozen-model passes include timestamp-based episode metrics and per-lead exceedance diagnostics. The passes never feed new observations back into the tracker.
+After training, [`train.py`](../train.py) loads each retained model and evaluates complete VAL and TEST datasets: **twelve final evaluation passes**, including when roles selected identical epochs. These frozen-model passes include all canonical metrics, timestamp-based episodes and excess-area metrics, and per-lead exceedance diagnostics. Final evaluations never feed observations back into the tracker.
 
-Each role gets `val_predictions_<role>.npz` and `test_predictions_<role>.npz`; dual models also include branch diagnostics in these exports. `checkpoint_comparison.json` contains the two roles' epochs, paths, complete final metric dictionaries, and explicit threshold metadata and method label. `checkpoint_comparison.md` groups metrics and reports event-aware minus overall deltas. The run summary exposes the selected primary role's fresh VAL/TEST metrics and the complete two-role comparison. The primary TEST export also uses the `test_preds_<run-stem>.npz` name.
+Every role gets `val_predictions_<role>.npz` and `test_predictions_<role>.npz`; dual models include branch diagnostics. `checkpoint_comparison.json` contains all six roles' epochs, paths, selection metadata, complete final metrics, and threshold metadata. `checkpoint_comparison.md` lists each selected epoch and groups complete metric tables by split and metric family, with six role columns. The run summary contains the primary role's fresh VAL/TEST metrics and the full comparison.
 
-The comparison reports differences without changing either selected epoch. See [the checkpoint tests](../tests/test_eventaware_checkpoints.py) and [pipeline tests](../tests/test_checkpoint_pipeline.py) for exact score, earliest-tie, unchanged-training-trajectory, and TEST-isolation checks.
+See the [tracker tests](../tests/test_eventaware_checkpoints.py) and [pipeline tests](../tests/test_checkpoint_pipeline.py) for exact scores, six distinct winners, earliest ties, trajectory parity, aliases, and TEST isolation.
+
+## Fresh WQE/Tail factorial
+
+```bash
+python tools/generate_configs.py --family wqe_factorial_multickpt
+DRY_RUN=1 bash train.sh configs/0922_wqe_factorial_multickpt/train_config_NCEP_CBBT_G0_E0_T0.sh
+```
+
+This creates 32 matched configs: CBBT, Boston, Battery, and Lewes × global MSE/WQE × raw-excess MSE/WQE × strict Q95 Tail-MSE off/on (0/0.025). Every config uses direct Dual, the existing WQE parameters and D0 training settings, zero amplitude/shape losses, and primary `overall`. Body remains MSE and Tail remains the existing extra MSE.
+
+All configs, the [manifest](../configs/0922_wqe_factorial_multickpt/manifest.csv), the [full launch script](../configs/0922_wqe_factorial_multickpt/launch_all.sh), and eight four-station launch subsets live in `configs/0922_wqe_factorial_multickpt`. Jobs are ordered by cell then CBBT, Boston, Battery, Lewes. Results use fresh `NCEP_<station>_Gg_Ee_Tt__<timestamp>` directories under `/home/exouser/media/share/PACT/All_results_0922_wqe_factorial_multickpt`. Generation and dry runs submit no jobs. Invoke a launch script explicitly to submit its jobs.

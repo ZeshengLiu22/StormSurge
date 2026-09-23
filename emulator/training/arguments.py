@@ -6,6 +6,7 @@ from pathlib import Path
 
 from emulator.common.cli import head_type_name, parse_bool_int, temporal_block_name
 from emulator.common.dual import DUAL_ABLATIONS, EXCESS_FORMULATIONS
+from .eventaware_checkpoints import ROLES
 from .losses import (enforce_dual_loss, validate_excess_amp_config,
                      validate_shape_config, validate_wqe_config)
 
@@ -209,8 +210,8 @@ def parse_args(argv=None):
     parser.add_argument("--transformer_dropout", type=float, default=0.05)
     parser.add_argument("--max_time_steps", type=int, default=32,
                         help="PACT lag-embedding capacity, including the current step; ignored by baseline.")
-    parser.add_argument("--checkpoint_selection", choices=("overall", "eventaware"), default="overall",
-                        help="Primary checkpoint role; both VAL-only roles are always retained.")
+    parser.add_argument("--checkpoint_selection", choices=ROLES, default="overall",
+                        help="Primary checkpoint role; all six VAL-only roles are always retained.")
     for term, weight in (("all", .65), ("exceedance", .20), ("peak", .15)):
         parser.add_argument(f"--ckpt_w_{term}", type=float, default=weight,
                             help=f"Event-aware score coefficient in physical meters; default {weight}.")

@@ -1,6 +1,9 @@
 """Raw VAL score, independent role minima, durable state, and earliest ties."""
 
 import math
+import random
+
+import numpy as np
 from pathlib import Path
 import tempfile
 import unittest
@@ -8,8 +11,8 @@ from unittest.mock import Mock, patch
 
 import torch
 
-from emulator.training.eventaware_checkpoints import (DEFAULT_WEIGHTS, EventAwareTracker,
-    eventaware_score, validate_score_weights)
+from emulator.training.eventaware_checkpoints import (DEFAULT_WEIGHTS, ROLES, SELECTION_METRICS, EventAwareTracker,
+    checkpoint_scores, eventaware_score, validate_score_weights)
 
 
 def metric(overall, exceedance, aligned):
@@ -54,8 +57,8 @@ class EventAwareCheckpointTests(unittest.TestCase):
                 self.assertEqual(checkpoint['selection_split'], 'val')
                 self.assertEqual(checkpoint['eventaware_settings']['score_formula'], 'raw_weighted_sum')
                 self.assertEqual(tracker.selection_summary(role)['selected_epoch'], epoch)
-            # Metadata points to both retained artifacts regardless of the primary role.
-            self.assertEqual(set(tracker.selection_summary()['checkpoints']), {'overall', 'eventaware'})
+            # Metadata points to all retained artifacts regardless of the primary role.
+            self.assertEqual(set(tracker.selection_summary()['checkpoints']), set(ROLES))
 
     def test_shared_epoch_factory_runs_once_and_tracker_does_not_draw_rng(self):
         with tempfile.TemporaryDirectory() as temporary:
@@ -63,15 +66,83 @@ class EventAwareCheckpointTests(unittest.TestCase):
             val = metric(1., 2., 4.)
             snapshot = Mock(return_value=dict(epoch=1, val=val, model_state={'weight': torch.tensor(7.)}))
             rng = torch.get_rng_state().clone()
+            python_rng, numpy_rng = random.getstate(), np.random.get_state()
             score, improved = tracker.observe(1, val, snapshot)
             snapshot.assert_called_once_with()
+            self.assertEqual(random.getstate(), python_rng)
+            actual_numpy_rng = np.random.get_state()
+            self.assertEqual(actual_numpy_rng[0], numpy_rng[0])
+            np.testing.assert_array_equal(actual_numpy_rng[1], numpy_rng[1])
+            self.assertEqual(actual_numpy_rng[2:], numpy_rng[2:])
             torch.testing.assert_close(torch.get_rng_state(), rng, rtol=0, atol=0)
-            self.assertEqual(improved, ['overall', 'eventaware'])
+            self.assertEqual(improved, list(ROLES))
             self.assertAlmostEqual(score, 1.65)
-            a, b = [torch.load(tracker.paths[role], weights_only=False) for role in improved]
-            torch.testing.assert_close(a['model_state']['weight'], b['model_state']['weight'])
+            for role in improved:
+                checkpoint = torch.load(tracker.paths[role], weights_only=False)
+                self.assertEqual(checkpoint['model_state']['weight'].item(), 7.)
             val['all_rmse'] = 999.
             self.assertEqual(tracker.best['overall']['val']['all_rmse'], 1.)
+
+    def test_six_raw_scores_and_legacy_weights_are_independent(self):
+        self.assertEqual(ROLES, ('overall', 'exceedance', 'aligned_peak', 'equal', 'peak_priority', 'eventaware'))
+        values = metric(1., 2., 4.)
+        expected = dict(overall=1., exceedance=2., aligned_peak=4., equal=7. / 3.,
+                        peak_priority=3., eventaware=1.65)
+        scores = checkpoint_scores(values)
+        for role, score in expected.items():
+            self.assertAlmostEqual(scores[role], score)
+        custom = checkpoint_scores(values, (1., 0., 0.))
+        self.assertEqual(custom.pop('eventaware'), 1.)
+        scores.pop('eventaware')
+        self.assertEqual(custom, scores)
+        self.assertEqual(checkpoint_scores(dict(values, test=-1e12, reference_scale=999.)),
+                         checkpoint_scores(values))
+
+    def test_all_six_distinct_winners_and_earliest_ties(self):
+        # Each row is the unique winner for its corresponding role in ROLES.
+        trajectory = [(0., 10., 10.), (10., 0., 10.), (10., 10., 0.),
+                      (4., 4., 4.), (7., 4., 2.), (1., 5., 7.)]
+        with tempfile.TemporaryDirectory() as temporary:
+            tracker = EventAwareTracker(temporary)
+            # Replaying the entire trajectory must not replace any tied winner.
+            for epoch, values in enumerate(trajectory * 2, 1):
+                val = metric(*values)
+                factory = Mock(return_value=dict(epoch=epoch, val=val, model_state={'weight': torch.tensor(epoch)}))
+                tracker.observe(epoch, val, factory)
+                if epoch > len(trajectory):
+                    factory.assert_not_called()
+            summary = tracker.selection_summary()
+            self.assertEqual(set(Path(temporary).glob('best_*.pt')), set(tracker.paths.values()))
+            for expected_epoch, role in enumerate(ROLES, 1):
+                selected = summary['checkpoints'][role]
+                self.assertEqual(selected['epoch'], expected_epoch)
+                self.assertEqual(selected['selection_metric_key'], SELECTION_METRICS[role])
+                self.assertEqual(selected['selection_metric_value'], checkpoint_scores(metric(*trajectory[expected_epoch - 1]))[role])
+                self.assertEqual(selected['path'], str(tracker.paths[role]))
+                saved = torch.load(tracker.paths[role], weights_only=False)
+                self.assertEqual(saved['epoch'], expected_epoch)
+                self.assertEqual(saved['model_state']['weight'].item(), expected_epoch)
+                self.assertEqual(saved['selection_split'], 'val')
+                self.assertEqual(saved['selection_metric_value'], selected['selection_metric_value'])
+                self.assertEqual(saved['eventaware_score'], selected['score'])
+                self.assertEqual(tracker.selection_summary(role)['selected_epoch'], expected_epoch)
+
+    def test_equal_selector_scores_with_different_components_keep_first_epoch(self):
+        # Same role score with other components improving: no secondary ranking.
+        pairs = dict(overall=((1., 4., 4.), (1., 2., 2.)),
+                     exceedance=((4., 1., 4.), (2., 1., 2.)),
+                     aligned_peak=((4., 4., 1.), (2., 2., 1.)),
+                     equal=((1., 2., 3.), (3., 2., 1.)),
+                     peak_priority=((4., 4., 1.), (8., 2., 1.)),
+                     eventaware=((0., 15., 0.), (0., 0., 20.)))
+        for role, pair in pairs.items():
+            with self.subTest(role=role), tempfile.TemporaryDirectory() as temporary:
+                tracker = EventAwareTracker(temporary)
+                self.assertEqual(*(checkpoint_scores(metric(*values))[role] for values in pair))
+                for epoch, values in enumerate(pair, 1):
+                    val = metric(*values)
+                    tracker.observe(epoch, val, lambda: dict(epoch=epoch, val=val))
+                self.assertEqual(tracker.best[role]['epoch'], 1)
 
     def test_invalid_epochs_missing_validation_and_wrong_snapshot_fail(self):
         with tempfile.TemporaryDirectory() as temporary:

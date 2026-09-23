@@ -1,4 +1,4 @@
-"""Atomic checkpoint persistence shared by the two canonical checkpoint roles."""
+"""Atomic checkpoint persistence shared by the canonical checkpoint roles."""
 
 import os
 from pathlib import Path

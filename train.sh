@@ -466,6 +466,7 @@ else
   echo "Dual excess loss: inactive (head_type=single)"
 fi
 echo "WQE: q_tau=${WQE_QUANTILE_TAU} e_tau=${WQE_EXPECTILE_TAU} q_weight=${WQE_QUANTILE_WEIGHT} e_weight=${WQE_EXPECTILE_WEIGHT}"
+echo "Checkpoint roles (VAL-only): overall, exceedance, aligned_peak, equal, peak_priority, eventaware; primary=${CHECKPOINT_SELECTION}"
 echo "Loss weights:  body=${BODY_LOSS_WEIGHT} excess=${EXCESS_LOSS_WEIGHT} gate=${GATE_LOSS_WEIGHT} exceedance=${EXCEEDANCE_LOSS_WEIGHT} amplitude=${EXCESS_AMP_LOSS_WEIGHT} shape=${SHAPE_LOSS_WEIGHT} slope=${SLOPE_LAMBDA_LIST[*]} (terms enabled by head/loss mode)"
 echo "H_LIST:        ${HISTORY_HOURS_LIST[*]}"
 echo "Split:         train=${TRAIN_RATIO} val=${VAL_RATIO} shuffle_years=${SHUFFLE_YEARS} future_only=${FUTURE_ONLY} future_year_threshold=${FUTURE_YEAR_THRESHOLD} seed=${SEED}"
