@@ -8,47 +8,57 @@ The default is `EXCESS_FORMULATION=direct`. Select `EXCESS_FORMULATION=severity_
 
 ## Context and branch networks
 
-The head receives horizon contexts C ∈ ℝᴮˣᴷˣᵈ. It forms a shared window context c̄ᵢ = (1/K)Σₕ Cᵢₕ ∈ ℝᵈ. Severity and the learned gate use c̄ᵢ; shape and body use each Cᵢₕ. The production head uses arithmetic mean pooling.
+The head receives horizon contexts $C\in\mathbb R^{B\times K\times d}$. It forms a shared window context $\bar c_i=(1/K)\sum_h C_{ih}\in\mathbb R^d$. Severity and the learned gate use $\bar c_i$; shape and body use each $C_{ih}$. The production head uses arithmetic mean pooling.
 
 Each branch uses `head_mlp`: Linear(d,2d) → LeakyReLU(0.1) → Dropout(`head_dropout`) → Linear(2d,1). A supplied internal `head_hidden` changes the intermediate width. Severity and shape outputs are cast to FP32 before their positive activations and normalization.
 
 ## Severity
 
-For raw scalar severity score aᵢ:
+For raw scalar severity score $a_i$:
 
-    Âᵢ = softplus(aᵢ),        shape [B], units m.                 (1)
+$$
+\hat A_i=\operatorname{softplus}(a_i). \tag{1}
+$$
 
-The factor is nonnegative and represents the maximum physical raw excess over the forecast horizons because predicted shape has unit maximum. The corresponding GT interpretation is A*ᵢ = maxₕ max(yᵢₕ−τ,0), using the canonical hourly TRAIN τ from [FORMULATION.md](FORMULATION.md).
+The output has shape `[B]` and units m. The factor is nonnegative and represents the maximum physical raw excess over the forecast horizons because predicted shape has unit maximum. The corresponding GT interpretation is $A_i^*=\max_h\max(y_{ih}-\tau,0)$, using the canonical hourly TRAIN $\tau$ from [FORMULATION.md](FORMULATION.md).
 
-The severity branch's final linear weights are initialized to zero and its bias to log(exp(0.1)−1). Initial severity is therefore 0.1 m for every window. No label-derived severity scale is fitted. There is no standalone loss comparing Â directly with A*.
+The severity branch's final linear weights are initialized to zero and its bias to $\log(\exp(0.1)-1)$. Initial severity is therefore 0.1 m for every window. No label-derived severity scale is fitted. There is no standalone loss comparing $\hat A$ directly with $A^*$.
 
 ## Temporal shape
 
-For raw shape scores sᵢₕ and positive `SEVERITY_SHAPE_EPS` / `severity_shape_eps`:
+For raw shape scores $s_{ih}$ and positive `SEVERITY_SHAPE_EPS` / `severity_shape_eps`:
 
-    uᵢₕ = softplus(sᵢₕ) + ε
-    ŝᵢₕ = uᵢₕ / maxⱼ uᵢⱼ,    shape [B,K], dimensionless.         (2)
+$$
+\begin{aligned}
+u_{ih}&=\operatorname{softplus}(s_{ih})+\varepsilon,\\
+\hat s_{ih}&=\frac{u_{ih}}{\max_j u_{ij}}.
+\end{aligned} \tag{2}
+$$
 
-The default ε is 10⁻⁶. It is added before maximum normalization, ensuring a positive denominator even when softplus underflows. For finite branch scores, ŝᵢₕ > 0 and maxₕ ŝᵢₕ = 1. There is no sum-to-one constraint: Σₕ ŝᵢₕ may range above 1 up to K. The maximum operation is a hard maximum, with PyTorch's first-index gradient behavior at tied maxima.
+The output has shape `[B,K]` and is dimensionless. The default $\varepsilon$ is $10^{-6}$. It is added before maximum normalization, ensuring a positive denominator even when softplus underflows. For finite branch scores, $\hat s_{ih}>0$ and $\max_h\hat s_{ih}=1$. There is no sum-to-one constraint: $\sum_h\hat s_{ih}$ may range above 1 up to $K$. The maximum operation is a hard maximum, with PyTorch's first-index gradient behavior at tied maxima.
 
-Shape final linear weights initialize to zero and the bias to log(exp(1)−1). Thus u is initially constant at approximately 1+ε and every normalized horizon shape initially equals 1.
+Shape final linear weights initialize to zero and the bias to $\log(\exp(1)-1)$. Thus $u$ is initially constant at approximately $1+\varepsilon$ and every normalized horizon shape initially equals 1.
 
-GT shape uses e*ᵢₕ = max(yᵢₕ−τ,0). In a GT Event Window, s*ᵢₕ = e*ᵢₕ / maxⱼ e*ᵢⱼ, giving maximum 1 and exact zeros at normal hours. Any positive GT excess amplitude is used exactly, including amplitudes below ε. Non-event target shape is zero. The positive architectural ε does not floor target amplitudes.
+GT shape uses $e_{ih}^*=\max(y_{ih}-\tau,0)$. In a GT Event Window, $s_{ih}^*=e_{ih}^*/\max_j e_{ij}^*$, giving maximum 1 and exact zeros at normal hours. Any positive GT excess amplitude is used exactly, including amplitudes below $\varepsilon$. Non-event target shape is zero. The positive architectural $\varepsilon$ does not floor target amplitudes.
 
 ## Reconstructed excess and final prediction
 
-The registered `target_y_std` buffer contains TRAIN physical target scales σ in shape [1,K]. It must be finite, positive, and match the number of horizons. Reconstruction is:
+The registered `target_y_std` buffer contains TRAIN physical target scales $\sigma$ in shape `[1,K]`. It must be finite, positive, and match the number of horizons. Reconstruction is:
 
-    êᵖʰʸˢᵢₕ = Âᵢ ŝᵢₕ                   [B,K], m
-    êⁿᵢₕ = Âᵢ ŝᵢₕ / σₕ                  [B,K], normalized
-    ŷⁿᵢₕ = b̂ⁿᵢₕ + gᵢ êⁿᵢₕ               [B,K]
-    ŷᵖʰʸˢᵢₕ = μₕ + σₕ b̂ⁿᵢₕ + gᵢ Âᵢ ŝᵢₕ.                  (3)
+$$
+\begin{aligned}
+\hat e^{\mathrm{phys}}_{ih}&=\hat A_i\hat s_{ih},\\
+\hat e^{\mathrm{norm}}_{ih}&=\hat A_i\hat s_{ih}/\sigma_h,\\
+\hat y^{\mathrm{norm}}_{ih}&=\hat b^{\mathrm{norm}}_{ih}+g_i\hat e^{\mathrm{norm}}_{ih},\\
+\hat y^{\mathrm{phys}}_{ih}&=\mu_h+\sigma_h\hat b^{\mathrm{norm}}_{ih}+g_i\hat A_i\hat s_{ih}.
+\end{aligned} \tag{3}
+$$
 
-Target means μ enter physical body reconstruction; excess is a difference and uses only σ. The raw physical excess has maximum Âᵢ. The window scalar gate multiplies every reconstructed excess horizon, making the gated contribution's maximum gᵢÂᵢ. This need not equal the maximum final prediction because body also varies across horizons.
+Each reconstructed tensor has shape `[B,K]`; physical excess and prediction have units m, while normalized quantities are dimensionless. Target means $\mu$ enter physical body reconstruction; excess is a difference and uses only $\sigma$. The raw physical excess has maximum $\hat A_i$. The window scalar gate multiplies every reconstructed excess horizon, making the gated contribution's maximum $g_i\hat A_i$. This need not equal the maximum final prediction because body also varies across horizons.
 
-The learned gate is gᵢ = sigmoid(gate(c̄ᵢ)), shape [B,1]. Its final weights initialize to zero, and its bias is the logit of TRAIN Event Window prevalence clipped to [10⁻⁶,1−10⁻⁶]. With `DUAL_ABLATION=fixed_gate`, g is the unmodified empirical TRAIN prevalence and there is no gate network.
+The learned gate is $g_i=\operatorname{sigmoid}(\operatorname{gate}(\bar c_i))$, shape `[B,1]`. Its final weights initialize to zero, and its bias is the logit of TRAIN Event Window prevalence clipped to $[10^{-6},1-10^{-6}]$. With `DUAL_ABLATION=fixed_gate`, $g$ is the unmodified empirical TRAIN prevalence and there is no gate network.
 
-`ForecastOutput` stores normalized `prediction`, `body`, `excess`, and `threshold`; window `gate_logits` and `gate_probability`; physical `severity_phys` [B]; and dimensionless `excess_shape` [B,K]. `gate_logits` is `None` for a fixed gate. Inference performs the same reconstruction with fitted buffers and learned network outputs. GT labels are used only for supervision and evaluation.
+`ForecastOutput` stores normalized `prediction`, `body`, `excess`, and `threshold`; window `gate_logits` and `gate_probability`; physical `severity_phys` `[B]`; and dimensionless `excess_shape` `[B,K]`. `gate_logits` is `None` for a fixed gate. Inference performs the same reconstruction with fitted buffers and learned network outputs. GT labels are used only for supervision and evaluation.
 
 ## Direct and Severity–Shape comparison
 
@@ -56,12 +66,12 @@ The learned gate is gᵢ = sigmoid(gate(c̄ᵢ)), shape [B,1]. Its final weights
 | --- | --- | --- |
 | Production class | `ExceedanceHead` | `SeverityShapeHead` |
 | Excess branch input | Context at each horizon | Window mean for severity; each horizon for shape |
-| Learned excess outputs | K positive normalized excess values | One physical severity and K shape scores |
-| Physical excess | σₕ softplus(rawᵢₕ) | Âᵢ ŝᵢₕ |
+| Learned excess outputs | $K$ positive normalized excess values | One physical severity and $K$ shape scores |
+| Physical excess | $\sigma_h\operatorname{softplus}(\mathrm{raw}_{ih})$ | $\hat A_i\hat s_{ih}$ |
 | Cross-horizon normalization | None in excess output | Shape divided by its hard maximum |
 | Shape constraint | No explicit factor | Nonnegative with maximum 1 |
 | Initial excess | 0.1 normalized units at each horizon | 0.1 m at each horizon |
-| Extra fixed buffer | None beyond τ | TRAIN target standard deviations |
+| Extra fixed buffer | None beyond $\tau$ | TRAIN target standard deviations |
 | Body and gate | Capped body and scalar Event Window gate | Same production definitions |
 | Backbone | PACT contexts | Same PACT contexts |
 | Default formulation | Yes | No; experimental option |
@@ -78,7 +88,7 @@ The complete equations, populations, reductions, units, and coefficients are def
 | Hourly exceedance | Yes | Yes | Final prediction at GT Extreme Hours |
 | Slope | Yes | Yes | Adjacent final prediction increments |
 | Excess trajectory | Yes | Yes | Reconstructed raw excess over GT Event Windows |
-| GT-aligned amplitude | Yes | Yes | Âᵢ ŝᵢ,h*ᵢ at the first GT target maximum |
+| GT-aligned amplitude | Yes | Yes | $\hat A_i\hat s_{i,h_i^*}$ at the first GT target maximum |
 | Shape | No | Yes | Dimensionless normalized shape over GT Event Windows |
 | Body / gate BCE | No | No | Their respective body / gate outputs |
 

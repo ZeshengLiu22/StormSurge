@@ -2,10 +2,10 @@
 
 The production `ExceedanceHead` in [`heads.py`](../emulator/models/heads.py) receives the shared PACT contexts from [BACKBONE](BACKBONE.md) and predicts a capped body, nonnegative excess and one Event Window gate. It uses the single physical threshold from [FORMULATION](FORMULATION.md):
 
-\[
+$$
  \tau=Q_p\bigl(\{y_t:t\text{ is a TRAIN supervised target hour}\}\bigr),
  \qquad p=\mathrm{exceedance\_percentile}/100.
-\]
+$$
 
 The default is TRAIN hourly Q95. All splits and corresponding OOD evaluations retain the same source TRAIN threshold. The model's normalized threshold vector represents this one physical value under per-horizon normalization.
 
@@ -13,18 +13,18 @@ The default is TRAIN hourly Q95. All splits and corresponding OOD evaluations re
 
 Let $C_{ih}\in\mathbb R^d$ be the context of horizon $h$ in window $i$, with $C\in\mathbb R^{B\times K\times d}$. Let $\mu_h\in\mathbb R$ and $s_h>0$ denote TRAIN target mean and scale, and define
 
-\[
+$$
  z_{ih}=\frac{y_{ih}-\mu_h}{s_h},\qquad
  \theta_h=\frac{\tau-\mu_h}{s_h}.
-\]
+$$
 
 `ModelConfig.peak_threshold_norm` carries $(\theta_0,\ldots,\theta_{K-1})$; `train.py` fills it from `tau_normalized`. `peak_prior` carries the observed TRAIN Event Window rate. These are construction fields, not additional fitted extreme definitions. The head registers `threshold` as a non-trainable FP32 buffer `[1,K]`.
 
 Production body, excess and gate each use an independent MLP:
 
-\[
+$$
  f(v)=W_2\operatorname{Dropout}\!\left(\operatorname{LeakyReLU}_{0.1}(W_1v+b_1)\right)+b_2,
-\]
+$$
 
 with widths $d\to w\to1$, normally $w=2d$. `head_dropout` controls their dropout, and the Python/checkpoint `head_hidden` field can override $w$. Parameters are not shared among branches, but each branch shares its MLP across horizons.
 
@@ -32,20 +32,21 @@ with widths $d\to w\to1$, normally $w=2d$. `head_dropout` controls their dropout
 
 With independent scalar raw outputs $r_{ih}=f_b(C_{ih})$ and $a_{ih}=f_e(C_{ih})$, the implementation computes
 
-\[
+$$
  \hat b^{\rm norm}_{ih}=\theta_h-\operatorname{softplus}(\theta_h-r_{ih}),\qquad
  \hat e^{\rm norm}_{ih}=\operatorname{softplus}(a_{ih}).
-\]
+$$
 
 It mean-pools the horizon contexts for a scalar window gate:
 
-\[
+$$
  \bar C_i=\frac1K\sum_hC_{ih},\qquad
  \ell_i=f_g(\bar C_i),\qquad g_i=\sigma(\ell_i),
-\]
-\[
+$$
+
+$$
  \hat z_{ih}=\hat b^{\rm norm}_{ih}+g_i\hat e^{\rm norm}_{ih}.
-\]
+$$
 
 Raw branch outputs are converted to FP32 before the body cap, softplus and sigmoid. The body is upper-bounded by $\theta_h$, with no lower bound. Excess is nonnegative. A learned sigmoid gate is shared across all horizons, rather than predicting separate hourly probabilities. No hard gate threshold is applied during inference.
 
@@ -53,18 +54,18 @@ Raw branch outputs are converted to FP32 before the body cap, softplus and sigmo
 
 Define physical body and raw excess:
 
-\[
+$$
  \hat b_{ih}=\mu_h+s_h\hat b^{\rm norm}_{ih}
      =\tau-s_h\operatorname{softplus}(\theta_h-r_{ih}),\qquad
  \hat e_{ih}=s_h\hat e^{\rm norm}_{ih}.
-\]
+$$
 
 Then
 
-\[
+$$
  \boxed{\hat y_{ih}=\hat b_{ih}+g_i\hat e_{ih}},\qquad
  \hat b_{ih}\le\tau,\quad \hat e_{ih}\ge0.
-\]
+$$
 
 Body and excess have units of meters; $g_i$ is dimensionless. The body cap is strict in exact finite arithmetic, but floating-point softplus underflow can reach equality. The final prediction can exceed $\tau$. Because body may lie below $\tau$, the branch quantity $g_i\hat e_{ih}$ is not generally identical to $\max(\hat y_{ih}-\tau,0)$.
 
@@ -96,10 +97,10 @@ The engine converts `prediction` to meters using the saved $\mu_h,s_h$. Optional
 
 Physical targets at every horizon are
 
-\[
+$$
  b^*_{ih}=\min(y_{ih},\tau),\qquad e^*_{ih}=\max(y_{ih}-\tau,0),\qquad
  E_i=\mathbf1\{\exists h:y_{ih}>\tau\}.
-\]
+$$
 
 Thus $y_{ih}=b^*_{ih}+e^*_{ih}$, and $y=\tau$ is not extreme. Normalized branch targets are $(b^*_{ih}-\mu_h)/s_h$ and $e^*_{ih}/s_h$. The production loss receives physical targets and the full-precision `tau_physical` when constructing the strict event mask and excess; its mask is not reconstructed by comparing rounded normalized buffers.
 
@@ -144,10 +145,10 @@ The `legacy` value is a supported preset name for the production MLP layout. Eve
 
 For these optional presets, `exceedance_gate_pooling=mean` averages horizon contexts. `learned` instead computes
 
-\[
+$$
  a_{ih}=w^\mathsf T\operatorname{LN}_{\rm affine}(C_{ih})+b,\quad
  \alpha_{ih}=\operatorname{softmax}_h(a_{ih}),\quad
  \bar C_i=\sum_h\alpha_{ih}C_{ih}.
-\]
+$$
 
 The gate MLP receives this pooled vector. Its affine normalization and scalar scoring layer use their standard initializers; the gate output itself still starts at $\tilde q_E$ because its final projection is initialized as above. `fixed_gate` omits learned pooling parameters as well as the gate network. The pooling setting has an effect only when a direct head preset is selected; the production head and Severity–Shape head use mean pooling.

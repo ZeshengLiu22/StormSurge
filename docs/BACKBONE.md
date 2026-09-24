@@ -48,10 +48,10 @@ The supplied [NCEP forcing preprocessing](../preprocessing/preprocessing_forcing
 
 Optional station metadata, shared across the station-specific batch, is encoded by [`station_features_from_json`](../emulator/data/station_metadata.py) in this order:
 
-\[
+$$
 [\mathrm{lat}/90,\ \mathrm{lon}/180,\ (\mathrm{elevation}/10),\
  \sin\phi,\cos\phi,\sin\lambda,\cos\lambda,\ (\mathrm{bathymetry}/10)].
-\]
+$$
 
 Parentheses mark independently optional entries; angles $\phi,\lambda$ are radians. The vector has $6+I_{\rm elevation}+I_{\rm bathymetry}$ entries: seven with CLI defaults and six in generated configs. Enabled fields must exist and be finite. `use_station_meta=0` omits this vector and its projection. Station metadata is passed only to PACT when a station is selected.
 
@@ -67,11 +67,11 @@ Parentheses mark independently optional entries; angles $\phi,\lambda$ are radia
 
 There are exactly `num_layers` `torch_geometric.nn.SAGEConv` layers, at least two, with widths $F\to d\to\cdots\to d$. The constructor uses mean aggregation, a learned root projection, bias, no pre-projection, and no output L2 normalization. At layer $\ell$, the preactivation for node $v$ is
 
-\[
+$$
  a_v^{(\ell)}=W_{\rm neigh}^{(\ell)}
        \operatorname{mean}_{u\in\mathcal N(v)}x_u^{(\ell-1)}
        +b^{(\ell)}+W_{\rm root}^{(\ell)}x_v^{(\ell-1)}.
-\]
+$$
 
 The neighbor set follows the supplied directed `edge_index`. Each layer, including the last, applies `LeakyReLU(0.1)` then dropout with probability `dropout`. There is no extra spatial normalization or residual block; the root projection is part of each SAGE convolution.
 
@@ -85,18 +85,18 @@ There are exactly `num_layers` `nn.Conv2d` layers, at least one. Every layer use
 
 PACT constructs a learned station query $q\in\mathbb R^{1\times d}$, initialized to zero. If station metadata $m$ is enabled, it adds
 
-\[
+$$
  q=q_{\rm learned}+\operatorname{LN}_{\rm affine}
        \left(W_2\operatorname{LeakyReLU}_{0.1}(W_1m+b_1)+b_2\right),
-\]
+$$
 
 where the metadata MLP widths are `station_feat_dim` $\to\max(16,d)\to d$. This query is expanded to `[B,1,d]`.
 
 At each forcing time, `to_dense_batch` converts spatial outputs into `[B,N_max,d]` and a valid-node mask. `node_readout` is `nn.MultiheadAttention` with `node_read_heads` heads, learned Q/K/V and output projections, bias and zero attention dropout. Per head it computes
 
-\[
+$$
  \operatorname{softmax}\!\left(\frac{QK^\mathsf T}{\sqrt{d/a}}+M\right)V,
-\]
+$$
 
 where $a$ is the head count and the key-padding mask $M$ excludes padded nodes. Queries come from $q$, and keys/values come from spatial node representations. Concatenated heads and the output projection yield `[B,1,d]`.
 
@@ -112,13 +112,14 @@ All temporal options preserve `[B,S,d]`. `transformer_layers` supplies their dep
 
 Each [`TemporalTransformer`](../emulator/models/temporal.py) layer contains an affine pre-normalization, self-attention with `time_read_heads`, a scaled residual, and a `TemporalMLP` sublayer:
 
-\[
+$$
  z=\operatorname{LN}_{\rm affine}(x),\qquad
  u=x+e^{\gamma_a}\operatorname{Dropout}(\operatorname{MHA}(z,z,z)),
-\]
-\[
+$$
+
+$$
  x'=u+e^{\gamma_f}\operatorname{FF}(\operatorname{LN}_{\rm affine}(u)).
-\]
+$$
 
 Both $\gamma_a$ and $\gamma_f$ are independent learned scalar parameters initialized to $\log(0.1)$, so their positive residual gains initially equal 0.1. The feed-forward sequence is `Linear(d,f) → LeakyReLU(0.1) → Dropout → Linear(f,d) → Dropout`. Attention has temporal attention-weight dropout plus the explicit output dropout. The stack contains `transformer_layers` such blocks.
 
@@ -130,9 +131,9 @@ Each `TemporalMLP` applies only the second residual equation above, with its own
 
 `TemporalRNN` constructs `nn.LSTM(d,d,depth)` or `nn.GRU(d,d,depth)`, unidirectional and `batch_first=True`. The output sequence $r$, rather than only the final state, forms a residual:
 
-\[
+$$
  x'=\operatorname{LN}_{\rm affine}(x+\operatorname{Dropout}(r)).
-\]
+$$
 
 PyTorch recurrent inter-layer dropout is enabled only for depth greater than one; the output dropout remains present for every depth. These blocks use post-residual affine LayerNorm and no learned residual gain. The feed-forward multiplier is unused.
 
