@@ -43,8 +43,10 @@ width 128、batch size 256、4 步梯度累积、学习率 5e-3、300 epochs 和
 WQE 是 weighted quantile–expectile loss。Tail-MSE 针对严格超过固定 TRAIN Q95
 阈值的真实极端小时。完整定义见 [Losses](../docs/LOSSES.md)。
 
-`multickpt` 表示同一次训练按六种 VAL 标准保存 checkpoint：overall、exceedance、
-aligned_peak、equal、peak_priority、eventaware。当前共享训练流程对所有实验族
+`multickpt` 表示同一次训练按四种 VAL 标准保存 checkpoint：overall、exceedance、
+aligned_peak、bea。BEA（Balanced Event-Aware）固定为
+`0.50*AllRMSE + 0.25*ExceedanceRMSE + 0.25*GTAlignedPeakRMSE`。
+当前共享训练流程对所有实验族
 采用该机制；这些配置的主结果均使用 overall。见
 [Checkpoint selection](../docs/CHECKPOINT_SELECTION.md)。
 

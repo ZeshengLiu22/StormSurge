@@ -3,7 +3,7 @@
 import copy
 import unittest
 
-from emulator.training.eventaware_checkpoints import ROLES
+from emulator.training.checkpoint_selection import ROLES
 from emulator.training.metrics import METRIC_GROUPS, METRIC_KEYS, METRIC_LABELS
 from emulator.training.reporting import compact_comparison_report, comparison_report
 
@@ -12,9 +12,7 @@ ROLE_LABELS = {
     'overall': 'Overall',
     'exceedance': 'Exceedance',
     'aligned_peak': 'Aligned-peak',
-    'equal': 'Equal-composite',
-    'peak_priority': 'Peak-priority',
-    'eventaware': 'Legacy event-aware',
+    'bea': 'BEA',
 }
 EXPECTED_LABELS = (
     'AllRMSE', 'AllMAE', 'ExceedanceRMSE', 'ExceedanceMAE',
@@ -108,11 +106,11 @@ EpisodePeakTimingMAEHours=0.91 h
         self.assertNotIn('NA', report)
 
     def test_role_subset_and_order_follow_evaluations(self):
-        report = compact_comparison_report(evaluations_for(('eventaware', 'aligned_peak')))
-        self.assertEqual(report.splitlines()[0], 'Selected epochs | Legacy event-aware=87 | Aligned-peak=88')
+        report = compact_comparison_report(evaluations_for(('bea', 'aligned_peak')))
+        self.assertEqual(report.splitlines()[0], 'Selected epochs | BEA=87 | Aligned-peak=88')
         blocks = report.split('\n\n[')[1:]
         self.assertEqual(len(blocks), 2)
-        self.assertTrue(blocks[0].startswith('Legacy event-aware | epoch 87]'))
+        self.assertTrue(blocks[0].startswith('BEA | epoch 87]'))
         self.assertTrue(blocks[1].startswith('Aligned-peak | epoch 88]'))
 
     def test_full_comparison_preserves_all_metrics_units_and_format(self):
@@ -126,7 +124,7 @@ EpisodePeakTimingMAEHours=0.91 h
         self.assertTrue(full.startswith(
             'Extreme threshold: TRAIN hourly target Q95; tau = 1.234567890 meters; strict exceedance y > tau\n\n'))
         self.assertTrue(full.endswith('\n\n'))
-        table_header = '| Metric | Overall | Exceedance | AlignedPeak | Equal | PeakPriority | EventAware |'
+        table_header = '| Metric | Overall | Exceedance | AlignedPeak | BEA |'
         self.assertEqual(full.count(table_header), 2 * (len(METRIC_GROUPS) + 1))
         for role in ROLES:
             self.assertIn(f'{ROLE_LABELS[role]} epoch: {evaluations[role]["epoch"]}', full)

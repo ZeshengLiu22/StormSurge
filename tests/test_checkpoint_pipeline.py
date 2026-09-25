@@ -1,4 +1,4 @@
-"""All six checkpoint roles follow one trajectory; final TEST cannot select epochs."""
+"""All four checkpoint roles follow one trajectory; final TEST cannot select epochs."""
 
 import contextlib
 import copy
@@ -16,16 +16,15 @@ import torch
 
 import train
 from emulator.training.engine import EpochResult
-from emulator.training.eventaware_checkpoints import ROLES, SELECTION_METRICS
+from emulator.training.checkpoint_selection import ROLES, SELECTION_METRICS
 from emulator.training.metrics import METRIC_KEYS, METRIC_LABELS
 from emulator.training.reporting import compact_comparison_report, display
 from emulator.training.metrics import evaluate_metrics
 from test_pipeline import make_fixture
 
 
-VALUES = ((0., 10., 10.), (10., 0., 10.), (10., 10., 0.),
-          (4., 4., 4.), (7., 4., 2.), (1., 5., 7.))
-WINNERS = dict(zip(ROLES, range(1, 7)))
+VALUES = ((0., 10., 10.), (10., 0., 10.), (10., 10., 0.), (4., 4., 4.))
+WINNERS = dict(zip(ROLES, range(1, 5)))
 
 
 def arguments(graphs, stations, output, variant='single', mode='overall'):
@@ -102,7 +101,7 @@ class CheckpointPipelineTests(unittest.TestCase):
     def setUpClass(cls):
         torch.set_num_threads(1)
 
-    def test_six_roles_all_formulations_both_final_splits_and_primary_alias(self):
+    def test_four_roles_all_formulations_both_final_splits_and_primary_alias(self):
         for variant in ('single', 'direct', 'severity_shape'):
             for mode in ROLES:
                 with self.subTest(variant=variant, mode=mode), tempfile.TemporaryDirectory() as temporary:
@@ -111,6 +110,10 @@ class CheckpointPipelineTests(unittest.TestCase):
                     self.assertEqual(state['final_calls'], [(role, split) for role in ROLES for split in ('val', 'test')])
                     summary = json.loads(next(output.glob('summary_*.json')).read_text())
                     self.assertEqual(summary['best_epoch'], WINNERS[mode])
+                    self.assertEqual({path.name for path in output.glob('*.pt')},
+                                     {'best.pt', *(f'best_{role}.pt' for role in ROLES)})
+                    self.assertEqual({path.name for path in output.glob('*_predictions_*.npz')},
+                                     {f'{split}_predictions_{role}.npz' for role in ROLES for split in ('val', 'test')})
                     selected = torch.load(output / 'best.pt', weights_only=False)
                     self.assertEqual(selected['epoch'], summary['best_epoch'])
                     self.assertEqual(selected['checkpoint_role'], mode)
@@ -136,9 +139,8 @@ class CheckpointPipelineTests(unittest.TestCase):
                     logs = [json.loads(line) for line in next(output.glob('metrics_*.jsonl')).read_text().splitlines()]
                     self.assertEqual(len(logs), len(VALUES))
                     for log, (a, e, p) in zip(logs, VALUES):
-                        self.assertEqual(log['eventaware_score'], .65 * a + .20 * e + .15 * p)
-                        self.assertEqual(log['equal_score'], (a + e + p) / 3)
-                        self.assertEqual(log['peak_priority_score'], (a + 2 * e + 4 * p) / 7)
+                        self.assertEqual(set(log), {'epoch', 'train', 'val', 'bea_score'})
+                        self.assertEqual(log['bea_score'], .50 * a + .25 * e + .25 * p)
                     report = (output / 'checkpoint_comparison.md').read_text()
                     comparison = json.loads((output / 'checkpoint_comparison.json').read_text())
                     self.assertEqual(comparison['threshold_metadata'], summary['threshold_metadata'])
@@ -153,7 +155,7 @@ class CheckpointPipelineTests(unittest.TestCase):
                     self.assertEqual(final_lines[selected_index:-1],
                                      compact_comparison_report(summary['checkpoint_comparison']).splitlines())
                     self.assertTrue(final_lines[-1].startswith('Wall time:'))
-                    for label, role in zip(('Overall', 'Exceedance', 'Aligned-peak', 'Equal-composite', 'Peak-priority', 'Legacy event-aware'), ROLES):
+                    for label, role in zip(('Overall', 'Exceedance', 'Aligned-peak', 'BEA'), ROLES):
                         self.assertIn(f'{label} epoch: {WINNERS[role]}', report)
                     for split in ('val', 'test'):
                         section = report.split(f'{split.upper()} — Overall', 1)[1].split('TEST — Overall')[0]
@@ -170,22 +172,22 @@ class CheckpointPipelineTests(unittest.TestCase):
         selected = []
         for score in (0., 1e12):
             with tempfile.TemporaryDirectory() as temporary:
-                output, state = recorded_run(Path(temporary), 'eventaware', test_score=score)
+                output, state = recorded_run(Path(temporary), 'bea', test_score=score)
                 summary = json.loads(next(output.glob('summary_*.json')).read_text())
                 selected.append({role: value['epoch'] for role, value in summary['checkpoint_selection']['checkpoints'].items()})
                 self.assertEqual(summary['test']['all_rmse'], score)
         self.assertEqual(selected, [WINNERS] * 2)
 
-    def test_six_role_bookkeeping_and_primary_do_not_change_real_cpu_training(self):
-        # Compare against retaining only the historical two roles, including
+    def test_four_role_bookkeeping_and_primary_do_not_change_real_cpu_training(self):
+        # Compare against retaining only the overall role, including
         # optimizer moments, scheduler state, losses, model weights, and RNG.
         for variant in ('single', 'direct', 'severity_shape'):
             trajectories = []
-            for mode in ('legacy', *ROLES):
+            for mode in ('overall_only', *ROLES):
                 with tempfile.TemporaryDirectory() as temporary, contextlib.ExitStack() as stack:
-                    if mode == 'legacy':
-                        for module in ('train', 'emulator.training.eventaware_checkpoints', 'emulator.training.reporting'):
-                            stack.enter_context(patch(f'{module}.ROLES', ('overall', 'eventaware')))
+                    if mode == 'overall_only':
+                        for module in ('train', 'emulator.training.checkpoint_selection', 'emulator.training.reporting'):
+                            stack.enter_context(patch(f'{module}.ROLES', ('overall',)))
                     torch.manual_seed(824)
                     root = Path(temporary)
                     graphs, stations = make_fixture(root)
@@ -214,7 +216,7 @@ class CheckpointPipelineTests(unittest.TestCase):
                     with contextlib.redirect_stdout(io.StringIO()), patch.object(train, 'run_epoch', side_effect=epoch), \
                             patch.object(torch.optim.lr_scheduler.LambdaLR, 'step', new=step):
                         train.main(arguments(graphs, stations, root / 'run', variant,
-                                             'overall' if mode == 'legacy' else mode))
+                                             'overall' if mode == 'overall_only' else mode))
                     trajectories.append((history, schedules))
             for actual in trajectories[1:]:
                 self.assertEqual(trajectories[0], actual, variant)

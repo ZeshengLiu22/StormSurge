@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Single-head S0_Tail_WQE comparison (six VAL-only checkpoint roles): Lewes.
+# Single-head S0_Tail_WQE comparison (four VAL-only checkpoint roles): Lewes.
 # Matched to main 9072c89; paired S0 settings plus latest G1_E0_T1 Tail-MSE.
 
 TRAIN_PY="train.py"
@@ -106,11 +106,8 @@ GATE_LOSS_WEIGHT=1
 SHAPE_LOSS_WEIGHT=0
 SEVERITY_SHAPE_EPS=1e-6
 
-# All six VAL-selected roles are retained and reevaluated on VAL and TEST.
+# All four VAL-selected roles are retained and reevaluated on VAL and TEST.
 CHECKPOINT_SELECTION="overall"
-CKPT_W_ALL=0.65
-CKPT_W_EXCEEDANCE=0.20
-CKPT_W_PEAK=0.15
 
 ALL_RESULTS_ROOT="/home/exouser/media/share/PACT/0924_s0_refresh"
 RUN_DIR_NAME_STYLE="runname_timestamp"

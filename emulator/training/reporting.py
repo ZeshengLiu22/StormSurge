@@ -1,16 +1,14 @@
 """Human-readable physical metric tables, using the canonical metric dictionary."""
 
 from .metrics import METRIC_GROUPS, METRIC_LABELS
-from .eventaware_checkpoints import ROLES
+from .checkpoint_selection import ROLES
 
 
 _ROLE_LABELS = {
     "overall": "Overall",
     "exceedance": "Exceedance",
     "aligned_peak": "Aligned-peak",
-    "equal": "Equal-composite",
-    "peak_priority": "Peak-priority",
-    "eventaware": "Legacy event-aware",
+    "bea": "BEA",
 }
 _COMPACT_METRIC_ROWS = (
     (("all_rmse", "all_mae"), 1000, "mm"),
@@ -43,9 +41,8 @@ def metric_report(metrics, metadata):
 
 
 def comparison_report(evaluations, metadata):
-    labels = ("Overall", "Exceedance", "Aligned-peak", "Equal-composite", "Peak-priority", "Legacy event-aware")
     lines = [threshold_label(metadata), ""]
-    lines.extend(f'{label} epoch: {evaluations[role]["epoch"]}' for role, label in zip(ROLES, labels))
+    lines.extend(f'{_ROLE_LABELS[role]} epoch: {evaluations[role]["epoch"]}' for role in ROLES)
     lines.append("")
     for split in ("val", "test"):
         groups = dict(METRIC_GROUPS)
@@ -55,8 +52,8 @@ def comparison_report(evaluations, metadata):
             groups["Additional diagnostics"] = extra
         for group, entries in groups.items():
             lines.extend([f"{split.upper()} — {group}", "",
-                          "| Metric | Overall | Exceedance | AlignedPeak | Equal | PeakPriority | EventAware |",
-                          "| --- | ---: | ---: | ---: | ---: | ---: | ---: |"])
+                          "| Metric | Overall | Exceedance | AlignedPeak | BEA |",
+                          "| --- | ---: | ---: | ---: | ---: |"])
             for key in entries:
                 label = METRIC_LABELS.get(key, key)
                 values = " | ".join(display(evaluations[role][split].get(key)) for role in ROLES)

@@ -13,7 +13,7 @@ import tempfile
 import unittest
 from unittest.mock import patch
 
-from emulator.training.eventaware_checkpoints import ROLES
+from emulator.training.checkpoint_selection import ROLES
 from tools.generate_configs import (FACTORIAL_CONFIG_DIR, FACTORIAL_RESULTS_ROOT, FACTORIAL_PYTHON,
                                     generate, main)
 from test_wqe_configs import PARAMETERS, REPO, dry_run
@@ -57,8 +57,7 @@ class WQEFactorialConfigTests(unittest.TestCase):
                     self.assertEqual((args.excess_amp_loss_weight, args.shape_loss_weight), (0., 0.))
                     self.assertIn('EXCESS_AMP_LOSS_WEIGHT=0\n', path.read_text())
                     self.assertIn('SHAPE_LOSS_WEIGHT=0\n', path.read_text())
-                    self.assertEqual((args.checkpoint_selection, args.ckpt_w_all, args.ckpt_w_exceedance, args.ckpt_w_peak),
-                                     ('overall', .65, .20, .15))
+                    self.assertEqual(args.checkpoint_selection, 'overall')
                     for name, value in PARAMETERS.items():
                         self.assertEqual(getattr(args, name), value)
                     run_dir = Path(args.output_dir)

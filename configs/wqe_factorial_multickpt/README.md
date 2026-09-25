@@ -16,8 +16,10 @@ Body/excess/gate weights are 1/2/0.5. Body remains MSE; Tail remains MSE on
 strict TRAIN Q95 extreme hours. Amplitude and shape losses are disabled.
 See the [manifest](manifest.csv) and [loss definitions](../../docs/LOSSES.md).
 
-`multickpt` refers to six VAL-selected checkpoints from one training trajectory:
-overall, exceedance, aligned_peak, equal, peak_priority, and eventaware.
+`multickpt` refers to four VAL-selected checkpoints from one training trajectory:
+overall, exceedance, aligned_peak, and bea (Balanced Event-Aware).
+BEA minimizes `0.50*AllRMSE + 0.25*ExceedanceRMSE + 0.25*GTAlignedPeakRMSE`
+with fixed weights.
 Every role is reevaluated on VAL and TEST; overall supplies the primary result.
 See [Checkpoint selection](../../docs/CHECKPOINT_SELECTION.md).
 

@@ -72,10 +72,10 @@ independently by `EXCEEDANCE_LOSS_WEIGHT`.
 ## Shared evaluation and logging
 
 Metrics use the current shared implementation and the same fixed TRAIN Q95
-threshold with strict `y > tau`. All six VAL-selected roles are retained:
-overall, exceedance, aligned_peak, equal, peak_priority, and eventaware.
-Each is reevaluated on VAL and TEST; `overall` is the primary alias. Legacy
-checkpoint weights remain `0.65/0.20/0.15`.
+threshold with strict `y > tau`. All four VAL-selected roles are retained:
+overall, exceedance, aligned_peak, and bea (Balanced Event-Aware).
+BEA minimizes `0.50*AllRMSE + 0.25*ExceedanceRMSE + 0.25*GTAlignedPeakRMSE`
+with fixed weights. Each is reevaluated on VAL and TEST; `overall` is the primary alias.
 
 The current launcher/trainer provide the same config snapshots, launcher and
 training logs, epoch JSONL, summaries, checkpoint comparisons, and per-role

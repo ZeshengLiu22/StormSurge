@@ -20,7 +20,8 @@ class FormulationCleanupTests(unittest.TestCase):
                            if path.is_file() and path.suffix in text_suffixes
                            and '__pycache__' not in path.parts
                            and path != REPO / 'tools' / 'audit_documentation.py')
-        forbidden = re.compile(r'top5|peak5|tail_frac|checkpoint_score_refs', re.IGNORECASE)
+        forbidden = re.compile(r'top5|peak5|tail_frac|checkpoint_score_refs|eventaware|peak_priority|'
+                               r'equal_score|best_equal|ckpt_w_|validate_score_weights', re.IGNORECASE)
         violations = []
         for path in sorted(sources):
             self.assertTrue(path.is_file(), str(path))

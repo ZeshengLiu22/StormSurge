@@ -12,9 +12,10 @@ forcing/history + graph → spatial encoder → station readout → temporal mod
 
 All extreme populations use one physical threshold fitted on unique TRAIN hourly
 targets. The default is Q95 with strict `y > tau`; VAL, TEST and OOD reuse that
-threshold. Every run retains six [checkpoint roles](docs/CHECKPOINT_SELECTION.md):
-overall, exceedance, aligned peak, equal composite, peak priority, and legacy
-event-aware. All are selected using VAL and reevaluated on VAL and TEST.
+threshold. Every run retains four [checkpoint roles](docs/CHECKPOINT_SELECTION.md):
+`overall`, `exceedance`, `aligned_peak`, and `bea` (Balanced Event-Aware).
+BEA minimizes `0.50*AllRMSE + 0.25*ExceedanceRMSE + 0.25*GTAlignedPeakRMSE`.
+All are selected using VAL and reevaluated on VAL and TEST.
 
 ## Run
 
@@ -50,7 +51,7 @@ For a fresh 32-run global/excess WQE × Tail-MSE factorial, run
 `python tools/generate_configs.py --family wqe_factorial_multickpt`.
 Configs, manifest, and launch scripts go to `configs/wqe_factorial_multickpt`;
 results go to `/home/exouser/media/share/PACT/All_results_0922_wqe_factorial_multickpt`.
-The primary role is `overall`; every run retains and evaluates all six roles.
+The primary role is `overall`; every run retains and evaluates all four roles.
 Generation does not submit jobs.
 
 Launch an explicitly chosen configuration:
@@ -68,15 +69,12 @@ EXCEEDANCE_PERCENTILE=95
 EXCEEDANCE_LOSS_WEIGHT=0.025
 EXCESS_AMP_LOSS_WEIGHT=0.003
 CHECKPOINT_SELECTION=overall
-CKPT_W_ALL=0.65
-CKPT_W_EXCEEDANCE=0.20
-CKPT_W_PEAK=0.15
 ```
 
 Evaluate a saved checkpoint, retaining its source TRAIN threshold:
 
 ```bash
-python infer.py --ckpt /path/to/run/best_eventaware.pt \
+python infer.py --ckpt /path/to/run/best_bea.pt \
   --root_dir ./Data/Grid4_New/NCEP/graphs --save_npz --out_dir ./All_Inference_Results/example
 ```
 
@@ -86,7 +84,7 @@ add `--dual_diagnostics`. Compare new prediction exports on shared GT episodes:
 ```bash
 python tools/event_diagnostics.py \
   --predictions Overall=/path/to/run/test_predictions_overall.npz \
-  --predictions EventAware=/path/to/run/test_predictions_eventaware.npz \
+  --predictions bea=/path/to/run/test_predictions_bea.npz \
   --output ./results/event_diagnostics
 ```
 
@@ -112,6 +110,6 @@ bash -n train.sh infer.sh infer_multi.sh
 ```
 
 The suite includes numerical metric oracles, timestamp/leakage checks, branch
-objectives, all six checkpoint roles, train/inference round trips, distributed
+objectives, all four checkpoint roles, train/inference round trips, distributed
 reductions, preprocessing and documentation consistency. Real experiment
 training is a separate explicit launch.

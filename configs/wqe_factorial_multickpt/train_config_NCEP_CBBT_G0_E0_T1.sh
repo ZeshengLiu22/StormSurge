@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Fresh WQE/Tail factorial (six VAL-only checkpoint roles): CBBT / G0_E0_T1.
+# Fresh WQE/Tail factorial (four VAL-only checkpoint roles): CBBT / G0_E0_T1.
 
 TRAIN_PY="train.py"
 DO_CONDA=0
@@ -102,9 +102,6 @@ SHAPE_LOSS_WEIGHT=0
 SEVERITY_SHAPE_EPS=1e-6
 
 CHECKPOINT_SELECTION="overall"
-CKPT_W_ALL=0.65
-CKPT_W_EXCEEDANCE=0.20
-CKPT_W_PEAK=0.15
 
 ALL_RESULTS_ROOT="/home/exouser/media/share/PACT/All_results_0922_wqe_factorial_multickpt"
 RUN_DIR_NAME_STYLE="runname_timestamp"

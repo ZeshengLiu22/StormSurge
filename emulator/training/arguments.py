@@ -6,7 +6,7 @@ from pathlib import Path
 
 from emulator.common.cli import head_type_name, parse_bool_int, temporal_block_name
 from emulator.common.dual import DUAL_ABLATIONS, EXCESS_FORMULATIONS
-from .eventaware_checkpoints import ROLES
+from .checkpoint_selection import ROLES
 from .losses import (enforce_dual_loss, validate_excess_amp_config,
                      validate_shape_config, validate_wqe_config)
 
@@ -211,10 +211,10 @@ def parse_args(argv=None):
     parser.add_argument("--max_time_steps", type=int, default=32,
                         help="PACT lag-embedding capacity, including the current step; ignored by baseline.")
     parser.add_argument("--checkpoint_selection", choices=ROLES, default="overall",
-                        help="Primary checkpoint role; all six VAL-only roles are always retained.")
-    for term, weight in (("all", .65), ("exceedance", .20), ("peak", .15)):
-        parser.add_argument(f"--ckpt_w_{term}", type=float, default=weight,
-                            help=f"Event-aware score coefficient in physical meters; default {weight}.")
+                        help="Primary checkpoint role; all four VAL-only roles are always retained. "
+                             "Minimize AllRMSE (overall), ExceedanceRMSE (exceedance), "
+                             "GTAlignedPeakRMSE (aligned_peak), or Balanced Event-Aware "
+                             "0.50*AllRMSE + 0.25*ExceedanceRMSE + 0.25*GTAlignedPeakRMSE (bea).")
     parser.add_argument("--run_tag", type=str, default=None)
     parser.add_argument(
         "--output_dir",
@@ -265,8 +265,6 @@ def parse_args(argv=None):
         validate_wqe_config(args)
         validate_excess_amp_config(args, head_type=args.head_type)
         validate_shape_config(args, head_type=args.head_type, model=args.model)
-        from .eventaware_checkpoints import validate_score_weights
-        validate_score_weights(getattr(args, f"ckpt_w_{term}") for term in ("all", "exceedance", "peak"))
     except ValueError as error:
         parser.error(str(error))
     if args.head_type == "dual":

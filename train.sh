@@ -150,10 +150,7 @@ fi
 : "${SHAPE_LOSS_WEIGHT:=0}"
 : "${SEVERITY_SHAPE_EPS:=1e-6}"
 : "${EXCESS_AMP_LOSS_WEIGHT:=0}"
-: "${CHECKPOINT_SELECTION:=overall}"
-: "${CKPT_W_ALL:=0.65}"
-: "${CKPT_W_EXCEEDANCE:=0.20}"
-: "${CKPT_W_PEAK:=0.15}"
+: "${CHECKPOINT_SELECTION:=overall}"  # overall | exceedance | aligned_peak | bea
 : "${GATE_LOSS_WEIGHT:=1}"
 : "${ROP_METRIC:=val_all_rmse}"   # val_all_rmse | val_exceedance_rmse
 
@@ -390,7 +387,7 @@ write_resolved_config() {
     EXCESS_AMP_LOSS_WEIGHT
     EXCESS_FORMULATION SHAPE_LOSS_WEIGHT SEVERITY_SHAPE_EPS
     EXCEEDANCE_HEAD_EXPERIMENT EXCEEDANCE_GATE_POOLING
-    CHECKPOINT_SELECTION CKPT_W_ALL CKPT_W_EXCEEDANCE CKPT_W_PEAK
+    CHECKPOINT_SELECTION
     X_NORM X_P_LO X_P_HI X_NODES_PER_GRAPH X_CLIP X_AUG X_AUG_PROB
     X_AUG_SCALE X_AUG_BIAS DISABLE_OOD USE_AMP AMP_DTYPE USE_TF32
     TORCH_THREADS NUM_WORKERS PIN_MEMORY PERSISTENT_WORKERS PREFETCH_FACTOR
@@ -466,7 +463,7 @@ else
   echo "Dual excess loss: inactive (head_type=single)"
 fi
 echo "WQE: q_tau=${WQE_QUANTILE_TAU} e_tau=${WQE_EXPECTILE_TAU} q_weight=${WQE_QUANTILE_WEIGHT} e_weight=${WQE_EXPECTILE_WEIGHT}"
-echo "Checkpoint roles (VAL-only): overall, exceedance, aligned_peak, equal, peak_priority, eventaware; primary=${CHECKPOINT_SELECTION}"
+echo "Checkpoint roles (VAL-only): overall, exceedance, aligned_peak, bea; primary=${CHECKPOINT_SELECTION}"
 echo "Loss weights:  body=${BODY_LOSS_WEIGHT} excess=${EXCESS_LOSS_WEIGHT} gate=${GATE_LOSS_WEIGHT} exceedance=${EXCEEDANCE_LOSS_WEIGHT} amplitude=${EXCESS_AMP_LOSS_WEIGHT} shape=${SHAPE_LOSS_WEIGHT} slope=${SLOPE_LAMBDA_LIST[*]} (terms enabled by head/loss mode)"
 echo "H_LIST:        ${HISTORY_HOURS_LIST[*]}"
 echo "Split:         train=${TRAIN_RATIO} val=${VAL_RATIO} shuffle_years=${SHUFFLE_YEARS} future_only=${FUTURE_ONLY} future_year_threshold=${FUTURE_YEAR_THRESHOLD} seed=${SEED}"
@@ -621,9 +618,6 @@ for LOSS_MODE in "${LOSS_MODE_LIST[@]}"; do
                 --shape_loss_weight "${SHAPE_LOSS_WEIGHT}"
                 --severity_shape_eps "${SEVERITY_SHAPE_EPS}"
                 --checkpoint_selection "${CHECKPOINT_SELECTION}"
-                --ckpt_w_all "${CKPT_W_ALL}"
-                --ckpt_w_exceedance "${CKPT_W_EXCEEDANCE}"
-                --ckpt_w_peak "${CKPT_W_PEAK}"
                 --encoder_type "${ENCODER_TYPE}"
                 --cnn_intermediate_channel "${CNN_INTERMEDIATE_CHANNEL}"
                 --batch_size "${BATCH_SIZE}"

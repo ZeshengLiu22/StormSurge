@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Single-head WQE comparison (six VAL-only checkpoint roles): CBBT / S0-WQE.
+# Single-head WQE comparison (four VAL-only checkpoint roles): CBBT / S0-WQE.
 # Matched to main 34ff3f0; paired S0 settings with global WQE prediction loss.
 
 TRAIN_PY="train.py"
@@ -105,11 +105,8 @@ GATE_LOSS_WEIGHT=1
 SHAPE_LOSS_WEIGHT=0
 SEVERITY_SHAPE_EPS=1e-6
 
-# All six VAL-selected roles are retained and reevaluated on VAL and TEST.
+# All four VAL-selected roles are retained and reevaluated on VAL and TEST.
 CHECKPOINT_SELECTION="overall"
-CKPT_W_ALL=0.65
-CKPT_W_EXCEEDANCE=0.20
-CKPT_W_PEAK=0.15
 
 ALL_RESULTS_ROOT="/home/exouser/media/share/PACT/0924_s0_refresh"
 RUN_DIR_NAME_STYLE="runname_timestamp"

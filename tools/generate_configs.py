@@ -125,9 +125,6 @@ SHAPE_LOSS_WEIGHT={shape_weight}
 SEVERITY_SHAPE_EPS=1e-6
 
 CHECKPOINT_SELECTION="overall"
-CKPT_W_ALL=0.65
-CKPT_W_EXCEEDANCE=0.20
-CKPT_W_PEAK=0.15
 
 ALL_RESULTS_ROOT="{results_root}"
 RUN_DIR_NAME_STYLE="runname_timestamp"
@@ -182,7 +179,7 @@ def generate_wqe_factorial_multickpt(output, *, results_root=FACTORIAL_RESULTS_R
     output.mkdir(parents=True, exist_ok=True)
     template = WQE_TEMPLATE.replace(
         "WQE placement experiment (existing D0 is the MSE/MSE control)",
-        "Fresh WQE/Tail factorial (six VAL-only checkpoint roles)").replace(
+        "Fresh WQE/Tail factorial (four VAL-only checkpoint roles)").replace(
         "DO_CONDA=0", 'DO_CONDA=0\n# Explicit runtime survives queue workers and tmux shell initialization.\n'
         'PYTHON_BIN="${{WQEF_PYTHON_BIN:-{python_bin}}}"')
     rows, all_commands = [], []

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Train one trajectory with the fixed TRAIN hourly threshold and six VAL checkpoint roles."""
+"""Train one trajectory with the fixed TRAIN hourly threshold and four VAL checkpoint roles."""
 
 from dataclasses import asdict, fields
 import json
@@ -27,7 +27,7 @@ from emulator.models import ModelConfig, build_model, count_model_parameters, fo
 from emulator.training import ForecastLoss, LossConfig, format_metrics, run_epoch
 from emulator.training.arguments import parse_args
 from emulator.training.checkpoints import atomic_save
-from emulator.training.eventaware_checkpoints import ROLES, EventAwareTracker
+from emulator.training.checkpoint_selection import ROLES, CheckpointTracker
 from emulator.training.reporting import compact_comparison_report, comparison_report, threshold_label
 
 
@@ -66,8 +66,7 @@ def train(args, device, distributed, rank, wall_start):
     checkpoint_path = output_dir / f"best_{stem}.pth"
     metrics_path = output_dir / f"metrics_{stem}.jsonl"
     summary_path = output_dir / f"summary_{stem}.json"
-    tracker = (EventAwareTracker(output_dir, (args.ckpt_w_all, args.ckpt_w_exceedance, args.ckpt_w_peak))
-               if rank == 0 else None)
+    tracker = CheckpointTracker(output_dir) if rank == 0 else None
     if rank == 0:
         log_message(f"Checkpoint roles (VAL-only): {', '.join(ROLES)}; primary={args.checkpoint_selection}")
         log_message(f"Global prediction loss: {args.loss_mode}")
@@ -205,16 +204,13 @@ def train(args, device, distributed, rank, wall_start):
                               "epoch": epoch, "val": validation.metrics, "model_parameters": model_parameters}
 
             score, improved = tracker.observe(epoch, validation.metrics, checkpoint_snapshot)
-            epoch_record["eventaware_score"] = score
-            epoch_record["equal_score"] = tracker.last_scores["equal"]
-            epoch_record["peak_priority_score"] = tracker.last_scores["peak_priority"]
-            log_message(f'VAL checkpoint scores: EqualScore={epoch_record["equal_score"]:.9f} '
-                        f'PeakPriorityScore={epoch_record["peak_priority_score"]:.9f} EventAwareScore={score:.9f}')
+            epoch_record["bea_score"] = score
+            log_message(f'VAL checkpoint score: BEAScore={score:.9f}')
             for role in improved:
                 log_message(f'[Best {role}] epoch={epoch} Val AllRMSE={validation.metrics["all_rmse"]:.9f} '
                             f'ExceedanceRMSE={validation.metrics["exceedance_rmse"]:.9f} '
                             f'GTAlignedPeakRMSE={validation.metrics["gt_aligned_peak_rmse"]:.9f} '
-                            f'EventAwareScore={score:.9f}')
+                            f'BEAScore={score:.9f}')
             if args.checkpoint_selection in improved:
                 chosen = torch.load(tracker.paths[args.checkpoint_selection], map_location="cpu", weights_only=False)
                 atomic_save(chosen, checkpoint_path)
