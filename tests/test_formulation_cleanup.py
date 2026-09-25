@@ -30,7 +30,7 @@ class FormulationCleanupTests(unittest.TestCase):
         self.assertFalse(violations, '\n'.join(violations))
         # Prevent an accidentally empty or relocated configuration tree from
         # silently reducing this to a check of the four entry points.
-        self.assertTrue(any(path.is_relative_to(REPO / 'configs' / 'current') for path in sources))
+        self.assertTrue(any(path.is_relative_to(REPO / 'configs' / 'baseline_ablation') for path in sources))
         self.assertIn(REPO / 'tools' / 'generate_configs.py', sources)
         self.assertIn(REPO / 'emulator' / 'training' / 'metrics.py', sources)
 

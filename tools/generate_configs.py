@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Generate matched current, WQE placement, or fresh WQE/Tail factorial configs without training."""
+"""Generate matched baseline ablation, WQE placement, or WQE/Tail factorial configs without training."""
 
 import argparse
 import csv
@@ -8,10 +8,11 @@ import shlex
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parents[1]
+BASELINE_CONFIG_DIR = "baseline_ablation"
 WQE_RESULTS_ROOT = "/home/exouser/media/share/PACT/WQE_Results"
 FACTORIAL_RESULTS_ROOT = "/home/exouser/media/share/PACT/All_results_0922_wqe_factorial_multickpt"
 FACTORIAL_PYTHON = "/home/exouser/.conda/envs/torchpyg-cu12x/bin/python"
-FACTORIAL_CONFIG_DIR = "0922_wqe_factorial_multickpt"
+FACTORIAL_CONFIG_DIR = "wqe_factorial_multickpt"
 FACTORIAL_STATIONS = ("CBBT", "Boston", "Battery", "Lewes")
 STATIONS = ("CBBT", "Lewes", "Battery", "Boston")
 VARIANTS = (
@@ -297,16 +298,17 @@ def generate(output, *, include_severity_shape=False, results_root=None, family=
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--family", choices=("current", "wqe", "wqe_factorial_multickpt"), default="current",
-                        help="WQE adds W1/W2/W3; wqe_factorial_multickpt adds 32 fresh WQE/Tail runs.")
+                        help="current generates baseline_ablation; wqe adds W1/W2/W3; wqe_factorial_multickpt adds 32 WQE/Tail runs.")
     parser.add_argument("--output", type=Path,
-                        help="Defaults to configs/current, configs/wqe, or configs/0922_wqe_factorial_multickpt.")
+                        help="Defaults to configs/baseline_ablation, configs/wqe, or configs/wqe_factorial_multickpt.")
     parser.add_argument("--include-severity-shape", action="store_true")
     parser.add_argument("--results-root",
                         help=f"Defaults to {FACTORIAL_RESULTS_ROOT} for the factorial, {WQE_RESULTS_ROOT} for WQE, otherwise ./All_Results.")
     args = parser.parse_args(argv)
     if args.family != "current" and args.include_severity_shape:
         parser.error(f"--family {args.family} cannot be combined with --include-severity-shape.")
-    directory = FACTORIAL_CONFIG_DIR if args.family == "wqe_factorial_multickpt" else args.family
+    directory = {"current": BASELINE_CONFIG_DIR,
+                 "wqe_factorial_multickpt": FACTORIAL_CONFIG_DIR}.get(args.family, args.family)
     output = args.output or REPO / "configs" / directory
     rows = generate(output, include_severity_shape=args.include_severity_shape,
                     results_root=args.results_root, family=args.family)

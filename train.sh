@@ -22,9 +22,9 @@ trap cleanup INT TERM
 #   bash train.sh configs/train_config_*.sh
 #   USE_TMUX=1 bash train.sh configs/train_config_*.sh
 #
-CONFIG_PATH="${1:-configs/current/train_config_NCEP_Battery_D0_DualBase.sh}"
+CONFIG_PATH="${1:-configs/baseline_ablation/train_config_NCEP_Battery_D0_DualBase.sh}"
 if [[ "${CONFIG_PATH}" == "--_tmux_inner" ]]; then
-  CONFIG_PATH="configs/current/train_config_NCEP_Battery_D0_DualBase.sh"
+  CONFIG_PATH="configs/baseline_ablation/train_config_NCEP_Battery_D0_DualBase.sh"
 fi
 if [[ ! -f "${CONFIG_PATH}" ]]; then
   echo "[FATAL] config not found: ${CONFIG_PATH}"

@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-# Fresh S0 Single baseline (six VAL-only checkpoint roles): Battery / S0.
-# Matched to main 49bb29f and configs/0922_wqe_factorial_multickpt.
+# Fresh S0 Single baseline (six VAL-only checkpoint roles): CBBT / S0.
+# Matched to main 49bb29f and configs/wqe_factorial_multickpt.
 
 TRAIN_PY="train.py"
 DO_CONDA=0
@@ -11,7 +11,7 @@ USE_TMUX="${USE_TMUX:-1}"
 
 ROOT_DIR="./Data/Grid4_New/NCEP/graphs"
 TEST_ROOT_DIR=""
-STATION="Battery"
+STATION="CBBT"
 MODEL="perceiver3"
 ENCODER_TYPE="GraphSAGE"
 CNN_INTERMEDIATE_CHANNEL=29
@@ -108,5 +108,5 @@ CKPT_W_PEAK=0.15
 
 ALL_RESULTS_ROOT="/home/exouser/media/share/PACT/0924_s0_refresh"
 RUN_DIR_NAME_STYLE="runname_timestamp"
-PACT_RUN_NAME="NCEP_Battery_S0_Single"
-PYTHON_RUN_TAG_BASE="NCEP_Battery_S0_Single"
+PACT_RUN_NAME="NCEP_CBBT_S0_Single"
+PYTHON_RUN_TAG_BASE="NCEP_CBBT_S0_Single"

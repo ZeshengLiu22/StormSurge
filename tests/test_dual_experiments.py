@@ -130,7 +130,7 @@ class DualExperimentTests(unittest.TestCase):
 
     def test_ablation_options_reach_cli_and_keep_the_matched_protocol(self):
         root = Path(__file__).resolve().parents[1]
-        command = dry_commands(root / 'configs/current/train_config_NCEP_Battery_D0_DualBase.sh')[0]
+        command = dry_commands(root / 'configs/baseline_ablation/train_config_NCEP_Battery_D0_DualBase.sh')[0]
         full = train.parse_args(command)
         for mode in DUAL_ABLATIONS:
             args = train.parse_args([*command, '--dual_ablation', mode])

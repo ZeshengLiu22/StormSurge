@@ -18,6 +18,10 @@ event-aware. All are selected using VAL and reevaluated on VAL and TEST.
 
 ## Run
 
+See the [configuration overview](configs/README.md) for experiment families,
+archive status, and directory names. The baseline ablation family is temporarily
+archived; the WQE placement family is completed and archived.
+
 Use the Python 3.11 training environment specified by
 [environment_training.yml](environment_training.yml). The complete preprocessing
 tests also use dependencies in [environment_dataprep.yml](environment_dataprep.yml).
@@ -28,7 +32,7 @@ Inspect thresholds and populations before training:
 ```bash
 python tools/audit_hourly_threshold.py --root-dir ./Data/Grid4_New/NCEP/graphs
 python tools/generate_configs.py
-DRY_RUN=1 USE_TMUX=0 bash train.sh configs/current/train_config_NCEP_CBBT_D0_DualBase.sh
+DRY_RUN=1 USE_TMUX=0 bash train.sh configs/baseline_ablation/train_config_NCEP_CBBT_D0_DualBase.sh
 ```
 
 The generator creates S0 Single, D0 DualBase, D1 Exceedance, D2 Amp and D3
@@ -44,7 +48,7 @@ shared published parameters, TRAIN scale handling, and experiment matrix.
 
 For a fresh 32-run global/excess WQE × Tail-MSE factorial, run
 `python tools/generate_configs.py --family wqe_factorial_multickpt`.
-Configs, manifest, and launch scripts go to `configs/0922_wqe_factorial_multickpt`;
+Configs, manifest, and launch scripts go to `configs/wqe_factorial_multickpt`;
 results go to `/home/exouser/media/share/PACT/All_results_0922_wqe_factorial_multickpt`.
 The primary role is `overall`; every run retains and evaluates all six roles.
 Generation does not submit jobs.
@@ -52,7 +56,7 @@ Generation does not submit jobs.
 Launch an explicitly chosen configuration:
 
 ```bash
-USE_TMUX=0 bash train.sh configs/current/train_config_NCEP_CBBT_D0_DualBase.sh
+USE_TMUX=0 bash train.sh configs/baseline_ablation/train_config_NCEP_CBBT_D0_DualBase.sh
 ```
 
 The core shell controls are:

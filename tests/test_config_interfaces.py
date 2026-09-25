@@ -107,7 +107,7 @@ class ConfigInterfaceTests(unittest.TestCase):
                 self.assertEqual((args.hidden_channels,args.lr,args.grad_accum_steps), (128,.005,4))
                 self.assertEqual(args.exceedance_percentile,95.)
                 self.assertEqual((args.ckpt_w_all,args.ckpt_w_exceedance,args.ckpt_w_peak),(.65,.2,.15))
-                checked_in = REPO / 'configs/current' / row['config']
+                checked_in = REPO / 'configs/baseline_ablation' / row['config']
                 self.assertEqual((generated/row['config']).read_text(),checked_in.read_text())
             self.assertEqual(len(generate(generated,include_severity_shape=True)),36)
             for path in generated.glob('*SeverityShape.sh'):

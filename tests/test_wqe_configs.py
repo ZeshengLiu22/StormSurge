@@ -29,7 +29,7 @@ def dry_run(config):
 
 class WQEConfigTests(unittest.TestCase):
     def test_old_d0_configs_resolve_mse_mse_with_unchanged_branch_weights(self):
-        configs = sorted((REPO / "configs/current").glob("*_D0_DualBase.sh"))
+        configs = sorted((REPO / "configs/baseline_ablation").glob("*_D0_DualBase.sh"))
         self.assertEqual(len(configs), 4)
         for config in configs:
             with self.subTest(config=config.name):

@@ -1,4 +1,7 @@
-# 0924 S0 refresh
+# S0 refresh
+
+Status: not archived. See the [configuration overview](../README.md) for the
+other experiment families and archive status.
 
 Sixteen matched Single-head PACT runs: CBBT, Lewes, Battery, and Boston, each
 with four prediction-loss/Tail conditions. All use `HEAD_TYPE=single` and
@@ -18,7 +21,7 @@ All results use `/home/exouser/media/share/PACT/0924_s0_refresh/`, with distinct
 The original MSE configs were based on `main` `49bb29f`; the WQE comparisons
 were added from `34ff3f0`. The Tail variants were added against verified
 `main` `9072c89`. Each station's corresponding `G0_E0_T0`, `G1_E0_T0`,
-`G0_E0_T1`, and `G1_E0_T1` configs in `configs/0922_wqe_factorial_multickpt`
+`G0_E0_T1`, and `G1_E0_T1` configs in `configs/wqe_factorial_multickpt`
 supply the matched protocol and loss settings.
 
 The common backbone and training settings match the latest factorial configs:
@@ -89,37 +92,37 @@ cd /home/exouser/StormSurge
 S0: global MSE.
 
 ```bash
-qsub_local train.sh S0_CBBT_0924 configs/0924_s0_refresh/train_config_NCEP_CBBT_S0_Single.sh
-qsub_local train.sh S0_Lewes_0924 configs/0924_s0_refresh/train_config_NCEP_Lewes_S0_Single.sh
-qsub_local train.sh S0_Battery_0924 configs/0924_s0_refresh/train_config_NCEP_Battery_S0_Single.sh
-qsub_local train.sh S0_Boston_0924 configs/0924_s0_refresh/train_config_NCEP_Boston_S0_Single.sh
+qsub_local train.sh S0_CBBT_0924 configs/s0_refresh/train_config_NCEP_CBBT_S0_Single.sh
+qsub_local train.sh S0_Lewes_0924 configs/s0_refresh/train_config_NCEP_Lewes_S0_Single.sh
+qsub_local train.sh S0_Battery_0924 configs/s0_refresh/train_config_NCEP_Battery_S0_Single.sh
+qsub_local train.sh S0_Boston_0924 configs/s0_refresh/train_config_NCEP_Boston_S0_Single.sh
 ```
 
 S0_WQE: global WQE.
 
 ```bash
-qsub_local train.sh S0WQE_CBBT_0924 configs/0924_s0_refresh/train_config_NCEP_CBBT_S0_Single_WQE.sh
-qsub_local train.sh S0WQE_Lewes_0924 configs/0924_s0_refresh/train_config_NCEP_Lewes_S0_Single_WQE.sh
-qsub_local train.sh S0WQE_Battery_0924 configs/0924_s0_refresh/train_config_NCEP_Battery_S0_Single_WQE.sh
-qsub_local train.sh S0WQE_Boston_0924 configs/0924_s0_refresh/train_config_NCEP_Boston_S0_Single_WQE.sh
+qsub_local train.sh S0WQE_CBBT_0924 configs/s0_refresh/train_config_NCEP_CBBT_S0_Single_WQE.sh
+qsub_local train.sh S0WQE_Lewes_0924 configs/s0_refresh/train_config_NCEP_Lewes_S0_Single_WQE.sh
+qsub_local train.sh S0WQE_Battery_0924 configs/s0_refresh/train_config_NCEP_Battery_S0_Single_WQE.sh
+qsub_local train.sh S0WQE_Boston_0924 configs/s0_refresh/train_config_NCEP_Boston_S0_Single_WQE.sh
 ```
 
 S0_Tail: global MSE plus Tail-MSE.
 
 ```bash
-qsub_local train.sh S0Tail_CBBT_0924 configs/0924_s0_refresh/train_config_NCEP_CBBT_S0_Single_Tail.sh
-qsub_local train.sh S0Tail_Lewes_0924 configs/0924_s0_refresh/train_config_NCEP_Lewes_S0_Single_Tail.sh
-qsub_local train.sh S0Tail_Battery_0924 configs/0924_s0_refresh/train_config_NCEP_Battery_S0_Single_Tail.sh
-qsub_local train.sh S0Tail_Boston_0924 configs/0924_s0_refresh/train_config_NCEP_Boston_S0_Single_Tail.sh
+qsub_local train.sh S0Tail_CBBT_0924 configs/s0_refresh/train_config_NCEP_CBBT_S0_Single_Tail.sh
+qsub_local train.sh S0Tail_Lewes_0924 configs/s0_refresh/train_config_NCEP_Lewes_S0_Single_Tail.sh
+qsub_local train.sh S0Tail_Battery_0924 configs/s0_refresh/train_config_NCEP_Battery_S0_Single_Tail.sh
+qsub_local train.sh S0Tail_Boston_0924 configs/s0_refresh/train_config_NCEP_Boston_S0_Single_Tail.sh
 ```
 
 S0_Tail_WQE: global WQE plus Tail-MSE.
 
 ```bash
-qsub_local train.sh S0TailWQE_CBBT_0924 configs/0924_s0_refresh/train_config_NCEP_CBBT_S0_Single_Tail_WQE.sh
-qsub_local train.sh S0TailWQE_Lewes_0924 configs/0924_s0_refresh/train_config_NCEP_Lewes_S0_Single_Tail_WQE.sh
-qsub_local train.sh S0TailWQE_Battery_0924 configs/0924_s0_refresh/train_config_NCEP_Battery_S0_Single_Tail_WQE.sh
-qsub_local train.sh S0TailWQE_Boston_0924 configs/0924_s0_refresh/train_config_NCEP_Boston_S0_Single_Tail_WQE.sh
+qsub_local train.sh S0TailWQE_CBBT_0924 configs/s0_refresh/train_config_NCEP_CBBT_S0_Single_Tail_WQE.sh
+qsub_local train.sh S0TailWQE_Lewes_0924 configs/s0_refresh/train_config_NCEP_Lewes_S0_Single_Tail_WQE.sh
+qsub_local train.sh S0TailWQE_Battery_0924 configs/s0_refresh/train_config_NCEP_Battery_S0_Single_Tail_WQE.sh
+qsub_local train.sh S0TailWQE_Boston_0924 configs/s0_refresh/train_config_NCEP_Boston_S0_Single_Tail_WQE.sh
 ```
 
 ## Configuration comparison

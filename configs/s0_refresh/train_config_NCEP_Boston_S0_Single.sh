@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Fresh S0 Single baseline (six VAL-only checkpoint roles): Boston / S0.
-# Matched to main 49bb29f and configs/0922_wqe_factorial_multickpt.
+# Matched to main 49bb29f and configs/wqe_factorial_multickpt.
 
 TRAIN_PY="train.py"
 DO_CONDA=0
