@@ -18,7 +18,7 @@ import train
 from emulator.training.engine import EpochResult
 from emulator.training.eventaware_checkpoints import ROLES, SELECTION_METRICS
 from emulator.training.metrics import METRIC_KEYS, METRIC_LABELS
-from emulator.training.reporting import display
+from emulator.training.reporting import compact_comparison_report, display
 from emulator.training.metrics import evaluate_metrics
 from test_pipeline import make_fixture
 
@@ -56,6 +56,8 @@ def recorded_run(root, mode='overall', variant='single', test_score=999.):
 
     def epoch(model, loader, **kwargs):
         if kwargs.get('save_predictions'):
+            assert 'FINAL MULTI-CHECKPOINT RE-EVALUATION' in console.getvalue()
+            assert 'Water-level errors and biases are displayed in mm; timing is displayed in hours.' in console.getvalue()
             role = ROLES[len(state['final_calls']) // 2]
             split = 'val' if len(state['final_calls']) % 2 == 0 else 'test'
             state['final_calls'].append((role, split))
@@ -143,7 +145,14 @@ class CheckpointPipelineTests(unittest.TestCase):
                     self.assertEqual(set(summary['checkpoint_comparison']), set(ROLES))
                     for role in ROLES:
                         self.assertEqual(comparison[role], summary['checkpoint_comparison'][role])
-                    self.assertIn('FINAL MULTI-CHECKPOINT RE-EVALUATION', state['console'])
+                    self.assertEqual(state['console'].count('FINAL MULTI-CHECKPOINT RE-EVALUATION'), 1)
+                    final_console = state['console'].split('FINAL MULTI-CHECKPOINT RE-EVALUATION', 1)[1]
+                    self.assertNotIn('| Metric |', final_console)
+                    final_lines = [line.split('] ', 1)[1] for line in final_console.splitlines()[1:]]
+                    selected_index = next(i for i, line in enumerate(final_lines) if line.startswith('Selected epochs | '))
+                    self.assertEqual(final_lines[selected_index:-1],
+                                     compact_comparison_report(summary['checkpoint_comparison']).splitlines())
+                    self.assertTrue(final_lines[-1].startswith('Wall time:'))
                     for label, role in zip(('Overall', 'Exceedance', 'Aligned-peak', 'Equal-composite', 'Peak-priority', 'Legacy event-aware'), ROLES):
                         self.assertIn(f'{label} epoch: {WINNERS[role]}', report)
                     for split in ('val', 'test'):

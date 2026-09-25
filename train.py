@@ -28,7 +28,7 @@ from emulator.training import ForecastLoss, LossConfig, format_metrics, run_epoc
 from emulator.training.arguments import parse_args
 from emulator.training.checkpoints import atomic_save
 from emulator.training.eventaware_checkpoints import ROLES, EventAwareTracker
-from emulator.training.reporting import comparison_report, threshold_label
+from emulator.training.reporting import compact_comparison_report, comparison_report, threshold_label
 
 
 
@@ -234,6 +234,8 @@ def train(args, device, distributed, rank, wall_start):
             test_store, test_indices = store, splits["test"]
         test_data = ForcingGraphView(test_store, test_indices, history_steps)
         evaluations = {}
+        log_message("FINAL MULTI-CHECKPOINT RE-EVALUATION")
+        log_message("Water-level errors and biases are displayed in mm; timing is displayed in hours.")
         for role in ROLES:
             checkpoint = torch.load(tracker.paths[role], map_location=device, weights_only=False)
             network.load_state_dict(checkpoint["model_state"], strict=True)
@@ -272,8 +274,7 @@ def train(args, device, distributed, rank, wall_start):
         summary["run_tag"] = args.run_tag
         summary_path.write_text(json.dumps(summary, indent=2))
         log_message(f'Best checkpoint: epoch {best_epoch:03d} | selection={args.checkpoint_selection}')
-        log_message("FINAL MULTI-CHECKPOINT RE-EVALUATION")
-        for line in comparison.splitlines():
+        for line in compact_comparison_report(evaluations).splitlines():
             log_message(line)
         hours, remainder = divmod(wall_seconds, 3600)
         minutes, seconds = divmod(remainder, 60)
