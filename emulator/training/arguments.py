@@ -99,9 +99,9 @@ def parse_args(argv=None):
         help="Global physical MSE, TRAIN-scale WQE, or smooth tau-weighted MSE; suffix *_slope adds slope matching.",
     )
     parser.add_argument("--wqe_quantile_tau", type=float, default=0.25,
-                        help="Shared global/excess WQE quantile level, strictly between 0 and 1.")
+                        help="Shared global/excess/Tail WQE quantile level, strictly between 0 and 1.")
     parser.add_argument("--wqe_expectile_tau", type=float, default=0.82,
-                        help="Shared global/excess WQE expectile level, strictly between 0 and 1.")
+                        help="Shared global/excess/Tail WQE expectile level, strictly between 0 and 1.")
     parser.add_argument("--wqe_quantile_weight", type=float, default=1.0 / 6.0,
                         help="Nonnegative quantile weight; WQE weights must sum to 1.")
     parser.add_argument("--wqe_expectile_weight", type=float, default=5.0 / 6.0,
@@ -113,7 +113,9 @@ def parse_args(argv=None):
     parser.add_argument("--exceedance_percentile", type=float, default=95.0,
                         help="Linear quantile percentile of unique physical TRAIN target hours; reused for every split.")
     parser.add_argument("--exceedance_loss_weight", type=float, default=0.0,
-                        help="Extra MSE on strict hourly y > TRAIN tau, divided by fixed TRAIN extreme-hour prevalence.")
+                        help="Extra Tail loss on strict hourly y > TRAIN tau, divided by fixed TRAIN extreme-hour prevalence.")
+    parser.add_argument("--exceedance_loss_mode", choices=["mse", "wqe"], default="mse",
+                        help="Tail pointwise penalty; independent of global and raw-excess loss modes.")
     parser.add_argument("--slope_lambda", type=float, default=0.01,
                         help="Weight for slope-matching smoothness loss. Typical: 0.001~0.05. Used only for *_slope modes.")
     parser.add_argument("--slope_mask_s", type=float, default=0.10,

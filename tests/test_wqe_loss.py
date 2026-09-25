@@ -241,8 +241,30 @@ class WQEObjectiveTests(unittest.TestCase):
             torch.testing.assert_close(totals[global_mode, "wqe"] - totals[global_mode, "mse"],
                                        2 * (wqe_excess - mse_excess))
 
-    def test_same_custom_wqe_parameters_reach_global_and_excess(self):
-        config = LossConfig(loss_mode="wqe", excess_loss_mode="wqe", wqe_quantile_tau=.4,
+    def test_all_single_and_dual_factorial_cells_have_independent_tail_terms(self):
+        error = (self.prediction - self.target).square()
+        pointwise = wqe_penalty(self.prediction, self.target, self.stats["y_std"])
+        mask = self.target.double() > self.tau
+        tail_terms = (error.new_zeros(()), (error * mask).mean() / .2,
+                      (pointwise * mask).mean() / .2)
+        global_terms = {"mse": error.mean(), "wqe": pointwise.mean()}
+        for head in ("single", "dual"):
+            output = ForecastOutput(self.prediction) if head == "single" else self.output
+            for global_mode, excess_mode, t in itertools.product(("mse", "wqe"), ("mse", "wqe"), range(3)):
+                with self.subTest(head=head, global_mode=global_mode, excess_mode=excess_mode, tail=t):
+                    config = LossConfig(loss_mode=global_mode, excess_loss_mode=excess_mode,
+                        exceedance_loss_mode="wqe" if t == 2 else "mse",
+                        exceedance_loss_weight=.025 if t else 0., excess_loss_weight=2., gate_loss_weight=.5)
+                    actual = self.criterion(config)(output, self.prediction, self.target)
+                    expected = global_terms[global_mode] + .025 * tail_terms[t]
+                    if head == "dual":
+                        body, excess, gate = self.branches(excess_mode)
+                        expected = expected + body + 2 * excess + .5 * gate
+                    torch.testing.assert_close(actual, expected)
+
+    def test_same_custom_wqe_parameters_reach_global_excess_and_tail(self):
+        config = LossConfig(loss_mode="wqe", excess_loss_mode="wqe", exceedance_loss_mode="wqe",
+            exceedance_loss_weight=.025, wqe_quantile_tau=.4,
             wqe_expectile_tau=.7, wqe_quantile_weight=.3, wqe_expectile_weight=.7)
         parameters = dict(quantile_tau=.4, expectile_tau=.7, quantile_weight=.3, expectile_weight=.7)
         scale = self.stats["y_std"]
@@ -251,16 +273,20 @@ class WQEObjectiveTests(unittest.TestCase):
         excess = (wqe_penalty(self.output.excess * scale, self.excess_target * scale,
                               scale, **parameters) * self.event).mean()
         actual = self.criterion(config)(self.output, self.prediction, self.target)
-        torch.testing.assert_close(actual, prediction + (body + excess + gate))
+        tail = (wqe_penalty(self.prediction, self.target, scale, **parameters)
+                * (self.target.double() > self.tau)).mean() / .2
+        torch.testing.assert_close(actual, prediction + (body + excess + gate) + .025 * tail)
 
     def test_optional_objectives_keep_existing_definitions_in_all_combinations(self):
         scale = self.stats["y_std"]
         strict_mse = ((self.prediction - self.target).square() * (self.target > self.tau)).mean() / .2
+        strict_wqe = (wqe_penalty(self.prediction, self.target, scale) * (self.target > self.tau)).mean() / .2
         amplitude = excess_amplitude_terms(self.output.excess, self.target_norm, self.output.threshold,
             scale, .4, target_phys=self.target, tau_physical=self.tau).loss
         shape = excess_shape_loss(self.output.excess_shape, self.target_norm, self.output.threshold,
             scale, .4, target_phys=self.target, tau_physical=self.tau)
         additions = ((dict(exceedance_loss_weight=.3), .3 * strict_mse),
+                     (dict(exceedance_loss_weight=.3, exceedance_loss_mode="wqe"), .3 * strict_wqe),
                      (dict(excess_amp_loss_weight=.7), .7 * amplitude),
                      (dict(excess_formulation="severity_shape", shape_loss_weight=.2), .2 * shape))
         for global_mode, excess_mode in itertools.product(("mse", "wqe"), repeat=2):

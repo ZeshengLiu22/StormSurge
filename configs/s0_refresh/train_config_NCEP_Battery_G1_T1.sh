@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
-# Single-head S0_Tail_WQE comparison (four VAL-only checkpoint roles): Battery.
-# Matched to main 9072c89; paired S0 settings plus latest G1_E0_T1 Tail-MSE.
+# Matched WQE/Tail factorial (four VAL-only checkpoint roles): Battery / G1_T1.
 
 TRAIN_PY="train.py"
 DO_CONDA=0
@@ -78,17 +77,15 @@ PERSISTENT_WORKERS=0
 PREFETCH_FACTOR=0
 MP_CONTEXT="fork"
 
-# Global prediction WQE plus Tail-MSE; amplitude and shape objectives disabled.
 LOSS_MODE_LIST=("wqe")
-# Inactive for Single; no dual excess objective is constructed.
 EXCESS_LOSS_MODE="mse"
 WQE_QUANTILE_TAU=0.25
 WQE_EXPECTILE_TAU=0.82
 WQE_QUANTILE_WEIGHT=0.16666666666666667
 WQE_EXPECTILE_WEIGHT=0.83333333333333333
-# Strict TRAIN Q95 Tail-MSE, normalized by the fixed TRAIN extreme-hour rate.
+EXCEEDANCE_LOSS_MODE="mse"
 EXCEEDANCE_LOSS_WEIGHT=0.025
-EXCESS_AMP_LOSS_WEIGHT=0.0
+EXCESS_AMP_LOSS_WEIGHT=0
 
 # These head/branch settings are inactive for Single.
 DUAL_MODE="exceedance"
@@ -98,7 +95,6 @@ EXCEEDANCE_GATE_POOLING="mean"
 GATE_MODE="window"
 DUAL_ABLATION="none"
 DUAL_LOSS=0
-# Fixed TRAIN hourly Q95 threshold for metrics, also used by Single.
 EXCEEDANCE_PERCENTILE=95
 BODY_LOSS_WEIGHT=1
 EXCESS_LOSS_WEIGHT=1
@@ -106,10 +102,9 @@ GATE_LOSS_WEIGHT=1
 SHAPE_LOSS_WEIGHT=0
 SEVERITY_SHAPE_EPS=1e-6
 
-# All four VAL-selected roles are retained and reevaluated on VAL and TEST.
 CHECKPOINT_SELECTION="overall"
 
 ALL_RESULTS_ROOT="/home/exouser/media/share/PACT/0924_s0_refresh"
 RUN_DIR_NAME_STYLE="runname_timestamp"
-PACT_RUN_NAME="NCEP_Battery_S0_Single_Tail_WQE"
-PYTHON_RUN_TAG_BASE="NCEP_Battery_S0_Single_Tail_WQE"
+PACT_RUN_NAME="NCEP_Battery_G1_T1"
+PYTHON_RUN_TAG_BASE="NCEP_Battery_G1_T1"

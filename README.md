@@ -47,12 +47,42 @@ W2 ExcessWQE, and W3 BothWQE for all four stations under `configs/wqe`;
 existing D0 is the MSE/MSE control. See [Losses](docs/LOSSES.md) for the
 shared published parameters, TRAIN scale handling, and experiment matrix.
 
-For a fresh 32-run global/excess WQE × Tail-MSE factorial, run
-`python tools/generate_configs.py --family wqe_factorial_multickpt`.
-Configs, manifest, and launch scripts go to `configs/wqe_factorial_multickpt`;
-results go to `/home/exouser/media/share/PACT/All_results_0922_wqe_factorial_multickpt`.
-The primary role is `overall`; every run retains and evaluates all four roles.
-Generation does not submit jobs.
+### Factorial labels: G / E / T
+
+G, E, and T are three independent loss choices encoded in config filenames and
+run names. The digit after each letter selects that factor's option:
+
+| Letter | Meaning / 含义 | 0 | 1 | 2 |
+| --- | --- | --- | --- | --- |
+| **G = Global** | 全局预测损失：final prediction versus target over all target hours | MSE | WQE | Not used |
+| **E = Excess** | 原始超额分支损失：Dual raw excess before gate multiplication | MSE | WQE | Not used |
+| **T = Tail** | 极端小时附加损失：final prediction versus target only where `y > tau` | Off, weight 0 | Tail-MSE, weight 0.025 | Tail-WQE, weight 0.025 |
+
+MSE means mean squared error; WQE means weighted quantile–expectile loss.
+**G0 and E0 still enable MSE; only T0 disables its term.** G and E use 0/1;
+T uses 0/1/2. E supervises raw excess across every horizon of a GT Event Window;
+T acts on final predictions at strict TRAIN Q95 extreme hours with fixed TRAIN
+`q_H` normalization. See [Losses](docs/LOSSES.md) for the formulas.
+
+For example, G1_E0_T2 means global WQE + raw-excess MSE + Tail-WQE at weight
+0.025. Single has no raw-excess branch, so it uses G/T only: G0_T1 means global
+MSE + Tail-MSE at weight 0.025. The old Single suffix S0_Single_Tail_WQE maps
+to G1_T1 (global WQE + Tail-MSE).
+
+Generate the full factorial families and inspect their commands:
+
+```bash
+python tools/generate_configs.py --family s0_refresh
+python tools/generate_configs.py --family wqe_factorial_multickpt
+DRY_RUN=1 bash configs/s0_refresh/launch_all.sh
+DRY_RUN=1 bash configs/wqe_factorial_multickpt/launch_all.sh
+```
+
+The [Single family](configs/s0_refresh/README.md) has 24 configs (G × T);
+the [Dual family](configs/wqe_factorial_multickpt/README.md) has 48 (G × E × T).
+Both include manifests and launch scripts, retain their historical result roots,
+and preserve all four checkpoint roles with primary `overall`.
+Generation and dry runs submit no jobs.
 
 Launch an explicitly chosen configuration:
 
@@ -66,6 +96,7 @@ The core shell controls are:
 LOSS_MODE_LIST=("mse")
 EXCESS_LOSS_MODE="mse"
 EXCEEDANCE_PERCENTILE=95
+EXCEEDANCE_LOSS_MODE="mse"
 EXCEEDANCE_LOSS_WEIGHT=0.025
 EXCESS_AMP_LOSS_WEIGHT=0.003
 CHECKPOINT_SELECTION=overall

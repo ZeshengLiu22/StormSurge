@@ -107,7 +107,8 @@ def audit(root=ROOT):
     # Enum declarations in the relevant documents are checked exactly against argparse.
     mappings = {'checkpoint_selection': 'CHECKPOINT_SELECTION.md', 'encoder_type': 'BACKBONE.md',
                 'temporal_block': 'BACKBONE.md', 'excess_formulation': 'SEVERITY_SHAPE.md',
-                'loss_mode': 'LOSSES.md'}
+                'loss_mode': 'LOSSES.md', 'excess_loss_mode': 'LOSSES.md',
+                'exceedance_loss_mode': 'LOSSES.md'}
     for name, doc in mappings.items():
         pattern = rf'<!-- choices {name}: ([^>]+) -->'
         matches = re.findall(pattern, text_by_file.get(root / 'docs' / doc, ''))

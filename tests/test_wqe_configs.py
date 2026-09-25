@@ -10,6 +10,9 @@ import subprocess
 import tempfile
 import unittest
 
+from dataclasses import fields
+
+from emulator.training import LossConfig
 from emulator.training.arguments import parse_args
 from tools.generate_configs import generate
 
@@ -81,13 +84,14 @@ class WQEConfigTests(unittest.TestCase):
                         self.assertAlmostEqual(float(logged[key]), expected, delta=5e-7)
             self.assertEqual((output / "manifest.csv").read_text(), (REPO / "configs/wqe/manifest.csv").read_text())
 
-    def test_launcher_passes_custom_parameters_to_both_modes_and_logs_single_inactive(self):
+    def test_launcher_passes_custom_parameters_to_all_modes_and_logs_single_inactive(self):
         with tempfile.TemporaryDirectory() as temporary:
             config = Path(temporary) / "custom.sh"
             for head in ("single", "dual"):
                 with self.subTest(head=head):
                     config.write_text(f"MODEL=perceiver3\nHEAD_TYPE={head}\n"
                         "LOSS_MODE_LIST=(mse wqe)\nEXCESS_LOSS_MODE=wqe\n"
+                        "EXCEEDANCE_LOSS_MODE=wqe\nEXCEEDANCE_LOSS_WEIGHT=.025\n"
                         "WQE_QUANTILE_TAU=.4\nWQE_EXPECTILE_TAU=.7\n"
                         "WQE_QUANTILE_WEIGHT=.3\nWQE_EXPECTILE_WEIGHT=.7\n"
                         "LR_LIST=(.005)\nHISTORY_HOURS_LIST=(24)\n")
@@ -95,16 +99,21 @@ class WQEConfigTests(unittest.TestCase):
                     self.assertEqual({args.loss_mode for args in commands}, {"mse", "wqe"})
                     for args in commands:
                         self.assertEqual(args.excess_loss_mode, "wqe")
+                        self.assertEqual((args.exceedance_loss_mode, args.exceedance_loss_weight), ("wqe", .025))
+                        resolved = LossConfig(**{field.name: getattr(args, field.name) for field in fields(LossConfig)})
+                        self.assertEqual(resolved.exceedance_loss_mode, "wqe")
+                        self.assertIn("_tailwqe", args.run_tag)
                         self.assertEqual((args.wqe_quantile_tau, args.wqe_expectile_tau,
                                           args.wqe_quantile_weight, args.wqe_expectile_weight), (.4, .7, .3, .7))
                     message = "Dual excess loss: inactive (head_type=single)" if head == "single" else "Dual excess loss: wqe"
                     self.assertIn(message, log)
+                    self.assertIn("Tail loss: wqe (weight=.025)", log)
 
     def test_cli_validates_modes_and_wqe_parameters(self):
         for mode in ("mse", "wqe", "wmse", "mse_slope", "wqe_slope", "wmse_slope"):
             args = parse_args(["--loss_mode", mode])
-            self.assertEqual((args.loss_mode, args.excess_loss_mode), (mode, "mse"))
-        invalid_options = (["--excess_loss_mode", "wmse"], ["--wqe_quantile_tau", "0"],
+            self.assertEqual((args.loss_mode, args.excess_loss_mode, args.exceedance_loss_mode), (mode, "mse", "mse"))
+        invalid_options = (["--excess_loss_mode", "wmse"], ["--exceedance_loss_mode", "wmse"], ["--wqe_quantile_tau", "0"],
             ["--wqe_expectile_tau", "1"], ["--wqe_quantile_weight", "-1"],
             ["--wqe_expectile_weight", "nan"], ["--wqe_expectile_weight", "inf"],
             ["--wqe_quantile_weight", ".2", "--wqe_expectile_weight", ".2"])

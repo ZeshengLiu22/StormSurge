@@ -50,8 +50,15 @@ python tools/generate_configs.py --family wqe_factorial_multickpt
 DRY_RUN=1 bash train.sh configs/wqe_factorial_multickpt/train_config_NCEP_CBBT_G0_E0_T0.sh
 ```
 
-This creates 32 matched configs: CBBT, Boston, Battery, and Lewes × global MSE/WQE × raw-excess MSE/WQE × strict Q95 Tail-MSE off/on (0/0.025). Every config uses direct Dual, the existing WQE parameters and D0 training settings, zero amplitude/shape losses, and primary `overall`. Body remains MSE and Tail remains the existing extra MSE.
+This creates 48 matched configs: CBBT, Boston, Battery, and Lewes × global MSE/WQE × raw-excess MSE/WQE × strict Q95 Tail off/MSE/WQE (weights 0/0.025/0.025). Every config uses direct Dual, the existing WQE parameters and D0 training settings, zero amplitude/shape losses, and primary `overall`. Body remains MSE. T1 retains Tail-MSE; T2 selects Tail-WQE with the same strict mask and fixed TRAIN normalization.
 
-All configs, the [manifest](../configs/wqe_factorial_multickpt/manifest.csv), the [full launch script](../configs/wqe_factorial_multickpt/launch_all.sh), and eight four-station launch subsets live in `configs/wqe_factorial_multickpt`. Jobs are ordered by cell then CBBT, Boston, Battery, Lewes. Results use fresh `NCEP_<station>_Gg_Ee_Tt__<timestamp>` directories under `/home/exouser/media/share/PACT/All_results_0922_wqe_factorial_multickpt`. Generation and dry runs submit no jobs. Invoke a launch script explicitly to submit its jobs.
+All configs, the [manifest](../configs/wqe_factorial_multickpt/manifest.csv), the [full launch script](../configs/wqe_factorial_multickpt/launch_all.sh), and twelve four-station launch subsets live in `configs/wqe_factorial_multickpt`. Jobs are ordered by cell then CBBT, Boston, Battery, Lewes. Results use fresh `NCEP_<station>_Gg_Ee_Tt__<timestamp>` directories under `/home/exouser/media/share/PACT/All_results_0922_wqe_factorial_multickpt`. Generation and dry runs submit no jobs. `DRY_RUN=1 bash configs/wqe_factorial_multickpt/launch_all.sh` inspects all 48 commands without CUDA preflight or queue submission. Invoke a launcher without `DRY_RUN=1` to submit its jobs.
 
 The factorial configs explicitly select `/home/exouser/.conda/envs/torchpyg-cu12x/bin/python`, matching the successful WQE runs. This prevents queue/tmux shell initialization from selecting the base Anaconda Python. Export `WQEF_PYTHON_BIN` to deliberately use another training interpreter. Each batch launcher checks training imports and CUDA availability before submitting any jobs; a failed check submits none.
+
+The [Single factorial](../configs/s0_refresh/README.md), generated with
+`python tools/generate_configs.py --family s0_refresh`, supplies 24 matched
+G × T controls with the same four roles and primary `overall`. Its six cells per
+station also use T0/T1/T2 = off/MSE/WQE. Results retain
+`/home/exouser/media/share/PACT/0924_s0_refresh`; the interpreter is the same,
+with override `S0_PYTHON_BIN`. Its launchers support the same dry-run behavior.

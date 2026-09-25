@@ -70,6 +70,7 @@ def train(args, device, distributed, rank, wall_start):
     if rank == 0:
         log_message(f"Checkpoint roles (VAL-only): {', '.join(ROLES)}; primary={args.checkpoint_selection}")
         log_message(f"Global prediction loss: {args.loss_mode}")
+        log_message(f"Tail loss: {args.exceedance_loss_mode} (weight={args.exceedance_loss_weight:g})")
         log_message(f"Dual excess loss: {args.excess_loss_mode}"
                     if args.head_type == "dual" else "Dual excess loss: inactive (head_type=single)")
         log_message(f"WQE: q_tau={args.wqe_quantile_tau:g} e_tau={args.wqe_expectile_tau:g} "

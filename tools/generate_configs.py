@@ -13,6 +13,8 @@ WQE_RESULTS_ROOT = "/home/exouser/media/share/PACT/WQE_Results"
 FACTORIAL_RESULTS_ROOT = "/home/exouser/media/share/PACT/All_results_0922_wqe_factorial_multickpt"
 FACTORIAL_PYTHON = "/home/exouser/.conda/envs/torchpyg-cu12x/bin/python"
 FACTORIAL_CONFIG_DIR = "wqe_factorial_multickpt"
+S0_CONFIG_DIR = "s0_refresh"
+S0_RESULTS_ROOT = "/home/exouser/media/share/PACT/0924_s0_refresh"
 FACTORIAL_STATIONS = ("CBBT", "Boston", "Battery", "Lewes")
 STATIONS = ("CBBT", "Lewes", "Battery", "Boston")
 VARIANTS = (
@@ -173,20 +175,26 @@ def generate_wqe(output, *, results_root=WQE_RESULTS_ROOT):
     return rows
 
 
-def generate_wqe_factorial_multickpt(output, *, results_root=FACTORIAL_RESULTS_ROOT):
-    """Fresh 4-station × global WQE × excess WQE × strict Tail-MSE factorial."""
+def generate_factorial(output, *, head, results_root):
+    """Matched Single G×T or direct Dual G×E×T, with three Tail levels."""
     output = Path(output)
     output.mkdir(parents=True, exist_ok=True)
+    dual = head == "dual"
+    runtime = ('PYTHON_BIN="${{WQEF_PYTHON_BIN:-{python_bin}}}"' if dual else
+               'PYTHON_BIN="${{S0_PYTHON_BIN:-{python_bin}}}"')
+    job_prefix = "WQEF" if dual else "S0F"
     template = WQE_TEMPLATE.replace(
         "WQE placement experiment (existing D0 is the MSE/MSE control)",
-        "Fresh WQE/Tail factorial (four VAL-only checkpoint roles)").replace(
+        "Matched WQE/Tail factorial (four VAL-only checkpoint roles)").replace(
         "DO_CONDA=0", 'DO_CONDA=0\n# Explicit runtime survives queue workers and tmux shell initialization.\n'
-        'PYTHON_BIN="${{WQEF_PYTHON_BIN:-{python_bin}}}"')
+        + runtime).replace(
+        "EXCEEDANCE_LOSS_WEIGHT={exceedance_weight}",
+        'EXCEEDANCE_LOSS_MODE="{exceedance_loss_mode}"\nEXCEEDANCE_LOSS_WEIGHT={exceedance_weight}')
     rows, all_commands = [], []
-    # qsub_local is a shell function on the local host; load the interactive
-    # shell initialization only when it is unavailable to the script.
+    # qsub_local is a shell function on the local host; only submission needs
+    # interactive initialization. Dry runs never invoke the real queue or CUDA.
     header = ("#!/usr/bin/env bash\n"
-              'if ! command -v qsub_local >/dev/null 2>&1 && [[ $- != *i* ]]; then\n'
+              'if [[ "${DRY_RUN:-0}" != "1" ]] && ! command -v qsub_local >/dev/null 2>&1 && [[ $- != *i* ]]; then\n'
               '  exec bash -i "$0" "$@"\n'
               'fi\n'
               "set -euo pipefail\n"
@@ -203,7 +211,7 @@ import torch
 import torch_geometric
 import train
 if not torch.cuda.is_available():
-    raise SystemExit("WQE factorial requires an available CUDA device; no jobs submitted.")
+    raise SystemExit("WQE/Tail factorial requires an available CUDA device; no jobs submitted.")
 print(f"[Preflight OK] Python={sys.executable}; torch={torch.__version__}; GPU={torch.cuda.get_device_name(0)}")
 PY
 """)
@@ -212,33 +220,39 @@ PY
     def write_launcher(name, commands):
         path = output / name
         first_config = shlex.split(commands[0])[-1]
-        check = f"bash {shlex.quote(str(preflight.resolve()))} {shlex.quote(first_config)}\n\n"
+        check = ('if [[ "${DRY_RUN:-0}" == "1" ]]; then\n'
+                 '  qsub_local() { DRY_RUN=1 USE_TMUX=0 bash "$1" "$3"; }\n'
+                 'else\n'
+                 f"  bash {shlex.quote(str(preflight.resolve()))} {shlex.quote(first_config)}\n"
+                 'fi\n\n')
         path.write_text(header + check + "\n".join(commands) + "\n")
         path.chmod(0o755)
 
-    for g, e, t in itertools.product((0, 1), repeat=3):
-        cell = f"G{g}_E{e}_T{t}"
+    for g, e, t in itertools.product((0, 1), (0, 1) if dual else (0,), (0, 1, 2)):
+        cell = f"G{g}_E{e}_T{t}" if dual else f"G{g}_T{t}"
         global_loss, excess_loss = ("mse", "wqe")[g], ("mse", "wqe")[e]
-        tail_weight = 0.025 if t else 0
+        tail_mode, tail_weight = ("wqe" if t == 2 else "mse"), (0.025 if t else 0)
         commands = []
         for station in FACTORIAL_STATIONS:
             name = f"NCEP_{station}_{cell}"
             config = output / f"train_config_{name}.sh"
             config.write_text(template.format(
-                station=station, condition=cell, head="dual",
+                station=station, condition=cell, head=head,
                 loss_mode=global_loss, excess_loss_mode=excess_loss,
-                exceedance_weight=tail_weight, amp_weight=0, formulation="direct",
-                shape_weight=0, dual_loss=1, excess_weight=2, gate_weight=0.5,
+                exceedance_loss_mode=tail_mode, exceedance_weight=tail_weight,
+                amp_weight=0, formulation="direct", shape_weight=0, dual_loss=int(dual),
+                excess_weight=2 if dual else 1, gate_weight=0.5 if dual else 1,
                 results_root=results_root, run_name=name, python_bin=FACTORIAL_PYTHON))
-            rows.append(dict(station=station, cell=cell, global_loss=global_loss,
-                excess_loss=excess_loss, tail_enabled=t, exceedance_loss_weight=tail_weight,
-                body_loss_weight=1, excess_loss_weight=2, gate_loss_weight=0.5,
-                excess_amp_loss_weight=0, shape_loss_weight=0,
+            rows.append(dict(station=station, cell=cell, head_type=head, global_loss=global_loss,
+                excess_loss=excess_loss, tail_enabled=int(t > 0), exceedance_loss_mode=tail_mode,
+                exceedance_loss_weight=tail_weight, body_loss_weight=1,
+                excess_loss_weight=2 if dual else 1, gate_loss_weight=0.5 if dual else 1,
+                excess_amp_loss_weight=0, shape_loss_weight=0, run_name=name,
                 config=config.name, result_root=str(results_root)))
             resolved = config.resolve()
             config_arg = resolved.relative_to(REPO) if resolved.is_relative_to(REPO) else resolved
-            commands.append(f"qsub_local train.sh WQEF_{station}_G{g}E{e}T{t} {shlex.quote(str(config_arg))}")
-        write_launcher(f"launch_G{g}E{e}T{t}.sh", commands)
+            commands.append(f"qsub_local train.sh {job_prefix}_{station}_{cell.replace('_', '')} {shlex.quote(str(config_arg))}")
+        write_launcher(f"launch_{cell.replace('_', '')}.sh", commands)
         all_commands.extend(commands)
     write_launcher("launch_all.sh", all_commands)
     with (output / "manifest.csv").open("w", newline="") as handle:
@@ -248,10 +262,28 @@ PY
     return rows
 
 
+def generate_s0_refresh(output, *, results_root=S0_RESULTS_ROOT):
+    """Six Single cells per station; replace the four historical suffixes."""
+    rows = generate_factorial(output, head="single", results_root=results_root)
+    for station in FACTORIAL_STATIONS:
+        for suffix in ("S0_Single", "S0_Single_WQE", "S0_Single_Tail", "S0_Single_Tail_WQE"):
+            (Path(output) / f"train_config_NCEP_{station}_{suffix}.sh").unlink(missing_ok=True)
+    return rows
+
+
+def generate_wqe_factorial_multickpt(output, *, results_root=FACTORIAL_RESULTS_ROOT):
+    """Twelve direct Dual cells per station, including independent Tail-WQE."""
+    return generate_factorial(output, head="dual", results_root=results_root)
+
+
 def generate(output, *, include_severity_shape=False, results_root=None, family="current"):
     if results_root is None:
-        results_root = {"wqe": WQE_RESULTS_ROOT,
+        results_root = {"wqe": WQE_RESULTS_ROOT, "s0_refresh": S0_RESULTS_ROOT,
                         "wqe_factorial_multickpt": FACTORIAL_RESULTS_ROOT}.get(family, "./All_Results")
+    if family == "s0_refresh":
+        if include_severity_shape:
+            raise ValueError("Single factorial configs do not use severity_shape.")
+        return generate_s0_refresh(output, results_root=results_root)
     if family == "wqe_factorial_multickpt":
         if include_severity_shape:
             raise ValueError("WQE factorial configs use the direct D0 excess formulation only.")
@@ -294,13 +326,13 @@ def generate(output, *, include_severity_shape=False, results_root=None, family=
 
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--family", choices=("current", "wqe", "wqe_factorial_multickpt"), default="current",
-                        help="current generates baseline_ablation; wqe adds W1/W2/W3; wqe_factorial_multickpt adds 32 WQE/Tail runs.")
+    parser.add_argument("--family", choices=("current", "wqe", "s0_refresh", "wqe_factorial_multickpt"), default="current",
+                        help="current generates baseline_ablation; wqe adds W1/W2/W3; s0_refresh adds 24 Single runs; wqe_factorial_multickpt adds 48 Dual runs.")
     parser.add_argument("--output", type=Path,
-                        help="Defaults to configs/baseline_ablation, configs/wqe, or configs/wqe_factorial_multickpt.")
+                        help="Defaults to configs/<family>, with current mapped to baseline_ablation.")
     parser.add_argument("--include-severity-shape", action="store_true")
     parser.add_argument("--results-root",
-                        help=f"Defaults to {FACTORIAL_RESULTS_ROOT} for the factorial, {WQE_RESULTS_ROOT} for WQE, otherwise ./All_Results.")
+                        help=f"Defaults to {S0_RESULTS_ROOT} for Single, {FACTORIAL_RESULTS_ROOT} for Dual factorial, {WQE_RESULTS_ROOT} for WQE, otherwise ./All_Results.")
     args = parser.parse_args(argv)
     if args.family != "current" and args.include_severity_shape:
         parser.error(f"--family {args.family} cannot be combined with --include-severity-shape.")

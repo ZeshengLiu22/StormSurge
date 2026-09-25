@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Fresh WQE/Tail factorial (four VAL-only checkpoint roles): Boston / G1_E0_T1.
+# Matched WQE/Tail factorial (four VAL-only checkpoint roles): Boston / G1_E0_T1.
 
 TRAIN_PY="train.py"
 DO_CONDA=0
@@ -83,6 +83,7 @@ WQE_QUANTILE_TAU=0.25
 WQE_EXPECTILE_TAU=0.82
 WQE_QUANTILE_WEIGHT=0.16666666666666667
 WQE_EXPECTILE_WEIGHT=0.83333333333333333
+EXCEEDANCE_LOSS_MODE="mse"
 EXCEEDANCE_LOSS_WEIGHT=0.025
 EXCESS_AMP_LOSS_WEIGHT=0
 

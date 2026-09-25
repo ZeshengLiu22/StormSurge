@@ -30,6 +30,8 @@ def validate_wqe_config(config):
         raise ValueError("loss_mode must be mse, wqe, wmse, mse_slope, wqe_slope or wmse_slope.")
     if config.excess_loss_mode not in ("mse", "wqe"):
         raise ValueError("excess_loss_mode must be mse or wqe.")
+    if config.exceedance_loss_mode not in ("mse", "wqe"):
+        raise ValueError("exceedance_loss_mode must be mse or wqe.")
     _validate_wqe_parameters(config.wqe_quantile_tau, config.wqe_expectile_tau,
                              config.wqe_quantile_weight, config.wqe_expectile_weight)
 
@@ -146,6 +148,7 @@ class LossConfig:
     wmse_alpha: float = 4.0
     wmse_s: float = 0.1
     exceedance_loss_weight: float = 0.0
+    exceedance_loss_mode: str = "mse"
     slope_lambda: float = 0.01
     slope_mask_s: float = 0.1
     slope_robust: str = "charb"
@@ -176,7 +179,8 @@ class ForecastLoss(nn.Module):
         if tau_physical is None or not math.isfinite(tau_physical):
             raise ValueError("ForecastLoss requires finite TRAIN tau_physical.")
         validate_wqe_config(config)
-        if (config.loss_mode.removesuffix("_slope") == "wqe" or config.excess_loss_mode == "wqe"):
+        if (config.loss_mode.removesuffix("_slope") == "wqe" or config.excess_loss_mode == "wqe"
+                or config.exceedance_loss_mode == "wqe"):
             if not torch.isfinite(self.y_std).all() or not (self.y_std > 0).all():
                 raise ValueError("WQE scale must be finite and positive.")
         if not math.isfinite(config.exceedance_loss_weight) or config.exceedance_loss_weight < 0:
@@ -212,7 +216,12 @@ class ForecastLoss(nn.Module):
         if c.exceedance_loss_weight:
             # Compare in FP64: a fitted threshold must not round to a target tie.
             mask = target.double() > self.tau_physical
-            exceedance = torch.where(mask, error, 0.0).mean() / self.extreme_hour_prior
+            tail_penalty = error
+            if c.exceedance_loss_mode == "wqe":
+                tail_penalty = wqe_penalty(prediction, target, self.y_std,
+                    quantile_tau=c.wqe_quantile_tau, expectile_tau=c.wqe_expectile_tau,
+                    quantile_weight=c.wqe_quantile_weight, expectile_weight=c.wqe_expectile_weight)
+            exceedance = torch.where(mask, tail_penalty, 0.0).mean() / self.extreme_hour_prior
             loss = loss + c.exceedance_loss_weight * exceedance
         if c.loss_mode.endswith("_slope") and c.slope_lambda and target.size(1) > 1:
             slope_error = prediction.diff(dim=1) - target.diff(dim=1)

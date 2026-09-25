@@ -3,6 +3,8 @@
 The objective is implemented by `ForecastLoss` in [losses.py](../emulator/training/losses.py), with [amplitude](../emulator/training/excess_amplitude.py) and [shape](../emulator/training/excess_shape.py) helpers. Every extreme target or mask uses the fixed TRAIN threshold defined in [FORMULATION.md](FORMULATION.md). Architecture constraints are specified in [DUAL_EXCEEDANCE.md](DUAL_EXCEEDANCE.md) and [SEVERITY_SHAPE.md](SEVERITY_SHAPE.md).
 
 <!-- choices loss_mode: mse,wqe,wmse,mse_slope,wqe_slope,wmse_slope -->
+<!-- choices excess_loss_mode: mse,wqe -->
+<!-- choices exceedance_loss_mode: mse,wqe -->
 
 ## Notation and reductions
 
@@ -21,7 +23,7 @@ Production loss calls construct strict events and physical excess from physical 
 
 `LOSS_MODE_LIST` selects one or more modes in the launcher; each command passes `loss_mode` through `--loss_mode`. The default is `mse`.
 
-The global prediction objective $L_{\mathrm{pred}}\in\{\mathrm{MSE},\mathrm{WQE}\}$ and the Dual conditional raw-excess objective $L_{\mathrm{excess}}\in\{\mathrm{MSE},\mathrm{WQE}\}$ are independently selectable. Legacy WMSE and slope modes remain supported. `EXCESS_LOSS_MODE` / `--excess_loss_mode` defaults to `mse` and affects only the Dual raw-excess trajectory term. Existing configs that omit it retain the original MSE/MSE objective. For Single, the excess choice is inactive, which is stated in the startup log.
+The global prediction objective $L_{\mathrm{pred}}\in\{\mathrm{MSE},\mathrm{WQE}\}$ and the Dual conditional raw-excess objective $L_{\mathrm{excess}}\in\{\mathrm{MSE},\mathrm{WQE}\}$ are independently selectable. Legacy WMSE and slope modes remain supported. `EXCESS_LOSS_MODE` / `--excess_loss_mode` defaults to `mse` and affects only the Dual raw-excess trajectory term. Existing configs that omit it retain the original MSE/MSE objective. The additional hourly Tail penalty is independently selected by `EXCEEDANCE_LOSS_MODE` / `--exceedance_loss_mode`, also defaulting to `mse`. For Single, the excess choice is inactive, which is stated in the startup log.
 
 **MSE**, used by `mse` and `mse_slope`:
 
@@ -58,7 +60,7 @@ L_{\mathrm{pred}}&=\operatorname{mean}\!\left(\rho_{\mathrm{scaled}}(y-\hat y;\s
 \end{aligned}
 $$
 
-The reusable `wqe_penalty` returns the pointwise tensor. Global WQE averages **all target hours**, with no Q95 or Event Window mask. The shared parameters for global and excess WQE are:
+The reusable `wqe_penalty` returns the pointwise tensor. Global WQE averages **all target hours**, with no Q95 or Event Window mask. The shared parameters for global, raw-excess, and Tail WQE are:
 
 | CLI field | Launcher variable | Published default |
 | --- | --- | ---: |
@@ -112,17 +114,40 @@ $$
 
 The learned gate has one logit $\ell_i$ per window, with $g_i=\operatorname{sigmoid}(\ell_i)$. BCE is averaged over all windows; multiplying by $v$ gives units m². `GATE_LOSS_WEIGHT` / `gate_loss_weight` defaults to 1. Only the gate branch receives a direct gradient from this term. The fixed-gate ablation has no learned logit and returns zero for this term.
 
-## Hourly exceedance loss
+## Hourly exceedance (Tail) loss
 
-The independent extreme-aware coefficient is `EXCEEDANCE_LOSS_WEIGHT` / `exceedance_loss_weight`, default 0:
+The independent coefficient is `EXCEEDANCE_LOSS_WEIGHT` / `exceedance_loss_weight`,
+default 0. `EXCEEDANCE_LOSS_MODE` / `--exceedance_loss_mode` selects its pointwise
+penalty, defaulting to `mse` for existing configs:
 
 $$
-L_{\mathrm{exceedance}}=\frac{1}{BKq_H}\sum_{i,h}M_{ih}d_{ih}^2. \tag{6}
+\begin{aligned}
+L_{\mathrm{exceedance}}&=\frac{1}{BKq_H}\sum_{i,h}M_{ih}\,p_{ih},\\
+p_{ih}&=\begin{cases}
+d_{ih}^2,&\text{Tail-MSE},\\
+\rho_{\mathrm{scaled}}(y_{ih}-\hat y_{ih};\sigma_h),&\text{Tail-WQE}.
+\end{cases}
+\end{aligned} \tag{6}
 $$
 
-This is additional physical MSE only on strict GT Extreme Hours. Its units are m². A normal horizon within an Event Window has zero contribution. The fixed $q_H$ is the observed TRAIN hourly prevalence, including the effect of ties at $\tau$. The term remains ordinary squared error when the primary prediction objective uses WMSE or WQE, or the excess objective uses WQE. `EXCEEDANCE_LOSS_WEIGHT` is independent of `EXCESS_LOSS_MODE`; switching either WQE placement also leaves body, gate, amplitude, shape, and slope definitions unchanged.
+Tail-WQE simply uses `wqe_penalty(prediction, target, y_std)` in place of the
+pointwise squared error. It shares all four WQE parameters and the detached TRAIN
+`y_std` with global and raw-excess WQE; scales must be finite and positive when
+any WQE mode is selected, including Tail-WQE with global/excess MSE.
 
-All three head choices support this objective. Its gradient follows the final prediction through the same branches as $L_{\mathrm{pred}}$. The threshold, target mask, and prevalence are constants.
+Both modes have physical squared units (m²) and select only strict GT Extreme
+Hours, `y > tau`. Ties and normal horizons within Event Windows contribute zero.
+The mean includes all $BK$ target positions with masked zeros. The denominator
+$q_H$ is the fixed observed TRAIN hourly prevalence, including the effect of
+ties at $\tau$. It is never replaced by the batch's extreme count or event rate.
+An extreme-free batch has a differentiable zero Tail contribution.
+
+Global, raw-excess, and Tail modes are independent; switching one leaves the
+other penalties, body, gate, amplitude, shape, and slope definitions unchanged.
+Setting the Tail weight to zero disables either Tail mode. All three head
+choices support it; its gradient follows the final prediction through the same
+branches as $L_{\mathrm{pred}}$. The threshold, target mask, and prevalence are
+constants.
 
 ## GT-aligned raw excess amplitude loss
 
@@ -277,7 +302,29 @@ WQE configs save results under `/home/exouser/media/share/PACT/WQE_Results`, wit
 | W2_ExcessWQE | `("mse")` | `"wqe"` |
 | W3_BothWQE | `("wqe")` | `"wqe"` |
 
-Every new run uses the published WQE parameters and Direct D0 settings: body weight 1, excess weight 2, gate weight 0.5, with exceedance, amplitude, and shape weights zero and no active slope term. Startup logs report the effective global loss, Dual excess loss (or Single inactivity), and all four shared WQE parameters. Checkpoint selection, metrics, thresholds, splits, and architecture retain their existing definitions.
+Every new run uses the published WQE parameters and Direct D0 settings: body weight 1, excess weight 2, gate weight 0.5, with exceedance, amplitude, and shape weights zero and no active slope term. Startup logs report the effective global loss, Dual excess loss (or Single inactivity), Tail mode and weight, and all four shared WQE parameters. Checkpoint selection, metrics, thresholds, splits, and architecture retain their existing definitions.
+
+## Full factorial experiments
+
+The [Single family](../configs/s0_refresh/README.md) contains 24 configs
+(4 stations × 2 global modes × 3 Tail levels). The
+[Dual family](../configs/wqe_factorial_multickpt/README.md) contains 48
+(4 stations × 2 global modes × 2 raw-excess modes × 3 Tail levels).
+Generate them with `--family s0_refresh` and `--family wqe_factorial_multickpt`.
+
+| Label | Meaning | Control |
+| --- | --- | --- |
+| G0 / G1 | Global MSE / WQE | `LOSS_MODE_LIST` |
+| E0 / E1 | Raw-excess MSE / WQE, Dual only | `EXCESS_LOSS_MODE` |
+| T0 | Tail off | `EXCEEDANCE_LOSS_WEIGHT=0`, inactive mode `mse` |
+| T1 | Tail-MSE | `EXCEEDANCE_LOSS_MODE=mse`, weight 0.025 |
+| T2 | Tail-WQE | `EXCEEDANCE_LOSS_MODE=wqe`, weight 0.025 |
+
+The historical Single suffix S0_Single_Tail_WQE maps to G1_T1: global WQE plus
+Tail-MSE. G0_T2 and G1_T2 add Tail-WQE. Both families preserve their model/training
+settings, result roots, shared WQE parameters, and four VAL checkpoint roles.
+Amplitude, shape, and slope are inactive. Single has no branch objectives;
+Dual retains body/excess/gate weights 1/2/0.5.
 
 ## Optimization and validation boundaries
 

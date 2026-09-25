@@ -1,45 +1,60 @@
-# S0 refresh
+# Single G × T factorial
 
-Status: not archived. See the [configuration overview](../README.md) for the
-other experiment families and archive status.
+Status: not archived. See the [configuration overview](../README.md).
 
-Sixteen matched Single-head PACT runs: CBBT, Lewes, Battery, and Boston, each
-with four prediction-loss/Tail conditions. All use `HEAD_TYPE=single` and
-`DUAL_LOSS=0`.
+This family contains 24 Single-head PACT configs: CBBT, Boston, Battery, and
+Lewes × global MSE/WQE × Tail off/MSE/WQE. Each station has six cells.
+All use `HEAD_TYPE=single` and `DUAL_LOSS=0`.
 
-| Condition | Global prediction loss | Tail-MSE weight | Config/run suffix |
-| --- | --- | ---: | --- |
-| S0 | MSE | 0 | `S0_Single` |
-| S0_WQE | WQE | 0 | `S0_Single_WQE` |
-| S0_Tail | MSE | 0.025 | `S0_Single_Tail` |
-| S0_Tail_WQE | WQE | 0.025 | `S0_Single_Tail_WQE` |
+**G = Global**: the final prediction loss over all target hours. G0 uses MSE
+(mean squared error); G1 uses WQE (weighted quantile–expectile loss).
+**T = Tail**: an additional final-prediction loss only at strict TRAIN Q95
+extreme hours (`y > tau`). T0 disables it; T1 uses MSE; T2 uses WQE.
+Both enabled Tail modes have weight 0.025 and fixed TRAIN `q_H` normalization.
+G0 still enables MSE; only T0 means off. There is no G2.
 
-Files are named `train_config_NCEP_<station>_<suffix>.sh` in this directory.
-All results use `/home/exouser/media/share/PACT/0924_s0_refresh/`, with distinct
-`NCEP_<station>_<suffix>__<timestamp>/` run directories.
+**E = Excess** selects the raw-excess branch loss in Dual runs (E0 = MSE,
+E1 = WQE; no E2). Single has no such branch, so its filenames use G/T only.
+For example, G1_T2 means global WQE + Tail-WQE at weight 0.025.
+See the [shared naming guide](../README.md#g--e--t-和-0--1--2-的含义).
 
-The original MSE configs were based on `main` `49bb29f`; the WQE comparisons
-were added from `34ff3f0`. The Tail variants were added against verified
-`main` `9072c89`. Each station's corresponding `G0_E0_T0`, `G1_E0_T0`,
-`G0_E0_T1`, and `G1_E0_T1` configs in `configs/wqe_factorial_multickpt`
-supply the matched protocol and loss settings.
+| Cell | Global prediction loss | Tail penalty | Tail weight | Previous config/run suffix |
+| --- | --- | --- | ---: | --- |
+| G0_T0 | MSE | Off | 0 | `S0_Single` |
+| G0_T1 | MSE | MSE | 0.025 | `S0_Single_Tail` |
+| G0_T2 | MSE | WQE | 0.025 | New |
+| G1_T0 | WQE | Off | 0 | `S0_Single_WQE` |
+| G1_T1 | WQE | MSE | 0.025 | `S0_Single_Tail_WQE` |
+| G1_T2 | WQE | WQE | 0.025 | New |
 
-The common backbone and training settings match the latest factorial configs:
-GraphSAGE + Transformer, width 128, 24-hour history, batch size 256 with four
-accumulation steps, learning rate `5e-3`, 300 epochs, cosine schedule with five
-warmup epochs, BF16 AMP, and TF32. Station selection, NCEP Grid4_New data,
-chronological 60/20/20 splits, seed 42, normalization, station metadata settings,
-and loader settings are preserved.
+The historical `S0_Single_Tail_WQE` used global WQE plus Tail-MSE and maps to
+G1_T1. T2 introduces the independently selected Tail-WQE penalty.
+The generator replaces the 16 old filenames with the complete factorial.
+Files are named `train_config_NCEP_<station>_G<g>_T<t>.sh`; the
+[manifest](manifest.csv) records all loss modes, weights, and run names.
 
-The interpreter remains explicitly pinned to
-`/home/exouser/.conda/envs/torchpyg-cu12x/bin/python`, matching the latest factorial
-configs. Export `S0_PYTHON_BIN` to deliberately override it.
+Results retain `/home/exouser/media/share/PACT/0924_s0_refresh/`, with distinct
+`NCEP_<station>_G<g>_T<t>__<timestamp>/` run directories. Existing result
+directories keep their historical names.
 
 ## Loss definitions
 
-`S0` uses global prediction MSE. `S0_WQE` uses the current TRAIN-scale-aware WQE
-prediction objective across all target hours, with the published parameters
-used by the latest experiments:
+G0/G1 select `LOSS_MODE_LIST=("mse")` / `("wqe")` over all target hours.
+T0 disables Tail with `EXCEEDANCE_LOSS_WEIGHT=0`. T1/T2 select
+`EXCEEDANCE_LOSS_MODE="mse"` / `"wqe"`, both at weight 0.025.
+T0 records the inactive mode as `mse`.
+
+```text
+Tail_MSE = mean(1[y > tau] * (prediction - y)^2) / q_H
+Tail_WQE = mean(1[y > tau] * wqe_penalty(prediction, y, y_std)) / q_H
+Single loss = global_loss + EXCEEDANCE_LOSS_WEIGHT * Tail_loss
+```
+
+`tau` is the fixed Q95 of unique TRAIN target hours. The mask is strictly
+`y > tau`, including within Event Windows; ties contribute zero. The mean
+includes all target positions, and `q_H` is the fixed observed TRAIN
+extreme-hour fraction. Tail-WQE uses the same detached TRAIN `y_std` and shared
+parameters as global WQE:
 
 ```bash
 WQE_QUANTILE_TAU=0.25
@@ -48,104 +63,48 @@ WQE_QUANTILE_WEIGHT=0.16666666666666667
 WQE_EXPECTILE_WEIGHT=0.83333333333333333
 ```
 
-Both Tail variants add `EXCEEDANCE_LOSS_WEIGHT=0.025` times the existing strict
-hourly exceedance MSE:
+`EXCESS_LOSS_MODE="mse"` is inactive for Single. Body/excess/gate weights
+remain the inactive Single defaults 1/1/1. Amplitude and shape weights remain
+zero. See the [loss definitions](../../docs/LOSSES.md).
 
-```text
-Tail_MSE = mean(1[y > tau] * (prediction - y)^2) / q_H
-S0_Tail loss = global_MSE + 0.025 * Tail_MSE
-S0_Tail_WQE loss = global_WQE + 0.025 * Tail_MSE
-```
+## Matched training and evaluation
 
-`tau` is the fixed Q95 of unique TRAIN target hours. `q_H` is the observed strict
-TRAIN extreme-hour fraction. The mean includes all target positions, with zero
-contribution outside `y > tau`; normalization uses the fixed TRAIN fraction.
-The Tail term remains ordinary physical squared error when global prediction
-loss is WQE. These settings match each station's `G0_E0_T1` and `G1_E0_T1`
-configs.
+All model and training settings are preserved: GraphSAGE + Transformer, width
+128, 24-hour history, batch size 256 with four accumulation steps, learning rate
+`5e-3`, 300 epochs, cosine schedule with five warmup epochs, BF16 AMP, and TF32.
+Station selection, NCEP Grid4_New data, chronological 60/20/20 splits, seed 42,
+normalization, station metadata, and loader settings remain the same.
+The [Dual factorial](../wqe_factorial_multickpt/README.md) provides corresponding
+G/E/T cells, with active branch weights 1/2/0.5.
 
-Amplitude and shape weights remain zero, the experimental head selector remains
-empty, and no dual branch is constructed. `EXCESS_LOSS_MODE="mse"` is inactive
-for every Single-head run; it does not add a branch objective. Tail is controlled
-independently by `EXCEEDANCE_LOSS_WEIGHT`.
+All four VAL-selected roles are retained: `overall`, `exceedance`,
+`aligned_peak`, and `bea` (Balanced Event-Aware). BEA minimizes the fixed score
+`0.50*AllRMSE + 0.25*ExceedanceRMSE + 0.25*GTAlignedPeakRMSE`.
+Each role is reevaluated on VAL and TEST; `overall` supplies the primary alias.
+See [checkpoint selection](../../docs/CHECKPOINT_SELECTION.md).
 
-## Shared evaluation and logging
+The interpreter remains `/home/exouser/.conda/envs/torchpyg-cu12x/bin/python`.
+Export `S0_PYTHON_BIN` to deliberately override it.
 
-Metrics use the current shared implementation and the same fixed TRAIN Q95
-threshold with strict `y > tau`. All four VAL-selected roles are retained:
-overall, exceedance, aligned_peak, and bea (Balanced Event-Aware).
-BEA minimizes `0.50*AllRMSE + 0.25*ExceedanceRMSE + 0.25*GTAlignedPeakRMSE`
-with fixed weights. Each is reevaluated on VAL and TEST; `overall` is the primary alias.
+## Generation and launchers
 
-The current launcher/trainer provide the same config snapshots, launcher and
-training logs, epoch JSONL, summaries, checkpoint comparisons, and per-role
-prediction exports. Single has no dual-branch diagnostics.
-
-## Launch commands
-
-Run the desired commands from a shell where `qsub_local` is available.
+From the repository root, regenerate and inspect commands without training:
 
 ```bash
-cd /home/exouser/StormSurge
+python tools/generate_configs.py --family s0_refresh
+DRY_RUN=1 USE_TMUX=0 bash train.sh configs/s0_refresh/train_config_NCEP_CBBT_G0_T2.sh
+DRY_RUN=1 bash configs/s0_refresh/launch_all.sh
 ```
 
-S0: global MSE.
+[launch_all.sh](launch_all.sh) covers all 24 jobs; each `launch_GgTt.sh`
+covers the four stations for one cell (for example,
+[launch_G1T2.sh](launch_G1T2.sh)). Order is G, then T, then CBBT, Boston,
+Battery, Lewes. With `DRY_RUN=1`, launchers print resolved commands, bypass
+CUDA preflight and the queue, and create no result directories.
 
-```bash
-qsub_local train.sh S0_CBBT_0924 configs/s0_refresh/train_config_NCEP_CBBT_S0_Single.sh
-qsub_local train.sh S0_Lewes_0924 configs/s0_refresh/train_config_NCEP_Lewes_S0_Single.sh
-qsub_local train.sh S0_Battery_0924 configs/s0_refresh/train_config_NCEP_Battery_S0_Single.sh
-qsub_local train.sh S0_Boston_0924 configs/s0_refresh/train_config_NCEP_Boston_S0_Single.sh
-```
-
-S0_WQE: global WQE.
-
-```bash
-qsub_local train.sh S0WQE_CBBT_0924 configs/s0_refresh/train_config_NCEP_CBBT_S0_Single_WQE.sh
-qsub_local train.sh S0WQE_Lewes_0924 configs/s0_refresh/train_config_NCEP_Lewes_S0_Single_WQE.sh
-qsub_local train.sh S0WQE_Battery_0924 configs/s0_refresh/train_config_NCEP_Battery_S0_Single_WQE.sh
-qsub_local train.sh S0WQE_Boston_0924 configs/s0_refresh/train_config_NCEP_Boston_S0_Single_WQE.sh
-```
-
-S0_Tail: global MSE plus Tail-MSE.
-
-```bash
-qsub_local train.sh S0Tail_CBBT_0924 configs/s0_refresh/train_config_NCEP_CBBT_S0_Single_Tail.sh
-qsub_local train.sh S0Tail_Lewes_0924 configs/s0_refresh/train_config_NCEP_Lewes_S0_Single_Tail.sh
-qsub_local train.sh S0Tail_Battery_0924 configs/s0_refresh/train_config_NCEP_Battery_S0_Single_Tail.sh
-qsub_local train.sh S0Tail_Boston_0924 configs/s0_refresh/train_config_NCEP_Boston_S0_Single_Tail.sh
-```
-
-S0_Tail_WQE: global WQE plus Tail-MSE.
-
-```bash
-qsub_local train.sh S0TailWQE_CBBT_0924 configs/s0_refresh/train_config_NCEP_CBBT_S0_Single_Tail_WQE.sh
-qsub_local train.sh S0TailWQE_Lewes_0924 configs/s0_refresh/train_config_NCEP_Lewes_S0_Single_Tail_WQE.sh
-qsub_local train.sh S0TailWQE_Battery_0924 configs/s0_refresh/train_config_NCEP_Battery_S0_Single_Tail_WQE.sh
-qsub_local train.sh S0TailWQE_Boston_0924 configs/s0_refresh/train_config_NCEP_Boston_S0_Single_Tail_WQE.sh
-```
-
-## Configuration comparison
-
-Relative to their paired runs without Tail, the new Tail configs change only
-`exceedance_loss_weight` (`0` to `0.025`) and run identity (`run_tag` and the
-run-specific `output_dir`) in the resolved training arguments. WQE versus MSE
-changes only `loss_mode` and run identity. WQE parameters are explicit in WQE
-configs and equal the inactive defaults resolved by the MSE configs.
-
-Compared with the corresponding latest factorial cells, differences are the
-Single head, disabled dual supervision, inactive S0 branch defaults (excess/gate
-weights `1/1` instead of `2/0.5`), and output/run identity. The runtime is the same,
-with the S0-specific override variable. The existing eight configs are preserved.
-
-## Validation
-
-All 16 configs passed Bash syntax checks, launcher dry runs, argument parsing,
-and comparisons with their corresponding latest factorial cells. The eight Tail
-additions were also compared against their paired configs without Tail; only
-Tail weight and run identity differ. All 16 documented launch commands resolve
-to distinct result directories under the shared root.
-
-All 27 existing tests in `test_exceedance_loss`, `test_wqe_loss`, and
-`test_wqe_configs` passed. The original eight configs remain byte-for-byte
-unchanged. No station jobs were submitted.
+Invoking a launcher without `DRY_RUN=1` submits its jobs through `qsub_local`
+after [preflight.sh](preflight.sh) verifies training imports and CUDA.
+Generation alone never submits jobs. Tests reproduce all configs and the
+manifest, parse dry-run arguments, compare unchanged settings to Single
+controls, check all four checkpoint roles, and exercise launch order using a
+mock queue.

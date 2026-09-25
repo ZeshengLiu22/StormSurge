@@ -111,6 +111,7 @@ if [[ -z "${LOSS_MODE_LIST+x}" ]]; then LOSS_MODE_LIST=("mse"); fi
 
 # Loss knobs
 : "${EXCEEDANCE_LOSS_WEIGHT:=0}"
+: "${EXCEEDANCE_LOSS_MODE:=mse}"
 : "${EXCESS_LOSS_MODE:=mse}"
 : "${WQE_QUANTILE_TAU:=0.25}"
 : "${WQE_EXPECTILE_TAU:=0.82}"
@@ -376,7 +377,7 @@ write_resolved_config() {
     BATCH_SIZE GRAD_ACCUM_STEPS
     EPOCHS HIDDEN_CHANNELS NUM_LAYERS DROPOUT HEAD_DROPOUT SEED TRAIN_RATIO
     VAL_RATIO SHUFFLE_YEARS FUTURE_ONLY FUTURE_YEAR_THRESHOLD LR_LIST
-    HISTORY_HOURS_LIST LOSS_MODE_LIST EXCEEDANCE_LOSS_WEIGHT
+    HISTORY_HOURS_LIST LOSS_MODE_LIST EXCEEDANCE_LOSS_WEIGHT EXCEEDANCE_LOSS_MODE
     EXCESS_LOSS_MODE WQE_QUANTILE_TAU WQE_EXPECTILE_TAU WQE_QUANTILE_WEIGHT WQE_EXPECTILE_WEIGHT
     WMSE_ALPHA WMSE_S SLOPE_LAMBDA_LIST SLOPE_MASK_S_LIST
     SLOPE_ROBUST SLOPE_CHARB_EPS SLOPE_HUBER_DELTA SCHEDULER ROP_METRIC ROP_FACTOR ROP_PATIENCE
@@ -457,6 +458,7 @@ echo "TEST_DATA_TAG: ${TEST_DATA_TAG}"
 echo "LR_LIST:       ${LR_LIST[*]}"
 echo "Loss modes:    ${LOSS_MODE_LIST[*]}"
 echo "Global prediction loss: ${LOSS_MODE_LIST[*]}"
+echo "Tail loss: ${EXCEEDANCE_LOSS_MODE} (weight=${EXCEEDANCE_LOSS_WEIGHT})"
 if [[ "${MODEL}" == "perceiver3" && "${HEAD_TYPE}" == "dual" ]]; then
   echo "Dual excess loss: ${EXCESS_LOSS_MODE}"
 else
@@ -558,7 +560,11 @@ for LOSS_MODE in "${LOSS_MODE_LIST[@]}"; do
   for LR_CUR in "${LR_LIST[@]}"; do
     for H in "${HISTORY_HOURS_LIST[@]}"; do
           LOSS_TAG="_loss${LOSS_MODE}_ex${EXCEEDANCE_LOSS_WEIGHT}"
+          if [[ "${EXCEEDANCE_LOSS_MODE}" != "mse" ]]; then
+            LOSS_TAG+="_tail${EXCEEDANCE_LOSS_MODE}"
+          fi
           LOSS_ARGS=(--loss_mode "${LOSS_MODE}" --exceedance_loss_weight "${EXCEEDANCE_LOSS_WEIGHT}"
+                     --exceedance_loss_mode "${EXCEEDANCE_LOSS_MODE}"
                      --excess_loss_mode "${EXCESS_LOSS_MODE}"
                      --wqe_quantile_tau "${WQE_QUANTILE_TAU}" --wqe_expectile_tau "${WQE_EXPECTILE_TAU}"
                      --wqe_quantile_weight "${WQE_QUANTILE_WEIGHT}" --wqe_expectile_weight "${WQE_EXPECTILE_WEIGHT}"

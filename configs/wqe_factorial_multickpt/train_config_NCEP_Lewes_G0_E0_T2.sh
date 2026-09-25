@@ -1,11 +1,10 @@
 #!/usr/bin/env bash
-# Single-head WQE comparison (four VAL-only checkpoint roles): Lewes / S0-WQE.
-# Matched to main 34ff3f0; paired S0 settings with global WQE prediction loss.
+# Matched WQE/Tail factorial (four VAL-only checkpoint roles): Lewes / G0_E0_T2.
 
 TRAIN_PY="train.py"
 DO_CONDA=0
 # Explicit runtime survives queue workers and tmux shell initialization.
-PYTHON_BIN="${S0_PYTHON_BIN:-/home/exouser/.conda/envs/torchpyg-cu12x/bin/python}"
+PYTHON_BIN="${WQEF_PYTHON_BIN:-/home/exouser/.conda/envs/torchpyg-cu12x/bin/python}"
 num_gpus=1
 USE_TMUX="${USE_TMUX:-1}"
 
@@ -16,7 +15,7 @@ MODEL="perceiver3"
 ENCODER_TYPE="GraphSAGE"
 CNN_INTERMEDIATE_CHANNEL=29
 TEMPORAL_BLOCK="Transformer"
-HEAD_TYPE="single"
+HEAD_TYPE="dual"
 HISTORY_HOURS_LIST=(24)
 HIDDEN_CHANNELS=128
 NUM_LAYERS=2
@@ -78,16 +77,15 @@ PERSISTENT_WORKERS=0
 PREFETCH_FACTOR=0
 MP_CONTEXT="fork"
 
-# Global prediction WQE; tail, amplitude, and shape objectives remain disabled.
-LOSS_MODE_LIST=("wqe")
-# Inactive for Single; no dual excess objective is constructed.
+LOSS_MODE_LIST=("mse")
 EXCESS_LOSS_MODE="mse"
 WQE_QUANTILE_TAU=0.25
 WQE_EXPECTILE_TAU=0.82
 WQE_QUANTILE_WEIGHT=0.16666666666666667
 WQE_EXPECTILE_WEIGHT=0.83333333333333333
-EXCEEDANCE_LOSS_WEIGHT=0.0
-EXCESS_AMP_LOSS_WEIGHT=0.0
+EXCEEDANCE_LOSS_MODE="wqe"
+EXCEEDANCE_LOSS_WEIGHT=0.025
+EXCESS_AMP_LOSS_WEIGHT=0
 
 # These head/branch settings are inactive for Single.
 DUAL_MODE="exceedance"
@@ -96,19 +94,17 @@ EXCEEDANCE_HEAD_EXPERIMENT=""
 EXCEEDANCE_GATE_POOLING="mean"
 GATE_MODE="window"
 DUAL_ABLATION="none"
-DUAL_LOSS=0
-# Fixed TRAIN hourly Q95 threshold for metrics, also used by Single.
+DUAL_LOSS=1
 EXCEEDANCE_PERCENTILE=95
 BODY_LOSS_WEIGHT=1
-EXCESS_LOSS_WEIGHT=1
-GATE_LOSS_WEIGHT=1
+EXCESS_LOSS_WEIGHT=2
+GATE_LOSS_WEIGHT=0.5
 SHAPE_LOSS_WEIGHT=0
 SEVERITY_SHAPE_EPS=1e-6
 
-# All four VAL-selected roles are retained and reevaluated on VAL and TEST.
 CHECKPOINT_SELECTION="overall"
 
-ALL_RESULTS_ROOT="/home/exouser/media/share/PACT/0924_s0_refresh"
+ALL_RESULTS_ROOT="/home/exouser/media/share/PACT/All_results_0922_wqe_factorial_multickpt"
 RUN_DIR_NAME_STYLE="runname_timestamp"
-PACT_RUN_NAME="NCEP_Lewes_S0_Single_WQE"
-PYTHON_RUN_TAG_BASE="NCEP_Lewes_S0_Single_WQE"
+PACT_RUN_NAME="NCEP_Lewes_G0_E0_T2"
+PYTHON_RUN_TAG_BASE="NCEP_Lewes_G0_E0_T2"

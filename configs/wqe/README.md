@@ -27,5 +27,5 @@ DRY_RUN=1 USE_TMUX=0 bash train.sh configs/wqe/train_config_NCEP_CBBT_W1_GlobalW
 ```
 
 The [Dual factorial](../wqe_factorial_multickpt/README.md) expands these
-placements with MSE/MSE controls and Tail-MSE off/on comparisons.
+placements with MSE/MSE controls and Tail off/MSE/WQE comparisons.
 See the [configuration overview](../README.md) for archive status and related families.
