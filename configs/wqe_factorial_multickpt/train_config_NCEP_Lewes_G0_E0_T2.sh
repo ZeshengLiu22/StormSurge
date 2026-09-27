@@ -104,7 +104,7 @@ SEVERITY_SHAPE_EPS=1e-6
 
 CHECKPOINT_SELECTION="overall"
 
-ALL_RESULTS_ROOT="/home/exouser/media/share/PACT/All_results_0922_wqe_factorial_multickpt"
+ALL_RESULTS_ROOT="/home/exouser/media/share/PACT/FormalRuns_0925/Dual"
 RUN_DIR_NAME_STYLE="runname_timestamp"
 PACT_RUN_NAME="NCEP_Lewes_G0_E0_T2"
 PYTHON_RUN_TAG_BASE="NCEP_Lewes_G0_E0_T2"

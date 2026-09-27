@@ -33,7 +33,7 @@ The generator replaces the 16 old filenames with the complete factorial.
 Files are named `train_config_NCEP_<station>_G<g>_T<t>.sh`; the
 [manifest](manifest.csv) records all loss modes, weights, and run names.
 
-Results retain `/home/exouser/media/share/PACT/0924_s0_refresh/`, with distinct
+Formal S0 results use `/home/exouser/media/share/PACT/FormalRuns_0925/S0/`, with distinct
 `NCEP_<station>_G<g>_T<t>__<timestamp>/` run directories. Existing result
 directories keep their historical names.
 

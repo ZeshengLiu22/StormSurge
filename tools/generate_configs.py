@@ -10,11 +10,11 @@ from pathlib import Path
 REPO = Path(__file__).resolve().parents[1]
 BASELINE_CONFIG_DIR = "baseline_ablation"
 WQE_RESULTS_ROOT = "/home/exouser/media/share/PACT/WQE_Results"
-FACTORIAL_RESULTS_ROOT = "/home/exouser/media/share/PACT/All_results_0922_wqe_factorial_multickpt"
+FACTORIAL_RESULTS_ROOT = "/home/exouser/media/share/PACT/FormalRuns_0925/Dual"
 FACTORIAL_PYTHON = "/home/exouser/.conda/envs/torchpyg-cu12x/bin/python"
 FACTORIAL_CONFIG_DIR = "wqe_factorial_multickpt"
 S0_CONFIG_DIR = "s0_refresh"
-S0_RESULTS_ROOT = "/home/exouser/media/share/PACT/0924_s0_refresh"
+S0_RESULTS_ROOT = "/home/exouser/media/share/PACT/FormalRuns_0925/S0"
 FACTORIAL_STATIONS = ("CBBT", "Boston", "Battery", "Lewes")
 STATIONS = ("CBBT", "Lewes", "Battery", "Boston")
 VARIANTS = (

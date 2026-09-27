@@ -77,11 +77,11 @@ aligned_peak、bea。BEA（Balanced Event-Aware）固定为
 
 ## Results locations
 
-配置目录重命名后，输出路径沿用历史设置，便于查找已有结果。
+S0 和 Dual 正式训练分别使用 `FormalRuns_0925/S0` 和 `FormalRuns_0925/Dual` 子目录；结果路径如下。
 
 | 配置目录 | 输出根目录 |
 | --- | --- |
 | `baseline_ablation` | `./All_Results` |
 | `wqe` | `/home/exouser/media/share/PACT/WQE_Results` |
-| `s0_refresh` | `/home/exouser/media/share/PACT/0924_s0_refresh` |
-| `wqe_factorial_multickpt` | `/home/exouser/media/share/PACT/All_results_0922_wqe_factorial_multickpt` |
+| `s0_refresh` | `/home/exouser/media/share/PACT/FormalRuns_0925/S0` |
+| `wqe_factorial_multickpt` | `/home/exouser/media/share/PACT/FormalRuns_0925/Dual` |

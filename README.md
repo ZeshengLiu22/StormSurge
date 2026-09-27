@@ -80,7 +80,7 @@ DRY_RUN=1 bash configs/wqe_factorial_multickpt/launch_all.sh
 
 The [Single family](configs/s0_refresh/README.md) has 24 configs (G × T);
 the [Dual family](configs/wqe_factorial_multickpt/README.md) has 48 (G × E × T).
-Both include manifests and launch scripts, retain their historical result roots,
+Both include manifests and launch scripts, use their documented result roots,
 and preserve all four checkpoint roles with primary `overall`.
 Generation and dry runs submit no jobs.
 

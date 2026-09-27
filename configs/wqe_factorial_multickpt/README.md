@@ -50,8 +50,8 @@ with fixed weights. Every role is reevaluated on VAL and TEST; `overall`
 supplies the primary result. See [checkpoint selection](../../docs/CHECKPOINT_SELECTION.md).
 
 The configured Python is `/home/exouser/.conda/envs/torchpyg-cu12x/bin/python`;
-export `WQEF_PYTHON_BIN` to override it. Results retain the historical root
-`/home/exouser/media/share/PACT/All_results_0922_wqe_factorial_multickpt`, using
+export `WQEF_PYTHON_BIN` to override it. Formal Dual results use
+`/home/exouser/media/share/PACT/FormalRuns_0925/Dual`, using
 `NCEP_<station>_G<g>_E<e>_T<t>__<timestamp>/` run directories.
 
 From the repository root, regenerate and inspect commands without training:

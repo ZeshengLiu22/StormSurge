@@ -104,7 +104,7 @@ SEVERITY_SHAPE_EPS=1e-6
 
 CHECKPOINT_SELECTION="overall"
 
-ALL_RESULTS_ROOT="/home/exouser/media/share/PACT/0924_s0_refresh"
+ALL_RESULTS_ROOT="/home/exouser/media/share/PACT/FormalRuns_0925/S0"
 RUN_DIR_NAME_STYLE="runname_timestamp"
 PACT_RUN_NAME="NCEP_Boston_G0_T1"
 PYTHON_RUN_TAG_BASE="NCEP_Boston_G0_T1"
