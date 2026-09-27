@@ -106,7 +106,7 @@ class ConfigInterfaceTests(unittest.TestCase):
                 self.assertEqual(args.excess_amp_loss_weight, row['excess_amp_loss_weight'])
                 self.assertEqual((args.hidden_channels,args.lr,args.grad_accum_steps), (128,.005,4))
                 self.assertEqual(args.exceedance_percentile,95.)
-                self.assertEqual(args.checkpoint_selection, 'overall')
+                self.assertEqual(args.checkpoint_selection, 'exceedance')
                 checked_in = REPO / 'configs/baseline_ablation' / row['config']
                 self.assertEqual((generated/row['config']).read_text(),checked_in.read_text())
             self.assertEqual(len(generate(generated,include_severity_shape=True)),36)
@@ -164,19 +164,19 @@ class ConfigInterfaceTests(unittest.TestCase):
                 actual.backward(); expected.backward()
                 torch.testing.assert_close(pred.grad,reference.grad,rtol=1e-12,atol=1e-12)
 
-    def test_checkpoint_selection_accepts_only_four_roles_and_fixed_weights(self):
-        self.assertEqual(train.parse_args([]).checkpoint_selection, 'overall')
-        for role in ('overall', 'exceedance', 'aligned_peak', 'bea'):
+    def test_checkpoint_selection_accepts_only_two_roles(self):
+        self.assertEqual(train.parse_args([]).checkpoint_selection, 'exceedance')
+        for role in ('overall', 'exceedance'):
             with self.subTest(role=role):
                 self.assertEqual(train.parse_args(['--checkpoint_selection', role]).checkpoint_selection, role)
-        for role in ('equal', 'peak_priority', 'eventaware', 'peakaware', 'BEA', 'balanced_event_aware'):
+        for role in ('aligned_peak', 'bea', 'episode_aligned_peak', 'equal', 'peak_priority', 'eventaware', 'peakaware', 'BEA', 'balanced_event_aware'):
             with self.subTest(role=role), self.assertRaises(SystemExit), contextlib.redirect_stderr(io.StringIO()):
                 train.parse_args(['--checkpoint_selection', role])
         for option in ('ckpt_w_all', 'ckpt_w_exceedance', 'ckpt_w_peak'):
             self.assertNotIn(option, vars(train.parse_args([])))
             with self.subTest(option=option), self.assertRaises(SystemExit), contextlib.redirect_stderr(io.StringIO()):
                 train.parse_args([f'--{option}', '1'])
-        for role in ('overall', 'exceedance', 'aligned_peak', 'bea'):
+        for role in ('overall', 'exceedance'):
             with self.subTest(shell_role=role), tempfile.TemporaryDirectory() as temporary:
                 config = Path(temporary) / 'selector.sh'
                 config.write_text(f'CHECKPOINT_SELECTION={role}\nALL_RESULTS_ROOT={temporary}/results\n')

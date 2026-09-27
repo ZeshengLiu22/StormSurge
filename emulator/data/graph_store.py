@@ -85,6 +85,7 @@ class ForcingGraphView(Dataset):
             if available < self.window:
                 raise ValueError(f"{store.graph_tags[index]} has {available} history steps; need {self.window}.")
         self.target_timestamps = store.target_timestamps(self.indices)
+        self.episode_peak_targets = None
 
     def __len__(self):
         return len(self.indices)
@@ -97,6 +98,10 @@ class ForcingGraphView(Dataset):
         data = Data(x=graph.x, x_hist=history, edge_index=graph.edge_index, y=graph.y.view(1, -1),
                     tag=self.store.graph_tags[index], sample_id=torch.tensor([index]),
                     target_timestamps=torch.from_numpy(self.target_timestamps[item].copy()).view(1, -1))
+        if self.episode_peak_targets is not None:
+            targets = self.episode_peak_targets
+            data.episode_id = torch.from_numpy(targets.episode_id[item].copy()).view(1, -1)
+            data.is_episode_gt_peak = torch.from_numpy(targets.is_episode_gt_peak[item].copy()).view(1, -1)
         for name in ("grid_H", "grid_W"):
             if name in graph:
                 data[name] = int(graph[name])

@@ -34,7 +34,7 @@ class FixedEventTests(unittest.TestCase):
             rows = [row for row in report['episode_rows'] if row['model'] == model]
             self.assertEqual([row['episode_id'] for row in rows], [0, 1, 2])
             self.assertEqual([row['gt_severity_bin'] for row in rows], [item['gt_severity_bin'] for item in report['frozen_gt_episodes']])
-            self.assertEqual(report['metrics'][model]['episode_n'], 3)
+            self.assertEqual(len(report['frozen_gt_episodes']), 3)
 
     def test_exact_id_alignment_and_mismatched_populations_fail(self):
         original = arrays()
@@ -82,7 +82,7 @@ class FixedEventTests(unittest.TestCase):
         values['split_ids'] = np.array(['train', 'test', 'test'])
         report = compare(dict(a=values))
         self.assertEqual(len(report['frozen_gt_episodes']), 4)
-        self.assertEqual(report['metrics']['a']['episode_n'], 4)
+        self.assertEqual(len(report['frozen_gt_episodes']), 4)
         self.assertTrue(all(row['split'] in ('train', 'test') for row in report['extreme_hour_rows']))
         bad = dict(values, split_ids=np.array(['train', 'val', 'test']))
         with self.assertRaisesRegex(ValueError, 'split_ids differs'):
@@ -94,7 +94,6 @@ class FixedEventTests(unittest.TestCase):
         values['y_pred'] = np.ones((3, 3), dtype=np.float32)
         values['tau_physical'] = np.array(np.nextafter(1., -np.inf))
         result = compare(dict(a=values))
-        self.assertEqual(result['metrics']['a']['extreme_hour_n'], 9)
         self.assertEqual(len(result['extreme_hour_rows']), 9)
 
     def test_underprediction_tolerance_matches_canonical_metric(self):
@@ -110,7 +109,7 @@ class FixedEventTests(unittest.TestCase):
             np.savez(root / 'predictions.npz', **arrays())
             main(['--predictions', f"dual={root / 'predictions.npz'}", '--output', str(root / 'out'), '--no-plots'])
             report = json.loads((root / 'out' / 'comparison.json').read_text())
-            self.assertEqual(report['metrics']['dual']['episode_n'], 3)
+            self.assertEqual(len(report['frozen_gt_episodes']), 3)
             self.assertTrue((root / 'out' / 'extreme_hour_rows.csv').is_file())
             self.assertEqual(len(json.loads((root / 'out' / 'frozen_gt_episodes.json').read_text())), 3)
 

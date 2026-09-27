@@ -136,6 +136,24 @@ def dual_loss_terms(output, target_norm, y_std, *, target_phys=None, tau_physica
     return body, excess, gate
 
 
+def validate_episode_peak_config(config, *, head_type="single"):
+    weight = config.episode_gt_aligned_peak_weight
+    if not math.isfinite(weight) or weight < 0:
+        raise ValueError("episode_gt_aligned_peak_weight must be finite and nonnegative.")
+    if weight > 0 and (head_type != "single" or config.loss_mode != "mse"
+                       or config.exceedance_loss_mode != "mse"):
+        raise ValueError("Episode GT-aligned peak supervision requires Single with global MSE and Tail MSE.")
+
+
+def episode_gt_aligned_peak_mse(squared_error, mask, p_episode_peak):
+    """Mean over all batch targets (including zeros), divided by fixed TRAIN J/N."""
+    if p_episode_peak is None or not math.isfinite(p_episode_peak) or not 0 < p_episode_peak <= 1:
+        raise ValueError("Episode peak supervision requires positive fixed TRAIN p_episode_peak.")
+    if mask is None or mask.dtype != torch.bool or mask.shape != squared_error.shape:
+        raise ValueError("Episode peak supervision requires a boolean canonical mask matching targets.")
+    return torch.where(mask, squared_error, 0.0).mean() / p_episode_peak
+
+
 @dataclass
 class LossConfig:
     """Complete objective settings for every run; no config-version dispatch.
@@ -149,6 +167,7 @@ class LossConfig:
     wmse_s: float = 0.1
     exceedance_loss_weight: float = 0.0
     exceedance_loss_mode: str = "mse"
+    episode_gt_aligned_peak_weight: float = 0.0
     slope_lambda: float = 0.01
     slope_mask_s: float = 0.1
     slope_robust: str = "charb"
@@ -171,7 +190,7 @@ class LossConfig:
 
 
 class ForecastLoss(nn.Module):
-    def __init__(self, config: LossConfig, stats, tau_physical, event_prior=None, extreme_hour_prior=None):
+    def __init__(self, config: LossConfig, stats, tau_physical, event_prior=None, extreme_hour_prior=None, p_episode_peak=None):
         super().__init__()
         self.config = config
         self.register_buffer("y_mean", stats["y_mean"])
@@ -179,6 +198,12 @@ class ForecastLoss(nn.Module):
         if tau_physical is None or not math.isfinite(tau_physical):
             raise ValueError("ForecastLoss requires finite TRAIN tau_physical.")
         validate_wqe_config(config)
+        validate_episode_peak_config(config)
+        if config.episode_gt_aligned_peak_weight > 0 and (p_episode_peak is None
+                or not math.isfinite(p_episode_peak) or not 0 < p_episode_peak <= 1):
+            raise ValueError("Episode peak supervision requires positive fixed TRAIN p_episode_peak.")
+        self.p_episode_peak = p_episode_peak
+        self.last_components = {}
         if (config.loss_mode.removesuffix("_slope") == "wqe" or config.excess_loss_mode == "wqe"
                 or config.exceedance_loss_mode == "wqe"):
             if not torch.isfinite(self.y_std).all() or not (self.y_std > 0).all():
@@ -196,8 +221,10 @@ class ForecastLoss(nn.Module):
             validate_event_prior(event_prior)
         self.event_prior = event_prior
 
-    def forward(self, output, prediction, target):
+    def forward(self, output, prediction, target, *, episode_gt_peak_mask=None):
         c = self.config
+        if c.episode_gt_aligned_peak_weight > 0 and output.body is not None:
+            raise ValueError("Episode GT-aligned peak supervision requires Single.")
         if output.body is None and c.excess_amp_loss_weight > 0:
             raise ValueError("Excess-amplitude supervision requires the supervised dual exceedance head.")
         if output.body is None and c.shape_loss_weight > 0:
@@ -213,6 +240,7 @@ class ForecastLoss(nn.Module):
                 quantile_weight=c.wqe_quantile_weight, expectile_weight=c.wqe_expectile_weight).mean()
         else:
             loss = weighted_error.mean() if core == "wmse" else error.mean()
+        exceedance = error.new_zeros(())
         if c.exceedance_loss_weight:
             # Compare in FP64: a fitted threshold must not round to a target tie.
             mask = target.double() > self.tau_physical
@@ -223,6 +251,24 @@ class ForecastLoss(nn.Module):
                     quantile_weight=c.wqe_quantile_weight, expectile_weight=c.wqe_expectile_weight)
             exceedance = torch.where(mask, tail_penalty, 0.0).mean() / self.extreme_hour_prior
             loss = loss + c.exceedance_loss_weight * exceedance
+        peak = error.sum() * 0.0
+        if c.episode_gt_aligned_peak_weight > 0 or (episode_gt_peak_mask is not None and self.p_episode_peak):
+            peak = episode_gt_aligned_peak_mse(error, episode_gt_peak_mask, self.p_episode_peak)
+        if c.episode_gt_aligned_peak_weight:
+            loss = loss + c.episode_gt_aligned_peak_weight * peak
+        # Detached diagnostics never change the legacy objective or its gradients.
+        tail_mse = (torch.where(target.double() > self.tau_physical, error, 0.0).mean()
+                    / self.extreme_hour_prior if self.extreme_hour_prior else error.new_zeros(()))
+        self.last_components = {
+            "global_mse_raw": error.mean().detach(),
+            "tail_mse_raw": tail_mse.detach(),
+            "tail_weighted": (c.exceedance_loss_weight * exceedance).detach(),
+            "episode_gt_aligned_peak_mse_raw": peak.detach(),
+            "episode_gt_aligned_peak_weighted": (c.episode_gt_aligned_peak_weight * peak).detach(),
+            "episode_peak_target_count": (episode_gt_peak_mask.sum().detach()
+                if episode_gt_peak_mask is not None else error.new_zeros(())),
+            "total_loss": loss.detach(),
+        }
         if c.loss_mode.endswith("_slope") and c.slope_lambda and target.size(1) > 1:
             slope_error = prediction.diff(dim=1) - target.diff(dim=1)
             if c.slope_robust == "huber":
@@ -237,6 +283,7 @@ class ForecastLoss(nn.Module):
             # Also enforce this for callers that construct LossConfig directly.
             enforce_dual_loss(c)
             if not c.dual_loss:
+                self.last_components["total_loss"] = loss.detach()
                 return loss
             target_norm = (target - self.y_mean) / self.y_std
             body, excess, gate = dual_loss_terms(output, target_norm, self.y_std,
@@ -257,4 +304,5 @@ class ForecastLoss(nn.Module):
                     self.y_std, self.event_prior, c.severity_shape_eps,
                     target_phys=target, tau_physical=self.tau_physical)
                 loss = loss + c.shape_loss_weight * shape_loss
+        self.last_components["total_loss"] = loss.detach()
         return loss

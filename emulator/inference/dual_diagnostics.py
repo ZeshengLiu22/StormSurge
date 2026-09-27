@@ -2,8 +2,6 @@
 
 import numpy as np
 
-from emulator.training.metrics import evaluate_metrics
-
 
 def summarize_excess_amplitude(excess_phys, target_excess_phys, target_phys, event):
     """Branch amplitude errors at the true target peak on TRAIN-threshold events.
@@ -89,7 +87,7 @@ def summarize_dual(arrays, tau_phys, bins=10):
                 brier=float(np.mean((probability - event) ** 2)) if count else None,
                 average_precision=average_precision, pr_auc_trapezoid=pr_auc,
                 precision=precision, recall=recall, reliability=reliability, gate_groups=gate_groups,
-                event_window_rmse=evaluate_metrics(prediction, truth, tau_phys)["event_window_rmse"], non_event_window_rmse=rmse(error, ~event),
+                event_window_rmse=rmse(error, event), non_event_window_rmse=rmse(error, ~event),
                 body_rmse=rmse(body - np.minimum(truth, tau_phys), np.ones(count, dtype=bool)),
                 excess_event_rmse=rmse(excess - excess_target, event),
                 **summarize_excess_amplitude(excess, excess_target, truth, event))

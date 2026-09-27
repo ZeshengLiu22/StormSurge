@@ -68,12 +68,11 @@ WQE 是 weighted quantile–expectile loss。`EXCEEDANCE_LOSS_MODE` 独立选择
 Tail-MSE 或 Tail-WQE；两者使用相同的严格 `y > tau` TRAIN Q95 mask 和固定 TRAIN
 `q_H` 归一化。Tail-WQE 与 global/excess WQE 共享参数和 `y_std`。完整定义见 [Losses](../docs/LOSSES.md)。
 
-`multickpt` 表示同一次训练按四种 VAL 标准保存 checkpoint：overall、exceedance、
-aligned_peak、bea。BEA（Balanced Event-Aware）固定为
-`0.50*AllRMSE + 0.25*ExceedanceRMSE + 0.25*GTAlignedPeakRMSE`。
-当前共享训练流程对所有实验族
-采用该机制；这些配置的主结果均使用 overall。见
-[Checkpoint selection](../docs/CHECKPOINT_SELECTION.md)。
+`multickpt` now retains two VAL checkpoints: `exceedance` (primary research
+result) and `overall` (conventional sensitivity). Both receive final VAL/TEST
+episode evaluation. `EPISODE_GT_ALIGNED_PEAK_WEIGHT` defaults to 0.0; positive
+values require Single with global MSE and Tail MSE. See
+[losses](../docs/LOSSES.md) and [checkpoint selection](../docs/CHECKPOINT_SELECTION.md).
 
 ## Results locations
 

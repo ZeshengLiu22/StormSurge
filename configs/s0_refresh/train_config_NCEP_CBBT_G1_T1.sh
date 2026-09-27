@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Matched WQE/Tail factorial (four VAL-only checkpoint roles): CBBT / G1_T1.
+# Matched WQE/Tail factorial (two VAL-only checkpoint roles): CBBT / G1_T1.
 
 TRAIN_PY="train.py"
 DO_CONDA=0
@@ -85,6 +85,7 @@ WQE_QUANTILE_WEIGHT=0.16666666666666667
 WQE_EXPECTILE_WEIGHT=0.83333333333333333
 EXCEEDANCE_LOSS_MODE="mse"
 EXCEEDANCE_LOSS_WEIGHT=0.025
+EPISODE_GT_ALIGNED_PEAK_WEIGHT=0.0
 EXCESS_AMP_LOSS_WEIGHT=0
 
 # These head/branch settings are inactive for Single.
@@ -102,7 +103,7 @@ GATE_LOSS_WEIGHT=1
 SHAPE_LOSS_WEIGHT=0
 SEVERITY_SHAPE_EPS=1e-6
 
-CHECKPOINT_SELECTION="overall"
+CHECKPOINT_SELECTION="exceedance"
 
 ALL_RESULTS_ROOT="/home/exouser/media/share/PACT/FormalRuns_0925/S0"
 RUN_DIR_NAME_STYLE="runname_timestamp"

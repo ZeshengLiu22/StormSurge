@@ -10,30 +10,25 @@ from unittest.mock import Mock, patch
 
 import torch
 
-from emulator.training.checkpoint_selection import (BEA_WEIGHTS, ROLES, SELECTION_METRICS, CheckpointTracker,
-    checkpoint_scores, bea_score)
+from emulator.training.checkpoint_selection import (ROLES, SELECTION_METRICS, CheckpointTracker, checkpoint_scores)
 
 
-def metric(overall, exceedance, aligned):
-    return dict(all_rmse=overall, exceedance_rmse=exceedance, gt_aligned_peak_rmse=aligned)
+def metric(overall, exceedance, unused=None):
+    return dict(all_rmse=overall, exceedance_rmse=exceedance)
 
 
 class CheckpointSelectionTests(unittest.TestCase):
-    def test_raw_physical_weighted_sum_and_unrelated_fields_cannot_change_it(self):
-        values = metric(1., 2., 4.)
-        self.assertEqual(BEA_WEIGHTS, (.50, .25, .25))
-        self.assertAlmostEqual(bea_score(values), 2.)
-        self.assertEqual(bea_score(dict(values, test=1e99, exceedance_bias=-999.,
-            gt_aligned_peak_under_pct=100., exceedance_f1=0.)), bea_score(values))
+    def test_only_hourly_val_errors_affect_scores(self):
+        values = metric(1., 2.)
+        self.assertEqual(checkpoint_scores(values), dict(overall=1., exceedance=2.))
+        self.assertEqual(checkpoint_scores(dict(values, test=1e99, episode_gt_aligned_peak_rmse=999.)),
+                         checkpoint_scores(values))
         for key in values:
             for value in (None, float('nan'), float('inf'), -1.):
                 with self.subTest(key=key, value=value), self.assertRaisesRegex(ValueError, 'VAL'):
-                    bea_score(dict(values, **{key: value}))
+                    checkpoint_scores(dict(values, **{key: value}))
         with self.assertRaisesRegex(ValueError, 'VAL'):
-            bea_score({})
-        self.assertEqual(bea_score(metric(0., 0., 0.)), 0.)
-        with self.assertRaises(TypeError):
-            bea_score(values, (1., 0., 0.))
+            checkpoint_scores({})
 
     def test_distinct_winners_and_earliest_ties_without_secondary_ranking(self):
         with tempfile.TemporaryDirectory() as temporary:
@@ -47,13 +42,12 @@ class CheckpointSelectionTests(unittest.TestCase):
                 tracker.observe(epoch, val, snapshot)
             self.assertEqual(calls, [1, 2])
             self.assertEqual(tracker.best['overall']['epoch'], 1)
-            self.assertEqual(tracker.best['bea']['epoch'], 2)
-            for role, epoch in (('overall', 1), ('bea', 2)):
+            self.assertEqual(tracker.best['exceedance']['epoch'], 2)
+            for role, epoch in (('overall', 1), ('exceedance', 2)):
                 checkpoint = torch.load(tracker.paths[role], weights_only=False)
                 self.assertEqual(checkpoint['epoch'], epoch)
                 self.assertEqual(checkpoint['model_state']['weight'].item(), epoch)
                 self.assertEqual(checkpoint['selection_split'], 'val')
-                self.assertEqual(checkpoint['bea_settings']['score_formula'], 'raw_weighted_sum')
                 self.assertEqual(tracker.selection_summary(role)['selected_epoch'], epoch)
             # Metadata points to all retained artifacts regardless of the primary role.
             self.assertEqual(set(tracker.selection_summary()['checkpoints']), set(ROLES))
@@ -74,27 +68,24 @@ class CheckpointSelectionTests(unittest.TestCase):
             self.assertEqual(actual_numpy_rng[2:], numpy_rng[2:])
             torch.testing.assert_close(torch.get_rng_state(), rng, rtol=0, atol=0)
             self.assertEqual(improved, list(ROLES))
-            self.assertAlmostEqual(score, 2.)
+            self.assertEqual(score, dict(overall=1., exceedance=2.))
             for role in improved:
                 checkpoint = torch.load(tracker.paths[role], weights_only=False)
                 self.assertEqual(checkpoint['model_state']['weight'].item(), 7.)
             val['all_rmse'] = 999.
             self.assertEqual(tracker.best['overall']['val']['all_rmse'], 1.)
 
-    def test_exactly_four_raw_scores_with_fixed_bea_weights(self):
-        self.assertEqual(ROLES, ('overall', 'exceedance', 'aligned_peak', 'bea'))
-        self.assertEqual(SELECTION_METRICS, dict(overall='all_rmse', exceedance='exceedance_rmse',
-                                                aligned_peak='gt_aligned_peak_rmse', bea='bea_score'))
-        values = metric(1., 2., 4.)
-        self.assertEqual(checkpoint_scores(values), dict(overall=1., exceedance=2., aligned_peak=4., bea=2.))
-        self.assertEqual(checkpoint_scores(dict(values, test=-1e12, reference_scale=999.)),
-                         checkpoint_scores(values))
-        with self.assertRaises(TypeError):
-            checkpoint_scores(values, (1., 0., 0.))
-        with tempfile.TemporaryDirectory() as temporary, self.assertRaises(TypeError):
-            CheckpointTracker(temporary, (1., 0., 0.))
+    def test_exactly_two_selectors_and_removed_roles_rejected(self):
+        self.assertEqual(ROLES, ('overall', 'exceedance'))
+        self.assertEqual(SELECTION_METRICS, dict(overall='all_rmse', exceedance='exceedance_rmse'))
+        with tempfile.TemporaryDirectory() as temporary:
+            tracker = CheckpointTracker(temporary)
+            self.assertEqual(set(tracker.paths), set(ROLES))
+            for role in ('aligned_peak', 'bea', 'episode_aligned_peak'):
+                with self.assertRaisesRegex(ValueError, 'Unknown checkpoint role'):
+                    tracker.selection_summary(role)
 
-    def test_all_four_distinct_winners_and_earliest_ties(self):
+    def test_both_distinct_winners_and_earliest_ties(self):
         # Each row is the unique winner for its corresponding role in ROLES.
         trajectory = [(0., 10., 10.), (10., 0., 10.), (10., 10., 0.), (4., 4., 4.)]
         with tempfile.TemporaryDirectory() as temporary:
@@ -119,21 +110,15 @@ class CheckpointSelectionTests(unittest.TestCase):
                 self.assertEqual(saved['model_state']['weight'].item(), expected_epoch)
                 self.assertEqual(saved['selection_split'], 'val')
                 self.assertEqual(saved['selection_metric_value'], selected['selection_metric_value'])
-                self.assertEqual(saved['bea_score'], selected['bea_score'])
                 self.assertEqual(set(saved), {'epoch', 'val', 'model_state', 'checkpoint_role',
                     'checkpoint_roles', 'selection_metric_key', 'selection_metric_value',
-                    'selection_split', 'bea_score', 'bea_settings'})
-                self.assertEqual(saved['bea_settings']['weights'],
-                                 dict(all_rmse=.50, exceedance_rmse=.25, gt_aligned_peak_rmse=.25))
-                self.assertEqual(tracker.selection_summary(role)['selected_bea_score'], selected['bea_score'])
+                    'selection_split'})
                 self.assertEqual(tracker.selection_summary(role)['selected_epoch'], expected_epoch)
 
     def test_tied_selector_scores_with_different_components_keep_first_epoch(self):
         # Same role score with other components improving: no secondary ranking.
         pairs = dict(overall=((1., 4., 4.), (1., 2., 2.)),
-                     exceedance=((4., 1., 4.), (2., 1., 2.)),
-                     aligned_peak=((4., 4., 1.), (2., 2., 1.)),
-                     bea=((1., 2., 3.), (2., 1., 2.)))
+                     exceedance=((4., 1., 4.), (2., 1., 2.)))
         for role, pair in pairs.items():
             with self.subTest(role=role), tempfile.TemporaryDirectory() as temporary:
                 tracker = CheckpointTracker(temporary)
@@ -172,7 +157,7 @@ class CheckpointSelectionTests(unittest.TestCase):
                     tracker.observe(2, second, lambda: dict(epoch=2, val=second))
             self.assertEqual(tracker.last_epoch, 1)
             self.assertEqual(tracker.best['overall']['epoch'], 1)
-            self.assertEqual(tracker.best['bea']['epoch'], 1)
+            self.assertEqual(tracker.best['exceedance']['epoch'], 1)
 
 
 if __name__ == '__main__':

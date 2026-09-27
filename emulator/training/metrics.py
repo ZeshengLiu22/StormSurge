@@ -1,8 +1,7 @@
 """Canonical physical-unit forecast metrics using one fixed TRAIN threshold.
 
 Forecast arrays are [window, target horizon]. Empty regression populations and
-undefined rates are represented by None, never NaN. Rates are fractions; keys
-ending in ``_under_pct`` or ``_under_*mm_pct`` are percentages (0 to 100).
+undefined metrics are represented by None, never NaN.
 """
 
 import math
@@ -13,44 +12,21 @@ import torch
 
 METRIC_GROUPS = {
     "Overall": ("all_rmse", "all_mae"),
-    "Extreme hours": (
-        "extreme_hour_n", "extreme_hour_rate", "exceedance_rmse", "exceedance_mae",
-        "exceedance_bias", "exceedance_under_pct", "exceedance_under_5mm_pct",
-        "exceedance_under_10mm_pct", "exceedance_under_20mm_pct",
-        "exceedance_precision", "exceedance_recall", "exceedance_f1",
-    ),
-    "Event windows": ("event_window_n", "event_window_rate", "event_window_rmse", "event_window_mae"),
-    "Window peaks": ("window_peak_rmse", "window_peak_mae", "window_peak_bias"),
-    "GT-aligned peaks": (
-        "gt_aligned_peak_rmse", "gt_aligned_peak_mae", "gt_aligned_peak_bias",
-        "gt_aligned_peak_under_pct", "gt_aligned_peak_under_5mm_pct",
-        "gt_aligned_peak_under_10mm_pct", "gt_aligned_peak_under_20mm_pct",
-    ),
-    "Peak timing": ("peak_timing_mae_steps", "peak_timing_mae_hours"),
+    "Extreme hours": ("exceedance_rmse", "exceedance_mae"),
     "Event episodes": (
-        "episode_n", "episode_peak_rmse", "episode_peak_mae", "episode_peak_bias",
+        "episode_peak_rmse", "episode_peak_mae", "episode_peak_bias",
         "episode_gt_aligned_peak_rmse", "episode_gt_aligned_peak_mae",
-        "episode_gt_aligned_peak_bias", "episode_gt_aligned_peak_under_pct",
-        "episode_peak_timing_mae_hours", "episode_detection_recall",
-        "episode_excess_area_mae", "episode_excess_area_bias",
+        "episode_gt_aligned_peak_bias", "episode_peak_timing_mae_hours",
     ),
 }
 METRIC_KEYS = tuple(key for group in METRIC_GROUPS.values() for key in group)
-EPOCH_METRIC_KEYS = tuple(key for name, group in METRIC_GROUPS.items() if name != "Event episodes" for key in group)
+EPOCH_METRIC_KEYS = METRIC_GROUPS["Overall"] + METRIC_GROUPS["Extreme hours"]
 EPISODE_METRIC_KEYS = METRIC_GROUPS["Event episodes"]
 METRIC_LABELS = dict(zip(METRIC_KEYS, (
-    "AllRMSE", "AllMAE", "ExtremeHourN", "ExtremeHourRate", "ExceedanceRMSE",
-    "ExceedanceMAE", "ExceedanceBias", "ExceedanceUnder%", "ExceedanceUnder5mm%",
-    "ExceedanceUnder10mm%", "ExceedanceUnder20mm%", "ExceedancePrecision",
-    "ExceedanceRecall", "ExceedanceF1", "EventWindowN", "EventWindowRate",
-    "EventWindowRMSE", "EventWindowMAE", "WindowPeakRMSE", "WindowPeakMAE",
-    "WindowPeakBias", "GTAlignedPeakRMSE", "GTAlignedPeakMAE", "GTAlignedPeakBias",
-    "GTAlignedPeakUnder%", "GTAlignedPeakUnder5mm%", "GTAlignedPeakUnder10mm%",
-    "GTAlignedPeakUnder20mm%", "PeakTimingMAESteps", "PeakTimingMAEHours",
-    "EpisodeN", "EpisodePeakRMSE", "EpisodePeakMAE", "EpisodePeakBias",
+    "AllRMSE", "AllMAE", "ExceedanceRMSE", "ExceedanceMAE",
+    "EpisodePeakRMSE", "EpisodePeakMAE", "EpisodePeakBias",
     "EpisodeGTAlignedPeakRMSE", "EpisodeGTAlignedPeakMAE", "EpisodeGTAlignedPeakBias",
-    "EpisodeGTAlignedPeakUnder%", "EpisodePeakTimingMAEHours", "EpisodeDetectionRecall",
-    "EpisodeExcessAreaMAE", "EpisodeExcessAreaBias",
+    "EpisodePeakTimingMAEHours",
 )))
 
 
@@ -154,92 +130,50 @@ def gt_event_episodes(y_true, target_timestamps, tau_physical, *, split_ids=None
     return episodes
 
 
+def gt_episode_peak_indices(y_true, episodes):
+    """One earliest GT argmax per chronological episode, shared with training."""
+    truth = _values(y_true, "y_true").ravel()
+    return np.asarray([indices[int(np.argmax(truth[indices]))] for indices in episodes], dtype=np.int64)
+
+
 def _episode_metrics(prediction, truth, timestamps, tau, split_ids):
     episodes = gt_event_episodes(truth, timestamps, tau, split_ids=split_ids)
+    peaks = gt_episode_peak_indices(truth, episodes)
     times = _timestamp_seconds(timestamps, truth.shape).ravel()
     prediction, truth = prediction.ravel(), truth.ravel()
-    peak_errors, aligned_predictions, aligned_truth, timings, detections, area_errors = [], [], [], [], [], []
-    for indices in episodes:
-        target, pred = truth[indices], prediction[indices]
-        gt_index, pred_index = int(np.argmax(target)), int(np.argmax(pred))
-        peak_errors.append(pred[pred_index] - target[gt_index])
-        aligned_predictions.append(pred[gt_index])
-        aligned_truth.append(target[gt_index])
-        timings.append(abs(int(times[indices[pred_index]]) - int(times[indices[gt_index]])) / 3600.)
-        detections.append(bool(np.any(pred > tau)))
-        area_errors.append(float(np.maximum(pred - tau, 0).sum() - np.maximum(target - tau, 0).sum()))
-    aligned_predictions, aligned_truth = np.asarray(aligned_predictions), np.asarray(aligned_truth)
-    return dict(episode_n=len(episodes),
-                **_errors(np.asarray(peak_errors), "episode_peak"),
-                **_errors(aligned_predictions - aligned_truth, "episode_gt_aligned_peak"),
-                **_under(aligned_predictions, aligned_truth, "episode_gt_aligned_peak", tolerances=False),
-                episode_peak_timing_mae_hours=_mean(timings),
-                episode_detection_recall=_mean(detections),
-                episode_excess_area_mae=_mean(np.abs(area_errors)),
-                episode_excess_area_bias=_mean(area_errors))
+    peak_errors, timings = [], []
+    for indices, gt_peak in zip(episodes, peaks):
+        pred_peak = indices[int(np.argmax(prediction[indices]))]
+        peak_errors.append(prediction[pred_peak] - truth[gt_peak])
+        timings.append(abs(int(times[pred_peak]) - int(times[gt_peak])) / 3600.)
+    return dict(**_errors(np.asarray(peak_errors), "episode_peak"),
+                **_errors(prediction[peaks] - truth[peaks], "episode_gt_aligned_peak"),
+                episode_peak_timing_mae_hours=_mean(timings))
 
 
-def evaluate_metrics(y_pred, y_true, tau_physical, *, target_timestamps=None,
-                     split_ids=None, include_leadwise=True, target_interval_hours=1.):
-    """Evaluate numpy/torch [N,K] physical predictions against fixed TRAIN tau.
+def evaluate_metrics(y_pred, y_true, tau_physical, *, target_timestamps=None, split_ids=None):
+    """Return four hourly metrics, or exactly eleven with target timestamps.
 
-    Epoch metrics need only arrays and tau. Supplying target timestamps enables
-    final episode metrics and strict per-split timestamp uniqueness validation.
-    Peak and timing metrics use GT Event Windows and first argmax on ties.
-    Episode integrals use one hour per extreme target. Lead indices start at 0.
+    Final episode populations use strict GT exceedance, exact hourly continuity
+    and earliest maxima. Duplicate timestamps within a split are rejected.
     """
     prediction, truth = _values(y_pred, "y_pred"), _values(y_true, "y_true")
     if prediction.shape != truth.shape:
         raise ValueError("y_pred and y_true must have identical [windows, horizons] shapes.")
     tau = _threshold(tau_physical)
-    if not math.isfinite(target_interval_hours) or target_interval_hours <= 0:
-        raise ValueError("target_interval_hours must be positive and finite.")
     if split_ids is not None and target_timestamps is None:
         raise ValueError("split_ids require target_timestamps for split-isolated episode evaluation.")
     error = prediction - truth
-    extreme = truth > tau
-    predicted_extreme = prediction > tau
-    events = extreme.any(axis=1)
-    event_truth, event_pred = truth[events], prediction[events]
-    gt_index, pred_index = event_truth.argmax(axis=1), event_pred.argmax(axis=1)
-    rows = np.arange(len(event_truth))
-    aligned_truth, aligned_pred = event_truth[rows, gt_index], event_pred[rows, gt_index]
-    peak_error = event_pred[rows, pred_index] - aligned_truth
-    extreme_n, predicted_n, true_positive = int(extreme.sum()), int(predicted_extreme.sum()), int((extreme & predicted_extreme).sum())
-    timing = _mean(np.abs(pred_index - gt_index))
-    metrics = dict(
-        **_errors(error, "all", bias=False),
-        extreme_hour_n=extreme_n,
-        extreme_hour_rate=extreme_n / truth.size if truth.size else None,
-        **_errors(error[extreme], "exceedance"),
-        **_under(prediction[extreme], truth[extreme], "exceedance"),
-        exceedance_precision=true_positive / predicted_n if predicted_n else None,
-        exceedance_recall=true_positive / extreme_n if extreme_n else None,
-        exceedance_f1=2 * true_positive / (predicted_n + extreme_n) if predicted_n + extreme_n else None,
-        event_window_n=int(events.sum()),
-        event_window_rate=float(events.mean()) if events.size else None,
-        **_errors(error[events], "event_window", bias=False),
-        **_errors(peak_error, "window_peak"),
-        **_errors(aligned_pred - aligned_truth, "gt_aligned_peak"),
-        **_under(aligned_pred, aligned_truth, "gt_aligned_peak"),
-        peak_timing_mae_steps=timing,
-        peak_timing_mae_hours=timing * target_interval_hours if timing is not None else None,
-    )
+    metrics = dict(**_errors(error, "all", bias=False),
+                   **_errors(error[truth > tau], "exceedance", bias=False))
     if target_timestamps is not None:
         metrics.update(_episode_metrics(prediction, truth, target_timestamps, tau, split_ids))
-    if include_leadwise:
-        for lead in range(truth.shape[1]):
-            selected = extreme[:, lead]
-            metrics[f"extreme_hour_n_lead_{lead}"] = int(selected.sum())
-            selected_error = error[selected, lead]
-            metrics[f"exceedance_rmse_lead_{lead}"] = float(np.sqrt(np.mean(selected_error ** 2))) if selected_error.size else None
     return metrics
 
 
 def format_metrics(label, metrics, *, extended=False):
     """Format a concise training line or the complete canonical metric dictionary."""
-    names = metrics if extended else ("all_rmse", "all_mae", "exceedance_rmse", "event_window_rmse",
-                                     "gt_aligned_peak_rmse", "extreme_hour_n", "event_window_n")
+    names = METRIC_KEYS if extended else EPOCH_METRIC_KEYS
     pairs = []
     for key in names:
         if key not in metrics:

@@ -150,9 +150,11 @@ class InferenceReportingTests(unittest.TestCase):
             with contextlib.redirect_stdout(io.StringIO()):
                 infer.main(args)
             report = json.loads((out / 'metrics.json').read_text())
-            self.assertEqual(report['metrics']['episode_n'], expected)
             self.assertEqual(report['scope'], 'external_all_years' if external else 'source_all_years')
             self.assertEqual(report['tau_physical'], 3.)
             with np.load(out / 'predictions.npz') as data:
+                from emulator.training.metrics import gt_event_episodes, METRIC_KEYS
+                self.assertEqual(set(report['metrics']), set(METRIC_KEYS))
+                self.assertEqual(len(gt_event_episodes(data['y_true'], data['target_timestamps'], 3., split_ids=data['split_ids'])), expected)
                 self.assertEqual(data['split'].item(), 'external' if external else 'mixed')
                 self.assertEqual(set(data['split_ids']), {'external'} if external else {'train', 'val'})

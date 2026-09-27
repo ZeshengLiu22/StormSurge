@@ -109,6 +109,7 @@ MP_CONTEXT="fork"
 
 LOSS_MODE_LIST=("mse")
 EXCEEDANCE_LOSS_WEIGHT={exceedance_weight}
+EPISODE_GT_ALIGNED_PEAK_WEIGHT=0.0
 EXCESS_AMP_LOSS_WEIGHT={amp_weight}
 
 # These head/branch settings are inactive for Single.
@@ -126,7 +127,7 @@ GATE_LOSS_WEIGHT={gate_weight}
 SHAPE_LOSS_WEIGHT={shape_weight}
 SEVERITY_SHAPE_EPS=1e-6
 
-CHECKPOINT_SELECTION="overall"
+CHECKPOINT_SELECTION="exceedance"
 
 ALL_RESULTS_ROOT="{results_root}"
 RUN_DIR_NAME_STYLE="runname_timestamp"
@@ -185,7 +186,7 @@ def generate_factorial(output, *, head, results_root):
     job_prefix = "WQEF" if dual else "S0F"
     template = WQE_TEMPLATE.replace(
         "WQE placement experiment (existing D0 is the MSE/MSE control)",
-        "Matched WQE/Tail factorial (four VAL-only checkpoint roles)").replace(
+        "Matched WQE/Tail factorial (two VAL-only checkpoint roles)").replace(
         "DO_CONDA=0", 'DO_CONDA=0\n# Explicit runtime survives queue workers and tmux shell initialization.\n'
         + runtime).replace(
         "EXCEEDANCE_LOSS_WEIGHT={exceedance_weight}",

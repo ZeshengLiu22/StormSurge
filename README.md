@@ -12,10 +12,15 @@ forcing/history + graph → spatial encoder → station readout → temporal mod
 
 All extreme populations use one physical threshold fitted on unique TRAIN hourly
 targets. The default is Q95 with strict `y > tau`; VAL, TEST and OOD reuse that
-threshold. Every run retains four [checkpoint roles](docs/CHECKPOINT_SELECTION.md):
-`overall`, `exceedance`, `aligned_peak`, and `bea` (Balanced Event-Aware).
-BEA minimizes `0.50*AllRMSE + 0.25*ExceedanceRMSE + 0.25*GTAlignedPeakRMSE`.
-All are selected using VAL and reevaluated on VAL and TEST.
+threshold. Every run retains two [checkpoint roles](docs/CHECKPOINT_SELECTION.md):
+`exceedance` is the primary research selector and `overall` is the sensitivity
+selector. Both use VAL RMSE and receive timestamp-aware final VAL/TEST evaluation
+with exactly eleven [episode-aware metrics](docs/METRICS.md).
+
+Single supports `EPISODE_GT_ALIGNED_PEAK_WEIGHT` (default 0.0): one GT amplitude
+target per TRAIN episode, normalized by fixed TRAIN peak prevalence. See the
+[loss definition](docs/LOSSES.md#single-episode-gt-aligned-peak-amplitude-loss)
+and [saved-data audit](reports/episode_peak/audit.json).
 
 ## Run
 
@@ -81,7 +86,7 @@ DRY_RUN=1 bash configs/wqe_factorial_multickpt/launch_all.sh
 The [Single family](configs/s0_refresh/README.md) has 24 configs (G × T);
 the [Dual family](configs/wqe_factorial_multickpt/README.md) has 48 (G × E × T).
 Both include manifests and launch scripts, use their documented result roots,
-and preserve all four checkpoint roles with primary `overall`.
+and retain both checkpoint roles with primary `exceedance`.
 Generation and dry runs submit no jobs.
 
 Launch an explicitly chosen configuration:
@@ -99,13 +104,14 @@ EXCEEDANCE_PERCENTILE=95
 EXCEEDANCE_LOSS_MODE="mse"
 EXCEEDANCE_LOSS_WEIGHT=0.025
 EXCESS_AMP_LOSS_WEIGHT=0.003
-CHECKPOINT_SELECTION=overall
+EPISODE_GT_ALIGNED_PEAK_WEIGHT=0.0
+CHECKPOINT_SELECTION=exceedance
 ```
 
 Evaluate a saved checkpoint, retaining its source TRAIN threshold:
 
 ```bash
-python infer.py --ckpt /path/to/run/best_bea.pt \
+python infer.py --ckpt /path/to/run/best_exceedance.pt \
   --root_dir ./Data/Grid4_New/NCEP/graphs --save_npz --out_dir ./All_Inference_Results/example
 ```
 
@@ -115,7 +121,7 @@ add `--dual_diagnostics`. Compare new prediction exports on shared GT episodes:
 ```bash
 python tools/event_diagnostics.py \
   --predictions Overall=/path/to/run/test_predictions_overall.npz \
-  --predictions bea=/path/to/run/test_predictions_bea.npz \
+  --predictions Exceedance=/path/to/run/test_predictions_exceedance.npz \
   --output ./results/event_diagnostics
 ```
 
@@ -141,6 +147,6 @@ bash -n train.sh infer.sh infer_multi.sh
 ```
 
 The suite includes numerical metric oracles, timestamp/leakage checks, branch
-objectives, all four checkpoint roles, train/inference round trips, distributed
+objectives, both checkpoint roles, train/inference round trips, distributed
 reductions, preprocessing and documentation consistency. Real experiment
 training is a separate explicit launch.

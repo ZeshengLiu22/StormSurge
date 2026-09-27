@@ -149,6 +149,95 @@ choices support it; its gradient follows the final prediction through the same
 branches as $L_{\mathrm{pred}}$. The threshold, target mask, and prevalence are
 constants.
 
+## Single episode GT-aligned peak amplitude loss
+
+Set `EPISODE_GT_ALIGNED_PEAK_WEIGHT` / `--episode_gt_aligned_peak_weight`
+(default **0.0**) to enable the Single objective:
+
+$$
+L=L_{\mathrm{GlobalMSE}}+w_T L_{\mathrm{TailMSE}}+
+ w_P L_{\mathrm{EpisodeGTAlignedPeakMSE}}.
+$$
+
+The Tail coefficient $w_T$ remains `EXCEEDANCE_LOSS_WEIGHT`; its strict hourly
+mask and fixed TRAIN normalization are unchanged. A positive $w_P$ requires
+Single, global MSE, Tail MSE, and TRAIN Q95. Existing configs omitting the new
+setting retain their original objective. At zero weight the implementation
+skips the addition; value and gradient regression tests are bitwise equal.
+
+[episode_peaks.py](../emulator/training/episode_peaks.py) builds metadata once
+from the complete TRAIN GT timeline and its fixed physical Q95. It calls the
+same `gt_event_episodes` and `gt_episode_peak_indices` helpers as final evaluation.
+Sorting is chronological; exceedance is strict; continuity is exactly 3600
+seconds. Normal hours, missing hours, and split boundaries end episodes.
+Single-hour episodes and episodes crossing forecast blocks remain valid.
+For each episode $E_j$, $t_j^*=\operatorname{earliest\ argmax}_{t\in E_j}y_t$.
+The boolean `is_episode_gt_peak` mask marks just this target. `episode_id` is -1
+outside episodes. These fields follow the sample through shuffling and batching.
+
+For $N$ eligible TRAIN target positions and $J$ canonical peaks, fix
+$p_{\mathrm{episode\_peak}}=J/N$. In a batch with $B$ windows and $K$ horizons:
+
+$$
+L_{\mathrm{EpisodeGTAlignedPeakMSE}}=
+\frac{1}{BKp_{\mathrm{episode\_peak}}}\sum_{i,h}
+\mathbf1[\mathrm{is\_episode\_gt\_peak}_{ih}]\,(\hat y_{ih}-y_{ih})^2.
+$$
+
+Over the full dataset this is exactly
+$\frac{1}{Np}\sum_{j=1}^J(\hat y_{t_j^*}-y_{t_j^*})^2
+=\frac1J\sum_j(\hat y_{t_j^*}-y_{t_j^*})^2$ in m².
+The mean includes masked zeros; it never divides by a batch peak count.
+An empty peak mask yields a differentiable exact zero. An enabled loss with
+zero TRAIN episodes is rejected because its required fixed prevalence is zero.
+
+Uniform shuffling without replacement gives every target the same probability
+of occupying each minibatch position, including a short last batch. Thus each
+batch mean, and each average of accumulated batch means, estimates the same
+equally weighted episode objective. For a fixed ordering, unequal microbatches
+still have the existing equal microbatch weights; epoch component logs instead
+use target-count weighting, which recovers the exact traversal mean. Model
+parameters evolve during an epoch, so these logs describe predictions at their
+training steps, not a frozen-checkpoint evaluation.
+
+### Timestamp and traversal audit
+
+Saved Grid4_New NCEP targets are `[t,t+1,...,t+5]` at six-hour centers. The
+[data audit](../reports/episode_peak/audit.json) verified **79,344 unique TRAIN
+hours per station** and zero repeated timestamps. Overlapping forcing histories
+do not duplicate target hours. Each physical peak therefore has one natural
+occurrence; no duplicate canonicalization rule is needed. The existing loader
+and threshold fitter continue to reject overlapping target blocks before loss
+construction. Global and Tail reductions are unchanged.
+
+| Station | Episodes = canonical peaks | TRAIN prevalence $J/79344$ |
+| --- | ---: | ---: |
+| CBBT | 185 | 0.002331619278 |
+| Lewes | 198 | 0.002495462795 |
+| Battery | 437 | 0.005507662835 |
+| Boston | 542 | 0.006831014317 |
+
+The current distributed sampler pads when the number of windows is not divisible
+by world size. Padding would repeat physical peaks and invalidate the fixed
+normalization. Positive episode loss fails explicitly for padded/truncated or
+replacement sampling. Use one process or a world size dividing the TRAIN window
+count. Sampling itself is unchanged. An unpadded distributed traversal gives one
+contribution per physical peak across all ranks.
+
+TRAIN peak count, prevalence, construction rules and threshold are saved in
+`episode_peak_metadata.json`, checkpoints and summaries. Compact epoch logs show
+GlobalMSE, TailMSE, weighted Tail, EpisodeGTAlignedPeakMSE, weighted episode peak,
+encountered canonical peak count, fixed prevalence and total loss. The episode
+loss supervises the final Single prediction at the GT peak; no predicted maximum
+or timing term enters it. Its full-dataset value equals the square of final
+EpisodeGTAlignedPeakRMSE for the same data and fixed predictions.
+
+Run the saved-data parity audit without training:
+
+```bash
+python tools/audit_episode_peak_targets.py --root-dir Data/Grid4_New/NCEP/graphs --output /tmp/episode_peak_audit.json
+```
+
 ## GT-aligned raw excess amplitude loss
 
 For each window, select the first maximum of the original physical target:
@@ -164,7 +253,7 @@ $$
 
 `EXCESS_AMP_LOSS_WEIGHT` / `excess_amp_loss_weight` defaults to 0. The loss is measured in m². Each GT Event Window contributes one squared error. The selected horizon is GT-aligned: a larger predicted excess at another horizon cannot substitute for excess at $h_i^*$. A strict Event Window has $a_i^*>0$; the scalar threshold ensures $h_i^*$ also selects a maximum of the target excess.
 
-The predicted quantity is raw excess; the gate and body do not enter (7). For Direct Dual, only the selected output excess coordinate receives the direct output gradient. For Severity–Shape, $\hat a_i=\mathrm{severity}_i\times\mathrm{shape}_{i,h_i^*}$; both factors receive gradients, and shape's maximum normalization can propagate a gradient to its normalizing maximum. Shared branch parameters and the backbone can affect multiple horizons. Single does not support amplitude supervision.
+The predicted quantity is raw excess; the gate and body do not enter (7). For Direct Dual, only the selected output excess coordinate receives the direct output gradient. For Severity–Shape, $\hat a_i=\mathrm{severity}_i\times\mathrm{shape}_{i,h_i^*}$; both factors receive gradients, and shape's maximum normalization can propagate a gradient to its normalizing maximum. Shared branch parameters and the backbone can affect multiple horizons. This raw-excess branch objective requires Dual; Single uses the episode amplitude objective above.
 
 ## Optional temporal shape loss
 
@@ -229,7 +318,7 @@ With absent terms assigned coefficient zero, the training objective is:
 
 $$
 \begin{aligned}
-L={}&L_{\mathrm{pred}}+\lambda_H L_{\mathrm{exceedance}}+\lambda_{\mathrm{slope}}L_{\mathrm{slope}}\\
+L={}&L_{\mathrm{pred}}+w_P L_{\mathrm{EpisodeGTAlignedPeakMSE}}+\lambda_H L_{\mathrm{exceedance}}+\lambda_{\mathrm{slope}}L_{\mathrm{slope}}\\
 &+\lambda_{\mathrm{body}}L_{\mathrm{body}}+\lambda_{\mathrm{excess}}L_{\mathrm{excess}}+\lambda_{\mathrm{gate}}L_{\mathrm{gate}}\\
 &+\lambda_{\mathrm{amp}}L_{\mathrm{amp}}+\lambda_{\mathrm{shape}}L_{\mathrm{shape}}.
 \end{aligned} \tag{10}
@@ -252,6 +341,7 @@ All enabled terms can update the shared backbone. Targets, normalization statist
 | Term | Directly supervised head paths | Single | Direct Dual | Severity–Shape |
 | --- | --- | --- | --- | --- |
 | Prediction, exceedance, slope | Single regression; Dual body, gate, excess; reconstructed severity and shape | Yes | Yes | Yes |
+| Episode GT-aligned peak | Single prediction at the TRAIN episode GT peak | Yes | No | No |
 | Body | Body | No | Yes | Yes |
 | Excess trajectory | Raw excess; severity and shape through their product | No | Yes | Yes |
 | Gate BCE | Learned gate | No | Yes | Yes |
@@ -322,12 +412,12 @@ Generate them with `--family s0_refresh` and `--family wqe_factorial_multickpt`.
 
 The historical Single suffix S0_Single_Tail_WQE maps to G1_T1: global WQE plus
 Tail-MSE. G0_T2 and G1_T2 add Tail-WQE. Both families preserve their model/training
-settings, result roots, shared WQE parameters, and four VAL checkpoint roles.
+settings, result roots, shared WQE parameters, and two VAL checkpoint roles. The episode peak weight defaults to zero in these factorial configs.
 Amplitude, shape, and slope are inactive. Single has no branch objectives;
 Dual retains body/excess/gate weights 1/2/0.5.
 
 ## Optimization and validation boundaries
 
-[train.py](../train.py) uses Adam with fixed `weight_decay=1e-5`, which contributes its optimizer L2 regularization to trainable parameters. It is separate from the scalar returned by `ForecastLoss`. Dropout belongs to the architecture described in [BACKBONE.md](BACKBONE.md). There is no additional independent peak objective or explicit scalar severity loss.
+[train.py](../train.py) uses Adam with fixed `weight_decay=1e-5`, which contributes its optimizer L2 regularization to trainable parameters. It is separate from the scalar returned by `ForecastLoss`. Dropout belongs to the architecture described in [BACKBONE.md](BACKBONE.md). The optional Single episode peak objective is defined above; Dual has no explicit scalar severity loss.
 
 [engine.py](../emulator/training/engine.py) supplies physical predictions and physical targets to the objective. Gradient accumulation divides each microbatch mean loss by the number of microbatches in its accumulation group, including the final partial group. Thus equally sized microbatches reproduce the corresponding combined-batch loss; unequal microbatches retain equal microbatch weights. All evaluation and checkpoint selection use the independent canonical physical metrics described in [METRICS.md](METRICS.md) and [CHECKPOINT_SELECTION.md](CHECKPOINT_SELECTION.md).

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Train one trajectory with the fixed TRAIN hourly threshold and four VAL checkpoint roles."""
+"""Train one trajectory with the fixed TRAIN hourly threshold and two VAL checkpoint roles."""
 
 from dataclasses import asdict, fields
 import json
@@ -26,9 +26,10 @@ from emulator.data import (ForcingGraphStore, ForcingGraphView, build_loader,
 from emulator.models import ModelConfig, build_model, count_model_parameters, format_parameter_counts
 from emulator.training import ForecastLoss, LossConfig, format_metrics, run_epoch
 from emulator.training.arguments import parse_args
+from emulator.training.episode_peaks import build_episode_peak_targets
 from emulator.training.checkpoints import atomic_save
 from emulator.training.checkpoint_selection import ROLES, CheckpointTracker
-from emulator.training.reporting import compact_comparison_report, comparison_report, threshold_label
+from emulator.training.reporting import compact_comparison_report, comparison_report, threshold_label, format_loss_components
 
 
 
@@ -70,6 +71,7 @@ def train(args, device, distributed, rank, wall_start):
     if rank == 0:
         log_message(f"Checkpoint roles (VAL-only): {', '.join(ROLES)}; primary={args.checkpoint_selection}")
         log_message(f"Global prediction loss: {args.loss_mode}")
+        log_message(f"Episode GT-aligned peak MSE weight: {args.episode_gt_aligned_peak_weight:g}")
         log_message(f"Tail loss: {args.exceedance_loss_mode} (weight={args.exceedance_loss_weight:g})")
         log_message(f"Dual excess loss: {args.excess_loss_mode}"
                     if args.head_type == "dual" else "Dual excess loss: inactive (head_type=single)")
@@ -106,6 +108,17 @@ def train(args, device, distributed, rank, wall_start):
     if distributed:
         dist.broadcast_object_list(thresholds, src=0)
     fitted = thresholds[0]
+    episode_peak_metadata = None
+    if args.head_type == "single":
+        train_truth = np.stack([store.graphs[i].y.detach().cpu().numpy().reshape(-1) for i in splits["train"]])
+        train_data.episode_peak_targets = build_episode_peak_targets(
+            train_truth, train_data.target_timestamps, fitted["tau_physical"])
+        episode_peak_metadata = train_data.episode_peak_targets.metadata
+        if rank == 0:
+            (output_dir / "episode_peak_metadata.json").write_text(json.dumps(episode_peak_metadata, indent=2) + "\n")
+            log_message(f'TRAIN episodes={episode_peak_metadata["episode_count"]} '
+                        f'canonical peaks={episode_peak_metadata["canonical_peak_target_count"]} '
+                        f'p_episode_peak={episode_peak_metadata["p_episode_peak"]:.9g}; unique target timestamps')
     dual_metadata = (dict(tau_physical=fitted["tau_physical"], event_prior=fitted["event_prior"],
                           gate_init_prior=initial_gate_prior(fitted["event_prior"])
                           if args.dual_ablation != "fixed_gate" else fitted["event_prior"],
@@ -145,7 +158,8 @@ def train(args, device, distributed, rank, wall_start):
     loss_config = LossConfig(**{field.name: getattr(args, field.name) for field in fields(LossConfig)})
     criterion = ForecastLoss(loss_config, stats, fitted["tau_physical"],
                              event_prior=fitted["event_prior"],
-                             extreme_hour_prior=fitted["train_extreme_hour_rate"]).to(device)
+                             extreme_hour_prior=fitted["train_extreme_hour_rate"],
+                             p_episode_peak=episode_peak_metadata["p_episode_peak"] if episode_peak_metadata else None).to(device)
     optimizer = torch.optim.Adam(model.parameters(), lr=args.lr, weight_decay=1e-5)
     def lr_multiplier(epoch):
         if epoch < args.warmup_epochs:
@@ -193,6 +207,10 @@ def train(args, device, distributed, rank, wall_start):
             log_message(f'Epoch {epoch:03d}/{args.epochs} | {format_metrics("Train", training.metrics)} | '
                         f'{format_metrics("Val", validation.metrics)}')
             epoch_record = {"epoch": epoch, "train": training.metrics, "val": validation.metrics}
+            if training.losses is not None:
+                epoch_record["loss"] = training.losses
+                if args.head_type == "single":
+                    log_message(format_loss_components(training.losses))
 
             def checkpoint_snapshot():
                 network = model.module if distributed else model
@@ -201,17 +219,15 @@ def train(args, device, distributed, rank, wall_start):
                               "station": args.station, "split_config": split_config,
                               "split_tags": {key: [store.graph_tags[i] for i in indices] for key, indices in splits.items()},
                               "training_config": vars(args), "threshold_metadata": fitted, "dual_metadata": dual_metadata,
+                              "episode_peak_metadata": episode_peak_metadata,
                               **fitted,
                               "epoch": epoch, "val": validation.metrics, "model_parameters": model_parameters}
 
-            score, improved = tracker.observe(epoch, validation.metrics, checkpoint_snapshot)
-            epoch_record["bea_score"] = score
-            log_message(f'VAL checkpoint score: BEAScore={score:.9f}')
+            scores, improved = tracker.observe(epoch, validation.metrics, checkpoint_snapshot)
+            epoch_record["checkpoint_scores"] = scores
             for role in improved:
                 log_message(f'[Best {role}] epoch={epoch} Val AllRMSE={validation.metrics["all_rmse"]:.9f} '
-                            f'ExceedanceRMSE={validation.metrics["exceedance_rmse"]:.9f} '
-                            f'GTAlignedPeakRMSE={validation.metrics["gt_aligned_peak_rmse"]:.9f} '
-                            f'BEAScore={score:.9f}')
+                            f'ExceedanceRMSE={validation.metrics["exceedance_rmse"]:.9f}')
             if args.checkpoint_selection in improved:
                 chosen = torch.load(tracker.paths[args.checkpoint_selection], map_location="cpu", weights_only=False)
                 atomic_save(chosen, checkpoint_path)
@@ -260,6 +276,7 @@ def train(args, device, distributed, rank, wall_start):
             json.dumps({**evaluations, **comparison_metadata}, indent=2, allow_nan=False) + "\n")
         summary = {"best_epoch": best_epoch, "best_val_rmse": best_rmse, "training_seconds": elapsed,
                    **comparison_metadata, **fitted, "dual_metadata": dual_metadata,
+                   "episode_peak_metadata": episode_peak_metadata,
                    "model_parameters": model_parameters, "val": primary["val"], "test": primary["test"],
                    "checkpoint_selection": tracker.selection_summary(args.checkpoint_selection),
                    "checkpoint_comparison": evaluations,

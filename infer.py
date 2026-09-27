@@ -333,9 +333,8 @@ def main(argv=None):
                   years_evaluated=metadata["years"], inference_args=vars(args).copy(), checkpoint_args=training,
                   results=results, metrics=metrics, threshold_metadata=threshold_metadata, method=threshold_label(threshold_metadata),
                   metric_space="physical", metric_note="RMSE/MAE on denormalized predictions in original y units. "
-                      "WindowPeak compares maxima; GTAlignedPeak samples the first GT maximum. "
                       "Episode metrics use fixed GT hourly episodes within each evaluation split. "
-                      "Argmax ties use the first occurrence; timing is in forecast steps. "
+                      "Argmax ties use the earliest timestamp; timing is in hours. "
                       "All extreme populations use the saved TRAIN hourly tau_physical.",
                   x_clip=training["x_clip"], dual_metadata=dual_metadata, dual_ablation=config.dual_ablation)
     (out_dir / f"metrics_per_year_{report_stem}.json").write_text(json.dumps(report, indent=2, default=str))

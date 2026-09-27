@@ -77,11 +77,12 @@ normalization, station metadata, and loader settings remain the same.
 The [Dual factorial](../wqe_factorial_multickpt/README.md) provides corresponding
 G/E/T cells, with active branch weights 1/2/0.5.
 
-All four VAL-selected roles are retained: `overall`, `exceedance`,
-`aligned_peak`, and `bea` (Balanced Event-Aware). BEA minimizes the fixed score
-`0.50*AllRMSE + 0.25*ExceedanceRMSE + 0.25*GTAlignedPeakRMSE`.
-Each role is reevaluated on VAL and TEST; `overall` supplies the primary alias.
-See [checkpoint selection](../../docs/CHECKPOINT_SELECTION.md).
+Both VAL roles are retained: `exceedance` is primary and `overall` is the
+conventional sensitivity selector. Both receive final VAL/TEST evaluation with
+the corrected eleven episode-aware metrics. Episode peak supervision defaults
+to zero; set `EPISODE_GT_ALIGNED_PEAK_WEIGHT` to a positive value only with G0
+and Tail-MSE (T0 or T1). See [losses](../../docs/LOSSES.md) and
+[checkpoint selection](../../docs/CHECKPOINT_SELECTION.md).
 
 The interpreter remains `/home/exouser/.conda/envs/torchpyg-cu12x/bin/python`.
 Export `S0_PYTHON_BIN` to deliberately override it.
@@ -106,5 +107,5 @@ Invoking a launcher without `DRY_RUN=1` submits its jobs through `qsub_local`
 after [preflight.sh](preflight.sh) verifies training imports and CUDA.
 Generation alone never submits jobs. Tests reproduce all configs and the
 manifest, parse dry-run arguments, compare unchanged settings to Single
-controls, check all four checkpoint roles, and exercise launch order using a
+controls, check both checkpoint roles, and exercise launch order using a
 mock queue.

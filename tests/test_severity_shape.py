@@ -637,7 +637,7 @@ class SeverityShapeTests(unittest.TestCase):
                         '--shape_loss_weight', shape_weight, '--severity_shape_eps', '2e-6',
                         '--exceedance_percentile', '75', '--epochs', '1', '--device', 'cpu', '--num_workers', '0',
                         '--hidden_channels', '16', '--history_hours', '12'])
-                self.assertEqual(constructor.call_args.kwargs, dict(event_prior=fitted['event_prior'], extreme_hour_prior=fitted['train_extreme_hour_rate']))
+                self.assertEqual(constructor.call_args.kwargs, dict(event_prior=fitted['event_prior'], extreme_hour_prior=fitted['train_extreme_hour_rate'], p_episode_peak=None))
                 ckpt = next(destination.glob('best_*.pth'))
                 saved = torch.load(ckpt, weights_only=False)
                 self.assertEqual({k:v for k,v in saved['threshold_metadata'].items() if k != 'tau_normalized'},

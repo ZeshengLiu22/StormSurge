@@ -10,12 +10,14 @@ from torch.nn.parallel import DistributedDataParallel
 
 from emulator.data.normalization import normalize_inputs
 from .metrics import evaluate_metrics
+from .episode_peaks import validate_episode_peak_traversal
 
 
 @dataclass
 class EpochResult:
     metrics: dict
     predictions: dict | None = None
+    losses: dict | None = None
 
 
 def run_epoch(model, loader, device, stats, *, station_feat=None, optimizer=None,
@@ -30,6 +32,10 @@ def run_epoch(model, loader, device, stats, *, station_feat=None, optimizer=None
     model.train(training)
     # Evaluation does not need gradient synchronization.
     network = model.module if not training and isinstance(model, DistributedDataParallel) else model
+    if training and criterion.config.episode_gt_aligned_peak_weight > 0:
+        validate_episode_peak_traversal(loader)
+    loss_sums = {}
+    loss_target_count = 0
     if training:
         optimizer.zero_grad(set_to_none=True)
     truth, predictions, ids, timestamps, tags = [], [], [], [], []
@@ -52,7 +58,12 @@ def run_epoch(model, loader, device, stats, *, station_feat=None, optimizer=None
                 if training:
                     group_start = (step // grad_accum_steps) * grad_accum_steps
                     group_batches = min(grad_accum_steps, len(loader) - group_start)
-                    loss = criterion(output, prediction, target) / group_batches
+                    loss = criterion(output, prediction, target,
+                                     episode_gt_peak_mask=getattr(batch, "is_episode_gt_peak", None)) / group_batches
+                    loss_target_count += target.numel()
+                    for name, value in criterion.last_components.items():
+                        factor = 1 if name == "episode_peak_target_count" else target.numel()
+                        loss_sums[name] = loss_sums.get(name, 0) + value.double() * factor
                     if scaler is not None:
                         scaler.scale(loss).backward()
                     else:
@@ -111,4 +122,14 @@ def run_epoch(model, loader, device, stats, *, station_feat=None, optimizer=None
             reconstruction = arrays["body_phys"] + arrays["gate_probability"][:, None] * arrays["excess_phys"]
             if not np.allclose(reconstruction, arrays["y_pred"], rtol=2e-5, atol=2e-6):
                 raise ValueError("Dual branch reconstruction does not match the physical prediction.")
-    return EpochResult(metrics, arrays)
+    losses = None
+    if training and loss_sums:
+        names = list(loss_sums)
+        totals = torch.stack([*loss_sums.values(), prediction.new_tensor(loss_target_count, dtype=torch.float64)])
+        if distributed:
+            dist.all_reduce(totals)
+        totals = totals.cpu().tolist()
+        losses = {name: (int(value) if name == "episode_peak_target_count" else value / totals[-1])
+                  for name, value in zip(names, totals)}
+        losses["p_episode_peak"] = criterion.p_episode_peak
+    return EpochResult(metrics, arrays, losses)

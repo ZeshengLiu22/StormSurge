@@ -1,4 +1,4 @@
-"""All four checkpoint roles follow one trajectory; final TEST cannot select epochs."""
+"""Both checkpoint roles follow one trajectory; final TEST cannot select epochs."""
 
 import contextlib
 import copy
@@ -42,7 +42,7 @@ def arguments(graphs, stations, output, variant='single', mode='overall'):
 
 def metric(values):
     result = evaluate_metrics(np.array([[0., 2., 1., 4.]]), np.array([[0., 1., 3., 4.]]), 2.)
-    result.update(zip(('all_rmse', 'exceedance_rmse', 'gt_aligned_peak_rmse'), values))
+    result.update(zip(('all_rmse', 'exceedance_rmse'), values))
     return result
 
 
@@ -67,7 +67,7 @@ def recorded_run(root, mode='overall', variant='single', test_score=999.):
                 torch.testing.assert_close(value, state['snapshots'][winner][key], rtol=0, atol=0)
             result = real_epoch(model, loader, **kwargs)
             if split == 'test':
-                result.metrics.update(zip(('all_rmse', 'exceedance_rmse', 'gt_aligned_peak_rmse'), [test_score] * 3))
+                result.metrics.update(zip(('all_rmse', 'exceedance_rmse'), [test_score] * 3))
             return result
         if kwargs.get('optimizer') is not None:
             state['train_calls'] += 1
@@ -101,7 +101,7 @@ class CheckpointPipelineTests(unittest.TestCase):
     def setUpClass(cls):
         torch.set_num_threads(1)
 
-    def test_four_roles_all_formulations_both_final_splits_and_primary_alias(self):
+    def test_two_roles_all_formulations_both_final_splits_and_primary_alias(self):
         for variant in ('single', 'direct', 'severity_shape'):
             for mode in ROLES:
                 with self.subTest(variant=variant, mode=mode), tempfile.TemporaryDirectory() as temporary:
@@ -131,16 +131,15 @@ class CheckpointPipelineTests(unittest.TestCase):
                         self.assertEqual(checkpoint['val'], metric(VALUES[epoch - 1]))
                         for split in ('val', 'test'):
                             reported = summary['checkpoint_comparison'][role][split]
-                            self.assertTrue(set(METRIC_KEYS).issubset(reported))
-                            self.assertIn('exceedance_rmse_lead_0', reported)
+                            self.assertEqual(set(METRIC_KEYS), set(reported))
                             with np.load(output / f'{split}_predictions_{role}.npz') as exported:
                                 self.assertIn('target_timestamps', exported.files)
                                 self.assertEqual(exported['tau_physical'], checkpoint['tau_physical'])
                     logs = [json.loads(line) for line in next(output.glob('metrics_*.jsonl')).read_text().splitlines()]
                     self.assertEqual(len(logs), len(VALUES))
                     for log, (a, e, p) in zip(logs, VALUES):
-                        self.assertEqual(set(log), {'epoch', 'train', 'val', 'bea_score'})
-                        self.assertEqual(log['bea_score'], .50 * a + .25 * e + .25 * p)
+                        self.assertEqual(set(log), {'epoch', 'train', 'val', 'checkpoint_scores'})
+                        self.assertEqual(log['checkpoint_scores'], dict(overall=a, exceedance=e))
                     report = (output / 'checkpoint_comparison.md').read_text()
                     comparison = json.loads((output / 'checkpoint_comparison.json').read_text())
                     self.assertEqual(comparison['threshold_metadata'], summary['threshold_metadata'])
@@ -155,7 +154,7 @@ class CheckpointPipelineTests(unittest.TestCase):
                     self.assertEqual(final_lines[selected_index:-1],
                                      compact_comparison_report(summary['checkpoint_comparison']).splitlines())
                     self.assertTrue(final_lines[-1].startswith('Wall time:'))
-                    for label, role in zip(('Overall', 'Exceedance', 'Aligned-peak', 'BEA'), ROLES):
+                    for label, role in zip(('Overall', 'Exceedance'), ROLES):
                         self.assertIn(f'{label} epoch: {WINNERS[role]}', report)
                     for split in ('val', 'test'):
                         section = report.split(f'{split.upper()} — Overall', 1)[1].split('TEST — Overall')[0]
@@ -165,20 +164,20 @@ class CheckpointPipelineTests(unittest.TestCase):
                             self.assertIn(row, section)
                     self.assertIn('strict exceedance y > tau', comparison['method'])
                     self.assertIn('TRAIN hourly target Q95', comparison['method'])
-                    for label in ('AllRMSE', 'ExceedanceRMSE', 'WindowPeakRMSE', 'GTAlignedPeakRMSE', 'EpisodePeakRMSE'):
+                    for label in ('AllRMSE', 'ExceedanceRMSE', 'EpisodeGTAlignedPeakRMSE', 'EpisodePeakRMSE'):
                         self.assertIn(label, report)
 
     def test_test_values_cannot_change_any_selected_epoch(self):
         selected = []
         for score in (0., 1e12):
             with tempfile.TemporaryDirectory() as temporary:
-                output, state = recorded_run(Path(temporary), 'bea', test_score=score)
+                output, state = recorded_run(Path(temporary), 'exceedance', test_score=score)
                 summary = json.loads(next(output.glob('summary_*.json')).read_text())
                 selected.append({role: value['epoch'] for role, value in summary['checkpoint_selection']['checkpoints'].items()})
                 self.assertEqual(summary['test']['all_rmse'], score)
         self.assertEqual(selected, [WINNERS] * 2)
 
-    def test_four_role_bookkeeping_and_primary_do_not_change_real_cpu_training(self):
+    def test_two_role_bookkeeping_and_primary_do_not_change_real_cpu_training(self):
         # Compare against retaining only the overall role, including
         # optimizer moments, scheduler state, losses, model weights, and RNG.
         for variant in ('single', 'direct', 'severity_shape'):

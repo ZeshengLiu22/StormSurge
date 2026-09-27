@@ -43,11 +43,10 @@ accumulation steps, learning rate `5e-3`, 300 epochs, five warmup epochs,
 cosine schedule, BF16 AMP, TF32, chronological 60/20/20 splits, and seed 42.
 See the [manifest](manifest.csv) and [loss definitions](../../docs/LOSSES.md).
 
-`multickpt` refers to four VAL-selected checkpoints from one training trajectory:
-`overall`, `exceedance`, `aligned_peak`, and `bea` (Balanced Event-Aware).
-BEA minimizes `0.50*AllRMSE + 0.25*ExceedanceRMSE + 0.25*GTAlignedPeakRMSE`
-with fixed weights. Every role is reevaluated on VAL and TEST; `overall`
-supplies the primary result. See [checkpoint selection](../../docs/CHECKPOINT_SELECTION.md).
+`multickpt` retains two VAL checkpoints from one trajectory: `exceedance`
+(primary research result) and `overall` (conventional sensitivity). Both receive
+the same timestamp-aware final VAL/TEST evaluation. See
+[checkpoint selection](../../docs/CHECKPOINT_SELECTION.md).
 
 The configured Python is `/home/exouser/.conda/envs/torchpyg-cu12x/bin/python`;
 export `WQEF_PYTHON_BIN` to override it. Formal Dual results use
@@ -72,6 +71,6 @@ after [preflight.sh](preflight.sh) verifies imports and CUDA availability.
 Generation alone never submits jobs.
 
 Tests reproduce all configs and the manifest, parse dry-run arguments, compare
-unchanged settings to existing Dual controls, check all four checkpoint roles,
+unchanged settings to existing Dual controls, check both checkpoint roles,
 and exercise launch order using a mock queue.
 The [Single factorial](../s0_refresh/README.md) supplies matching G × T controls.

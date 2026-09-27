@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Compare new prediction exports on identical GT hours, windows and episodes."""
+"""Compare new prediction exports on identical GT hours and episodes."""
 
 import argparse
 import csv
@@ -181,22 +181,6 @@ def episode_rows(name, arrays, episodes, membership):
     return rows
 
 
-def window_rows(name, arrays, membership):
-    y, p = arrays["y_true"], arrays["y_pred"]
-    tau = float(scalar(arrays, "tau_physical"))
-    rows = []
-    for i, bin_id in zip(np.flatnonzero((y > tau).any(axis=1)), membership):
-        h = int(y[i].argmax())
-        rows.append(dict(model=name, window_id=str(arrays["tags"][i]), gt_peak_bin=int(bin_id),
-                         station=scalar(arrays, "station"), split=target_split(arrays, i, h),
-                         gt_peak=float(y[i, h]), lead=h, timestamp=utc(arrays["target_timestamps"][i, h]),
-                         true_excess=float(y[i, h]) - tau, prediction_at_gt_peak=float(p[i, h]),
-                         window_peak_error=float(p[i].max() - y[i, h]),
-                         gt_aligned_peak_error=float(p[i, h] - y[i, h]),
-                         **branch_fields(arrays, i, h, tau)))
-    return rows
-
-
 def summarize_branch(rows):
     if not rows or "raw_excess_error" not in rows[0]:
         return {}
@@ -224,10 +208,6 @@ def summarize_bins(rows, bin_key, population):
                 area = _errors(values("excess_area_error"), "episode_excess_area")
                 result.update({key: area[key] for key in ("episode_excess_area_mae", "episode_excess_area_bias")})
                 result.update(_under(values("prediction_at_gt_peak"), values("gt_peak"), "episode_gt_aligned_peak"))
-            elif population == "event_window_peak":
-                for prefix in ("window_peak", "gt_aligned_peak"):
-                    error = values(f"{prefix}_error")
-                    result.update(_errors(error, prefix))
             result.update(summarize_branch(selected))
             summaries.append(result)
     return summaries
@@ -242,29 +222,26 @@ def compare(exports, quantile_bins=4):
     episodes = gt_event_episodes(y, times, tau, split_ids=reference.get("split_ids"))
     episode_membership, episode_edges = shared_quantile_bins([y.reshape(-1)[episode].max() for episode in episodes], quantile_bins)
     hour_membership, hour_edges = shared_quantile_bins(y[y > tau].astype(float) - tau, quantile_bins)
-    window_membership, window_edges = shared_quantile_bins(y[(y > tau).any(axis=1)].max(axis=1), quantile_bins)
     frozen = [dict(episode_id=index, timestamps=[utc(value) for value in times.reshape(-1)[episode]],
                    split=target_split(reference, *divmod(int(episode[0]), y.shape[1])),
                    target_indices=episode.tolist(), gt_peak=float(y.reshape(-1)[episode].max()),
                    gt_severity_bin=int(episode_membership[index])) for index, episode in enumerate(episodes)]
     population_hash = hashlib.sha256(json.dumps(frozen, sort_keys=True).encode()).hexdigest()
-    metrics, hours, windows, episode_records = {}, [], [], []
+    metrics, hours, episode_records = {}, [], []
     for name, arrays in exports.items():
         metrics[name] = evaluate_metrics(arrays["y_pred"], y, tau, target_timestamps=times, split_ids=reference.get("split_ids"))
         episode_records.extend(episode_rows(name, arrays, episodes, episode_membership))
         hours.extend(hour_rows(name, arrays, hour_membership))
-        windows.extend(window_rows(name, arrays, window_membership))
     return dict(metric_schema="hourly_q95_v1", threshold_schema="train_hourly_q95_v1", tau_physical=tau,
                 exceedance_percentile=percentile,
                 method=f"TRAIN hourly target Q{percentile:g}; tau={tau:.12g} m; strict y > tau",
                 station=scalar(reference, "station"), split=scalar(reference, "split"),
                 frozen_gt_episodes=frozen, episode_population_sha256=population_hash,
-                bins=dict(episode_gt_peak_edges=episode_edges, event_window_gt_peak_edges=window_edges,
+                bins=dict(episode_gt_peak_edges=episode_edges,
                           true_excess_edges=hour_edges, quantile_method="linear", requested_bin_count=quantile_bins),
-                metrics=metrics, episode_rows=episode_records, extreme_hour_rows=hours, event_window_peak_rows=windows,
+                metrics=metrics, episode_rows=episode_records, extreme_hour_rows=hours,
                 episode_bins=summarize_bins(episode_records, "gt_severity_bin", "episode"),
-                extreme_hour_bins=summarize_bins(hours, "true_excess_bin", "extreme_hour"),
-                event_window_peak_bins=summarize_bins(windows, "gt_peak_bin", "event_window_peak"))
+                extreme_hour_bins=summarize_bins(hours, "true_excess_bin", "extreme_hour"))
 
 
 def write_csv(path, rows, metadata=None):
@@ -344,7 +321,7 @@ def main(argv=None):
     report = compare(exports, args.quantile_bins)
     args.output.mkdir(parents=True, exist_ok=True)
     metadata = {key: report[key] for key in ("station", "split", "metric_schema", "threshold_schema", "exceedance_percentile", "tau_physical", "method")}
-    for key in ("episode_rows", "extreme_hour_rows", "event_window_peak_rows", "episode_bins", "extreme_hour_bins", "event_window_peak_bins"):
+    for key in ("episode_rows", "extreme_hour_rows", "episode_bins", "extreme_hour_bins"):
         write_csv(args.output / f"{key}.csv", report[key], metadata)
     compact = {key: value for key, value in report.items() if not key.endswith("_rows")}
     (args.output / "comparison.json").write_text(json.dumps(compact, indent=2, allow_nan=False) + "\n")

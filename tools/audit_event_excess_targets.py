@@ -21,7 +21,6 @@ REPO = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO))
 from emulator.data import ForcingGraphStore, fit_loss_thresholds, supervised_targets, validate_target_timestamps
 from emulator.training.excess_amplitude import physical_excess_target
-from emulator.training.metrics import evaluate_metrics
 
 
 def require(condition, message):
@@ -63,8 +62,7 @@ def audit_targets(labels, timestamps, tags, sample_ids, tau, station, split):
     selected = np.flatnonzero(event.numpy().reshape(-1))
     excess = excess.numpy()[selected]
     positive = excess > 0
-    canonical = evaluate_metrics(labels, labels, tau, include_leadwise=False)
-    require(len(selected) == canonical["event_window_n"] and int(positive.sum()) == canonical["extreme_hour_n"],
+    require(len(selected) == int((labels > tau).any(axis=1).sum()) and int(positive.sum()) == int((labels > tau).sum()),
             "Production training/evaluation event populations disagree.")
 
     windows, width = excess.shape

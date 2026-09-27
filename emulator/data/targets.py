@@ -99,7 +99,7 @@ def supervised_targets(store, indices):
 def threshold_population(labels, timestamps, tau_physical):
     """Count strict extreme hours, event windows and contiguous hourly episodes."""
     # Import lazily to keep data-module imports independent of training setup.
-    from emulator.training.metrics import evaluate_metrics
+    from emulator.training.metrics import gt_event_episodes
 
     labels = np.asarray(labels, dtype=np.float64)
     timestamps = validate_target_timestamps(timestamps)
@@ -107,7 +107,10 @@ def threshold_population(labels, timestamps, tau_physical):
         raise ValueError("Finite target labels and timestamps must have matching [windows, horizons] shapes.")
     if not np.isfinite(tau_physical):
         raise ValueError("The TRAIN physical threshold must be finite.")
-    metrics = evaluate_metrics(labels, labels, tau_physical, target_timestamps=timestamps, include_leadwise=False)
-    return dict(target_hour_count=int(labels.size), extreme_hour_count=metrics["extreme_hour_n"],
-                extreme_hour_rate=metrics["extreme_hour_rate"], event_window_count=metrics["event_window_n"],
-                event_window_rate=metrics["event_window_rate"], episode_count=metrics["episode_n"])
+    extreme = labels > tau_physical
+    events = extreme.any(axis=1)
+    return dict(target_hour_count=int(labels.size), extreme_hour_count=int(extreme.sum()),
+                extreme_hour_rate=float(extreme.mean()) if labels.size else None,
+                event_window_count=int(events.sum()),
+                event_window_rate=float(events.mean()) if events.size else None,
+                episode_count=len(gt_event_episodes(labels, timestamps, tau_physical)))

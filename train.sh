@@ -111,6 +111,7 @@ if [[ -z "${LOSS_MODE_LIST+x}" ]]; then LOSS_MODE_LIST=("mse"); fi
 
 # Loss knobs
 : "${EXCEEDANCE_LOSS_WEIGHT:=0}"
+: "${EPISODE_GT_ALIGNED_PEAK_WEIGHT:=0.0}"
 : "${EXCEEDANCE_LOSS_MODE:=mse}"
 : "${EXCESS_LOSS_MODE:=mse}"
 : "${WQE_QUANTILE_TAU:=0.25}"
@@ -151,7 +152,11 @@ fi
 : "${SHAPE_LOSS_WEIGHT:=0}"
 : "${SEVERITY_SHAPE_EPS:=1e-6}"
 : "${EXCESS_AMP_LOSS_WEIGHT:=0}"
-: "${CHECKPOINT_SELECTION:=overall}"  # overall | exceedance | aligned_peak | bea
+: "${CHECKPOINT_SELECTION:=exceedance}"  # exceedance (primary) | overall (sensitivity)
+case "${CHECKPOINT_SELECTION}" in
+  overall|exceedance) ;;
+  *) echo "[FATAL] CHECKPOINT_SELECTION must be overall or exceedance." >&2; exit 2 ;;
+esac
 : "${GATE_LOSS_WEIGHT:=1}"
 : "${ROP_METRIC:=val_all_rmse}"   # val_all_rmse | val_exceedance_rmse
 
@@ -378,6 +383,7 @@ write_resolved_config() {
     EPOCHS HIDDEN_CHANNELS NUM_LAYERS DROPOUT HEAD_DROPOUT SEED TRAIN_RATIO
     VAL_RATIO SHUFFLE_YEARS FUTURE_ONLY FUTURE_YEAR_THRESHOLD LR_LIST
     HISTORY_HOURS_LIST LOSS_MODE_LIST EXCEEDANCE_LOSS_WEIGHT EXCEEDANCE_LOSS_MODE
+    EPISODE_GT_ALIGNED_PEAK_WEIGHT
     EXCESS_LOSS_MODE WQE_QUANTILE_TAU WQE_EXPECTILE_TAU WQE_QUANTILE_WEIGHT WQE_EXPECTILE_WEIGHT
     WMSE_ALPHA WMSE_S SLOPE_LAMBDA_LIST SLOPE_MASK_S_LIST
     SLOPE_ROBUST SLOPE_CHARB_EPS SLOPE_HUBER_DELTA SCHEDULER ROP_METRIC ROP_FACTOR ROP_PATIENCE
@@ -458,6 +464,7 @@ echo "TEST_DATA_TAG: ${TEST_DATA_TAG}"
 echo "LR_LIST:       ${LR_LIST[*]}"
 echo "Loss modes:    ${LOSS_MODE_LIST[*]}"
 echo "Global prediction loss: ${LOSS_MODE_LIST[*]}"
+echo "Episode GT-aligned peak MSE weight: ${EPISODE_GT_ALIGNED_PEAK_WEIGHT}"
 echo "Tail loss: ${EXCEEDANCE_LOSS_MODE} (weight=${EXCEEDANCE_LOSS_WEIGHT})"
 if [[ "${MODEL}" == "perceiver3" && "${HEAD_TYPE}" == "dual" ]]; then
   echo "Dual excess loss: ${EXCESS_LOSS_MODE}"
@@ -465,7 +472,7 @@ else
   echo "Dual excess loss: inactive (head_type=single)"
 fi
 echo "WQE: q_tau=${WQE_QUANTILE_TAU} e_tau=${WQE_EXPECTILE_TAU} q_weight=${WQE_QUANTILE_WEIGHT} e_weight=${WQE_EXPECTILE_WEIGHT}"
-echo "Checkpoint roles (VAL-only): overall, exceedance, aligned_peak, bea; primary=${CHECKPOINT_SELECTION}"
+echo "Checkpoint roles (VAL-only): overall, exceedance; primary=${CHECKPOINT_SELECTION}"
 echo "Loss weights:  body=${BODY_LOSS_WEIGHT} excess=${EXCESS_LOSS_WEIGHT} gate=${GATE_LOSS_WEIGHT} exceedance=${EXCEEDANCE_LOSS_WEIGHT} amplitude=${EXCESS_AMP_LOSS_WEIGHT} shape=${SHAPE_LOSS_WEIGHT} slope=${SLOPE_LAMBDA_LIST[*]} (terms enabled by head/loss mode)"
 echo "H_LIST:        ${HISTORY_HOURS_LIST[*]}"
 echo "Split:         train=${TRAIN_RATIO} val=${VAL_RATIO} shuffle_years=${SHUFFLE_YEARS} future_only=${FUTURE_ONLY} future_year_threshold=${FUTURE_YEAR_THRESHOLD} seed=${SEED}"
@@ -564,6 +571,7 @@ for LOSS_MODE in "${LOSS_MODE_LIST[@]}"; do
             LOSS_TAG+="_tail${EXCEEDANCE_LOSS_MODE}"
           fi
           LOSS_ARGS=(--loss_mode "${LOSS_MODE}" --exceedance_loss_weight "${EXCEEDANCE_LOSS_WEIGHT}"
+                     --episode_gt_aligned_peak_weight "${EPISODE_GT_ALIGNED_PEAK_WEIGHT}"
                      --exceedance_loss_mode "${EXCEEDANCE_LOSS_MODE}"
                      --excess_loss_mode "${EXCESS_LOSS_MODE}"
                      --wqe_quantile_tau "${WQE_QUANTILE_TAU}" --wqe_expectile_tau "${WQE_EXPECTILE_TAU}"

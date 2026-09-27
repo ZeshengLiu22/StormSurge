@@ -8,7 +8,7 @@ from emulator.common.cli import head_type_name, parse_bool_int, temporal_block_n
 from emulator.common.dual import DUAL_ABLATIONS, EXCESS_FORMULATIONS
 from .checkpoint_selection import ROLES
 from .losses import (enforce_dual_loss, validate_excess_amp_config,
-                     validate_shape_config, validate_wqe_config)
+                     validate_shape_config, validate_wqe_config, validate_episode_peak_config)
 
 
 def parse_args(argv=None):
@@ -114,6 +114,8 @@ def parse_args(argv=None):
                         help="Linear quantile percentile of unique physical TRAIN target hours; reused for every split.")
     parser.add_argument("--exceedance_loss_weight", type=float, default=0.0,
                         help="Extra Tail loss on strict hourly y > TRAIN tau, divided by fixed TRAIN extreme-hour prevalence.")
+    parser.add_argument("--episode_gt_aligned_peak_weight", type=float, default=0.0,
+                        help="Single episode GT-peak amplitude MSE weight; fixed TRAIN peak prevalence normalization.")
     parser.add_argument("--exceedance_loss_mode", choices=["mse", "wqe"], default="mse",
                         help="Tail pointwise penalty; independent of global and raw-excess loss modes.")
     parser.add_argument("--slope_lambda", type=float, default=0.01,
@@ -212,11 +214,8 @@ def parse_args(argv=None):
     parser.add_argument("--transformer_dropout", type=float, default=0.05)
     parser.add_argument("--max_time_steps", type=int, default=32,
                         help="PACT lag-embedding capacity, including the current step; ignored by baseline.")
-    parser.add_argument("--checkpoint_selection", choices=ROLES, default="overall",
-                        help="Primary checkpoint role; all four VAL-only roles are always retained. "
-                             "Minimize AllRMSE (overall), ExceedanceRMSE (exceedance), "
-                             "GTAlignedPeakRMSE (aligned_peak), or Balanced Event-Aware "
-                             "0.50*AllRMSE + 0.25*ExceedanceRMSE + 0.25*GTAlignedPeakRMSE (bea).")
+    parser.add_argument("--checkpoint_selection", choices=ROLES, default="exceedance",
+                        help="Primary VAL checkpoint: exceedance (research default) or overall (sensitivity); both retained.")
     parser.add_argument("--run_tag", type=str, default=None)
     parser.add_argument(
         "--output_dir",
@@ -265,6 +264,9 @@ def parse_args(argv=None):
             parser.error(f"--{name} must be finite; small values use the original numerical floor.")
     try:
         validate_wqe_config(args)
+        validate_episode_peak_config(args, head_type=args.head_type)
+        if args.episode_gt_aligned_peak_weight > 0 and args.exceedance_percentile != 95.0:
+            raise ValueError("Episode peak supervision requires the fixed TRAIN Q95 threshold.")
         validate_excess_amp_config(args, head_type=args.head_type)
         validate_shape_config(args, head_type=args.head_type, model=args.model)
     except ValueError as error:

@@ -129,8 +129,8 @@ is not extreme. Its true physical excess is $e_t^*=\max(y_t-\tau,0)$.
 
 **Event Window:** a supervised forecast block with at least one Extreme Hour:
 $E_i=\mathbf1[\exists h:y_{ih}>\tau]$. A window may contain both extreme and
-ordinary hours. The gate target is $E_i$; Event Window trajectory metrics score
-all its horizons.
+ordinary hours. The gate target is $E_i$; Dual branch trajectory supervision
+uses all its horizons. Canonical final peak metrics use Event Episodes.
 
 **Event Episode:** a maximal chronological contiguous sequence of GT Extreme
 Hours. Adjacency is exactly one hour, gap tolerance is zero, and minimum duration

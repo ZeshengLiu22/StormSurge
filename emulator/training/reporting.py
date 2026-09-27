@@ -7,8 +7,6 @@ from .checkpoint_selection import ROLES
 _ROLE_LABELS = {
     "overall": "Overall",
     "exceedance": "Exceedance",
-    "aligned_peak": "Aligned-peak",
-    "bea": "BEA",
 }
 _COMPACT_METRIC_ROWS = (
     (("all_rmse", "all_mae"), 1000, "mm"),
@@ -45,15 +43,11 @@ def comparison_report(evaluations, metadata):
     lines.extend(f'{_ROLE_LABELS[role]} epoch: {evaluations[role]["epoch"]}' for role in ROLES)
     lines.append("")
     for split in ("val", "test"):
-        groups = dict(METRIC_GROUPS)
-        # Include per-lead diagnostics as well as every canonical metric group.
-        extra = sorted({key for role in ROLES for key in evaluations[role][split]} - set(METRIC_LABELS))
-        if extra:
-            groups["Additional diagnostics"] = extra
+        groups = METRIC_GROUPS
         for group, entries in groups.items():
             lines.extend([f"{split.upper()} — {group}", "",
-                          "| Metric | Overall | Exceedance | AlignedPeak | BEA |",
-                          "| --- | ---: | ---: | ---: | ---: |"])
+                          "| Metric | " + " | ".join(_ROLE_LABELS[role] for role in ROLES) + " |",
+                          "| --- | " + " | ".join("---:" for role in ROLES) + " |"])
             for key in entries:
                 label = METRIC_LABELS.get(key, key)
                 values = " | ".join(display(evaluations[role][split].get(key)) for role in ROLES)
@@ -79,3 +73,12 @@ def compact_comparison_report(evaluations):
                     values.append(f"{METRIC_LABELS[key]}={formatted}")
                 lines.append(" | ".join(values))
     return "\n".join(lines) + "\n"
+
+
+def format_loss_components(losses):
+    labels = dict(global_mse_raw="GlobalMSE", tail_mse_raw="TailMSE",
+                  tail_weighted="TailWeighted", episode_gt_aligned_peak_mse_raw="EpisodeGTAlignedPeakMSE",
+                  episode_gt_aligned_peak_weighted="EpisodePeakWeighted",
+                  episode_peak_target_count="EpisodePeakN", p_episode_peak="TRAINPeakPrevalence",
+                  total_loss="TotalLoss")
+    return "Loss " + " ".join(f"{label}={display(losses.get(key))}" for key, label in labels.items())

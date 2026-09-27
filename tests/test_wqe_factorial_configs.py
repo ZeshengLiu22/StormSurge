@@ -67,7 +67,7 @@ class FactorialConfigChecks:
                     self.assertEqual(row['head_type'], self.head)
                     self.assertEqual((args.body_loss_weight, args.excess_loss_weight, args.gate_loss_weight), self.branch_weights)
                     self.assertEqual((args.excess_amp_loss_weight, args.shape_loss_weight), (0., 0.))
-                    self.assertEqual(args.checkpoint_selection, 'overall')
+                    self.assertEqual(args.checkpoint_selection, 'exceedance')
                     for name, value in PARAMETERS.items():
                         self.assertEqual(getattr(args, name), value)
                     run_dir = Path(args.output_dir)
@@ -80,7 +80,7 @@ class FactorialConfigChecks:
                     self.assertEqual(record['result_root'], self.results_root)
                     self.assertIn('Results root:  ' + self.results_root, log)
                     self.assertIn(f'Tail loss: {args.exceedance_loss_mode}', log)
-                    self.assertIn(f"Checkpoint roles (VAL-only): {', '.join(ROLES)}; primary=overall", log)
+                    self.assertIn(f"Checkpoint roles (VAL-only): {', '.join(ROLES)}; primary=exceedance", log)
                     run_names.add(name)
                     # Every resolved model/training option must equal the
                     # unchanged station control, apart from factors and identity.
