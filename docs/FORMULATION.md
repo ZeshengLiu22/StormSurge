@@ -139,6 +139,10 @@ breaks the episode. An episode may cross a forecast-window boundary. Predictions
 never determine episode membership, and independently detected predicted episodes
 are not matched to GT episodes.
 
+Single's [episode peak supervision](EPISODE_PEAK.md) selects one timestamp per
+TRAIN Event Episode: the earliest timestamp attaining its GT maximum. The
+prediction determines neither the episode nor its canonical GT peak timestamp.
+
 For example, take $\tau=0.20$ m and two adjacent six-hour blocks:
 
 | Hour | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 |

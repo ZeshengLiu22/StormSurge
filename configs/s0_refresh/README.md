@@ -1,6 +1,13 @@
 # Single G × T factorial
 
-Status: not archived. See the [configuration overview](../README.md).
+**Status: ACHIEVED — completed Single G/T study.**
+
+The earlier Single comparison established simple Global MSE + Tail-MSE as the
+reference direction. All 24 manifest cells have saved final VAL/TEST summaries
+and completed logs (verified 2026-09-27). This family is superseded for current
+development by [single_tail_episodepeak_4x4](../single_tail_episodepeak_4x4/README.md).
+Its specification, configs, manifests, and previous formal results remain for
+provenance and reproduction. See the [configuration overview](../README.md).
 
 This family contains 24 Single-head PACT configs: CBBT, Boston, Battery, and
 Lewes × global MSE/WQE × Tail off/MSE/WQE. Each station has six cells.
@@ -77,8 +84,8 @@ normalization, station metadata, and loader settings remain the same.
 The [Dual factorial](../wqe_factorial_multickpt/README.md) provides corresponding
 G/E/T cells, with active branch weights 1/2/0.5.
 
-Both VAL roles are retained: `exceedance` is primary and `overall` is the
-conventional sensitivity selector. Both receive final VAL/TEST evaluation with
+Reruns with the current implementation retain both VAL roles: `exceedance` is
+primary and `overall` is the conventional sensitivity selector. Both receive final VAL/TEST evaluation with
 the corrected eleven episode-aware metrics. Episode peak supervision defaults
 to zero; set `EPISODE_GT_ALIGNED_PEAK_WEIGHT` to a positive value only with G0
 and Tail-MSE (T0 or T1). See [losses](../../docs/LOSSES.md) and

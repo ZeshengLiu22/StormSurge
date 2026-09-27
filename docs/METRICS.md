@@ -46,7 +46,7 @@ Every episode has equal weight in an episode reduction.
 
 Bias is prediction minus GT. Smaller RMSE/MAE is better; bias closer to zero is
 better. The aligned metric samples the prediction at the GT peak time. The
-[Single episode loss](LOSSES.md#single-episode-gt-aligned-peak-amplitude-loss)
+[Single episode loss](EPISODE_PEAK.md#relationship-to-evaluation)
 uses that same amplitude error, squared. It adds no timing supervision.
 
 Both retained [checkpoints](CHECKPOINT_SELECTION.md) receive the same fresh final

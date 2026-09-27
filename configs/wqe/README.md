@@ -1,6 +1,11 @@
 # WQE placement
 
-**Status: Archived（已完成并归档）.**
+**Status: ACHIEVED — completed WQE placement study / legacy reference.**
+
+This study compared WQE on the global prediction, raw-excess branch, or both.
+All 12 manifest cells have saved final VAL/TEST summaries and completed logs
+(verified 2026-09-27). WQE remains historical/diagnostic and is outside the
+current [Single Tail × EpisodePeak 4×4](../single_tail_episodepeak_4x4/README.md).
 
 This completed family contains 12 NCEP configurations: CBBT, Lewes, Battery,
 and Boston × three WQE placements on the direct Dual head.

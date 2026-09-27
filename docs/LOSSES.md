@@ -2,6 +2,13 @@
 
 The objective is implemented by `ForecastLoss` in [losses.py](../emulator/training/losses.py), with [amplitude](../emulator/training/excess_amplitude.py) and [shape](../emulator/training/excess_shape.py) helpers. Every extreme target or mask uses the fixed TRAIN threshold defined in [FORMULATION.md](FORMULATION.md). Architecture constraints are specified in [DUAL_EXCEEDANCE.md](DUAL_EXCEEDANCE.md) and [SEVERITY_SHAPE.md](SEVERITY_SHAPE.md).
 
+Current Single development uses the [Tail × EpisodePeak 4×4](../configs/single_tail_episodepeak_4x4/README.md):
+`GlobalMSE + lambda_T * TailMSE + lambda_P * EpisodeGTAlignedPeakMSE`.
+Global MSE covers all supervised hours, Tail-MSE covers strict TRAIN Q95
+exceedance hours, and the episode term selects one GT peak per physical TRAIN
+episode. The [episode method](EPISODE_PEAK.md) defines construction and
+normalization. No forecast-window peak objective is active in this family.
+
 <!-- choices loss_mode: mse,wqe,wmse,mse_slope,wqe_slope,wmse_slope -->
 <!-- choices excess_loss_mode: mse,wqe -->
 <!-- choices exceedance_loss_mode: mse,wqe -->
@@ -203,7 +210,7 @@ training steps, not a frozen-checkpoint evaluation.
 ### Timestamp and traversal audit
 
 Saved Grid4_New NCEP targets are `[t,t+1,...,t+5]` at six-hour centers. The
-[data audit](../reports/episode_peak/audit.json) verified **79,344 unique TRAIN
+[data audit](audits/episode_peak/audit.json) verified **79,344 unique TRAIN
 hours per station** and zero repeated timestamps. Overlapping forcing histories
 do not duplicate target hours. Each physical peak therefore has one natural
 occurrence; no duplicate canonicalization rule is needed. The existing loader
@@ -348,7 +355,11 @@ All enabled terms can update the shared backbone. Targets, normalization statist
 | Amplitude | GT-aligned raw excess; severity and shape through their product | No | Yes | Yes |
 | Shape | Shape | No | No | Yes |
 
-## Canonical generated experiments
+## Legacy baseline ablation experiments
+
+The [baseline family](../configs/baseline_ablation/README.md) is retained as a
+legacy reference; its original formal completion is unverified. Current Single
+development uses the [4×4 family](../configs/single_tail_episodepeak_4x4/README.md).
 
 [tools/generate_configs.py](../tools/generate_configs.py) generates the matched S0/D0/D1/D2/D3 variants. Their primary objective is MSE and slope weight is inactive. Generator branch weights override parser defaults: $\lambda_{\mathrm{body}}=1$, $\lambda_{\mathrm{excess}}=2$, $\lambda_{\mathrm{gate}}=0.5$ in every Dual variant. The parser defaults for these three fields are all 1.
 
@@ -372,9 +383,11 @@ $$
 
 The optional Severity–Shape D0–D3 configs use the same matrix with the alternative excess parameterization. Their generated shape weight is 0; explicitly enabling shape supervision adds $\lambda_{\mathrm{shape}}L_{\mathrm{shape}}$ to the corresponding objective. S0 has no Severity–Shape counterpart.
 
-## WQE placement experiments
+## Completed WQE placement study
 
-Generate the separate [WQE family](../configs/wqe) with:
+The [WQE family](../configs/wqe/README.md) is ACHIEVED and retained for
+historical/diagnostic use. WQE is outside the current Single 4×4. Reproduce its
+configuration specification with:
 
 ```bash
 python tools/generate_configs.py --family wqe
@@ -392,9 +405,13 @@ WQE configs save results under `/home/exouser/media/share/PACT/WQE_Results`, wit
 | W2_ExcessWQE | `("mse")` | `"wqe"` |
 | W3_BothWQE | `("wqe")` | `"wqe"` |
 
-Every new run uses the published WQE parameters and Direct D0 settings: body weight 1, excess weight 2, gate weight 0.5, with exceedance, amplitude, and shape weights zero and no active slope term. Startup logs report the effective global loss, Dual excess loss (or Single inactivity), Tail mode and weight, and all four shared WQE parameters. Checkpoint selection, metrics, thresholds, splits, and architecture retain their existing definitions.
+Every WQE placement config uses the published WQE parameters and Direct D0 settings: body weight 1, excess weight 2, gate weight 0.5, with exceedance, amplitude, and shape weights zero and no active slope term. Startup logs report the effective global loss, Dual excess loss (or Single inactivity), Tail mode and weight, and all four shared WQE parameters. Checkpoint selection, metrics, thresholds, splits, and architecture retain their existing definitions.
 
-## Full factorial experiments
+## Completed Single G/T and Dual G/E/T studies
+
+Both families are ACHIEVED and retained for provenance and previous formal
+results. The Single study established Global MSE + Tail-MSE as the reference
+direction, now extended by the [Tail × EpisodePeak 4×4](../configs/single_tail_episodepeak_4x4/README.md).
 
 The [Single family](../configs/s0_refresh/README.md) contains 24 configs
 (4 stations × 2 global modes × 3 Tail levels). The

@@ -38,8 +38,14 @@ with explicit target timestamps. This produces exactly the eleven corrected
 report both roles using the same metric definitions. The compact console displays
 water-level errors in mm and timing in hours. Saved errors remain in meters.
 
-The [Single](../configs/s0_refresh/README.md) and
-[Dual](../configs/wqe_factorial_multickpt/README.md) config generators use these
-two roles and the same primary default. Config generation and dry runs do not
-start training. Existing saved artifacts remain unchanged; Git history retains
+The active [Single Tail × EpisodePeak 4×4](../configs/single_tail_episodepeak_4x4/README.md)
+uses these two roles, with primary `exceedance` and secondary `overall`.
+The completed [Single G/T](../configs/s0_refresh/README.md) and
+[Dual G/E/T](../configs/wqe_factorial_multickpt/README.md) specifications remain
+available for reproduction with the same current roles. Config generation and
+dry runs do not start training.
+
+Historical `aligned_peak` and `bea` selectors are retired. Saved results from
+completed studies retain their original selection and metric schemas; current
+reruns use the two roles and eleven final metrics above. Git history retains
 the previous selection implementation.

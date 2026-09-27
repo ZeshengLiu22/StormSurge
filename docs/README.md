@@ -1,8 +1,11 @@
 # PACT documentation
 
-This documentation describes the supported implementation. Read it in this order:
-forecasting task → hourly extreme definition → backbone representation → output
-formulation → training objectives → validation checkpoint selection → evaluation.
+This documentation describes the supported implementation. The current Single
+development experiment is the [Tail × EpisodePeak 4×4](../configs/single_tail_episodepeak_4x4/README.md).
+Read in this order: [FORMULATION](FORMULATION.md) → [BACKBONE](BACKBONE.md) →
+output formulation (Single in BACKBONE, or the Dual documents below) →
+[LOSSES](LOSSES.md) / [EPISODE_PEAK](EPISODE_PEAK.md) →
+[CHECKPOINT_SELECTION](CHECKPOINT_SELECTION.md) → [METRICS](METRICS.md).
 
 ```text
 forcing/history + graph + optional station metadata
@@ -34,7 +37,8 @@ forcing/history + graph + optional station metadata
 | [DUAL_EXCEEDANCE](DUAL_EXCEEDANCE.md) | Direct Dual architecture, physical reconstruction, branch targets and supported ablations. |
 | [SEVERITY_SHAPE](SEVERITY_SHAPE.md) | Optional severity × shape excess parameterization sharing the same backbone. |
 | [LOSSES](LOSSES.md) | Complete objectives, masks, reductions, units, gradients, controls and experiment variants. |
-| [CHECKPOINT_SELECTION](CHECKPOINT_SELECTION.md) | Four VAL-selected checkpoints from each training trajectory and final comparison. |
+| [EPISODE_PEAK](EPISODE_PEAK.md) | True episode construction, canonical GT peak supervision, normalization, and implementation audit. |
+| [CHECKPOINT_SELECTION](CHECKPOINT_SELECTION.md) | Two VAL-selected checkpoint roles: exceedance and overall, plus timestamp-aware final evaluation. |
 | [METRICS](METRICS.md) | Authoritative metric dictionary, worked example, lead-wise and fixed-episode diagnostics. |
 
 The [repository README](../README.md) contains commands. Implementation references

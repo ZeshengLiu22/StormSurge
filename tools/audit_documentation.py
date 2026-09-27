@@ -19,7 +19,9 @@ from emulator.training.metrics import METRIC_KEYS, METRIC_LABELS
 
 
 DOCUMENTS = ('README.md', 'FORMULATION.md', 'BACKBONE.md', 'DUAL_EXCEEDANCE.md',
-             'SEVERITY_SHAPE.md', 'LOSSES.md', 'CHECKPOINT_SELECTION.md', 'METRICS.md')
+             'SEVERITY_SHAPE.md', 'LOSSES.md', 'EPISODE_PEAK.md',
+             'CHECKPOINT_SELECTION.md', 'METRICS.md')
+AUDIT_ARTIFACTS = ('audits/episode_peak/audit.json', 'audits/episode_peak/validation.json')
 BANNED = ('rmse_peak5', 'mae_peak5', 'true_peak_rmse_top5', 'Top5RMSE', 'Top5MAE',
           'constrained_peak5', 'constrained_true_peak', 'checkpoint_score_refs',
           'window-max Q95', 'TRAIN window maxima')
@@ -42,7 +44,7 @@ def audit(root=ROOT):
     root = Path(root)
     errors = []
     actual = sorted(p.relative_to(root / 'docs').as_posix() for p in (root / 'docs').rglob('*') if p.is_file())
-    if actual != sorted(DOCUMENTS):
+    if actual != sorted((*DOCUMENTS, *AUDIT_ARTIFACTS)):
         errors.append(f'Active docs set differs: {actual}')
     files = [root / 'README.md', *(root / 'docs' / name for name in DOCUMENTS)]
     text_by_file = {p: p.read_text() for p in files if p.exists()}

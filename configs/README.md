@@ -1,18 +1,46 @@
 # Configuration overview
 
-训练配置按实验内容命名。四组实验都覆盖 CBBT、Lewes、Battery、Boston；
-共享 NCEP Grid4_New 数据、GraphSAGE + Transformer backbone、24 小时历史、
-width 128、batch size 256、4 步梯度累积、学习率 5e-3、300 epochs 和 seed 42。
+当前 Single 开发实验为 **[single_tail_episodepeak_4x4](single_tail_episodepeak_4x4/README.md)**。
+所有实验均覆盖 CBBT、Lewes、Battery、Boston；共享 NCEP Grid4_New 数据、
+GraphSAGE + Transformer backbone、24 小时历史、width 128、batch size 256、
+4 步梯度累积、学习率 5e-3、300 epochs 和 seed 42。
 
-| 目录 | 状态 | 实验内容 | 配置数 |
+| 目录 | 科学状态 | 实验内容 | 配置数 |
 | --- | --- | --- | ---: |
-| [baseline_ablation](baseline_ablation/README.md) | **Temporarily archived（暂时归档）** | S0/D0–D3：Single / Dual、Tail、Amplitude 基础消融 | 20 |
-| [wqe](wqe/README.md) | **Archived（已完成并归档）** | W1/W2/W3：WQE 用于 global prediction、excess 分支或两者 | 12 |
-| [s0_refresh](s0_refresh/README.md) | 未归档 | Single-head：G0/G1 × T0/T1/T2 | 24 |
-| [wqe_factorial_multickpt](wqe_factorial_multickpt/README.md) | 未归档 | Dual-head：G0/G1 × E0/E1 × T0/T1/T2 | 48 |
+| [single_tail_episodepeak_4x4](single_tail_episodepeak_4x4/README.md) | **ACTIVE — current Single Tail × EpisodePeak factorial** | Global MSE only；Tail-MSE × EpisodeGTAlignedPeak-MSE 权重 4×4 | 64 |
+| [s0_refresh](s0_refresh/README.md) | **ACHIEVED — completed Single G/T study** | Single：G0/G1 × T0/T1/T2；已完成并由 4×4 接替当前开发 | 24 |
+| [wqe](wqe/README.md) | **ACHIEVED — completed WQE placement study / legacy reference** | W1/W2/W3：WQE 用于 global prediction、excess 分支或两者 | 12 |
+| [wqe_factorial_multickpt](wqe_factorial_multickpt/README.md) | **ACHIEVED — completed Dual loss factorial / legacy in-domain study** | Dual：G0/G1 × E0/E1 × T0/T1/T2 | 48 |
+| [baseline_ablation](baseline_ablation/README.md) | **LEGACY / ARCHIVED — baseline ablation reference** | S0/D0–D3：Single / Dual、Tail、Amplitude 基础消融；原正式实验完成状态未核实 | 20 |
 
-归档状态用于记录实验整理进度；配置保留供复现和对照使用。
+`s0_refresh` 完成了早期 Single 比较，确立简单 Global MSE + Tail-MSE 为参考方向；
+当前开发由 `single_tail_episodepeak_4x4` 接替。WQE 仅作为历史/诊断参考，
+不属于当前 4×4。旧配置、manifest、README 和有效的正式结果引用均保留供溯源和复现。
+
+2026-09-27 只读核查确认：S0 的 24/24、Dual 的 48/48、WQE 的 12/12 个 manifest
+单元均有最终 VAL/TEST summary 和完成日志；Dual 亦有全部 checkpoint comparison 文件。
+baseline 的 `./All_Results` 在本 checkout 中不存在，因此不宣称其原 20 单元正式研究已完成。
 推理配置位于 [configs_infer](configs_infer/)。
+
+## Active Single Tail × EpisodePeak 4×4
+
+```text
+GlobalMSE + lambda_T * TailMSE + lambda_P * EpisodeGTAlignedPeakMSE
+```
+
+- Global loss: **MSE only**.
+- Tail-MSE weights: **{0, 0.0125, 0.025, 0.05}**，覆盖严格 `GT > TRAIN Q95` 小时。
+- EpisodeGTAlignedPeak-MSE weights: **{0, 0.0025, 0.005, 0.01}**，每个物理 TRAIN episode 一个 GT peak。
+- **16 configs/station，64 configs total**。
+- Primary selector = **exceedance**，最小 VAL ExceedanceRMSE。
+- Secondary selector = **overall**，最小 VAL AllRMSE。
+- Canonical anchors: `T0000_EP0000` = `G0_T0` / plain Global MSE；
+  `T0250_EP0000` = `G0_T1` / Global MSE + 0.025 Tail-MSE。
+
+完整网格、Boston+Lewes 和 CBBT+Battery 子集 manifest、结果根目录和单配置预览见
+[active family README](single_tail_episodepeak_4x4/README.md)。本家族未生成 launcher。
+方法见 [EPISODE_PEAK](../docs/EPISODE_PEAK.md)、[LOSSES](../docs/LOSSES.md)、
+[CHECKPOINT_SELECTION](../docs/CHECKPOINT_SELECTION.md) 和 [METRICS](../docs/METRICS.md)。
 
 ## Directory names
 
@@ -46,9 +74,9 @@ Q95 阈值的小时，并使用固定 TRAIN `q_H` 归一化。
 例如，`G1_E0_T2` 表示全局 WQE + 超额分支 MSE + 权重 0.025 的 Tail-WQE。
 Single 没有超额分支，只写 G/T：`G0_T1` 表示全局 MSE + 权重 0.025 的 Tail-MSE。
 Dual 使用完整 G/E/T，保留 body/excess/gate 权重 1/2/0.5。
-因此 Single 每站 2×3=6 个配置，Dual 每站 2×2×3=12 个配置。
+在已完成的旧 factorial 中，Single 每站 2×3=6 个配置，Dual 每站 2×2×3=12 个配置。
 
-## Experiment relationships
+## Historical experiment relationships
 
 - `baseline_ablation`：S0 是 Single MSE；D0 是 Dual 基础；D1 加 Tail-MSE
   （权重 0.025）；D2 加 amplitude loss（权重 0.003）；D3 同时加两者。
@@ -76,10 +104,11 @@ values require Single with global MSE and Tail MSE. See
 
 ## Results locations
 
-S0 和 Dual 正式训练分别使用 `FormalRuns_0925/S0` 和 `FormalRuns_0925/Dual` 子目录；结果路径如下。
+历史 S0 和 Dual 正式训练分别使用 `FormalRuns_0925/S0` 和 `FormalRuns_0925/Dual` 子目录；结果路径如下。
 
 | 配置目录 | 输出根目录 |
 | --- | --- |
+| `single_tail_episodepeak_4x4` | `/home/exouser/media/share/PACT/FormalRuns_0925/single_tail_episodepeak_4x4` |
 | `baseline_ablation` | `./All_Results` |
 | `wqe` | `/home/exouser/media/share/PACT/WQE_Results` |
 | `s0_refresh` | `/home/exouser/media/share/PACT/FormalRuns_0925/S0` |

@@ -1,6 +1,13 @@
 # Dual G × E × T factorial with multiple checkpoints
 
-Status: not archived. See the [configuration overview](../README.md).
+**Status: ACHIEVED — completed Dual loss factorial / legacy in-domain study.**
+
+This study compared global and raw-excess MSE/WQE with Tail off/MSE/WQE.
+All 48 manifest cells have saved final VAL/TEST summaries, checkpoint comparison
+files, and completed logs under the formal Dual result root (verified 2026-09-27).
+The specification and configs remain for provenance and reproduction; current
+Single development uses [single_tail_episodepeak_4x4](../single_tail_episodepeak_4x4/README.md).
+See the [configuration overview](../README.md).
 
 This family contains 48 direct Dual-head NCEP configs: CBBT, Boston, Battery,
 and Lewes × global MSE/WQE × raw-excess MSE/WQE × Tail off/MSE/WQE.
@@ -43,8 +50,9 @@ accumulation steps, learning rate `5e-3`, 300 epochs, five warmup epochs,
 cosine schedule, BF16 AMP, TF32, chronological 60/20/20 splits, and seed 42.
 See the [manifest](manifest.csv) and [loss definitions](../../docs/LOSSES.md).
 
-`multickpt` retains two VAL checkpoints from one trajectory: `exceedance`
-(primary research result) and `overall` (conventional sensitivity). Both receive
+With the current implementation, `multickpt` retains two VAL checkpoints from
+one trajectory: `exceedance` (primary research result) and `overall`
+(conventional sensitivity). Both receive
 the same timestamp-aware final VAL/TEST evaluation. See
 [checkpoint selection](../../docs/CHECKPOINT_SELECTION.md).
 
