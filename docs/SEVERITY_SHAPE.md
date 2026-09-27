@@ -1,5 +1,12 @@
 # Severity–Shape excess parameterization
 
+**Implementation status: SUPPORTED LEGACY / optional experimental Dual formulation.**
+
+Severity–Shape remains implemented and tested, and is retained for reproducibility
+and possible future Dual/full-field work. It is outside the
+[current Single 4×4](../configs/single_tail_episodepeak_4x4/README.md) and is not a
+current primary research path.
+
 `SeverityShapeHead` in [heads.py](../emulator/models/heads.py) is a supported experimental Dual formulation. It replaces the excess branch with a physical severity factor and a dimensionless horizon shape. The upstream [backbone](BACKBONE.md), capped body, and Event Window gate retain the interfaces defined in [DUAL_EXCEEDANCE.md](DUAL_EXCEEDANCE.md).
 
 <!-- choices excess_formulation: direct,severity_shape -->

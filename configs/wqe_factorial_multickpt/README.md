@@ -1,12 +1,13 @@
 # Dual G × E × T factorial with multiple checkpoints
 
-**Status: ACHIEVED — completed Dual loss factorial / legacy in-domain study.**
+**Status: ACHIEVED / LEGACY — completed Dual G × E × T factorial / legacy in-domain study.**
 
-This study compared global and raw-excess MSE/WQE with Tail off/MSE/WQE.
+The intended 48-run factorial is complete. It compared global and raw-excess
+MSE/WQE with Tail off/MSE/WQE.
 All 48 manifest cells have saved final VAL/TEST summaries, checkpoint comparison
 files, and completed logs under the formal Dual result root (verified 2026-09-27).
-The specification and configs remain for provenance and reproduction; current
-Single development uses [single_tail_episodepeak_4x4](../single_tail_episodepeak_4x4/README.md).
+The specification and configs remain for historical comparison, provenance, and
+reproduction; current Single development uses [single_tail_episodepeak_4x4](../single_tail_episodepeak_4x4/README.md).
 See the [configuration overview](../README.md).
 
 This family contains 48 direct Dual-head NCEP configs: CBBT, Boston, Battery,

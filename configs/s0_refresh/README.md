@@ -1,10 +1,10 @@
 # Single G × T factorial
 
-**Status: ACHIEVED — completed Single G/T study.**
+**Status: ACHIEVED — completed Single G × T study; superseded for active development by single_tail_episodepeak_4x4.**
 
-The earlier Single comparison established simple Global MSE + Tail-MSE as the
-reference direction. All 24 manifest cells have saved final VAL/TEST summaries
-and completed logs (verified 2026-09-27). This family is superseded for current
+The 24-run Single G × T study is complete and established simple Global MSE +
+Tail-MSE as the reference direction. All 24 manifest cells have saved final
+VAL/TEST summaries and completed logs (verified 2026-09-27). This family is superseded for current
 development by [single_tail_episodepeak_4x4](../single_tail_episodepeak_4x4/README.md).
 Its specification, configs, manifests, and previous formal results remain for
 provenance and reproduction. See the [configuration overview](../README.md).

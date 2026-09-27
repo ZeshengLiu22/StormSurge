@@ -1,6 +1,6 @@
 # Single Tail-MSE × EpisodeGTAlignedPeak-MSE 4×4
 
-**Status: ACTIVE — current Single Tail × EpisodePeak factorial.**
+**Status: ACTIVE — current Single development factorial.**
 
 This family extends the completed [Single G/T study](../s0_refresh/README.md)
 using its G0 / Single / Global-MSE setup. Global loss is **MSE only**:

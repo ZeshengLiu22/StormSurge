@@ -12,7 +12,7 @@ forcing/history + graph → spatial encoder → station readout → temporal mod
 
 ## Current Single development
 
-The active family is **[configs/single_tail_episodepeak_4x4](configs/single_tail_episodepeak_4x4/README.md)**:
+The **ACTIVE** family is **[configs/single_tail_episodepeak_4x4](configs/single_tail_episodepeak_4x4/README.md)**:
 16 Tail × EpisodePeak combinations per station, 64 configs total.
 
 ```text
@@ -101,24 +101,29 @@ raise errors.
 
 ## Documentation
 
-Start with the [documentation index](docs/README.md), then read
-[Formulation](docs/FORMULATION.md), [Backbone](docs/BACKBONE.md),
-[Direct Dual](docs/DUAL_EXCEEDANCE.md), [Severity–Shape](docs/SEVERITY_SHAPE.md),
-[Losses](docs/LOSSES.md) / [Episode peak supervision](docs/EPISODE_PEAK.md),
-[Checkpoint selection](docs/CHECKPOINT_SELECTION.md) and
+The primary reading path in the [documentation index](docs/README.md) follows
+current Single development:
+[Formulation](docs/FORMULATION.md) → [Backbone](docs/BACKBONE.md) →
+[Losses](docs/LOSSES.md) / [Episode peak supervision](docs/EPISODE_PEAK.md) →
+[Checkpoint selection](docs/CHECKPOINT_SELECTION.md) →
 [Metrics](docs/METRICS.md).
 
-## Completed and legacy studies
+For **SUPPORTED LEGACY** historical/optional Dual formulations, see
+[Direct Dual](docs/DUAL_EXCEEDANCE.md) and [Severity–Shape](docs/SEVERITY_SHAPE.md).
 
-These specifications and their formal result references remain available for
-provenance and reproduction. Current Single development uses the 4×4 above.
+## Experiment-family status
+
+Completed and legacy study specifications and their formal result references
+remain available for provenance and reproduction. The
+[configuration overview](configs/README.md#status-vocabulary) defines the status vocabulary.
 
 | Family | Scientific status and purpose |
 | --- | --- |
-| [s0_refresh](configs/s0_refresh/README.md) | **ACHIEVED** — completed Single G/T comparison; established Global MSE + Tail-MSE as the reference direction and is superseded by the 4×4 for development. |
-| [wqe](configs/wqe/README.md) | **ACHIEVED** — completed WQE placement study; historical/diagnostic use, outside the current 4×4. |
-| [wqe_factorial_multickpt](configs/wqe_factorial_multickpt/README.md) | **ACHIEVED** — completed Dual loss factorial / legacy in-domain study. |
-| [baseline_ablation](configs/baseline_ablation/README.md) | **LEGACY / ARCHIVED** — original Single/Dual, Tail, and amplitude ablations; formal completion unverified. |
+| [single_tail_episodepeak_4x4](configs/single_tail_episodepeak_4x4/README.md) | **ACTIVE** — current Single development factorial: Global MSE with Tail-MSE × EpisodeGTAlignedPeak-MSE weights. |
+| [s0_refresh](configs/s0_refresh/README.md) | **ACHIEVED** — completed 24-run Single G × T study; established Global MSE + Tail-MSE as the reference direction and is superseded by the 4×4 for development. |
+| [wqe](configs/wqe/README.md) | **ACHIEVED / ARCHIVED** — completed WQE placement study; historical/diagnostic use, outside the current 4×4. |
+| [wqe_factorial_multickpt](configs/wqe_factorial_multickpt/README.md) | **ACHIEVED / LEGACY** — completed 48-run Dual G × E × T factorial / legacy in-domain study. |
+| [baseline_ablation](configs/baseline_ablation/README.md) | **LEGACY / ARCHIVED — completion unverified** — original 20-cell Single/Dual, Tail, and amplitude specification. |
 
 Saved results retain the selector and metric schema used when they were produced.
 Reruns with the current implementation use the two roles and 11 final metrics

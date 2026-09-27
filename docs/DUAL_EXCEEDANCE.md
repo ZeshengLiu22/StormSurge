@@ -1,5 +1,13 @@
 # Direct Dual exceedance head
 
+**Implementation status: SUPPORTED LEGACY / historical Dual formulation.**
+
+Direct Dual remains implemented and tested; the completed
+[Dual G × E × T factorial](../configs/wqe_factorial_multickpt/README.md) and
+[WQE placement study](../configs/wqe/README.md) use this formulation.
+Current scientific development is the [Single Tail × EpisodePeak 4×4](../configs/single_tail_episodepeak_4x4/README.md);
+this document is authoritative only for reproducing or extending Dual experiments.
+
 The production `ExceedanceHead` in [`heads.py`](../emulator/models/heads.py) receives the shared PACT contexts from [BACKBONE](BACKBONE.md) and predicts a capped body, nonnegative excess and one Event Window gate. It uses the single physical threshold from [FORMULATION](FORMULATION.md):
 
 $$

@@ -1,12 +1,13 @@
 # Baseline ablation
 
-**Status: LEGACY / ARCHIVED — baseline ablation reference.**
+**Status: LEGACY / ARCHIVED — completion unverified.**
 
-This specification compares Single/Dual heads and the added Tail and raw-excess
-amplitude losses. Completion of the original 20-cell study is unverified because
-its `./All_Results` root is absent in this checkout (checked 2026-09-27).
-Configs and the manifest remain for provenance and reproduction; current Single
-development uses [single_tail_episodepeak_4x4](../single_tail_episodepeak_4x4/README.md).
+This remains the original specification for Single/Dual heads, Tail, and
+raw-excess amplitude losses. Current result-root evidence is insufficient to
+certify completion of the original 20-cell study: its `./All_Results` root is
+absent in this checkout (checked 2026-09-27). Configs and the manifest remain
+useful for provenance and reproduction. This family is not active development;
+current Single development uses [single_tail_episodepeak_4x4](../single_tail_episodepeak_4x4/README.md).
 
 Formerly `current`. This family contains 20 matched NCEP configurations:
 CBBT, Lewes, Battery, and Boston × five Single/Dual loss conditions.

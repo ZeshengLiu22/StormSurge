@@ -7,11 +7,11 @@ GraphSAGE + Transformer backbone、24 小时历史、width 128、batch size 256�
 
 | 目录 | 科学状态 | 实验内容 | 配置数 |
 | --- | --- | --- | ---: |
-| [single_tail_episodepeak_4x4](single_tail_episodepeak_4x4/README.md) | **ACTIVE — current Single Tail × EpisodePeak factorial** | Global MSE only；Tail-MSE × EpisodeGTAlignedPeak-MSE 权重 4×4 | 64 |
-| [s0_refresh](s0_refresh/README.md) | **ACHIEVED — completed Single G/T study** | Single：G0/G1 × T0/T1/T2；已完成并由 4×4 接替当前开发 | 24 |
-| [wqe](wqe/README.md) | **ACHIEVED — completed WQE placement study / legacy reference** | W1/W2/W3：WQE 用于 global prediction、excess 分支或两者 | 12 |
-| [wqe_factorial_multickpt](wqe_factorial_multickpt/README.md) | **ACHIEVED — completed Dual loss factorial / legacy in-domain study** | Dual：G0/G1 × E0/E1 × T0/T1/T2 | 48 |
-| [baseline_ablation](baseline_ablation/README.md) | **LEGACY / ARCHIVED — baseline ablation reference** | S0/D0–D3：Single / Dual、Tail、Amplitude 基础消融；原正式实验完成状态未核实 | 20 |
+| [single_tail_episodepeak_4x4](single_tail_episodepeak_4x4/README.md) | **ACTIVE — current Single development factorial** | Global MSE only；Tail-MSE × EpisodeGTAlignedPeak-MSE 权重 4×4 | 64 |
+| [s0_refresh](s0_refresh/README.md) | **ACHIEVED — completed Single G × T study** | Single：G0/G1 × T0/T1/T2；已完成并由 4×4 接替当前开发 | 24 |
+| [wqe](wqe/README.md) | **ACHIEVED / ARCHIVED — completed WQE placement study** | W1/W2/W3：WQE 用于 global prediction、excess 分支或两者 | 12 |
+| [wqe_factorial_multickpt](wqe_factorial_multickpt/README.md) | **ACHIEVED / LEGACY — completed Dual G × E × T factorial / legacy in-domain study** | Dual：G0/G1 × E0/E1 × T0/T1/T2 | 48 |
+| [baseline_ablation](baseline_ablation/README.md) | **LEGACY / ARCHIVED — completion unverified** | S0/D0–D3：Single / Dual、Tail、Amplitude 基础消融；原正式实验完成状态未核实 | 20 |
 
 `s0_refresh` 完成了早期 Single 比较，确立简单 Global MSE + Tail-MSE 为参考方向；
 当前开发由 `single_tail_episodepeak_4x4` 接替。WQE 仅作为历史/诊断参考，
@@ -21,6 +21,17 @@ GraphSAGE + Transformer backbone、24 小时历史、width 128、batch size 256�
 单元均有最终 VAL/TEST summary 和完成日志；Dual 亦有全部 checkpoint comparison 文件。
 baseline 的 `./All_Results` 在本 checkout 中不存在，因此不宣称其原 20 单元正式研究已完成。
 推理配置位于 [configs_infer](configs_infer/)。
+
+## Status vocabulary
+
+- **ACTIVE**: the current scientific development path, `single_tail_episodepeak_4x4`.
+- **ACHIEVED**: the intended scientific study is complete; its configs and results
+  remain available for provenance and reproduction. Archive/legacy qualifiers
+  describe its historical role; the implementation remains available.
+- **SUPPORTED LEGACY**: an implementation remains supported and tested, but is
+  outside the current Single development path. This status does not certify a completed study.
+- **LEGACY / ARCHIVED — completion unverified**: historical configs remain, but
+  repository evidence does not establish formal completion; do not label the study ACHIEVED.
 
 ## Active Single Tail × EpisodePeak 4×4
 

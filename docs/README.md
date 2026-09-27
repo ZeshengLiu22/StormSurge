@@ -1,9 +1,14 @@
 # PACT documentation
 
-This documentation describes the supported implementation. The current Single
-development experiment is the [Tail × EpisodePeak 4×4](../configs/single_tail_episodepeak_4x4/README.md).
-Read in this order: [FORMULATION](FORMULATION.md) → [BACKBONE](BACKBONE.md) →
-output formulation (Single in BACKBONE, or the Dual documents below) →
+The **ACTIVE** scientific development path is the
+[Single Tail × EpisodePeak 4×4](../configs/single_tail_episodepeak_4x4/README.md).
+The [configuration overview](../configs/README.md#status-vocabulary) defines
+experiment-family and implementation statuses.
+
+## Current Single documentation
+
+This sequence describes the current active Single development pipeline:
+[FORMULATION](FORMULATION.md) → [BACKBONE](BACKBONE.md) →
 [LOSSES](LOSSES.md) / [EPISODE_PEAK](EPISODE_PEAK.md) →
 [CHECKPOINT_SELECTION](CHECKPOINT_SELECTION.md) → [METRICS](METRICS.md).
 
@@ -21,11 +26,6 @@ forcing/history + graph + optional station metadata
        ┌───────────────────────────────┐
        │ Single Head                   │
        └───────────────────────────────┘
-                      OR
-       ┌───────────────────────────────┐
-       │ Dual Exceedance Head          │
-       │ body + gate × excess          │
-       └───────────────────────────────┘
                         ↓
                  physical prediction
 ```
@@ -34,12 +34,20 @@ forcing/history + graph + optional station metadata
 | --- | --- |
 | [FORMULATION](FORMULATION.md) | Target timestamps, physical units, the one TRAIN threshold, Extreme Hours, Event Windows and Event Episodes. |
 | [BACKBONE](BACKBONE.md) | Inputs, supported encoders and temporal modules, readouts, stability and parameter accounting. |
-| [DUAL_EXCEEDANCE](DUAL_EXCEEDANCE.md) | Direct Dual architecture, physical reconstruction, branch targets and supported ablations. |
-| [SEVERITY_SHAPE](SEVERITY_SHAPE.md) | Optional severity × shape excess parameterization sharing the same backbone. |
-| [LOSSES](LOSSES.md) | Complete objectives, masks, reductions, units, gradients, controls and experiment variants. |
+| [LOSSES](LOSSES.md) | Current Single objective, feature status table, and complete supported loss formulas and controls. |
 | [EPISODE_PEAK](EPISODE_PEAK.md) | True episode construction, canonical GT peak supervision, normalization, and implementation audit. |
 | [CHECKPOINT_SELECTION](CHECKPOINT_SELECTION.md) | Two VAL-selected checkpoint roles: exceedance and overall, plus timestamp-aware final evaluation. |
 | [METRICS](METRICS.md) | Authoritative metric dictionary, worked example, lead-wise and fixed-episode diagnostics. |
+
+## Supported legacy / optional formulations
+
+These Dual implementations remain supported and tested for historical reproduction
+and optional extensions. They are outside the current Single research path.
+
+| Document | Implementation status and role |
+| --- | --- |
+| [DUAL_EXCEEDANCE](DUAL_EXCEEDANCE.md) | SUPPORTED LEGACY / historical Dual formulation: Direct Dual architecture, physical reconstruction, branch targets and supported ablations. |
+| [SEVERITY_SHAPE](SEVERITY_SHAPE.md) | SUPPORTED LEGACY / optional experimental Dual formulation: severity × shape excess parameterization sharing the same backbone. |
 
 The [repository README](../README.md) contains commands. Implementation references
 inside each document identify the source of its equations and configuration.
