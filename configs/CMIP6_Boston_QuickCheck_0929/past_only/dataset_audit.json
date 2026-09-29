@@ -1,0 +1,2060 @@
+{
+  "audited_at_utc": "2026-09-29T05:42:00.907704+00:00",
+  "data_root": "/media/share/PACT/Data/Grid4_New_PastOnly",
+  "scope": "All file inventories; full Boston tensor/target validation against source dictionaries.",
+  "expected_year_groups": [
+    "1979_1980",
+    "1980_1981",
+    "1981_1982",
+    "1982_1983",
+    "1983_1984",
+    "1984_1985",
+    "1985_1986",
+    "1986_1987",
+    "1987_1988",
+    "1988_1989",
+    "1989_1990",
+    "1990_1991",
+    "1991_1992",
+    "1992_1993",
+    "1993_1994",
+    "1994_1995",
+    "1995_1996",
+    "1996_1997",
+    "1997_1998",
+    "1998_1999",
+    "1999_2000",
+    "2000_2001",
+    "2001_2002",
+    "2002_2003",
+    "2003_2004",
+    "2004_2005",
+    "2005_2006",
+    "2006_2007",
+    "2007_2008",
+    "2008_2009",
+    "2009_2010",
+    "2010_2011",
+    "2011_2012",
+    "2012_2013",
+    "2013_2014",
+    "2014_2015"
+  ],
+  "group": "past_only",
+  "train_ratio": 0.6,
+  "val_ratio": 0.2,
+  "datasets": {
+    "CMIP6_AWI": {
+      "included": true,
+      "reasons": [],
+      "files": [
+        {
+          "name": "1979_1980_Boston_peryear_hist48_graphs.pt",
+          "bytes": 411857367,
+          "mtime_ns": 1788642148478341148,
+          "graphs": 604,
+          "first_target_utc": "1979-11-01T00:00:00",
+          "last_target_utc": "1980-03-30T23:00:00"
+        },
+        {
+          "name": "1980_1981_Boston_peryear_hist48_graphs.pt",
+          "bytes": 409131391,
+          "mtime_ns": 1788642150485350991,
+          "graphs": 600,
+          "first_target_utc": "1980-11-01T00:00:00",
+          "last_target_utc": "1981-03-30T23:00:00"
+        },
+        {
+          "name": "1981_1982_Boston_peryear_hist48_graphs.pt",
+          "bytes": 409131391,
+          "mtime_ns": 1788642152554361135,
+          "graphs": 600,
+          "first_target_utc": "1981-11-01T00:00:00",
+          "last_target_utc": "1982-03-30T23:00:00"
+        },
+        {
+          "name": "1982_1983_Boston_peryear_hist48_graphs.pt",
+          "bytes": 409131391,
+          "mtime_ns": 1788642155269374445,
+          "graphs": 600,
+          "first_target_utc": "1982-11-01T00:00:00",
+          "last_target_utc": "1983-03-30T23:00:00"
+        },
+        {
+          "name": "1983_1984_Boston_peryear_hist48_graphs.pt",
+          "bytes": 411857367,
+          "mtime_ns": 1788642157300384399,
+          "graphs": 604,
+          "first_target_utc": "1983-11-01T00:00:00",
+          "last_target_utc": "1984-03-30T23:00:00"
+        },
+        {
+          "name": "1984_1985_Boston_peryear_hist48_graphs.pt",
+          "bytes": 409131391,
+          "mtime_ns": 1788642159305394224,
+          "graphs": 600,
+          "first_target_utc": "1984-11-01T00:00:00",
+          "last_target_utc": "1985-03-30T23:00:00"
+        },
+        {
+          "name": "1985_1986_Boston_peryear_hist48_graphs.pt",
+          "bytes": 409131391,
+          "mtime_ns": 1788642161398404479,
+          "graphs": 600,
+          "first_target_utc": "1985-11-01T00:00:00",
+          "last_target_utc": "1986-03-30T23:00:00"
+        },
+        {
+          "name": "1986_1987_Boston_peryear_hist48_graphs.pt",
+          "bytes": 409131391,
+          "mtime_ns": 1788642163395414262,
+          "graphs": 600,
+          "first_target_utc": "1986-11-01T00:00:00",
+          "last_target_utc": "1987-03-30T23:00:00"
+        },
+        {
+          "name": "1987_1988_Boston_peryear_hist48_graphs.pt",
+          "bytes": 411857367,
+          "mtime_ns": 1788642165405424108,
+          "graphs": 604,
+          "first_target_utc": "1987-11-01T00:00:00",
+          "last_target_utc": "1988-03-30T23:00:00"
+        },
+        {
+          "name": "1988_1989_Boston_peryear_hist48_graphs.pt",
+          "bytes": 409131391,
+          "mtime_ns": 1788642168158437590,
+          "graphs": 600,
+          "first_target_utc": "1988-11-01T00:00:00",
+          "last_target_utc": "1989-03-30T23:00:00"
+        },
+        {
+          "name": "1989_1990_Boston_peryear_hist48_graphs.pt",
+          "bytes": 409131391,
+          "mtime_ns": 1788642170175447467,
+          "graphs": 600,
+          "first_target_utc": "1989-11-01T00:00:00",
+          "last_target_utc": "1990-03-30T23:00:00"
+        },
+        {
+          "name": "1990_1991_Boston_peryear_hist48_graphs.pt",
+          "bytes": 409131391,
+          "mtime_ns": 1788642172917460890,
+          "graphs": 600,
+          "first_target_utc": "1990-11-01T00:00:00",
+          "last_target_utc": "1991-03-30T23:00:00"
+        },
+        {
+          "name": "1991_1992_Boston_peryear_hist48_graphs.pt",
+          "bytes": 411857367,
+          "mtime_ns": 1788642175750474756,
+          "graphs": 604,
+          "first_target_utc": "1991-11-01T00:00:00",
+          "last_target_utc": "1992-03-30T23:00:00"
+        },
+        {
+          "name": "1992_1993_Boston_peryear_hist48_graphs.pt",
+          "bytes": 409131391,
+          "mtime_ns": 1788642178219486838,
+          "graphs": 600,
+          "first_target_utc": "1992-11-01T00:00:00",
+          "last_target_utc": "1993-03-30T23:00:00"
+        },
+        {
+          "name": "1993_1994_Boston_peryear_hist48_graphs.pt",
+          "bytes": 409131391,
+          "mtime_ns": 1788642180676498859,
+          "graphs": 600,
+          "first_target_utc": "1993-11-01T00:00:00",
+          "last_target_utc": "1994-03-30T23:00:00"
+        },
+        {
+          "name": "1994_1995_Boston_peryear_hist48_graphs.pt",
+          "bytes": 409131391,
+          "mtime_ns": 1788642182790509200,
+          "graphs": 600,
+          "first_target_utc": "1994-11-01T00:00:00",
+          "last_target_utc": "1995-03-30T23:00:00"
+        },
+        {
+          "name": "1995_1996_Boston_peryear_hist48_graphs.pt",
+          "bytes": 411857367,
+          "mtime_ns": 1788642185236521164,
+          "graphs": 604,
+          "first_target_utc": "1995-11-01T00:00:00",
+          "last_target_utc": "1996-03-30T23:00:00"
+        },
+        {
+          "name": "1996_1997_Boston_peryear_hist48_graphs.pt",
+          "bytes": 409131391,
+          "mtime_ns": 1788642187309531301,
+          "graphs": 600,
+          "first_target_utc": "1996-11-01T00:00:00",
+          "last_target_utc": "1997-03-30T23:00:00"
+        },
+        {
+          "name": "1997_1998_Boston_peryear_hist48_graphs.pt",
+          "bytes": 409131391,
+          "mtime_ns": 1788642189260540840,
+          "graphs": 600,
+          "first_target_utc": "1997-11-01T00:00:00",
+          "last_target_utc": "1998-03-30T23:00:00"
+        },
+        {
+          "name": "1998_1999_Boston_peryear_hist48_graphs.pt",
+          "bytes": 409131391,
+          "mtime_ns": 1788642191182550237,
+          "graphs": 600,
+          "first_target_utc": "1998-11-01T00:00:00",
+          "last_target_utc": "1999-03-30T23:00:00"
+        },
+        {
+          "name": "1999_2000_Boston_peryear_hist48_graphs.pt",
+          "bytes": 411857367,
+          "mtime_ns": 1788642193190560052,
+          "graphs": 604,
+          "first_target_utc": "1999-11-01T00:00:00",
+          "last_target_utc": "2000-03-30T23:00:00"
+        },
+        {
+          "name": "2000_2001_Boston_peryear_hist48_graphs.pt",
+          "bytes": 409131391,
+          "mtime_ns": 1788642195959573584,
+          "graphs": 600,
+          "first_target_utc": "2000-11-01T00:00:00",
+          "last_target_utc": "2001-03-30T23:00:00"
+        },
+        {
+          "name": "2001_2002_Boston_peryear_hist48_graphs.pt",
+          "bytes": 409131391,
+          "mtime_ns": 1788642197886583000,
+          "graphs": 600,
+          "first_target_utc": "2001-11-01T00:00:00",
+          "last_target_utc": "2002-03-30T23:00:00"
+        },
+        {
+          "name": "2002_2003_Boston_peryear_hist48_graphs.pt",
+          "bytes": 409131391,
+          "mtime_ns": 1788642199860592645,
+          "graphs": 600,
+          "first_target_utc": "2002-11-01T00:00:00",
+          "last_target_utc": "2003-03-30T23:00:00"
+        },
+        {
+          "name": "2003_2004_Boston_peryear_hist48_graphs.pt",
+          "bytes": 411857367,
+          "mtime_ns": 1788642201854602386,
+          "graphs": 604,
+          "first_target_utc": "2003-11-01T00:00:00",
+          "last_target_utc": "2004-03-30T23:00:00"
+        },
+        {
+          "name": "2004_2005_Boston_peryear_hist48_graphs.pt",
+          "bytes": 409131391,
+          "mtime_ns": 1788642204217613927,
+          "graphs": 600,
+          "first_target_utc": "2004-11-01T00:00:00",
+          "last_target_utc": "2005-03-30T23:00:00"
+        },
+        {
+          "name": "2005_2006_Boston_peryear_hist48_graphs.pt",
+          "bytes": 409131391,
+          "mtime_ns": 1788642206324624217,
+          "graphs": 600,
+          "first_target_utc": "2005-11-01T00:00:00",
+          "last_target_utc": "2006-03-30T23:00:00"
+        },
+        {
+          "name": "2006_2007_Boston_peryear_hist48_graphs.pt",
+          "bytes": 409131391,
+          "mtime_ns": 1788642208483634758,
+          "graphs": 600,
+          "first_target_utc": "2006-11-01T00:00:00",
+          "last_target_utc": "2007-03-30T23:00:00"
+        },
+        {
+          "name": "2007_2008_Boston_peryear_hist48_graphs.pt",
+          "bytes": 411857367,
+          "mtime_ns": 1788642210434644283,
+          "graphs": 604,
+          "first_target_utc": "2007-11-01T00:00:00",
+          "last_target_utc": "2008-03-30T23:00:00"
+        },
+        {
+          "name": "2008_2009_Boston_peryear_hist48_graphs.pt",
+          "bytes": 409131391,
+          "mtime_ns": 1788642212405653905,
+          "graphs": 600,
+          "first_target_utc": "2008-11-01T00:00:00",
+          "last_target_utc": "2009-03-30T23:00:00"
+        },
+        {
+          "name": "2009_2010_Boston_peryear_hist48_graphs.pt",
+          "bytes": 409131391,
+          "mtime_ns": 1788642214677664993,
+          "graphs": 600,
+          "first_target_utc": "2009-11-01T00:00:00",
+          "last_target_utc": "2010-03-30T23:00:00"
+        },
+        {
+          "name": "2010_2011_Boston_peryear_hist48_graphs.pt",
+          "bytes": 409131391,
+          "mtime_ns": 1788642216611674431,
+          "graphs": 600,
+          "first_target_utc": "2010-11-01T00:00:00",
+          "last_target_utc": "2011-03-30T23:00:00"
+        },
+        {
+          "name": "2011_2012_Boston_peryear_hist48_graphs.pt",
+          "bytes": 411857367,
+          "mtime_ns": 1788642218663684444,
+          "graphs": 604,
+          "first_target_utc": "2011-11-01T00:00:00",
+          "last_target_utc": "2012-03-30T23:00:00"
+        },
+        {
+          "name": "2012_2013_Boston_peryear_hist48_graphs.pt",
+          "bytes": 409131391,
+          "mtime_ns": 1788642220778694762,
+          "graphs": 600,
+          "first_target_utc": "2012-11-01T00:00:00",
+          "last_target_utc": "2013-03-30T23:00:00"
+        },
+        {
+          "name": "2013_2014_Boston_peryear_hist48_graphs.pt",
+          "bytes": 409131391,
+          "mtime_ns": 1788642222778704517,
+          "graphs": 600,
+          "first_target_utc": "2013-11-01T00:00:00",
+          "last_target_utc": "2014-03-30T23:00:00"
+        },
+        {
+          "name": "2014_2015_Boston_peryear_hist48_graphs.pt",
+          "bytes": 166520615,
+          "mtime_ns": 1788642224192711414,
+          "graphs": 244,
+          "first_target_utc": "2014-11-01T00:00:00",
+          "last_target_utc": "2014-12-31T23:00:00"
+        }
+      ],
+      "unused_future_dictionaries": 120,
+      "all_graph_files": 144,
+      "boston_graph_files": 36,
+      "tensor_validation": "Full tensor validation in this audit",
+      "tensor_shapes": [
+        [
+          3776,
+          5
+        ],
+        [
+          9,
+          3776,
+          5
+        ],
+        [
+          6
+        ],
+        [
+          2,
+          14858
+        ]
+      ],
+      "total_graphs": 21280,
+      "tau_physical": 0.22662775516509914,
+      "split": {
+        "train": {
+          "year_groups": [
+            "1979_1980",
+            "1980_1981",
+            "1981_1982",
+            "1982_1983",
+            "1983_1984",
+            "1984_1985",
+            "1985_1986",
+            "1986_1987",
+            "1987_1988",
+            "1988_1989",
+            "1989_1990",
+            "1990_1991",
+            "1991_1992",
+            "1992_1993",
+            "1993_1994",
+            "1994_1995",
+            "1995_1996",
+            "1996_1997",
+            "1997_1998",
+            "1998_1999",
+            "1999_2000",
+            "2000_2001"
+          ],
+          "windows": 13224,
+          "target_hour_count": 79344,
+          "extreme_hour_count": 3968,
+          "extreme_hour_rate": 0.05001008267795927,
+          "event_window_count": 1001,
+          "event_window_rate": 0.07569570477918935,
+          "episode_count": 526
+        },
+        "val": {
+          "year_groups": [
+            "2001_2002",
+            "2002_2003",
+            "2003_2004",
+            "2004_2005",
+            "2005_2006",
+            "2006_2007",
+            "2007_2008"
+          ],
+          "windows": 4208,
+          "target_hour_count": 25248,
+          "extreme_hour_count": 1211,
+          "extreme_hour_rate": 0.04796419518377693,
+          "event_window_count": 281,
+          "event_window_rate": 0.06677756653992395,
+          "episode_count": 125
+        },
+        "test": {
+          "year_groups": [
+            "2008_2009",
+            "2009_2010",
+            "2010_2011",
+            "2011_2012",
+            "2012_2013",
+            "2013_2014",
+            "2014_2015"
+          ],
+          "windows": 3848,
+          "target_hour_count": 23088,
+          "extreme_hour_count": 1264,
+          "extreme_hour_rate": 0.05474705474705475,
+          "event_window_count": 295,
+          "event_window_rate": 0.07666320166320166,
+          "episode_count": 131
+        }
+      },
+      "episode_peak_metadata": {
+        "fitted_on": "train",
+        "episode_count": 526,
+        "canonical_peak_target_count": 526,
+        "eligible_target_count": 79344,
+        "duplicate_target_count": 0,
+        "p_episode_peak": 0.006629360758217383,
+        "tau_physical": 0.22662775516509914,
+        "canonical_occurrence_rule": "unique target timestamp; overlapping blocks rejected",
+        "episode_definition": "GT > TRAIN tau; consecutive timestamps exactly 3600 seconds apart",
+        "peak_tie_rule": "earliest timestamp at GT maximum"
+      }
+    },
+    "CMIP6_CNRM": {
+      "included": true,
+      "reasons": [],
+      "files": [
+        {
+          "name": "1979_1980_Boston_peryear_hist48_graphs.pt",
+          "bytes": 183538007,
+          "mtime_ns": 1788642235262765385,
+          "graphs": 604,
+          "first_target_utc": "1979-11-01T00:00:00",
+          "last_target_utc": "1980-03-30T23:00:00"
+        },
+        {
+          "name": "1980_1981_Boston_peryear_hist48_graphs.pt",
+          "bytes": 182323199,
+          "mtime_ns": 1788642236198769946,
+          "graphs": 600,
+          "first_target_utc": "1980-11-01T00:00:00",
+          "last_target_utc": "1981-03-30T23:00:00"
+        },
+        {
+          "name": "1981_1982_Boston_peryear_hist48_graphs.pt",
+          "bytes": 182323199,
+          "mtime_ns": 1788642237130774488,
+          "graphs": 600,
+          "first_target_utc": "1981-11-01T00:00:00",
+          "last_target_utc": "1982-03-30T23:00:00"
+        },
+        {
+          "name": "1982_1983_Boston_peryear_hist48_graphs.pt",
+          "bytes": 182323199,
+          "mtime_ns": 1788642238308780228,
+          "graphs": 600,
+          "first_target_utc": "1982-11-01T00:00:00",
+          "last_target_utc": "1983-03-30T23:00:00"
+        },
+        {
+          "name": "1983_1984_Boston_peryear_hist48_graphs.pt",
+          "bytes": 183538007,
+          "mtime_ns": 1788642239339785252,
+          "graphs": 604,
+          "first_target_utc": "1983-11-01T00:00:00",
+          "last_target_utc": "1984-03-30T23:00:00"
+        },
+        {
+          "name": "1984_1985_Boston_peryear_hist48_graphs.pt",
+          "bytes": 182323199,
+          "mtime_ns": 1788642240311789987,
+          "graphs": 600,
+          "first_target_utc": "1984-11-01T00:00:00",
+          "last_target_utc": "1985-03-30T23:00:00"
+        },
+        {
+          "name": "1985_1986_Boston_peryear_hist48_graphs.pt",
+          "bytes": 182323199,
+          "mtime_ns": 1788642241675796633,
+          "graphs": 600,
+          "first_target_utc": "1985-11-01T00:00:00",
+          "last_target_utc": "1986-03-30T23:00:00"
+        },
+        {
+          "name": "1986_1987_Boston_peryear_hist48_graphs.pt",
+          "bytes": 182323199,
+          "mtime_ns": 1788642242679801524,
+          "graphs": 600,
+          "first_target_utc": "1986-11-01T00:00:00",
+          "last_target_utc": "1987-03-30T23:00:00"
+        },
+        {
+          "name": "1987_1988_Boston_peryear_hist48_graphs.pt",
+          "bytes": 183538007,
+          "mtime_ns": 1788642243715806570,
+          "graphs": 604,
+          "first_target_utc": "1987-11-01T00:00:00",
+          "last_target_utc": "1988-03-30T23:00:00"
+        },
+        {
+          "name": "1988_1989_Boston_peryear_hist48_graphs.pt",
+          "bytes": 182323199,
+          "mtime_ns": 1788642244663811187,
+          "graphs": 600,
+          "first_target_utc": "1988-11-01T00:00:00",
+          "last_target_utc": "1989-03-30T23:00:00"
+        },
+        {
+          "name": "1989_1990_Boston_peryear_hist48_graphs.pt",
+          "bytes": 182323199,
+          "mtime_ns": 1788642245583815668,
+          "graphs": 600,
+          "first_target_utc": "1989-11-01T00:00:00",
+          "last_target_utc": "1990-03-30T23:00:00"
+        },
+        {
+          "name": "1990_1991_Boston_peryear_hist48_graphs.pt",
+          "bytes": 182323199,
+          "mtime_ns": 1788642246544820348,
+          "graphs": 600,
+          "first_target_utc": "1990-11-01T00:00:00",
+          "last_target_utc": "1991-03-30T23:00:00"
+        },
+        {
+          "name": "1991_1992_Boston_peryear_hist48_graphs.pt",
+          "bytes": 183538007,
+          "mtime_ns": 1788642247540825199,
+          "graphs": 604,
+          "first_target_utc": "1991-11-01T00:00:00",
+          "last_target_utc": "1992-03-30T23:00:00"
+        },
+        {
+          "name": "1992_1993_Boston_peryear_hist48_graphs.pt",
+          "bytes": 182323199,
+          "mtime_ns": 1788642248489829820,
+          "graphs": 600,
+          "first_target_utc": "1992-11-01T00:00:00",
+          "last_target_utc": "1993-03-30T23:00:00"
+        },
+        {
+          "name": "1993_1994_Boston_peryear_hist48_graphs.pt",
+          "bytes": 182323199,
+          "mtime_ns": 1788642249594835200,
+          "graphs": 600,
+          "first_target_utc": "1993-11-01T00:00:00",
+          "last_target_utc": "1994-03-30T23:00:00"
+        },
+        {
+          "name": "1994_1995_Boston_peryear_hist48_graphs.pt",
+          "bytes": 182323199,
+          "mtime_ns": 1788642250643840307,
+          "graphs": 600,
+          "first_target_utc": "1994-11-01T00:00:00",
+          "last_target_utc": "1995-03-30T23:00:00"
+        },
+        {
+          "name": "1995_1996_Boston_peryear_hist48_graphs.pt",
+          "bytes": 183538007,
+          "mtime_ns": 1788642251675845332,
+          "graphs": 604,
+          "first_target_utc": "1995-11-01T00:00:00",
+          "last_target_utc": "1996-03-30T23:00:00"
+        },
+        {
+          "name": "1996_1997_Boston_peryear_hist48_graphs.pt",
+          "bytes": 182323199,
+          "mtime_ns": 1788642252619849927,
+          "graphs": 600,
+          "first_target_utc": "1996-11-01T00:00:00",
+          "last_target_utc": "1997-03-30T23:00:00"
+        },
+        {
+          "name": "1997_1998_Boston_peryear_hist48_graphs.pt",
+          "bytes": 182323199,
+          "mtime_ns": 1788642253598854693,
+          "graphs": 600,
+          "first_target_utc": "1997-11-01T00:00:00",
+          "last_target_utc": "1998-03-30T23:00:00"
+        },
+        {
+          "name": "1998_1999_Boston_peryear_hist48_graphs.pt",
+          "bytes": 182323199,
+          "mtime_ns": 1788642254546859307,
+          "graphs": 600,
+          "first_target_utc": "1998-11-01T00:00:00",
+          "last_target_utc": "1999-03-30T23:00:00"
+        },
+        {
+          "name": "1999_2000_Boston_peryear_hist48_graphs.pt",
+          "bytes": 183538007,
+          "mtime_ns": 1788642255522864058,
+          "graphs": 604,
+          "first_target_utc": "1999-11-01T00:00:00",
+          "last_target_utc": "2000-03-30T23:00:00"
+        },
+        {
+          "name": "2000_2001_Boston_peryear_hist48_graphs.pt",
+          "bytes": 182323199,
+          "mtime_ns": 1788642256553869076,
+          "graphs": 600,
+          "first_target_utc": "2000-11-01T00:00:00",
+          "last_target_utc": "2001-03-30T23:00:00"
+        },
+        {
+          "name": "2001_2002_Boston_peryear_hist48_graphs.pt",
+          "bytes": 182323199,
+          "mtime_ns": 1788642257637874351,
+          "graphs": 600,
+          "first_target_utc": "2001-11-01T00:00:00",
+          "last_target_utc": "2002-03-30T23:00:00"
+        },
+        {
+          "name": "2002_2003_Boston_peryear_hist48_graphs.pt",
+          "bytes": 182323199,
+          "mtime_ns": 1788642258551878799,
+          "graphs": 600,
+          "first_target_utc": "2002-11-01T00:00:00",
+          "last_target_utc": "2003-03-30T23:00:00"
+        },
+        {
+          "name": "2003_2004_Boston_peryear_hist48_graphs.pt",
+          "bytes": 183538007,
+          "mtime_ns": 1788642259526883544,
+          "graphs": 604,
+          "first_target_utc": "2003-11-01T00:00:00",
+          "last_target_utc": "2004-03-30T23:00:00"
+        },
+        {
+          "name": "2004_2005_Boston_peryear_hist48_graphs.pt",
+          "bytes": 182323199,
+          "mtime_ns": 1788642260566888604,
+          "graphs": 600,
+          "first_target_utc": "2004-11-01T00:00:00",
+          "last_target_utc": "2005-03-30T23:00:00"
+        },
+        {
+          "name": "2005_2006_Boston_peryear_hist48_graphs.pt",
+          "bytes": 182323199,
+          "mtime_ns": 1788642261480893052,
+          "graphs": 600,
+          "first_target_utc": "2005-11-01T00:00:00",
+          "last_target_utc": "2006-03-30T23:00:00"
+        },
+        {
+          "name": "2006_2007_Boston_peryear_hist48_graphs.pt",
+          "bytes": 182323199,
+          "mtime_ns": 1788642262807899508,
+          "graphs": 600,
+          "first_target_utc": "2006-11-01T00:00:00",
+          "last_target_utc": "2007-03-30T23:00:00"
+        },
+        {
+          "name": "2007_2008_Boston_peryear_hist48_graphs.pt",
+          "bytes": 183538007,
+          "mtime_ns": 1788642263773904207,
+          "graphs": 604,
+          "first_target_utc": "2007-11-01T00:00:00",
+          "last_target_utc": "2008-03-30T23:00:00"
+        },
+        {
+          "name": "2008_2009_Boston_peryear_hist48_graphs.pt",
+          "bytes": 182323199,
+          "mtime_ns": 1788642264710908765,
+          "graphs": 600,
+          "first_target_utc": "2008-11-01T00:00:00",
+          "last_target_utc": "2009-03-30T23:00:00"
+        },
+        {
+          "name": "2009_2010_Boston_peryear_hist48_graphs.pt",
+          "bytes": 182323199,
+          "mtime_ns": 1788642265613913158,
+          "graphs": 600,
+          "first_target_utc": "2009-11-01T00:00:00",
+          "last_target_utc": "2010-03-30T23:00:00"
+        },
+        {
+          "name": "2010_2011_Boston_peryear_hist48_graphs.pt",
+          "bytes": 182323199,
+          "mtime_ns": 1788642267610922870,
+          "graphs": 600,
+          "first_target_utc": "2010-11-01T00:00:00",
+          "last_target_utc": "2011-03-30T23:00:00"
+        },
+        {
+          "name": "2011_2012_Boston_peryear_hist48_graphs.pt",
+          "bytes": 183538007,
+          "mtime_ns": 1788642268513927262,
+          "graphs": 604,
+          "first_target_utc": "2011-11-01T00:00:00",
+          "last_target_utc": "2012-03-30T23:00:00"
+        },
+        {
+          "name": "2012_2013_Boston_peryear_hist48_graphs.pt",
+          "bytes": 179893647,
+          "mtime_ns": 1788642269443931785,
+          "graphs": 592,
+          "first_target_utc": "2012-11-01T00:00:00",
+          "last_target_utc": "2013-03-28T23:00:00"
+        },
+        {
+          "name": "2013_2014_Boston_peryear_hist48_graphs.pt",
+          "bytes": 182323199,
+          "mtime_ns": 1788642270371936297,
+          "graphs": 600,
+          "first_target_utc": "2013-11-01T00:00:00",
+          "last_target_utc": "2014-03-30T23:00:00"
+        },
+        {
+          "name": "2014_2015_Boston_peryear_hist48_graphs.pt",
+          "bytes": 74206375,
+          "mtime_ns": 1788642271703942774,
+          "graphs": 244,
+          "first_target_utc": "2014-11-01T00:00:00",
+          "last_target_utc": "2014-12-31T23:00:00"
+        }
+      ],
+      "unused_future_dictionaries": 120,
+      "all_graph_files": 144,
+      "boston_graph_files": 36,
+      "tensor_validation": "Full tensor validation in this audit",
+      "tensor_shapes": [
+        [
+          1677,
+          5
+        ],
+        [
+          9,
+          1677,
+          5
+        ],
+        [
+          6
+        ],
+        [
+          2,
+          6544
+        ]
+      ],
+      "total_graphs": 21272,
+      "tau_physical": 0.3272660821676247,
+      "split": {
+        "train": {
+          "year_groups": [
+            "1979_1980",
+            "1980_1981",
+            "1981_1982",
+            "1982_1983",
+            "1983_1984",
+            "1984_1985",
+            "1985_1986",
+            "1986_1987",
+            "1987_1988",
+            "1988_1989",
+            "1989_1990",
+            "1990_1991",
+            "1991_1992",
+            "1992_1993",
+            "1993_1994",
+            "1994_1995",
+            "1995_1996",
+            "1996_1997",
+            "1997_1998",
+            "1998_1999",
+            "1999_2000",
+            "2000_2001"
+          ],
+          "windows": 13224,
+          "target_hour_count": 79344,
+          "extreme_hour_count": 3968,
+          "extreme_hour_rate": 0.05001008267795927,
+          "event_window_count": 991,
+          "event_window_rate": 0.0749395039322444,
+          "episode_count": 461
+        },
+        "val": {
+          "year_groups": [
+            "2001_2002",
+            "2002_2003",
+            "2003_2004",
+            "2004_2005",
+            "2005_2006",
+            "2006_2007",
+            "2007_2008"
+          ],
+          "windows": 4208,
+          "target_hour_count": 25248,
+          "extreme_hour_count": 1314,
+          "extreme_hour_rate": 0.052043726235741446,
+          "event_window_count": 319,
+          "event_window_rate": 0.07580798479087453,
+          "episode_count": 143
+        },
+        "test": {
+          "year_groups": [
+            "2008_2009",
+            "2009_2010",
+            "2010_2011",
+            "2011_2012",
+            "2012_2013",
+            "2013_2014",
+            "2014_2015"
+          ],
+          "windows": 3840,
+          "target_hour_count": 23040,
+          "extreme_hour_count": 1184,
+          "extreme_hour_rate": 0.05138888888888889,
+          "event_window_count": 286,
+          "event_window_rate": 0.07447916666666667,
+          "episode_count": 129
+        }
+      },
+      "episode_peak_metadata": {
+        "fitted_on": "train",
+        "episode_count": 461,
+        "canonical_peak_target_count": 461,
+        "eligible_target_count": 79344,
+        "duplicate_target_count": 0,
+        "p_episode_peak": 0.005810143174027021,
+        "tau_physical": 0.3272660821676247,
+        "canonical_occurrence_rule": "unique target timestamp; overlapping blocks rejected",
+        "episode_definition": "GT > TRAIN tau; consecutive timestamps exactly 3600 seconds apart",
+        "peak_tie_rule": "earliest timestamp at GT maximum"
+      }
+    },
+    "CMIP6_Cane5": {
+      "included": false,
+      "reasons": [
+        "Excluded by user request; no configs or runs."
+      ],
+      "files": []
+    },
+    "CMIP6_EC_EARTH": {
+      "included": true,
+      "reasons": [],
+      "files": [
+        {
+          "name": "1979_1980_Boston_peryear_hist48_graphs.pt",
+          "bytes": 730801111,
+          "mtime_ns": 1788642317085163118,
+          "graphs": 604,
+          "first_target_utc": "1979-11-01T00:00:00",
+          "last_target_utc": "1980-03-30T23:00:00"
+        },
+        {
+          "name": "1980_1981_Boston_peryear_hist48_graphs.pt",
+          "bytes": 725964159,
+          "mtime_ns": 1788642321582184920,
+          "graphs": 600,
+          "first_target_utc": "1980-11-01T00:00:00",
+          "last_target_utc": "1981-03-30T23:00:00"
+        },
+        {
+          "name": "1981_1982_Boston_peryear_hist48_graphs.pt",
+          "bytes": 725964159,
+          "mtime_ns": 1788642325851205612,
+          "graphs": 600,
+          "first_target_utc": "1981-11-01T00:00:00",
+          "last_target_utc": "1982-03-30T23:00:00"
+        },
+        {
+          "name": "1982_1983_Boston_peryear_hist48_graphs.pt",
+          "bytes": 725964159,
+          "mtime_ns": 1788642329474223170,
+          "graphs": 600,
+          "first_target_utc": "1982-11-01T00:00:00",
+          "last_target_utc": "1983-03-30T23:00:00"
+        },
+        {
+          "name": "1983_1984_Boston_peryear_hist48_graphs.pt",
+          "bytes": 730801111,
+          "mtime_ns": 1788642333048240486,
+          "graphs": 604,
+          "first_target_utc": "1983-11-01T00:00:00",
+          "last_target_utc": "1984-03-30T23:00:00"
+        },
+        {
+          "name": "1984_1985_Boston_peryear_hist48_graphs.pt",
+          "bytes": 725964159,
+          "mtime_ns": 1788642336943259354,
+          "graphs": 600,
+          "first_target_utc": "1984-11-01T00:00:00",
+          "last_target_utc": "1985-03-30T23:00:00"
+        },
+        {
+          "name": "1985_1986_Boston_peryear_hist48_graphs.pt",
+          "bytes": 725964159,
+          "mtime_ns": 1788642340468276426,
+          "graphs": 600,
+          "first_target_utc": "1985-11-01T00:00:00",
+          "last_target_utc": "1986-03-30T23:00:00"
+        },
+        {
+          "name": "1986_1987_Boston_peryear_hist48_graphs.pt",
+          "bytes": 725964159,
+          "mtime_ns": 1788642344919297978,
+          "graphs": 600,
+          "first_target_utc": "1986-11-01T00:00:00",
+          "last_target_utc": "1987-03-30T23:00:00"
+        },
+        {
+          "name": "1987_1988_Boston_peryear_hist48_graphs.pt",
+          "bytes": 730801111,
+          "mtime_ns": 1788642348371314690,
+          "graphs": 604,
+          "first_target_utc": "1987-11-01T00:00:00",
+          "last_target_utc": "1988-03-30T23:00:00"
+        },
+        {
+          "name": "1988_1989_Boston_peryear_hist48_graphs.pt",
+          "bytes": 725964159,
+          "mtime_ns": 1788642352028332390,
+          "graphs": 600,
+          "first_target_utc": "1988-11-01T00:00:00",
+          "last_target_utc": "1989-03-30T23:00:00"
+        },
+        {
+          "name": "1989_1990_Boston_peryear_hist48_graphs.pt",
+          "bytes": 725964159,
+          "mtime_ns": 1788642355531349342,
+          "graphs": 600,
+          "first_target_utc": "1989-11-01T00:00:00",
+          "last_target_utc": "1990-03-30T23:00:00"
+        },
+        {
+          "name": "1990_1991_Boston_peryear_hist48_graphs.pt",
+          "bytes": 725964159,
+          "mtime_ns": 1788642359141366808,
+          "graphs": 600,
+          "first_target_utc": "1990-11-01T00:00:00",
+          "last_target_utc": "1991-03-30T23:00:00"
+        },
+        {
+          "name": "1991_1992_Boston_peryear_hist48_graphs.pt",
+          "bytes": 730801111,
+          "mtime_ns": 1788642362510383106,
+          "graphs": 604,
+          "first_target_utc": "1991-11-01T00:00:00",
+          "last_target_utc": "1992-03-30T23:00:00"
+        },
+        {
+          "name": "1992_1993_Boston_peryear_hist48_graphs.pt",
+          "bytes": 725964159,
+          "mtime_ns": 1788642366232401108,
+          "graphs": 600,
+          "first_target_utc": "1992-11-01T00:00:00",
+          "last_target_utc": "1993-03-30T23:00:00"
+        },
+        {
+          "name": "1993_1994_Boston_peryear_hist48_graphs.pt",
+          "bytes": 725964159,
+          "mtime_ns": 1788642370514421815,
+          "graphs": 600,
+          "first_target_utc": "1993-11-01T00:00:00",
+          "last_target_utc": "1994-03-30T23:00:00"
+        },
+        {
+          "name": "1994_1995_Boston_peryear_hist48_graphs.pt",
+          "bytes": 725964159,
+          "mtime_ns": 1788642374394440573,
+          "graphs": 600,
+          "first_target_utc": "1994-11-01T00:00:00",
+          "last_target_utc": "1995-03-30T23:00:00"
+        },
+        {
+          "name": "1995_1996_Boston_peryear_hist48_graphs.pt",
+          "bytes": 730801111,
+          "mtime_ns": 1788642377999457998,
+          "graphs": 604,
+          "first_target_utc": "1995-11-01T00:00:00",
+          "last_target_utc": "1996-03-30T23:00:00"
+        },
+        {
+          "name": "1996_1997_Boston_peryear_hist48_graphs.pt",
+          "bytes": 725964159,
+          "mtime_ns": 1788642382061477630,
+          "graphs": 600,
+          "first_target_utc": "1996-11-01T00:00:00",
+          "last_target_utc": "1997-03-30T23:00:00"
+        },
+        {
+          "name": "1997_1998_Boston_peryear_hist48_graphs.pt",
+          "bytes": 725964159,
+          "mtime_ns": 1788642386343498320,
+          "graphs": 600,
+          "first_target_utc": "1997-11-01T00:00:00",
+          "last_target_utc": "1998-03-30T23:00:00"
+        },
+        {
+          "name": "1998_1999_Boston_peryear_hist48_graphs.pt",
+          "bytes": 725964159,
+          "mtime_ns": 1788642390577518773,
+          "graphs": 600,
+          "first_target_utc": "1998-11-01T00:00:00",
+          "last_target_utc": "1999-03-30T23:00:00"
+        },
+        {
+          "name": "1999_2000_Boston_peryear_hist48_graphs.pt",
+          "bytes": 730801111,
+          "mtime_ns": 1788642394880539555,
+          "graphs": 604,
+          "first_target_utc": "1999-11-01T00:00:00",
+          "last_target_utc": "2000-03-30T23:00:00"
+        },
+        {
+          "name": "2000_2001_Boston_peryear_hist48_graphs.pt",
+          "bytes": 725964159,
+          "mtime_ns": 1788642399177560304,
+          "graphs": 600,
+          "first_target_utc": "2000-11-01T00:00:00",
+          "last_target_utc": "2001-03-30T23:00:00"
+        },
+        {
+          "name": "2001_2002_Boston_peryear_hist48_graphs.pt",
+          "bytes": 725964159,
+          "mtime_ns": 1788642403663581962,
+          "graphs": 600,
+          "first_target_utc": "2001-11-01T00:00:00",
+          "last_target_utc": "2002-03-30T23:00:00"
+        },
+        {
+          "name": "2002_2003_Boston_peryear_hist48_graphs.pt",
+          "bytes": 725964159,
+          "mtime_ns": 1788642408034603058,
+          "graphs": 600,
+          "first_target_utc": "2002-11-01T00:00:00",
+          "last_target_utc": "2003-03-30T23:00:00"
+        },
+        {
+          "name": "2003_2004_Boston_peryear_hist48_graphs.pt",
+          "bytes": 730801111,
+          "mtime_ns": 1788642412327623775,
+          "graphs": 604,
+          "first_target_utc": "2003-11-01T00:00:00",
+          "last_target_utc": "2004-03-30T23:00:00"
+        },
+        {
+          "name": "2004_2005_Boston_peryear_hist48_graphs.pt",
+          "bytes": 725964159,
+          "mtime_ns": 1788642416665644704,
+          "graphs": 600,
+          "first_target_utc": "2004-11-01T00:00:00",
+          "last_target_utc": "2005-03-30T23:00:00"
+        },
+        {
+          "name": "2005_2006_Boston_peryear_hist48_graphs.pt",
+          "bytes": 725964159,
+          "mtime_ns": 1788642421064665924,
+          "graphs": 600,
+          "first_target_utc": "2005-11-01T00:00:00",
+          "last_target_utc": "2006-03-30T23:00:00"
+        },
+        {
+          "name": "2006_2007_Boston_peryear_hist48_graphs.pt",
+          "bytes": 725964159,
+          "mtime_ns": 1788642425248686102,
+          "graphs": 600,
+          "first_target_utc": "2006-11-01T00:00:00",
+          "last_target_utc": "2007-03-30T23:00:00"
+        },
+        {
+          "name": "2007_2008_Boston_peryear_hist48_graphs.pt",
+          "bytes": 730801111,
+          "mtime_ns": 1788642429555706869,
+          "graphs": 604,
+          "first_target_utc": "2007-11-01T00:00:00",
+          "last_target_utc": "2008-03-30T23:00:00"
+        },
+        {
+          "name": "2008_2009_Boston_peryear_hist48_graphs.pt",
+          "bytes": 725964159,
+          "mtime_ns": 1788642433720726948,
+          "graphs": 600,
+          "first_target_utc": "2008-11-01T00:00:00",
+          "last_target_utc": "2009-03-30T23:00:00"
+        },
+        {
+          "name": "2009_2010_Boston_peryear_hist48_graphs.pt",
+          "bytes": 725964159,
+          "mtime_ns": 1788642438012747635,
+          "graphs": 600,
+          "first_target_utc": "2009-11-01T00:00:00",
+          "last_target_utc": "2010-03-30T23:00:00"
+        },
+        {
+          "name": "2010_2011_Boston_peryear_hist48_graphs.pt",
+          "bytes": 725964159,
+          "mtime_ns": 1788642442270768155,
+          "graphs": 600,
+          "first_target_utc": "2010-11-01T00:00:00",
+          "last_target_utc": "2011-03-30T23:00:00"
+        },
+        {
+          "name": "2011_2012_Boston_peryear_hist48_graphs.pt",
+          "bytes": 730801111,
+          "mtime_ns": 1788642446694789471,
+          "graphs": 604,
+          "first_target_utc": "2011-11-01T00:00:00",
+          "last_target_utc": "2012-03-30T23:00:00"
+        },
+        {
+          "name": "2012_2013_Boston_peryear_hist48_graphs.pt",
+          "bytes": 725964159,
+          "mtime_ns": 1788642451129810835,
+          "graphs": 600,
+          "first_target_utc": "2012-11-01T00:00:00",
+          "last_target_utc": "2013-03-30T23:00:00"
+        },
+        {
+          "name": "2013_2014_Boston_peryear_hist48_graphs.pt",
+          "bytes": 725964159,
+          "mtime_ns": 1788642455138830143,
+          "graphs": 600,
+          "first_target_utc": "2013-11-01T00:00:00",
+          "last_target_utc": "2014-03-30T23:00:00"
+        },
+        {
+          "name": "2014_2015_Boston_peryear_hist48_graphs.pt",
+          "bytes": 290639567,
+          "mtime_ns": 1788642458033844083,
+          "graphs": 240,
+          "first_target_utc": "2014-11-01T00:00:00",
+          "last_target_utc": "2014-12-30T23:00:00"
+        }
+      ],
+      "unused_future_dictionaries": 120,
+      "all_graph_files": 144,
+      "boston_graph_files": 36,
+      "tensor_validation": "Full tensor validation in this audit",
+      "tensor_shapes": [
+        [
+          6708,
+          5
+        ],
+        [
+          9,
+          6708,
+          5
+        ],
+        [
+          6
+        ],
+        [
+          2,
+          26504
+        ]
+      ],
+      "total_graphs": 21276,
+      "tau_physical": 0.27713152468204477,
+      "split": {
+        "train": {
+          "year_groups": [
+            "1979_1980",
+            "1980_1981",
+            "1981_1982",
+            "1982_1983",
+            "1983_1984",
+            "1984_1985",
+            "1985_1986",
+            "1986_1987",
+            "1987_1988",
+            "1988_1989",
+            "1989_1990",
+            "1990_1991",
+            "1991_1992",
+            "1992_1993",
+            "1993_1994",
+            "1994_1995",
+            "1995_1996",
+            "1996_1997",
+            "1997_1998",
+            "1998_1999",
+            "1999_2000",
+            "2000_2001"
+          ],
+          "windows": 13224,
+          "target_hour_count": 79344,
+          "extreme_hour_count": 3968,
+          "extreme_hour_rate": 0.05001008267795927,
+          "event_window_count": 1000,
+          "event_window_rate": 0.07562008469449485,
+          "episode_count": 492
+        },
+        "val": {
+          "year_groups": [
+            "2001_2002",
+            "2002_2003",
+            "2003_2004",
+            "2004_2005",
+            "2005_2006",
+            "2006_2007",
+            "2007_2008"
+          ],
+          "windows": 4208,
+          "target_hour_count": 25248,
+          "extreme_hour_count": 1438,
+          "extreme_hour_rate": 0.056955006337135614,
+          "event_window_count": 348,
+          "event_window_rate": 0.08269961977186312,
+          "episode_count": 159
+        },
+        "test": {
+          "year_groups": [
+            "2008_2009",
+            "2009_2010",
+            "2010_2011",
+            "2011_2012",
+            "2012_2013",
+            "2013_2014",
+            "2014_2015"
+          ],
+          "windows": 3844,
+          "target_hour_count": 23064,
+          "extreme_hour_count": 1319,
+          "extreme_hour_rate": 0.05718869233437392,
+          "event_window_count": 321,
+          "event_window_rate": 0.08350676378772112,
+          "episode_count": 140
+        }
+      },
+      "episode_peak_metadata": {
+        "fitted_on": "train",
+        "episode_count": 492,
+        "canonical_peak_target_count": 492,
+        "eligible_target_count": 79344,
+        "duplicate_target_count": 0,
+        "p_episode_peak": 0.006200846944948578,
+        "tau_physical": 0.27713152468204477,
+        "canonical_occurrence_rule": "unique target timestamp; overlapping blocks rejected",
+        "episode_definition": "GT > TRAIN tau; consecutive timestamps exactly 3600 seconds apart",
+        "peak_tie_rule": "earliest timestamp at GT maximum"
+      }
+    },
+    "CMIP6_MPI": {
+      "included": true,
+      "reasons": [],
+      "files": [
+        {
+          "name": "1979_1980_Boston_peryear_hist48_graphs.pt",
+          "bytes": 411857367,
+          "mtime_ns": 1788642479350946682,
+          "graphs": 604,
+          "first_target_utc": "1979-11-01T00:00:00",
+          "last_target_utc": "1980-03-30T23:00:00"
+        },
+        {
+          "name": "1980_1981_Boston_peryear_hist48_graphs.pt",
+          "bytes": 409131391,
+          "mtime_ns": 1788642481337956240,
+          "graphs": 600,
+          "first_target_utc": "1980-11-01T00:00:00",
+          "last_target_utc": "1981-03-30T23:00:00"
+        },
+        {
+          "name": "1981_1982_Boston_peryear_hist48_graphs.pt",
+          "bytes": 409131391,
+          "mtime_ns": 1788642484275970372,
+          "graphs": 600,
+          "first_target_utc": "1981-11-01T00:00:00",
+          "last_target_utc": "1982-03-30T23:00:00"
+        },
+        {
+          "name": "1982_1983_Boston_peryear_hist48_graphs.pt",
+          "bytes": 409131391,
+          "mtime_ns": 1788642486256979900,
+          "graphs": 600,
+          "first_target_utc": "1982-11-01T00:00:00",
+          "last_target_utc": "1983-03-30T23:00:00"
+        },
+        {
+          "name": "1983_1984_Boston_peryear_hist48_graphs.pt",
+          "bytes": 411857367,
+          "mtime_ns": 1788642488460990499,
+          "graphs": 604,
+          "first_target_utc": "1983-11-01T00:00:00",
+          "last_target_utc": "1984-03-30T23:00:00"
+        },
+        {
+          "name": "1984_1985_Boston_peryear_hist48_graphs.pt",
+          "bytes": 409131391,
+          "mtime_ns": 1788642490570000641,
+          "graphs": 600,
+          "first_target_utc": "1984-11-01T00:00:00",
+          "last_target_utc": "1985-03-30T23:00:00"
+        },
+        {
+          "name": "1985_1986_Boston_peryear_hist48_graphs.pt",
+          "bytes": 409131391,
+          "mtime_ns": 1788642492987012262,
+          "graphs": 600,
+          "first_target_utc": "1985-11-01T00:00:00",
+          "last_target_utc": "1986-03-30T23:00:00"
+        },
+        {
+          "name": "1986_1987_Boston_peryear_hist48_graphs.pt",
+          "bytes": 409131391,
+          "mtime_ns": 1788642495414023930,
+          "graphs": 600,
+          "first_target_utc": "1986-11-01T00:00:00",
+          "last_target_utc": "1987-03-30T23:00:00"
+        },
+        {
+          "name": "1987_1988_Boston_peryear_hist48_graphs.pt",
+          "bytes": 411857367,
+          "mtime_ns": 1788642497385033405,
+          "graphs": 604,
+          "first_target_utc": "1987-11-01T00:00:00",
+          "last_target_utc": "1988-03-30T23:00:00"
+        },
+        {
+          "name": "1988_1989_Boston_peryear_hist48_graphs.pt",
+          "bytes": 409131391,
+          "mtime_ns": 1788642499919045587,
+          "graphs": 600,
+          "first_target_utc": "1988-11-01T00:00:00",
+          "last_target_utc": "1989-03-30T23:00:00"
+        },
+        {
+          "name": "1989_1990_Boston_peryear_hist48_graphs.pt",
+          "bytes": 409131391,
+          "mtime_ns": 1788642502697058939,
+          "graphs": 600,
+          "first_target_utc": "1989-11-01T00:00:00",
+          "last_target_utc": "1990-03-30T23:00:00"
+        },
+        {
+          "name": "1990_1991_Boston_peryear_hist48_graphs.pt",
+          "bytes": 409131391,
+          "mtime_ns": 1788642505006070035,
+          "graphs": 600,
+          "first_target_utc": "1990-11-01T00:00:00",
+          "last_target_utc": "1991-03-30T23:00:00"
+        },
+        {
+          "name": "1991_1992_Boston_peryear_hist48_graphs.pt",
+          "bytes": 411857367,
+          "mtime_ns": 1788642507081080006,
+          "graphs": 604,
+          "first_target_utc": "1991-11-01T00:00:00",
+          "last_target_utc": "1992-03-30T23:00:00"
+        },
+        {
+          "name": "1992_1993_Boston_peryear_hist48_graphs.pt",
+          "bytes": 409131391,
+          "mtime_ns": 1788642509062089526,
+          "graphs": 600,
+          "first_target_utc": "1992-11-01T00:00:00",
+          "last_target_utc": "1993-03-30T23:00:00"
+        },
+        {
+          "name": "1993_1994_Boston_peryear_hist48_graphs.pt",
+          "bytes": 409131391,
+          "mtime_ns": 1788642511069099169,
+          "graphs": 600,
+          "first_target_utc": "1993-11-01T00:00:00",
+          "last_target_utc": "1994-03-30T23:00:00"
+        },
+        {
+          "name": "1994_1995_Boston_peryear_hist48_graphs.pt",
+          "bytes": 409131391,
+          "mtime_ns": 1788642531633197960,
+          "graphs": 600,
+          "first_target_utc": "1994-11-01T00:00:00",
+          "last_target_utc": "1995-03-30T23:00:00"
+        },
+        {
+          "name": "1995_1996_Boston_peryear_hist48_graphs.pt",
+          "bytes": 411857367,
+          "mtime_ns": 1788642534385211172,
+          "graphs": 604,
+          "first_target_utc": "1995-11-01T00:00:00",
+          "last_target_utc": "1996-03-30T23:00:00"
+        },
+        {
+          "name": "1996_1997_Boston_peryear_hist48_graphs.pt",
+          "bytes": 409131391,
+          "mtime_ns": 1788642536414220912,
+          "graphs": 600,
+          "first_target_utc": "1996-11-01T00:00:00",
+          "last_target_utc": "1997-03-30T23:00:00"
+        },
+        {
+          "name": "1997_1998_Boston_peryear_hist48_graphs.pt",
+          "bytes": 409131391,
+          "mtime_ns": 1788642538454230705,
+          "graphs": 600,
+          "first_target_utc": "1997-11-01T00:00:00",
+          "last_target_utc": "1998-03-30T23:00:00"
+        },
+        {
+          "name": "1998_1999_Boston_peryear_hist48_graphs.pt",
+          "bytes": 409131391,
+          "mtime_ns": 1788642540428240179,
+          "graphs": 600,
+          "first_target_utc": "1998-11-01T00:00:00",
+          "last_target_utc": "1999-03-30T23:00:00"
+        },
+        {
+          "name": "1999_2000_Boston_peryear_hist48_graphs.pt",
+          "bytes": 411857367,
+          "mtime_ns": 1788642542437249821,
+          "graphs": 604,
+          "first_target_utc": "1999-11-01T00:00:00",
+          "last_target_utc": "2000-03-30T23:00:00"
+        },
+        {
+          "name": "2000_2001_Boston_peryear_hist48_graphs.pt",
+          "bytes": 409131391,
+          "mtime_ns": 1788642544431259389,
+          "graphs": 600,
+          "first_target_utc": "2000-11-01T00:00:00",
+          "last_target_utc": "2001-03-30T23:00:00"
+        },
+        {
+          "name": "2001_2002_Boston_peryear_hist48_graphs.pt",
+          "bytes": 409131391,
+          "mtime_ns": 1788642546603269813,
+          "graphs": 600,
+          "first_target_utc": "2001-11-01T00:00:00",
+          "last_target_utc": "2002-03-30T23:00:00"
+        },
+        {
+          "name": "2002_2003_Boston_peryear_hist48_graphs.pt",
+          "bytes": 409131391,
+          "mtime_ns": 1788642548648279626,
+          "graphs": 600,
+          "first_target_utc": "2002-11-01T00:00:00",
+          "last_target_utc": "2003-03-30T23:00:00"
+        },
+        {
+          "name": "2003_2004_Boston_peryear_hist48_graphs.pt",
+          "bytes": 411857367,
+          "mtime_ns": 1788642550858290229,
+          "graphs": 604,
+          "first_target_utc": "2003-11-01T00:00:00",
+          "last_target_utc": "2004-03-30T23:00:00"
+        },
+        {
+          "name": "2004_2005_Boston_peryear_hist48_graphs.pt",
+          "bytes": 409131391,
+          "mtime_ns": 1788642553107301018,
+          "graphs": 600,
+          "first_target_utc": "2004-11-01T00:00:00",
+          "last_target_utc": "2005-03-30T23:00:00"
+        },
+        {
+          "name": "2005_2006_Boston_peryear_hist48_graphs.pt",
+          "bytes": 409131391,
+          "mtime_ns": 1788642555237311235,
+          "graphs": 600,
+          "first_target_utc": "2005-11-01T00:00:00",
+          "last_target_utc": "2006-03-30T23:00:00"
+        },
+        {
+          "name": "2006_2007_Boston_peryear_hist48_graphs.pt",
+          "bytes": 409131391,
+          "mtime_ns": 1788642557247320877,
+          "graphs": 600,
+          "first_target_utc": "2006-11-01T00:00:00",
+          "last_target_utc": "2007-03-30T23:00:00"
+        },
+        {
+          "name": "2007_2008_Boston_peryear_hist48_graphs.pt",
+          "bytes": 411857367,
+          "mtime_ns": 1788642559243330450,
+          "graphs": 604,
+          "first_target_utc": "2007-11-01T00:00:00",
+          "last_target_utc": "2008-03-30T23:00:00"
+        },
+        {
+          "name": "2008_2009_Boston_peryear_hist48_graphs.pt",
+          "bytes": 409131391,
+          "mtime_ns": 1788642561183339754,
+          "graphs": 600,
+          "first_target_utc": "2008-11-01T00:00:00",
+          "last_target_utc": "2009-03-30T23:00:00"
+        },
+        {
+          "name": "2009_2010_Boston_peryear_hist48_graphs.pt",
+          "bytes": 409131391,
+          "mtime_ns": 1788642563292349868,
+          "graphs": 600,
+          "first_target_utc": "2009-11-01T00:00:00",
+          "last_target_utc": "2010-03-30T23:00:00"
+        },
+        {
+          "name": "2010_2011_Boston_peryear_hist48_graphs.pt",
+          "bytes": 409131391,
+          "mtime_ns": 1788642571552389473,
+          "graphs": 600,
+          "first_target_utc": "2010-11-01T00:00:00",
+          "last_target_utc": "2011-03-30T23:00:00"
+        },
+        {
+          "name": "2011_2012_Boston_peryear_hist48_graphs.pt",
+          "bytes": 411857367,
+          "mtime_ns": 1788642573974401083,
+          "graphs": 604,
+          "first_target_utc": "2011-11-01T00:00:00",
+          "last_target_utc": "2012-03-30T23:00:00"
+        },
+        {
+          "name": "2012_2013_Boston_peryear_hist48_graphs.pt",
+          "bytes": 409131391,
+          "mtime_ns": 1788642576636413843,
+          "graphs": 600,
+          "first_target_utc": "2012-11-01T00:00:00",
+          "last_target_utc": "2013-03-30T23:00:00"
+        },
+        {
+          "name": "2013_2014_Boston_peryear_hist48_graphs.pt",
+          "bytes": 409131391,
+          "mtime_ns": 1788642579328426746,
+          "graphs": 600,
+          "first_target_utc": "2013-11-01T00:00:00",
+          "last_target_utc": "2014-03-30T23:00:00"
+        },
+        {
+          "name": "2014_2015_Boston_peryear_hist48_graphs.pt",
+          "bytes": 166520615,
+          "mtime_ns": 1788642580912434337,
+          "graphs": 244,
+          "first_target_utc": "2014-11-01T00:00:00",
+          "last_target_utc": "2014-12-31T23:00:00"
+        }
+      ],
+      "unused_future_dictionaries": 120,
+      "all_graph_files": 144,
+      "boston_graph_files": 36,
+      "tensor_validation": "Full tensor validation in this audit",
+      "tensor_shapes": [
+        [
+          3776,
+          5
+        ],
+        [
+          9,
+          3776,
+          5
+        ],
+        [
+          6
+        ],
+        [
+          2,
+          14858
+        ]
+      ],
+      "total_graphs": 21280,
+      "tau_physical": 0.24955656975507734,
+      "split": {
+        "train": {
+          "year_groups": [
+            "1979_1980",
+            "1980_1981",
+            "1981_1982",
+            "1982_1983",
+            "1983_1984",
+            "1984_1985",
+            "1985_1986",
+            "1986_1987",
+            "1987_1988",
+            "1988_1989",
+            "1989_1990",
+            "1990_1991",
+            "1991_1992",
+            "1992_1993",
+            "1993_1994",
+            "1994_1995",
+            "1995_1996",
+            "1996_1997",
+            "1997_1998",
+            "1998_1999",
+            "1999_2000",
+            "2000_2001"
+          ],
+          "windows": 13224,
+          "target_hour_count": 79344,
+          "extreme_hour_count": 3968,
+          "extreme_hour_rate": 0.05001008267795927,
+          "event_window_count": 952,
+          "event_window_rate": 0.07199032062915911,
+          "episode_count": 417
+        },
+        "val": {
+          "year_groups": [
+            "2001_2002",
+            "2002_2003",
+            "2003_2004",
+            "2004_2005",
+            "2005_2006",
+            "2006_2007",
+            "2007_2008"
+          ],
+          "windows": 4208,
+          "target_hour_count": 25248,
+          "extreme_hour_count": 1233,
+          "extreme_hour_rate": 0.04883555133079848,
+          "event_window_count": 296,
+          "event_window_rate": 0.07034220532319392,
+          "episode_count": 130
+        },
+        "test": {
+          "year_groups": [
+            "2008_2009",
+            "2009_2010",
+            "2010_2011",
+            "2011_2012",
+            "2012_2013",
+            "2013_2014",
+            "2014_2015"
+          ],
+          "windows": 3848,
+          "target_hour_count": 23088,
+          "extreme_hour_count": 1226,
+          "extreme_hour_rate": 0.0531011781011781,
+          "event_window_count": 286,
+          "event_window_rate": 0.07432432432432433,
+          "episode_count": 131
+        }
+      },
+      "episode_peak_metadata": {
+        "fitted_on": "train",
+        "episode_count": 417,
+        "canonical_peak_target_count": 417,
+        "eligible_target_count": 79344,
+        "duplicate_target_count": 0,
+        "p_episode_peak": 0.005255595886267393,
+        "tau_physical": 0.24955656975507734,
+        "canonical_occurrence_rule": "unique target timestamp; overlapping blocks rejected",
+        "episode_definition": "GT > TRAIN tau; consecutive timestamps exactly 3600 seconds apart",
+        "peak_tie_rule": "earliest timestamp at GT maximum"
+      }
+    },
+    "CMIP6_MRI": {
+      "included": true,
+      "reasons": [],
+      "files": [
+        {
+          "name": "1979_1980_Boston_peryear_hist48_graphs.pt",
+          "bytes": 283599319,
+          "mtime_ns": 1788642598269517496,
+          "graphs": 604,
+          "first_target_utc": "1979-11-01T00:00:00",
+          "last_target_utc": "1980-03-30T23:00:00"
+        },
+        {
+          "name": "1980_1981_Boston_peryear_hist48_graphs.pt",
+          "bytes": 281722239,
+          "mtime_ns": 1788642599668524196,
+          "graphs": 600,
+          "first_target_utc": "1980-11-01T00:00:00",
+          "last_target_utc": "1981-03-30T23:00:00"
+        },
+        {
+          "name": "1981_1982_Boston_peryear_hist48_graphs.pt",
+          "bytes": 281722239,
+          "mtime_ns": 1788642601065530887,
+          "graphs": 600,
+          "first_target_utc": "1981-11-01T00:00:00",
+          "last_target_utc": "1982-03-30T23:00:00"
+        },
+        {
+          "name": "1982_1983_Boston_peryear_hist48_graphs.pt",
+          "bytes": 281722239,
+          "mtime_ns": 1788642602455537544,
+          "graphs": 600,
+          "first_target_utc": "1982-11-01T00:00:00",
+          "last_target_utc": "1983-03-30T23:00:00"
+        },
+        {
+          "name": "1983_1984_Boston_peryear_hist48_graphs.pt",
+          "bytes": 283599319,
+          "mtime_ns": 1788642603980544847,
+          "graphs": 604,
+          "first_target_utc": "1983-11-01T00:00:00",
+          "last_target_utc": "1984-03-30T23:00:00"
+        },
+        {
+          "name": "1984_1985_Boston_peryear_hist48_graphs.pt",
+          "bytes": 281722239,
+          "mtime_ns": 1788642606085554928,
+          "graphs": 600,
+          "first_target_utc": "1984-11-01T00:00:00",
+          "last_target_utc": "1985-03-30T23:00:00"
+        },
+        {
+          "name": "1985_1986_Boston_peryear_hist48_graphs.pt",
+          "bytes": 281722239,
+          "mtime_ns": 1788642629477666895,
+          "graphs": 600,
+          "first_target_utc": "1985-11-01T00:00:00",
+          "last_target_utc": "1986-03-30T23:00:00"
+        },
+        {
+          "name": "1986_1987_Boston_peryear_hist48_graphs.pt",
+          "bytes": 281722239,
+          "mtime_ns": 1788642653138780065,
+          "graphs": 600,
+          "first_target_utc": "1986-11-01T00:00:00",
+          "last_target_utc": "1987-03-30T23:00:00"
+        },
+        {
+          "name": "1987_1988_Boston_peryear_hist48_graphs.pt",
+          "bytes": 283599319,
+          "mtime_ns": 1788642676331890916,
+          "graphs": 604,
+          "first_target_utc": "1987-11-01T00:00:00",
+          "last_target_utc": "1988-03-30T23:00:00"
+        },
+        {
+          "name": "1988_1989_Boston_peryear_hist48_graphs.pt",
+          "bytes": 281722239,
+          "mtime_ns": 1788642699424001214,
+          "graphs": 600,
+          "first_target_utc": "1988-11-01T00:00:00",
+          "last_target_utc": "1989-03-30T23:00:00"
+        },
+        {
+          "name": "1989_1990_Boston_peryear_hist48_graphs.pt",
+          "bytes": 281722239,
+          "mtime_ns": 1788642722929113414,
+          "graphs": 600,
+          "first_target_utc": "1989-11-01T00:00:00",
+          "last_target_utc": "1990-03-30T23:00:00"
+        },
+        {
+          "name": "1990_1991_Boston_peryear_hist48_graphs.pt",
+          "bytes": 281722239,
+          "mtime_ns": 1788642747172229065,
+          "graphs": 600,
+          "first_target_utc": "1990-11-01T00:00:00",
+          "last_target_utc": "1991-03-30T23:00:00"
+        },
+        {
+          "name": "1991_1992_Boston_peryear_hist48_graphs.pt",
+          "bytes": 283599319,
+          "mtime_ns": 1788642771393344540,
+          "graphs": 604,
+          "first_target_utc": "1991-11-01T00:00:00",
+          "last_target_utc": "1992-03-30T23:00:00"
+        },
+        {
+          "name": "1992_1993_Boston_peryear_hist48_graphs.pt",
+          "bytes": 281722239,
+          "mtime_ns": 1788642794959456827,
+          "graphs": 600,
+          "first_target_utc": "1992-11-01T00:00:00",
+          "last_target_utc": "1993-03-30T23:00:00"
+        },
+        {
+          "name": "1993_1994_Boston_peryear_hist48_graphs.pt",
+          "bytes": 281722239,
+          "mtime_ns": 1788642817478564069,
+          "graphs": 600,
+          "first_target_utc": "1993-11-01T00:00:00",
+          "last_target_utc": "1994-03-30T23:00:00"
+        },
+        {
+          "name": "1994_1995_Boston_peryear_hist48_graphs.pt",
+          "bytes": 281722239,
+          "mtime_ns": 1788642840265672535,
+          "graphs": 600,
+          "first_target_utc": "1994-11-01T00:00:00",
+          "last_target_utc": "1995-03-30T23:00:00"
+        },
+        {
+          "name": "1995_1996_Boston_peryear_hist48_graphs.pt",
+          "bytes": 283599319,
+          "mtime_ns": 1788642863321782229,
+          "graphs": 604,
+          "first_target_utc": "1995-11-01T00:00:00",
+          "last_target_utc": "1996-03-30T23:00:00"
+        },
+        {
+          "name": "1996_1997_Boston_peryear_hist48_graphs.pt",
+          "bytes": 281722239,
+          "mtime_ns": 1788642887238895966,
+          "graphs": 600,
+          "first_target_utc": "1996-11-01T00:00:00",
+          "last_target_utc": "1997-03-30T23:00:00"
+        },
+        {
+          "name": "1997_1998_Boston_peryear_hist48_graphs.pt",
+          "bytes": 281722239,
+          "mtime_ns": 1788642910500006536,
+          "graphs": 600,
+          "first_target_utc": "1997-11-01T00:00:00",
+          "last_target_utc": "1998-03-30T23:00:00"
+        },
+        {
+          "name": "1998_1999_Boston_peryear_hist48_graphs.pt",
+          "bytes": 281722239,
+          "mtime_ns": 1788642935535125482,
+          "graphs": 600,
+          "first_target_utc": "1998-11-01T00:00:00",
+          "last_target_utc": "1999-03-30T23:00:00"
+        },
+        {
+          "name": "1999_2000_Boston_peryear_hist48_graphs.pt",
+          "bytes": 283599319,
+          "mtime_ns": 1788642956791226424,
+          "graphs": 604,
+          "first_target_utc": "1999-11-01T00:00:00",
+          "last_target_utc": "2000-03-30T23:00:00"
+        },
+        {
+          "name": "2000_2001_Boston_peryear_hist48_graphs.pt",
+          "bytes": 281722239,
+          "mtime_ns": 1788642958264233418,
+          "graphs": 600,
+          "first_target_utc": "2000-11-01T00:00:00",
+          "last_target_utc": "2001-03-30T23:00:00"
+        },
+        {
+          "name": "2001_2002_Boston_peryear_hist48_graphs.pt",
+          "bytes": 281722239,
+          "mtime_ns": 1788642959698240227,
+          "graphs": 600,
+          "first_target_utc": "2001-11-01T00:00:00",
+          "last_target_utc": "2002-03-30T23:00:00"
+        },
+        {
+          "name": "2002_2003_Boston_peryear_hist48_graphs.pt",
+          "bytes": 281722239,
+          "mtime_ns": 1788642961263247657,
+          "graphs": 600,
+          "first_target_utc": "2002-11-01T00:00:00",
+          "last_target_utc": "2003-03-30T23:00:00"
+        },
+        {
+          "name": "2003_2004_Boston_peryear_hist48_graphs.pt",
+          "bytes": 283599319,
+          "mtime_ns": 1788642962738254660,
+          "graphs": 604,
+          "first_target_utc": "2003-11-01T00:00:00",
+          "last_target_utc": "2004-03-30T23:00:00"
+        },
+        {
+          "name": "2004_2005_Boston_peryear_hist48_graphs.pt",
+          "bytes": 281722239,
+          "mtime_ns": 1788642965091265832,
+          "graphs": 600,
+          "first_target_utc": "2004-11-01T00:00:00",
+          "last_target_utc": "2005-03-30T23:00:00"
+        },
+        {
+          "name": "2005_2006_Boston_peryear_hist48_graphs.pt",
+          "bytes": 281722239,
+          "mtime_ns": 1788642966562272815,
+          "graphs": 600,
+          "first_target_utc": "2005-11-01T00:00:00",
+          "last_target_utc": "2006-03-30T23:00:00"
+        },
+        {
+          "name": "2006_2007_Boston_peryear_hist48_graphs.pt",
+          "bytes": 281722239,
+          "mtime_ns": 1788642968072279984,
+          "graphs": 600,
+          "first_target_utc": "2006-11-01T00:00:00",
+          "last_target_utc": "2007-03-30T23:00:00"
+        },
+        {
+          "name": "2007_2008_Boston_peryear_hist48_graphs.pt",
+          "bytes": 283599319,
+          "mtime_ns": 1788642969838288368,
+          "graphs": 604,
+          "first_target_utc": "2007-11-01T00:00:00",
+          "last_target_utc": "2008-03-30T23:00:00"
+        },
+        {
+          "name": "2008_2009_Boston_peryear_hist48_graphs.pt",
+          "bytes": 281722239,
+          "mtime_ns": 1788642971593296700,
+          "graphs": 600,
+          "first_target_utc": "2008-11-01T00:00:00",
+          "last_target_utc": "2009-03-30T23:00:00"
+        },
+        {
+          "name": "2009_2010_Boston_peryear_hist48_graphs.pt",
+          "bytes": 281722239,
+          "mtime_ns": 1788642973416305353,
+          "graphs": 600,
+          "first_target_utc": "2009-11-01T00:00:00",
+          "last_target_utc": "2010-03-30T23:00:00"
+        },
+        {
+          "name": "2010_2011_Boston_peryear_hist48_graphs.pt",
+          "bytes": 281722239,
+          "mtime_ns": 1788642974869312251,
+          "graphs": 600,
+          "first_target_utc": "2010-11-01T00:00:00",
+          "last_target_utc": "2011-03-30T23:00:00"
+        },
+        {
+          "name": "2011_2012_Boston_peryear_hist48_graphs.pt",
+          "bytes": 283599319,
+          "mtime_ns": 1788642976779321317,
+          "graphs": 604,
+          "first_target_utc": "2011-11-01T00:00:00",
+          "last_target_utc": "2012-03-30T23:00:00"
+        },
+        {
+          "name": "2012_2013_Boston_peryear_hist48_graphs.pt",
+          "bytes": 281722239,
+          "mtime_ns": 1788642978302328547,
+          "graphs": 600,
+          "first_target_utc": "2012-11-01T00:00:00",
+          "last_target_utc": "2013-03-30T23:00:00"
+        },
+        {
+          "name": "2013_2014_Boston_peryear_hist48_graphs.pt",
+          "bytes": 281722239,
+          "mtime_ns": 1788642980313338092,
+          "graphs": 600,
+          "first_target_utc": "2013-11-01T00:00:00",
+          "last_target_utc": "2014-03-30T23:00:00"
+        },
+        {
+          "name": "2014_2015_Boston_peryear_hist48_graphs.pt",
+          "bytes": 112786127,
+          "mtime_ns": 1788642982002346109,
+          "graphs": 240,
+          "first_target_utc": "2014-11-01T00:00:00",
+          "last_target_utc": "2014-12-30T23:00:00"
+        }
+      ],
+      "unused_future_dictionaries": 120,
+      "all_graph_files": 144,
+      "boston_graph_files": 36,
+      "tensor_validation": "Full tensor validation in this audit",
+      "tensor_shapes": [
+        [
+          2597,
+          5
+        ],
+        [
+          9,
+          2597,
+          5
+        ],
+        [
+          6
+        ],
+        [
+          2,
+          10184
+        ]
+      ],
+      "total_graphs": 21276,
+      "tau_physical": 0.3367236018180845,
+      "split": {
+        "train": {
+          "year_groups": [
+            "1979_1980",
+            "1980_1981",
+            "1981_1982",
+            "1982_1983",
+            "1983_1984",
+            "1984_1985",
+            "1985_1986",
+            "1986_1987",
+            "1987_1988",
+            "1988_1989",
+            "1989_1990",
+            "1990_1991",
+            "1991_1992",
+            "1992_1993",
+            "1993_1994",
+            "1994_1995",
+            "1995_1996",
+            "1996_1997",
+            "1997_1998",
+            "1998_1999",
+            "1999_2000",
+            "2000_2001"
+          ],
+          "windows": 13224,
+          "target_hour_count": 79344,
+          "extreme_hour_count": 3968,
+          "extreme_hour_rate": 0.05001008267795927,
+          "event_window_count": 966,
+          "event_window_rate": 0.07304900181488204,
+          "episode_count": 455
+        },
+        "val": {
+          "year_groups": [
+            "2001_2002",
+            "2002_2003",
+            "2003_2004",
+            "2004_2005",
+            "2005_2006",
+            "2006_2007",
+            "2007_2008"
+          ],
+          "windows": 4208,
+          "target_hour_count": 25248,
+          "extreme_hour_count": 1366,
+          "extreme_hour_rate": 0.05410329531051965,
+          "event_window_count": 340,
+          "event_window_rate": 0.08079847908745247,
+          "episode_count": 162
+        },
+        "test": {
+          "year_groups": [
+            "2008_2009",
+            "2009_2010",
+            "2010_2011",
+            "2011_2012",
+            "2012_2013",
+            "2013_2014",
+            "2014_2015"
+          ],
+          "windows": 3844,
+          "target_hour_count": 23064,
+          "extreme_hour_count": 1093,
+          "extreme_hour_rate": 0.04738987166146375,
+          "event_window_count": 285,
+          "event_window_rate": 0.07414151925078044,
+          "episode_count": 137
+        }
+      },
+      "episode_peak_metadata": {
+        "fitted_on": "train",
+        "episode_count": 455,
+        "canonical_peak_target_count": 455,
+        "eligible_target_count": 79344,
+        "duplicate_target_count": 0,
+        "p_episode_peak": 0.005734523089332527,
+        "tau_physical": 0.3367236018180845,
+        "canonical_occurrence_rule": "unique target timestamp; overlapping blocks rejected",
+        "episode_definition": "GT > TRAIN tau; consecutive timestamps exactly 3600 seconds apart",
+        "peak_tie_rule": "earliest timestamp at GT maximum"
+      }
+    }
+  }
+}
