@@ -1,6 +1,7 @@
 # Boston CMIP6 quick check — 0929
 
-Test the NCEP extreme-aware objective using **two groups of 10 configs** (20 runs).
+Test the NCEP extreme-aware objective using **two groups of 20 configs** (40 runs):
+the original 20 MSE / Tail+Peak runs plus 20 Tail Only / Peak Only ablations.
 Included in each group: `CMIP6_AWI`, `CMIP6_CNRM`, `CMIP6_EC_EARTH`, `CMIP6_MPI`, `CMIP6_MRI`.
 Excluded: `CMIP6_Cane5`, by request. All five selected datasets passed completeness,
 tensor/history, target/timestamp, and split-population checks.
@@ -16,9 +17,11 @@ tensor/history, target/timestamp, and split-population checks.
 years available for TRAIN/VAL; future years appear only in the future-year TEST split.
 Past-only folders contain unused future dictionaries; the loader reads only their 36 historical graph files.
 
-## Two loss formulations
+## Four loss formulations
 
 - `T0000_EP0000`: Global MSE.
+- `T0500_EP0000`: **Tail Only** — Global MSE + 0.05 × Tail-MSE.
+- `T0000_EP0100`: **Peak Only** — Global MSE + 0.01 × EpisodeGTAlignedPeak-MSE.
 - `T0500_EP0100`: Global MSE + 0.05 × Tail-MSE + 0.01 × EpisodeGTAlignedPeak-MSE.
 
 Tail uses strict GT > TRAIN Q95; episode peak supervises one GT peak timestamp per
@@ -40,22 +43,36 @@ Config root: `/home/exouser/StormSurge/configs/CMIP6_Boston_QuickCheck_0929`; se
 
 Results root: `/home/exouser/media/share/PACT/FormalRuns_0925/CMIP6_Boston_QuickCheck_0929`; separate `past_only/` and `future_year/` folders.
 
-`manifest.csv` records all 20 exact config/result paths; each group also has its own
-manifest, audit report, template diff, and dry-run commands. No NCEP config/result is modified.
+`manifest.csv` records all 40 exact config/result paths; each group also has its own
+manifest, audit report, template diff, and dry-run commands.
+The added configs share the existing group folders and use batch stamp `20260930_233312`.
+Each job creates its own run directory inside the corresponding existing results folder.
 
-From `/home/exouser/StormSurge`:
+## Submit the additional ablations manually
+
+[The 20 qsub_local commands](qsub_ablations.txt) contain only the new Tail Only / Peak Only
+runs. Copy the `cd` and `export` lines first, then submit each `qsub_local` line once
+in an interactive shell. The fixed `PACT_RUNSTAMP` keeps result paths identical to
+the manifest. Jobs use tmux and one GPU queue slot.
+
+The 20 additional runs are prepared for manual submission. Their configs keep the
+existing combined run's data, split, architecture, optimizer, and checkpoint settings;
+only the disabled loss weight and run identifiers differ.
+`prepare_ablations.py` appends the missing variants and refuses a second append.
+
+Validate both complete groups from `/home/exouser/StormSurge`:
 
 ```bash
-DRY_RUN=1 bash configs/CMIP6_Boston_QuickCheck_0929/launch_all.sh
-bash configs/CMIP6_Boston_QuickCheck_0929/launch_all.sh
+/home/exouser/.conda/envs/torchpyg-cu12x/bin/python configs/CMIP6_Boston_QuickCheck_0929/audit_configs.py past_only
+/home/exouser/.conda/envs/torchpyg-cu12x/bin/python configs/CMIP6_Boston_QuickCheck_0929/audit_configs.py future_year
 ```
 
-The launcher audits both groups before submission and uses existing `qsub_local` →
-`train.sh` → tmux, one GPU job at a time. Past-only jobs are queued first.
-Queue IDs are saved in each results folder's `_orchestration/submissions.tsv`.
-Use `qstat_local` in an interactive shell for status. The fixed batch cannot be submitted twice.
+The existing `launch_all.sh` scripts describe the original 20-run batch and keep its
+repeat-submission guard. The original queue receipts remain in each results folder's
+`_orchestration/submissions.tsv`. For manually submitted ablations, `qsub_local`
+prints each queue ID and stores its normal local queue record; use `qstat_local` for status.
 
-## Submitted batch
+## Original submitted batch
 
 Submitted 2026-09-29 UTC: past-only queue IDs **153–162**; future-year IDs **163–172**.
 The first AWI past-only MSE run completed epoch 1 and saved both checkpoint roles.

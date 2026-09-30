@@ -28,7 +28,8 @@ import train
 from emulator.training.checkpoint_selection import ROLES
 from emulator.data.graph_store import ForcingGraphStore
 
-VARIANTS = {'T0000_EP0000': (0., 0.), 'T0500_EP0100': (.05, .01)}
+VARIANTS = {'T0000_EP0000': (0., 0.), 'T0500_EP0100': (.05, .01),
+            'T0500_EP0000': (.05, 0.), 'T0000_EP0100': (0., .01)}
 ASSIGNMENT_CHANGES = {'ROOT_DIR', 'ALL_RESULTS_ROOT', 'PACT_RUN_NAME', 'PYTHON_RUN_TAG_BASE', 'CHECKPOINT_SELECTION'}
 ARGUMENT_CHANGES = {'root_dir', 'checkpoint_selection', 'run_tag', 'output_dir'}
 if GROUP == 'future_year':
@@ -57,9 +58,23 @@ def main():
     assert len(included) == 5 and 'CMIP6_Cane5' not in included, 'Expected five eligible datasets; Cane5 is excluded'
     assert data['group'] == GROUP and (data['train_ratio'], data['val_ratio']) == RATIOS
     rows = list(csv.DictReader((FOLDER/'manifest.csv').open()))
-    assert Counter(r['dataset'] for r in rows) == Counter({k:2 for k in included})
+    assert Counter(r['dataset'] for r in rows) == Counter({k:len(VARIANTS) for k in included})
     assert {(r['dataset'],r['variant']) for r in rows} == {(k,v) for k in included for v in VARIANTS}
-    assert len({r['config_path'] for r in rows}) == len({r['result_path'] for r in rows}) == len(rows)
+    assert len({r['config_path'] for r in rows}) == len({r['result_path'] for r in rows}) == len({r['queue_label'] for r in rows}) == len(rows)
+    with (ROOT_FOLDER/'manifest.csv').open() as handle:
+        combined_rows = list(csv.DictReader(handle))
+    assert rows == [r for r in combined_rows if r['group'] == GROUP], 'Root/group manifests disagree'
+    # Check the manual commands without contacting the queue.
+    ablations = [r for r in rows if r['variant'] in ('T0500_EP0000','T0000_EP0100')]
+    command_lines = (ROOT_FOLDER/'qsub_ablations.txt').read_text().splitlines()
+    commands = [shlex.split(line) for line in command_lines if line.startswith('qsub_local ')]
+    assert len(commands) == 20 and len({command[2] for command in commands}) == 20
+    stamps = {r['runstamp'] for r in ablations}
+    assert len(stamps) == 1
+    assert f'export PACT_RUNSTAMP={next(iter(stamps))} USE_TMUX=1 QSUB_LOCAL_SLOTS=1' in command_lines
+    expected_commands = [['qsub_local','train.sh',r['queue_label'],str(Path(r['config_path']).relative_to(REPO))]
+                         for r in ablations]
+    assert [command for command in commands if command[2] in {r['queue_label'] for r in ablations}] == expected_commands
     assert sorted(str(p) for p in FOLDER.glob('train_config_*.sh')) == sorted(r['config_path'] for r in rows)
     assert set(ROLES) == {'overall','exceedance'}, 'Training must retain both checkpoint roles'
     for name in included:
@@ -75,6 +90,8 @@ def main():
         path = Path(row['config_path'])
         result = Path(row['result_path'])
         source = Path(row['template_path'])
+        assert source == REPO/'configs/single_tail_episodepeak_4x4'/f'train_config_NCEP_Boston_G0_{row["variant"]}.sh'
+        assert (float(row['tail_mse_weight']),float(row['episode_gt_aligned_peak_mse_weight'])) == VARIANTS[row['variant']]
         assert path.parent == FOLDER and path.resolve().parent == FOLDER.resolve()
         assert result.parent == RESULTS and result.resolve().parent == RESULTS.resolve()
         assert 'NCEP' not in path.name and 'NCEP' not in result.name
@@ -130,14 +147,14 @@ def main():
         audit_rows.append(dict(**row, passed=True, config_sha256=digest(path), template_sha256=digest(source),
                                assignment_changes=changes, argument_changes=changed_args, resolved_arguments=resolved))
     report = dict(passed=True, group=GROUP, audited_at_utc=datetime.now(timezone.utc).isoformat(), config_count=len(rows),
-                  configs_per_dataset=2, split_years=split_years, included=included, excluded={k:v['reasons'] for k,v in data['datasets'].items() if not v['included']},
+                  configs_per_dataset=len(VARIANTS), split_years=split_years, included=included, excluded={k:v['reasons'] for k,v in data['datasets'].items() if not v['included']},
                   checkpoint_roles=list(ROLES), primary_checkpoint='overall', results_root=str(RESULTS),
                   git_commit=subprocess.check_output(['git','rev-parse','HEAD'],cwd=REPO,text=True).strip(),
                   code_sha256={name:digest(REPO/name) for name in ['train.py','train.sh','emulator/training/checkpoint_selection.py','emulator/training/losses.py','emulator/data/graph_store.py']}, rows=audit_rows)
     (FOLDER/'config_audit.json').write_text(json.dumps(report,indent=2,default=str)+'\n')
     (FOLDER/'template_diffs.patch').write_text(''.join(diffs))
     (FOLDER/'dry_run.log').write_text('\n'.join(dry_logs))
-    print(f'PASS {GROUP}: {len(rows)} configs; exactly 2 per dataset; template and resolved-argument audit passed.')
+    print(f'PASS {GROUP}: {len(rows)} configs; exactly {len(VARIANTS)} per dataset; template and resolved-argument audit passed.')
     print('PASS split: '+ '; '.join(f'{part}={len(years)} groups ({years[0]} to {years[-1]})' for part,years in split_years.items()))
     print('PASS: both checkpoint roles retained; primary=overall; all config/result paths isolated from NCEP runs.')
     print('Config root: '+str(FOLDER))

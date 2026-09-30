@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Prepare exactly ten Boston configs per group after both data audits pass."""
+"""Prepare the original ten configs per group; use prepare_ablations.py to extend them."""
 from pathlib import Path
 from datetime import datetime, timezone
 import csv

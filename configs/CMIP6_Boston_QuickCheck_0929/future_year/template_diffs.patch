@@ -458,3 +458,463 @@
 -PYTHON_RUN_TAG_BASE="NCEP_Boston_G0_T0500_EP0100"
 +PACT_RUN_NAME="CMIP6_MRI_Boston_future_year_G0_T0500_EP0100"
 +PYTHON_RUN_TAG_BASE="CMIP6_MRI_Boston_future_year_G0_T0500_EP0100"
+--- /home/exouser/StormSurge/configs/single_tail_episodepeak_4x4/train_config_NCEP_Boston_G0_T0500_EP0000.sh
++++ /home/exouser/StormSurge/configs/CMIP6_Boston_QuickCheck_0929/future_year/train_config_CMIP6_AWI_Boston_future_year_G0_T0500_EP0000.sh
+@@ -1,7 +1,7 @@
+ #!/usr/bin/env bash
+ # Single Global-MSE + Tail-MSE x EpisodeGTAlignedPeak-MSE: Boston, T=0.05, EP=0.0.
+-# Four-station gradient recommendation: KEEP GRID AS PROPOSED.
+-# Primary selector: exceedance; secondary: overall (both retained by active code).
++# Boston CMIP6 quick check: CMIP6_AWI, future_year; matching NCEP formal template.
++# Primary selector: overall; secondary: exceedance (both retained by active code).
+ # WQE and Dual defaults below are inactive for this Single/MSE objective.
+ # Assignment-only configuration; contains no launch or submission command.
+ 
+@@ -12,7 +12,7 @@
+ num_gpus=1
+ USE_TMUX="${USE_TMUX:-1}"
+ 
+-ROOT_DIR="./Data/Grid4_New/NCEP/graphs"
++ROOT_DIR="./Data/Grid4_New/CMIP6_AWI/graphs"
+ TEST_ROOT_DIR=""
+ STATION="Boston"
+ MODEL="perceiver3"
+@@ -32,8 +32,8 @@
+ TRANSFORMER_DROPOUT=0.0
+ MAX_TIME_STEPS=32
+ 
+-TRAIN_RATIO="0.6"
+-VAL_RATIO="0.2"
++TRAIN_RATIO="0.4545454545"
++VAL_RATIO="0.0909090909"
+ SHUFFLE_YEARS=0
+ FUTURE_ONLY=0
+ FUTURE_YEAR_THRESHOLD=2030
+@@ -107,9 +107,9 @@
+ SHAPE_LOSS_WEIGHT=0
+ SEVERITY_SHAPE_EPS=1e-6
+ 
+-CHECKPOINT_SELECTION="exceedance"
++CHECKPOINT_SELECTION="overall"
+ 
+-ALL_RESULTS_ROOT="/home/exouser/media/share/PACT/FormalRuns_0925/single_tail_episodepeak_4x4"
++ALL_RESULTS_ROOT="/home/exouser/media/share/PACT/FormalRuns_0925/CMIP6_Boston_QuickCheck_0929/future_year"
+ RUN_DIR_NAME_STYLE="runname_timestamp"
+-PACT_RUN_NAME="NCEP_Boston_G0_T0500_EP0000"
+-PYTHON_RUN_TAG_BASE="NCEP_Boston_G0_T0500_EP0000"
++PACT_RUN_NAME="CMIP6_AWI_Boston_future_year_G0_T0500_EP0000"
++PYTHON_RUN_TAG_BASE="CMIP6_AWI_Boston_future_year_G0_T0500_EP0000"
+--- /home/exouser/StormSurge/configs/single_tail_episodepeak_4x4/train_config_NCEP_Boston_G0_T0000_EP0100.sh
++++ /home/exouser/StormSurge/configs/CMIP6_Boston_QuickCheck_0929/future_year/train_config_CMIP6_AWI_Boston_future_year_G0_T0000_EP0100.sh
+@@ -1,7 +1,7 @@
+ #!/usr/bin/env bash
+ # Single Global-MSE + Tail-MSE x EpisodeGTAlignedPeak-MSE: Boston, T=0.0, EP=0.01.
+-# Four-station gradient recommendation: KEEP GRID AS PROPOSED.
+-# Primary selector: exceedance; secondary: overall (both retained by active code).
++# Boston CMIP6 quick check: CMIP6_AWI, future_year; matching NCEP formal template.
++# Primary selector: overall; secondary: exceedance (both retained by active code).
+ # WQE and Dual defaults below are inactive for this Single/MSE objective.
+ # Assignment-only configuration; contains no launch or submission command.
+ 
+@@ -12,7 +12,7 @@
+ num_gpus=1
+ USE_TMUX="${USE_TMUX:-1}"
+ 
+-ROOT_DIR="./Data/Grid4_New/NCEP/graphs"
++ROOT_DIR="./Data/Grid4_New/CMIP6_AWI/graphs"
+ TEST_ROOT_DIR=""
+ STATION="Boston"
+ MODEL="perceiver3"
+@@ -32,8 +32,8 @@
+ TRANSFORMER_DROPOUT=0.0
+ MAX_TIME_STEPS=32
+ 
+-TRAIN_RATIO="0.6"
+-VAL_RATIO="0.2"
++TRAIN_RATIO="0.4545454545"
++VAL_RATIO="0.0909090909"
+ SHUFFLE_YEARS=0
+ FUTURE_ONLY=0
+ FUTURE_YEAR_THRESHOLD=2030
+@@ -107,9 +107,9 @@
+ SHAPE_LOSS_WEIGHT=0
+ SEVERITY_SHAPE_EPS=1e-6
+ 
+-CHECKPOINT_SELECTION="exceedance"
++CHECKPOINT_SELECTION="overall"
+ 
+-ALL_RESULTS_ROOT="/home/exouser/media/share/PACT/FormalRuns_0925/single_tail_episodepeak_4x4"
++ALL_RESULTS_ROOT="/home/exouser/media/share/PACT/FormalRuns_0925/CMIP6_Boston_QuickCheck_0929/future_year"
+ RUN_DIR_NAME_STYLE="runname_timestamp"
+-PACT_RUN_NAME="NCEP_Boston_G0_T0000_EP0100"
+-PYTHON_RUN_TAG_BASE="NCEP_Boston_G0_T0000_EP0100"
++PACT_RUN_NAME="CMIP6_AWI_Boston_future_year_G0_T0000_EP0100"
++PYTHON_RUN_TAG_BASE="CMIP6_AWI_Boston_future_year_G0_T0000_EP0100"
+--- /home/exouser/StormSurge/configs/single_tail_episodepeak_4x4/train_config_NCEP_Boston_G0_T0500_EP0000.sh
++++ /home/exouser/StormSurge/configs/CMIP6_Boston_QuickCheck_0929/future_year/train_config_CMIP6_CNRM_Boston_future_year_G0_T0500_EP0000.sh
+@@ -1,7 +1,7 @@
+ #!/usr/bin/env bash
+ # Single Global-MSE + Tail-MSE x EpisodeGTAlignedPeak-MSE: Boston, T=0.05, EP=0.0.
+-# Four-station gradient recommendation: KEEP GRID AS PROPOSED.
+-# Primary selector: exceedance; secondary: overall (both retained by active code).
++# Boston CMIP6 quick check: CMIP6_CNRM, future_year; matching NCEP formal template.
++# Primary selector: overall; secondary: exceedance (both retained by active code).
+ # WQE and Dual defaults below are inactive for this Single/MSE objective.
+ # Assignment-only configuration; contains no launch or submission command.
+ 
+@@ -12,7 +12,7 @@
+ num_gpus=1
+ USE_TMUX="${USE_TMUX:-1}"
+ 
+-ROOT_DIR="./Data/Grid4_New/NCEP/graphs"
++ROOT_DIR="./Data/Grid4_New/CMIP6_CNRM/graphs"
+ TEST_ROOT_DIR=""
+ STATION="Boston"
+ MODEL="perceiver3"
+@@ -32,8 +32,8 @@
+ TRANSFORMER_DROPOUT=0.0
+ MAX_TIME_STEPS=32
+ 
+-TRAIN_RATIO="0.6"
+-VAL_RATIO="0.2"
++TRAIN_RATIO="0.4545454545"
++VAL_RATIO="0.0909090909"
+ SHUFFLE_YEARS=0
+ FUTURE_ONLY=0
+ FUTURE_YEAR_THRESHOLD=2030
+@@ -107,9 +107,9 @@
+ SHAPE_LOSS_WEIGHT=0
+ SEVERITY_SHAPE_EPS=1e-6
+ 
+-CHECKPOINT_SELECTION="exceedance"
++CHECKPOINT_SELECTION="overall"
+ 
+-ALL_RESULTS_ROOT="/home/exouser/media/share/PACT/FormalRuns_0925/single_tail_episodepeak_4x4"
++ALL_RESULTS_ROOT="/home/exouser/media/share/PACT/FormalRuns_0925/CMIP6_Boston_QuickCheck_0929/future_year"
+ RUN_DIR_NAME_STYLE="runname_timestamp"
+-PACT_RUN_NAME="NCEP_Boston_G0_T0500_EP0000"
+-PYTHON_RUN_TAG_BASE="NCEP_Boston_G0_T0500_EP0000"
++PACT_RUN_NAME="CMIP6_CNRM_Boston_future_year_G0_T0500_EP0000"
++PYTHON_RUN_TAG_BASE="CMIP6_CNRM_Boston_future_year_G0_T0500_EP0000"
+--- /home/exouser/StormSurge/configs/single_tail_episodepeak_4x4/train_config_NCEP_Boston_G0_T0000_EP0100.sh
++++ /home/exouser/StormSurge/configs/CMIP6_Boston_QuickCheck_0929/future_year/train_config_CMIP6_CNRM_Boston_future_year_G0_T0000_EP0100.sh
+@@ -1,7 +1,7 @@
+ #!/usr/bin/env bash
+ # Single Global-MSE + Tail-MSE x EpisodeGTAlignedPeak-MSE: Boston, T=0.0, EP=0.01.
+-# Four-station gradient recommendation: KEEP GRID AS PROPOSED.
+-# Primary selector: exceedance; secondary: overall (both retained by active code).
++# Boston CMIP6 quick check: CMIP6_CNRM, future_year; matching NCEP formal template.
++# Primary selector: overall; secondary: exceedance (both retained by active code).
+ # WQE and Dual defaults below are inactive for this Single/MSE objective.
+ # Assignment-only configuration; contains no launch or submission command.
+ 
+@@ -12,7 +12,7 @@
+ num_gpus=1
+ USE_TMUX="${USE_TMUX:-1}"
+ 
+-ROOT_DIR="./Data/Grid4_New/NCEP/graphs"
++ROOT_DIR="./Data/Grid4_New/CMIP6_CNRM/graphs"
+ TEST_ROOT_DIR=""
+ STATION="Boston"
+ MODEL="perceiver3"
+@@ -32,8 +32,8 @@
+ TRANSFORMER_DROPOUT=0.0
+ MAX_TIME_STEPS=32
+ 
+-TRAIN_RATIO="0.6"
+-VAL_RATIO="0.2"
++TRAIN_RATIO="0.4545454545"
++VAL_RATIO="0.0909090909"
+ SHUFFLE_YEARS=0
+ FUTURE_ONLY=0
+ FUTURE_YEAR_THRESHOLD=2030
+@@ -107,9 +107,9 @@
+ SHAPE_LOSS_WEIGHT=0
+ SEVERITY_SHAPE_EPS=1e-6
+ 
+-CHECKPOINT_SELECTION="exceedance"
++CHECKPOINT_SELECTION="overall"
+ 
+-ALL_RESULTS_ROOT="/home/exouser/media/share/PACT/FormalRuns_0925/single_tail_episodepeak_4x4"
++ALL_RESULTS_ROOT="/home/exouser/media/share/PACT/FormalRuns_0925/CMIP6_Boston_QuickCheck_0929/future_year"
+ RUN_DIR_NAME_STYLE="runname_timestamp"
+-PACT_RUN_NAME="NCEP_Boston_G0_T0000_EP0100"
+-PYTHON_RUN_TAG_BASE="NCEP_Boston_G0_T0000_EP0100"
++PACT_RUN_NAME="CMIP6_CNRM_Boston_future_year_G0_T0000_EP0100"
++PYTHON_RUN_TAG_BASE="CMIP6_CNRM_Boston_future_year_G0_T0000_EP0100"
+--- /home/exouser/StormSurge/configs/single_tail_episodepeak_4x4/train_config_NCEP_Boston_G0_T0500_EP0000.sh
++++ /home/exouser/StormSurge/configs/CMIP6_Boston_QuickCheck_0929/future_year/train_config_CMIP6_EC_EARTH_Boston_future_year_G0_T0500_EP0000.sh
+@@ -1,7 +1,7 @@
+ #!/usr/bin/env bash
+ # Single Global-MSE + Tail-MSE x EpisodeGTAlignedPeak-MSE: Boston, T=0.05, EP=0.0.
+-# Four-station gradient recommendation: KEEP GRID AS PROPOSED.
+-# Primary selector: exceedance; secondary: overall (both retained by active code).
++# Boston CMIP6 quick check: CMIP6_EC_EARTH, future_year; matching NCEP formal template.
++# Primary selector: overall; secondary: exceedance (both retained by active code).
+ # WQE and Dual defaults below are inactive for this Single/MSE objective.
+ # Assignment-only configuration; contains no launch or submission command.
+ 
+@@ -12,7 +12,7 @@
+ num_gpus=1
+ USE_TMUX="${USE_TMUX:-1}"
+ 
+-ROOT_DIR="./Data/Grid4_New/NCEP/graphs"
++ROOT_DIR="./Data/Grid4_New/CMIP6_EC_EARTH/graphs"
+ TEST_ROOT_DIR=""
+ STATION="Boston"
+ MODEL="perceiver3"
+@@ -32,8 +32,8 @@
+ TRANSFORMER_DROPOUT=0.0
+ MAX_TIME_STEPS=32
+ 
+-TRAIN_RATIO="0.6"
+-VAL_RATIO="0.2"
++TRAIN_RATIO="0.4545454545"
++VAL_RATIO="0.0909090909"
+ SHUFFLE_YEARS=0
+ FUTURE_ONLY=0
+ FUTURE_YEAR_THRESHOLD=2030
+@@ -107,9 +107,9 @@
+ SHAPE_LOSS_WEIGHT=0
+ SEVERITY_SHAPE_EPS=1e-6
+ 
+-CHECKPOINT_SELECTION="exceedance"
++CHECKPOINT_SELECTION="overall"
+ 
+-ALL_RESULTS_ROOT="/home/exouser/media/share/PACT/FormalRuns_0925/single_tail_episodepeak_4x4"
++ALL_RESULTS_ROOT="/home/exouser/media/share/PACT/FormalRuns_0925/CMIP6_Boston_QuickCheck_0929/future_year"
+ RUN_DIR_NAME_STYLE="runname_timestamp"
+-PACT_RUN_NAME="NCEP_Boston_G0_T0500_EP0000"
+-PYTHON_RUN_TAG_BASE="NCEP_Boston_G0_T0500_EP0000"
++PACT_RUN_NAME="CMIP6_EC_EARTH_Boston_future_year_G0_T0500_EP0000"
++PYTHON_RUN_TAG_BASE="CMIP6_EC_EARTH_Boston_future_year_G0_T0500_EP0000"
+--- /home/exouser/StormSurge/configs/single_tail_episodepeak_4x4/train_config_NCEP_Boston_G0_T0000_EP0100.sh
++++ /home/exouser/StormSurge/configs/CMIP6_Boston_QuickCheck_0929/future_year/train_config_CMIP6_EC_EARTH_Boston_future_year_G0_T0000_EP0100.sh
+@@ -1,7 +1,7 @@
+ #!/usr/bin/env bash
+ # Single Global-MSE + Tail-MSE x EpisodeGTAlignedPeak-MSE: Boston, T=0.0, EP=0.01.
+-# Four-station gradient recommendation: KEEP GRID AS PROPOSED.
+-# Primary selector: exceedance; secondary: overall (both retained by active code).
++# Boston CMIP6 quick check: CMIP6_EC_EARTH, future_year; matching NCEP formal template.
++# Primary selector: overall; secondary: exceedance (both retained by active code).
+ # WQE and Dual defaults below are inactive for this Single/MSE objective.
+ # Assignment-only configuration; contains no launch or submission command.
+ 
+@@ -12,7 +12,7 @@
+ num_gpus=1
+ USE_TMUX="${USE_TMUX:-1}"
+ 
+-ROOT_DIR="./Data/Grid4_New/NCEP/graphs"
++ROOT_DIR="./Data/Grid4_New/CMIP6_EC_EARTH/graphs"
+ TEST_ROOT_DIR=""
+ STATION="Boston"
+ MODEL="perceiver3"
+@@ -32,8 +32,8 @@
+ TRANSFORMER_DROPOUT=0.0
+ MAX_TIME_STEPS=32
+ 
+-TRAIN_RATIO="0.6"
+-VAL_RATIO="0.2"
++TRAIN_RATIO="0.4545454545"
++VAL_RATIO="0.0909090909"
+ SHUFFLE_YEARS=0
+ FUTURE_ONLY=0
+ FUTURE_YEAR_THRESHOLD=2030
+@@ -107,9 +107,9 @@
+ SHAPE_LOSS_WEIGHT=0
+ SEVERITY_SHAPE_EPS=1e-6
+ 
+-CHECKPOINT_SELECTION="exceedance"
++CHECKPOINT_SELECTION="overall"
+ 
+-ALL_RESULTS_ROOT="/home/exouser/media/share/PACT/FormalRuns_0925/single_tail_episodepeak_4x4"
++ALL_RESULTS_ROOT="/home/exouser/media/share/PACT/FormalRuns_0925/CMIP6_Boston_QuickCheck_0929/future_year"
+ RUN_DIR_NAME_STYLE="runname_timestamp"
+-PACT_RUN_NAME="NCEP_Boston_G0_T0000_EP0100"
+-PYTHON_RUN_TAG_BASE="NCEP_Boston_G0_T0000_EP0100"
++PACT_RUN_NAME="CMIP6_EC_EARTH_Boston_future_year_G0_T0000_EP0100"
++PYTHON_RUN_TAG_BASE="CMIP6_EC_EARTH_Boston_future_year_G0_T0000_EP0100"
+--- /home/exouser/StormSurge/configs/single_tail_episodepeak_4x4/train_config_NCEP_Boston_G0_T0500_EP0000.sh
++++ /home/exouser/StormSurge/configs/CMIP6_Boston_QuickCheck_0929/future_year/train_config_CMIP6_MPI_Boston_future_year_G0_T0500_EP0000.sh
+@@ -1,7 +1,7 @@
+ #!/usr/bin/env bash
+ # Single Global-MSE + Tail-MSE x EpisodeGTAlignedPeak-MSE: Boston, T=0.05, EP=0.0.
+-# Four-station gradient recommendation: KEEP GRID AS PROPOSED.
+-# Primary selector: exceedance; secondary: overall (both retained by active code).
++# Boston CMIP6 quick check: CMIP6_MPI, future_year; matching NCEP formal template.
++# Primary selector: overall; secondary: exceedance (both retained by active code).
+ # WQE and Dual defaults below are inactive for this Single/MSE objective.
+ # Assignment-only configuration; contains no launch or submission command.
+ 
+@@ -12,7 +12,7 @@
+ num_gpus=1
+ USE_TMUX="${USE_TMUX:-1}"
+ 
+-ROOT_DIR="./Data/Grid4_New/NCEP/graphs"
++ROOT_DIR="./Data/Grid4_New/CMIP6_MPI/graphs"
+ TEST_ROOT_DIR=""
+ STATION="Boston"
+ MODEL="perceiver3"
+@@ -32,8 +32,8 @@
+ TRANSFORMER_DROPOUT=0.0
+ MAX_TIME_STEPS=32
+ 
+-TRAIN_RATIO="0.6"
+-VAL_RATIO="0.2"
++TRAIN_RATIO="0.4545454545"
++VAL_RATIO="0.0909090909"
+ SHUFFLE_YEARS=0
+ FUTURE_ONLY=0
+ FUTURE_YEAR_THRESHOLD=2030
+@@ -107,9 +107,9 @@
+ SHAPE_LOSS_WEIGHT=0
+ SEVERITY_SHAPE_EPS=1e-6
+ 
+-CHECKPOINT_SELECTION="exceedance"
++CHECKPOINT_SELECTION="overall"
+ 
+-ALL_RESULTS_ROOT="/home/exouser/media/share/PACT/FormalRuns_0925/single_tail_episodepeak_4x4"
++ALL_RESULTS_ROOT="/home/exouser/media/share/PACT/FormalRuns_0925/CMIP6_Boston_QuickCheck_0929/future_year"
+ RUN_DIR_NAME_STYLE="runname_timestamp"
+-PACT_RUN_NAME="NCEP_Boston_G0_T0500_EP0000"
+-PYTHON_RUN_TAG_BASE="NCEP_Boston_G0_T0500_EP0000"
++PACT_RUN_NAME="CMIP6_MPI_Boston_future_year_G0_T0500_EP0000"
++PYTHON_RUN_TAG_BASE="CMIP6_MPI_Boston_future_year_G0_T0500_EP0000"
+--- /home/exouser/StormSurge/configs/single_tail_episodepeak_4x4/train_config_NCEP_Boston_G0_T0000_EP0100.sh
++++ /home/exouser/StormSurge/configs/CMIP6_Boston_QuickCheck_0929/future_year/train_config_CMIP6_MPI_Boston_future_year_G0_T0000_EP0100.sh
+@@ -1,7 +1,7 @@
+ #!/usr/bin/env bash
+ # Single Global-MSE + Tail-MSE x EpisodeGTAlignedPeak-MSE: Boston, T=0.0, EP=0.01.
+-# Four-station gradient recommendation: KEEP GRID AS PROPOSED.
+-# Primary selector: exceedance; secondary: overall (both retained by active code).
++# Boston CMIP6 quick check: CMIP6_MPI, future_year; matching NCEP formal template.
++# Primary selector: overall; secondary: exceedance (both retained by active code).
+ # WQE and Dual defaults below are inactive for this Single/MSE objective.
+ # Assignment-only configuration; contains no launch or submission command.
+ 
+@@ -12,7 +12,7 @@
+ num_gpus=1
+ USE_TMUX="${USE_TMUX:-1}"
+ 
+-ROOT_DIR="./Data/Grid4_New/NCEP/graphs"
++ROOT_DIR="./Data/Grid4_New/CMIP6_MPI/graphs"
+ TEST_ROOT_DIR=""
+ STATION="Boston"
+ MODEL="perceiver3"
+@@ -32,8 +32,8 @@
+ TRANSFORMER_DROPOUT=0.0
+ MAX_TIME_STEPS=32
+ 
+-TRAIN_RATIO="0.6"
+-VAL_RATIO="0.2"
++TRAIN_RATIO="0.4545454545"
++VAL_RATIO="0.0909090909"
+ SHUFFLE_YEARS=0
+ FUTURE_ONLY=0
+ FUTURE_YEAR_THRESHOLD=2030
+@@ -107,9 +107,9 @@
+ SHAPE_LOSS_WEIGHT=0
+ SEVERITY_SHAPE_EPS=1e-6
+ 
+-CHECKPOINT_SELECTION="exceedance"
++CHECKPOINT_SELECTION="overall"
+ 
+-ALL_RESULTS_ROOT="/home/exouser/media/share/PACT/FormalRuns_0925/single_tail_episodepeak_4x4"
++ALL_RESULTS_ROOT="/home/exouser/media/share/PACT/FormalRuns_0925/CMIP6_Boston_QuickCheck_0929/future_year"
+ RUN_DIR_NAME_STYLE="runname_timestamp"
+-PACT_RUN_NAME="NCEP_Boston_G0_T0000_EP0100"
+-PYTHON_RUN_TAG_BASE="NCEP_Boston_G0_T0000_EP0100"
++PACT_RUN_NAME="CMIP6_MPI_Boston_future_year_G0_T0000_EP0100"
++PYTHON_RUN_TAG_BASE="CMIP6_MPI_Boston_future_year_G0_T0000_EP0100"
+--- /home/exouser/StormSurge/configs/single_tail_episodepeak_4x4/train_config_NCEP_Boston_G0_T0500_EP0000.sh
++++ /home/exouser/StormSurge/configs/CMIP6_Boston_QuickCheck_0929/future_year/train_config_CMIP6_MRI_Boston_future_year_G0_T0500_EP0000.sh
+@@ -1,7 +1,7 @@
+ #!/usr/bin/env bash
+ # Single Global-MSE + Tail-MSE x EpisodeGTAlignedPeak-MSE: Boston, T=0.05, EP=0.0.
+-# Four-station gradient recommendation: KEEP GRID AS PROPOSED.
+-# Primary selector: exceedance; secondary: overall (both retained by active code).
++# Boston CMIP6 quick check: CMIP6_MRI, future_year; matching NCEP formal template.
++# Primary selector: overall; secondary: exceedance (both retained by active code).
+ # WQE and Dual defaults below are inactive for this Single/MSE objective.
+ # Assignment-only configuration; contains no launch or submission command.
+ 
+@@ -12,7 +12,7 @@
+ num_gpus=1
+ USE_TMUX="${USE_TMUX:-1}"
+ 
+-ROOT_DIR="./Data/Grid4_New/NCEP/graphs"
++ROOT_DIR="./Data/Grid4_New/CMIP6_MRI/graphs"
+ TEST_ROOT_DIR=""
+ STATION="Boston"
+ MODEL="perceiver3"
+@@ -32,8 +32,8 @@
+ TRANSFORMER_DROPOUT=0.0
+ MAX_TIME_STEPS=32
+ 
+-TRAIN_RATIO="0.6"
+-VAL_RATIO="0.2"
++TRAIN_RATIO="0.4545454545"
++VAL_RATIO="0.0909090909"
+ SHUFFLE_YEARS=0
+ FUTURE_ONLY=0
+ FUTURE_YEAR_THRESHOLD=2030
+@@ -107,9 +107,9 @@
+ SHAPE_LOSS_WEIGHT=0
+ SEVERITY_SHAPE_EPS=1e-6
+ 
+-CHECKPOINT_SELECTION="exceedance"
++CHECKPOINT_SELECTION="overall"
+ 
+-ALL_RESULTS_ROOT="/home/exouser/media/share/PACT/FormalRuns_0925/single_tail_episodepeak_4x4"
++ALL_RESULTS_ROOT="/home/exouser/media/share/PACT/FormalRuns_0925/CMIP6_Boston_QuickCheck_0929/future_year"
+ RUN_DIR_NAME_STYLE="runname_timestamp"
+-PACT_RUN_NAME="NCEP_Boston_G0_T0500_EP0000"
+-PYTHON_RUN_TAG_BASE="NCEP_Boston_G0_T0500_EP0000"
++PACT_RUN_NAME="CMIP6_MRI_Boston_future_year_G0_T0500_EP0000"
++PYTHON_RUN_TAG_BASE="CMIP6_MRI_Boston_future_year_G0_T0500_EP0000"
+--- /home/exouser/StormSurge/configs/single_tail_episodepeak_4x4/train_config_NCEP_Boston_G0_T0000_EP0100.sh
++++ /home/exouser/StormSurge/configs/CMIP6_Boston_QuickCheck_0929/future_year/train_config_CMIP6_MRI_Boston_future_year_G0_T0000_EP0100.sh
+@@ -1,7 +1,7 @@
+ #!/usr/bin/env bash
+ # Single Global-MSE + Tail-MSE x EpisodeGTAlignedPeak-MSE: Boston, T=0.0, EP=0.01.
+-# Four-station gradient recommendation: KEEP GRID AS PROPOSED.
+-# Primary selector: exceedance; secondary: overall (both retained by active code).
++# Boston CMIP6 quick check: CMIP6_MRI, future_year; matching NCEP formal template.
++# Primary selector: overall; secondary: exceedance (both retained by active code).
+ # WQE and Dual defaults below are inactive for this Single/MSE objective.
+ # Assignment-only configuration; contains no launch or submission command.
+ 
+@@ -12,7 +12,7 @@
+ num_gpus=1
+ USE_TMUX="${USE_TMUX:-1}"
+ 
+-ROOT_DIR="./Data/Grid4_New/NCEP/graphs"
++ROOT_DIR="./Data/Grid4_New/CMIP6_MRI/graphs"
+ TEST_ROOT_DIR=""
+ STATION="Boston"
+ MODEL="perceiver3"
+@@ -32,8 +32,8 @@
+ TRANSFORMER_DROPOUT=0.0
+ MAX_TIME_STEPS=32
+ 
+-TRAIN_RATIO="0.6"
+-VAL_RATIO="0.2"
++TRAIN_RATIO="0.4545454545"
++VAL_RATIO="0.0909090909"
+ SHUFFLE_YEARS=0
+ FUTURE_ONLY=0
+ FUTURE_YEAR_THRESHOLD=2030
+@@ -107,9 +107,9 @@
+ SHAPE_LOSS_WEIGHT=0
+ SEVERITY_SHAPE_EPS=1e-6
+ 
+-CHECKPOINT_SELECTION="exceedance"
++CHECKPOINT_SELECTION="overall"
+ 
+-ALL_RESULTS_ROOT="/home/exouser/media/share/PACT/FormalRuns_0925/single_tail_episodepeak_4x4"
++ALL_RESULTS_ROOT="/home/exouser/media/share/PACT/FormalRuns_0925/CMIP6_Boston_QuickCheck_0929/future_year"
+ RUN_DIR_NAME_STYLE="runname_timestamp"
+-PACT_RUN_NAME="NCEP_Boston_G0_T0000_EP0100"
+-PYTHON_RUN_TAG_BASE="NCEP_Boston_G0_T0000_EP0100"
++PACT_RUN_NAME="CMIP6_MRI_Boston_future_year_G0_T0000_EP0100"
++PYTHON_RUN_TAG_BASE="CMIP6_MRI_Boston_future_year_G0_T0000_EP0100"

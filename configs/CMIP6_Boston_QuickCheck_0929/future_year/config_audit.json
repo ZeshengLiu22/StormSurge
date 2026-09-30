@@ -1,9 +1,9 @@
 {
   "passed": true,
   "group": "future_year",
-  "audited_at_utc": "2026-09-29T05:46:41.320797+00:00",
-  "config_count": 10,
-  "configs_per_dataset": 2,
+  "audited_at_utc": "2026-09-30T23:34:57.277642+00:00",
+  "config_count": 20,
+  "configs_per_dataset": 4,
   "split_years": {
     "train": [
       "1979_1980",
@@ -96,7 +96,7 @@
   ],
   "primary_checkpoint": "overall",
   "results_root": "/home/exouser/media/share/PACT/FormalRuns_0925/CMIP6_Boston_QuickCheck_0929/future_year",
-  "git_commit": "6f5521bd99cd3dd75ddbeb550aa9a8135319a457",
+  "git_commit": "c4f09a1381ac1d4deeeea5fe206ea34e29a155c7",
   "code_sha256": {
     "train.py": "e3f0be162a1395785ec6096e50c42ee328f1c3a123f129cc2ebc7f808478b68a",
     "train.sh": "18353634f6a83036c5bfeef817b345fe9746f488e2591be3f4a488fea3020bb9",
@@ -1821,6 +1821,1726 @@
         "checkpoint_selection": "overall",
         "run_tag": "CMIP6_MRI_Boston_future_year_G0_T0500_EP0100_20260929_054511",
         "output_dir": "/home/exouser/media/share/PACT/FormalRuns_0925/CMIP6_Boston_QuickCheck_0929/future_year/CMIP6_MRI_Boston_future_year_G0_T0500_EP0100__20260929_054511",
+        "device": "auto",
+        "use_station_meta": 1
+      }
+    },
+    {
+      "group": "future_year",
+      "dataset": "CMIP6_AWI",
+      "variant": "T0500_EP0000",
+      "tail_mse_weight": "0.05",
+      "episode_gt_aligned_peak_mse_weight": "0.0",
+      "config_path": "/home/exouser/StormSurge/configs/CMIP6_Boston_QuickCheck_0929/future_year/train_config_CMIP6_AWI_Boston_future_year_G0_T0500_EP0000.sh",
+      "result_path": "/home/exouser/media/share/PACT/FormalRuns_0925/CMIP6_Boston_QuickCheck_0929/future_year/CMIP6_AWI_Boston_future_year_G0_T0500_EP0000__20260930_233312",
+      "template_path": "/home/exouser/StormSurge/configs/single_tail_episodepeak_4x4/train_config_NCEP_Boston_G0_T0500_EP0000.sh",
+      "primary_checkpoint": "overall",
+      "runstamp": "20260930_233312",
+      "queue_label": "QB0929F_AWI_T0500_EP0000",
+      "passed": true,
+      "config_sha256": "46f2cd17ff1b10d3bef47efed74b8028ff0f61976181a8452be83788a07a6cbb",
+      "template_sha256": "619dee824fcd1b79adaba632a01519095294bfbd49c0e76798c382c858c3f9d1",
+      "assignment_changes": {
+        "ROOT_DIR": {
+          "template": "\"./Data/Grid4_New/NCEP/graphs\"",
+          "quick_check": "\"./Data/Grid4_New/CMIP6_AWI/graphs\""
+        },
+        "TRAIN_RATIO": {
+          "template": "\"0.6\"",
+          "quick_check": "\"0.4545454545\""
+        },
+        "VAL_RATIO": {
+          "template": "\"0.2\"",
+          "quick_check": "\"0.0909090909\""
+        },
+        "CHECKPOINT_SELECTION": {
+          "template": "\"exceedance\"",
+          "quick_check": "\"overall\""
+        },
+        "ALL_RESULTS_ROOT": {
+          "template": "\"/home/exouser/media/share/PACT/FormalRuns_0925/single_tail_episodepeak_4x4\"",
+          "quick_check": "\"/home/exouser/media/share/PACT/FormalRuns_0925/CMIP6_Boston_QuickCheck_0929/future_year\""
+        },
+        "PACT_RUN_NAME": {
+          "template": "\"NCEP_Boston_G0_T0500_EP0000\"",
+          "quick_check": "\"CMIP6_AWI_Boston_future_year_G0_T0500_EP0000\""
+        },
+        "PYTHON_RUN_TAG_BASE": {
+          "template": "\"NCEP_Boston_G0_T0500_EP0000\"",
+          "quick_check": "\"CMIP6_AWI_Boston_future_year_G0_T0500_EP0000\""
+        }
+      },
+      "argument_changes": {
+        "root_dir": {
+          "template": "./Data/Grid4_New/NCEP/graphs",
+          "quick_check": "./Data/Grid4_New/CMIP6_AWI/graphs"
+        },
+        "train_ratio": {
+          "template": 0.6,
+          "quick_check": 0.4545454545
+        },
+        "val_ratio": {
+          "template": 0.2,
+          "quick_check": 0.0909090909
+        },
+        "checkpoint_selection": {
+          "template": "exceedance",
+          "quick_check": "overall"
+        },
+        "run_tag": {
+          "template": "NCEP_Boston_G0_T0500_EP0000_20260930_233312",
+          "quick_check": "CMIP6_AWI_Boston_future_year_G0_T0500_EP0000_20260930_233312"
+        },
+        "output_dir": {
+          "template": "/home/exouser/media/share/PACT/FormalRuns_0925/single_tail_episodepeak_4x4/NCEP_Boston_G0_T0500_EP0000__20260930_233312",
+          "quick_check": "/home/exouser/media/share/PACT/FormalRuns_0925/CMIP6_Boston_QuickCheck_0929/future_year/CMIP6_AWI_Boston_future_year_G0_T0500_EP0000__20260930_233312"
+        }
+      },
+      "resolved_arguments": {
+        "root_dir": "./Data/Grid4_New/CMIP6_AWI/graphs",
+        "test_root_dir": "",
+        "filter": null,
+        "station": "Boston",
+        "station_json_dir": "station_json",
+        "use_site_elevation": 0,
+        "use_bathymetry": 0,
+        "train_ratio": 0.4545454545,
+        "val_ratio": 0.0909090909,
+        "shuffle_years": 0,
+        "future_only": 0,
+        "future_year_threshold": 2030,
+        "batch_size": 256,
+        "grad_accum_steps": 4,
+        "epochs": 300,
+        "lr": 0.005,
+        "hidden_channels": 128,
+        "seed": 42,
+        "num_layers": 2,
+        "dropout": 0.05,
+        "history_hours": 24,
+        "x_norm": "zscore",
+        "x_p_lo": 1.0,
+        "x_p_hi": 99.0,
+        "x_nodes_per_graph": 0,
+        "x_clip": 0.0,
+        "x_aug": 0,
+        "x_aug_prob": 0.0,
+        "x_aug_scale": 0.0,
+        "x_aug_bias": 0.0,
+        "loss_mode": "mse",
+        "wqe_quantile_tau": 0.25,
+        "wqe_expectile_tau": 0.82,
+        "wqe_quantile_weight": 0.16666666666666666,
+        "wqe_expectile_weight": 0.8333333333333334,
+        "wmse_alpha": 4.0,
+        "wmse_s": 0.1,
+        "exceedance_percentile": 95.0,
+        "exceedance_loss_weight": 0.05,
+        "episode_gt_aligned_peak_weight": 0.0,
+        "exceedance_loss_mode": "mse",
+        "slope_lambda": 0.01,
+        "slope_mask_s": 0.1,
+        "slope_robust": "charb",
+        "slope_charb_eps": 0.001,
+        "slope_huber_delta": 0.05,
+        "scheduler": "cosine",
+        "min_lr": 1e-06,
+        "warmup_epochs": 5,
+        "warmup_start_factor": 0.1,
+        "rop_factor": 0.5,
+        "rop_patience": 20,
+        "rop_threshold": 0.0001,
+        "rop_cooldown": 0,
+        "rop_min_lr": 1e-06,
+        "rop_metric": "val_all_rmse",
+        "num_workers": 0,
+        "pin_memory": false,
+        "persistent_workers": false,
+        "prefetch_factor": 0,
+        "mp_context": "fork",
+        "torch_threads": 1,
+        "tf32": true,
+        "amp": true,
+        "amp_dtype": "bf16",
+        "model": "perceiver3",
+        "encoder_type": "GraphSAGE",
+        "cnn_intermediate_channel": 29,
+        "head_type": "single",
+        "head_dropout": 0.05,
+        "exceedance_head_experiment": null,
+        "exceedance_gate_pooling": "mean",
+        "gate_mode": "window",
+        "dual_mode": "exceedance",
+        "dual_loss": 0,
+        "dual_ablation": "none",
+        "body_loss_weight": 1.0,
+        "excess_loss_weight": 1.0,
+        "excess_loss_mode": "mse",
+        "excess_formulation": "direct",
+        "shape_loss_weight": 0.0,
+        "severity_shape_eps": 1e-06,
+        "excess_amp_loss_weight": 0.0,
+        "gate_loss_weight": 1.0,
+        "max_grad_norm": 0.0,
+        "deterministic": 0,
+        "temporal_block": "Transformer",
+        "node_read_heads": 8,
+        "time_read_heads": 8,
+        "transformer_layers": 2,
+        "transformer_ff_mult": 4.0,
+        "transformer_dropout": 0.0,
+        "max_time_steps": 32,
+        "checkpoint_selection": "overall",
+        "run_tag": "CMIP6_AWI_Boston_future_year_G0_T0500_EP0000_20260930_233312",
+        "output_dir": "/home/exouser/media/share/PACT/FormalRuns_0925/CMIP6_Boston_QuickCheck_0929/future_year/CMIP6_AWI_Boston_future_year_G0_T0500_EP0000__20260930_233312",
+        "device": "auto",
+        "use_station_meta": 1
+      }
+    },
+    {
+      "group": "future_year",
+      "dataset": "CMIP6_AWI",
+      "variant": "T0000_EP0100",
+      "tail_mse_weight": "0.0",
+      "episode_gt_aligned_peak_mse_weight": "0.01",
+      "config_path": "/home/exouser/StormSurge/configs/CMIP6_Boston_QuickCheck_0929/future_year/train_config_CMIP6_AWI_Boston_future_year_G0_T0000_EP0100.sh",
+      "result_path": "/home/exouser/media/share/PACT/FormalRuns_0925/CMIP6_Boston_QuickCheck_0929/future_year/CMIP6_AWI_Boston_future_year_G0_T0000_EP0100__20260930_233312",
+      "template_path": "/home/exouser/StormSurge/configs/single_tail_episodepeak_4x4/train_config_NCEP_Boston_G0_T0000_EP0100.sh",
+      "primary_checkpoint": "overall",
+      "runstamp": "20260930_233312",
+      "queue_label": "QB0929F_AWI_T0000_EP0100",
+      "passed": true,
+      "config_sha256": "39fd8517edfe1b32842c2a10d96adee4398cf2a4d1180a7ab445abf80a35d7c2",
+      "template_sha256": "ec21eeee3823b78bf92f8137c4ff345d38819fe89ae1ec09b31327008710d357",
+      "assignment_changes": {
+        "ROOT_DIR": {
+          "template": "\"./Data/Grid4_New/NCEP/graphs\"",
+          "quick_check": "\"./Data/Grid4_New/CMIP6_AWI/graphs\""
+        },
+        "TRAIN_RATIO": {
+          "template": "\"0.6\"",
+          "quick_check": "\"0.4545454545\""
+        },
+        "VAL_RATIO": {
+          "template": "\"0.2\"",
+          "quick_check": "\"0.0909090909\""
+        },
+        "CHECKPOINT_SELECTION": {
+          "template": "\"exceedance\"",
+          "quick_check": "\"overall\""
+        },
+        "ALL_RESULTS_ROOT": {
+          "template": "\"/home/exouser/media/share/PACT/FormalRuns_0925/single_tail_episodepeak_4x4\"",
+          "quick_check": "\"/home/exouser/media/share/PACT/FormalRuns_0925/CMIP6_Boston_QuickCheck_0929/future_year\""
+        },
+        "PACT_RUN_NAME": {
+          "template": "\"NCEP_Boston_G0_T0000_EP0100\"",
+          "quick_check": "\"CMIP6_AWI_Boston_future_year_G0_T0000_EP0100\""
+        },
+        "PYTHON_RUN_TAG_BASE": {
+          "template": "\"NCEP_Boston_G0_T0000_EP0100\"",
+          "quick_check": "\"CMIP6_AWI_Boston_future_year_G0_T0000_EP0100\""
+        }
+      },
+      "argument_changes": {
+        "root_dir": {
+          "template": "./Data/Grid4_New/NCEP/graphs",
+          "quick_check": "./Data/Grid4_New/CMIP6_AWI/graphs"
+        },
+        "train_ratio": {
+          "template": 0.6,
+          "quick_check": 0.4545454545
+        },
+        "val_ratio": {
+          "template": 0.2,
+          "quick_check": 0.0909090909
+        },
+        "checkpoint_selection": {
+          "template": "exceedance",
+          "quick_check": "overall"
+        },
+        "run_tag": {
+          "template": "NCEP_Boston_G0_T0000_EP0100_20260930_233312",
+          "quick_check": "CMIP6_AWI_Boston_future_year_G0_T0000_EP0100_20260930_233312"
+        },
+        "output_dir": {
+          "template": "/home/exouser/media/share/PACT/FormalRuns_0925/single_tail_episodepeak_4x4/NCEP_Boston_G0_T0000_EP0100__20260930_233312",
+          "quick_check": "/home/exouser/media/share/PACT/FormalRuns_0925/CMIP6_Boston_QuickCheck_0929/future_year/CMIP6_AWI_Boston_future_year_G0_T0000_EP0100__20260930_233312"
+        }
+      },
+      "resolved_arguments": {
+        "root_dir": "./Data/Grid4_New/CMIP6_AWI/graphs",
+        "test_root_dir": "",
+        "filter": null,
+        "station": "Boston",
+        "station_json_dir": "station_json",
+        "use_site_elevation": 0,
+        "use_bathymetry": 0,
+        "train_ratio": 0.4545454545,
+        "val_ratio": 0.0909090909,
+        "shuffle_years": 0,
+        "future_only": 0,
+        "future_year_threshold": 2030,
+        "batch_size": 256,
+        "grad_accum_steps": 4,
+        "epochs": 300,
+        "lr": 0.005,
+        "hidden_channels": 128,
+        "seed": 42,
+        "num_layers": 2,
+        "dropout": 0.05,
+        "history_hours": 24,
+        "x_norm": "zscore",
+        "x_p_lo": 1.0,
+        "x_p_hi": 99.0,
+        "x_nodes_per_graph": 0,
+        "x_clip": 0.0,
+        "x_aug": 0,
+        "x_aug_prob": 0.0,
+        "x_aug_scale": 0.0,
+        "x_aug_bias": 0.0,
+        "loss_mode": "mse",
+        "wqe_quantile_tau": 0.25,
+        "wqe_expectile_tau": 0.82,
+        "wqe_quantile_weight": 0.16666666666666666,
+        "wqe_expectile_weight": 0.8333333333333334,
+        "wmse_alpha": 4.0,
+        "wmse_s": 0.1,
+        "exceedance_percentile": 95.0,
+        "exceedance_loss_weight": 0.0,
+        "episode_gt_aligned_peak_weight": 0.01,
+        "exceedance_loss_mode": "mse",
+        "slope_lambda": 0.01,
+        "slope_mask_s": 0.1,
+        "slope_robust": "charb",
+        "slope_charb_eps": 0.001,
+        "slope_huber_delta": 0.05,
+        "scheduler": "cosine",
+        "min_lr": 1e-06,
+        "warmup_epochs": 5,
+        "warmup_start_factor": 0.1,
+        "rop_factor": 0.5,
+        "rop_patience": 20,
+        "rop_threshold": 0.0001,
+        "rop_cooldown": 0,
+        "rop_min_lr": 1e-06,
+        "rop_metric": "val_all_rmse",
+        "num_workers": 0,
+        "pin_memory": false,
+        "persistent_workers": false,
+        "prefetch_factor": 0,
+        "mp_context": "fork",
+        "torch_threads": 1,
+        "tf32": true,
+        "amp": true,
+        "amp_dtype": "bf16",
+        "model": "perceiver3",
+        "encoder_type": "GraphSAGE",
+        "cnn_intermediate_channel": 29,
+        "head_type": "single",
+        "head_dropout": 0.05,
+        "exceedance_head_experiment": null,
+        "exceedance_gate_pooling": "mean",
+        "gate_mode": "window",
+        "dual_mode": "exceedance",
+        "dual_loss": 0,
+        "dual_ablation": "none",
+        "body_loss_weight": 1.0,
+        "excess_loss_weight": 1.0,
+        "excess_loss_mode": "mse",
+        "excess_formulation": "direct",
+        "shape_loss_weight": 0.0,
+        "severity_shape_eps": 1e-06,
+        "excess_amp_loss_weight": 0.0,
+        "gate_loss_weight": 1.0,
+        "max_grad_norm": 0.0,
+        "deterministic": 0,
+        "temporal_block": "Transformer",
+        "node_read_heads": 8,
+        "time_read_heads": 8,
+        "transformer_layers": 2,
+        "transformer_ff_mult": 4.0,
+        "transformer_dropout": 0.0,
+        "max_time_steps": 32,
+        "checkpoint_selection": "overall",
+        "run_tag": "CMIP6_AWI_Boston_future_year_G0_T0000_EP0100_20260930_233312",
+        "output_dir": "/home/exouser/media/share/PACT/FormalRuns_0925/CMIP6_Boston_QuickCheck_0929/future_year/CMIP6_AWI_Boston_future_year_G0_T0000_EP0100__20260930_233312",
+        "device": "auto",
+        "use_station_meta": 1
+      }
+    },
+    {
+      "group": "future_year",
+      "dataset": "CMIP6_CNRM",
+      "variant": "T0500_EP0000",
+      "tail_mse_weight": "0.05",
+      "episode_gt_aligned_peak_mse_weight": "0.0",
+      "config_path": "/home/exouser/StormSurge/configs/CMIP6_Boston_QuickCheck_0929/future_year/train_config_CMIP6_CNRM_Boston_future_year_G0_T0500_EP0000.sh",
+      "result_path": "/home/exouser/media/share/PACT/FormalRuns_0925/CMIP6_Boston_QuickCheck_0929/future_year/CMIP6_CNRM_Boston_future_year_G0_T0500_EP0000__20260930_233312",
+      "template_path": "/home/exouser/StormSurge/configs/single_tail_episodepeak_4x4/train_config_NCEP_Boston_G0_T0500_EP0000.sh",
+      "primary_checkpoint": "overall",
+      "runstamp": "20260930_233312",
+      "queue_label": "QB0929F_CNRM_T0500_EP0000",
+      "passed": true,
+      "config_sha256": "5c54b2be924a5eccfe4294e73c54e35d723a9c8b252725e85df5aef8920e4c89",
+      "template_sha256": "619dee824fcd1b79adaba632a01519095294bfbd49c0e76798c382c858c3f9d1",
+      "assignment_changes": {
+        "ROOT_DIR": {
+          "template": "\"./Data/Grid4_New/NCEP/graphs\"",
+          "quick_check": "\"./Data/Grid4_New/CMIP6_CNRM/graphs\""
+        },
+        "TRAIN_RATIO": {
+          "template": "\"0.6\"",
+          "quick_check": "\"0.4545454545\""
+        },
+        "VAL_RATIO": {
+          "template": "\"0.2\"",
+          "quick_check": "\"0.0909090909\""
+        },
+        "CHECKPOINT_SELECTION": {
+          "template": "\"exceedance\"",
+          "quick_check": "\"overall\""
+        },
+        "ALL_RESULTS_ROOT": {
+          "template": "\"/home/exouser/media/share/PACT/FormalRuns_0925/single_tail_episodepeak_4x4\"",
+          "quick_check": "\"/home/exouser/media/share/PACT/FormalRuns_0925/CMIP6_Boston_QuickCheck_0929/future_year\""
+        },
+        "PACT_RUN_NAME": {
+          "template": "\"NCEP_Boston_G0_T0500_EP0000\"",
+          "quick_check": "\"CMIP6_CNRM_Boston_future_year_G0_T0500_EP0000\""
+        },
+        "PYTHON_RUN_TAG_BASE": {
+          "template": "\"NCEP_Boston_G0_T0500_EP0000\"",
+          "quick_check": "\"CMIP6_CNRM_Boston_future_year_G0_T0500_EP0000\""
+        }
+      },
+      "argument_changes": {
+        "root_dir": {
+          "template": "./Data/Grid4_New/NCEP/graphs",
+          "quick_check": "./Data/Grid4_New/CMIP6_CNRM/graphs"
+        },
+        "train_ratio": {
+          "template": 0.6,
+          "quick_check": 0.4545454545
+        },
+        "val_ratio": {
+          "template": 0.2,
+          "quick_check": 0.0909090909
+        },
+        "checkpoint_selection": {
+          "template": "exceedance",
+          "quick_check": "overall"
+        },
+        "run_tag": {
+          "template": "NCEP_Boston_G0_T0500_EP0000_20260930_233312",
+          "quick_check": "CMIP6_CNRM_Boston_future_year_G0_T0500_EP0000_20260930_233312"
+        },
+        "output_dir": {
+          "template": "/home/exouser/media/share/PACT/FormalRuns_0925/single_tail_episodepeak_4x4/NCEP_Boston_G0_T0500_EP0000__20260930_233312",
+          "quick_check": "/home/exouser/media/share/PACT/FormalRuns_0925/CMIP6_Boston_QuickCheck_0929/future_year/CMIP6_CNRM_Boston_future_year_G0_T0500_EP0000__20260930_233312"
+        }
+      },
+      "resolved_arguments": {
+        "root_dir": "./Data/Grid4_New/CMIP6_CNRM/graphs",
+        "test_root_dir": "",
+        "filter": null,
+        "station": "Boston",
+        "station_json_dir": "station_json",
+        "use_site_elevation": 0,
+        "use_bathymetry": 0,
+        "train_ratio": 0.4545454545,
+        "val_ratio": 0.0909090909,
+        "shuffle_years": 0,
+        "future_only": 0,
+        "future_year_threshold": 2030,
+        "batch_size": 256,
+        "grad_accum_steps": 4,
+        "epochs": 300,
+        "lr": 0.005,
+        "hidden_channels": 128,
+        "seed": 42,
+        "num_layers": 2,
+        "dropout": 0.05,
+        "history_hours": 24,
+        "x_norm": "zscore",
+        "x_p_lo": 1.0,
+        "x_p_hi": 99.0,
+        "x_nodes_per_graph": 0,
+        "x_clip": 0.0,
+        "x_aug": 0,
+        "x_aug_prob": 0.0,
+        "x_aug_scale": 0.0,
+        "x_aug_bias": 0.0,
+        "loss_mode": "mse",
+        "wqe_quantile_tau": 0.25,
+        "wqe_expectile_tau": 0.82,
+        "wqe_quantile_weight": 0.16666666666666666,
+        "wqe_expectile_weight": 0.8333333333333334,
+        "wmse_alpha": 4.0,
+        "wmse_s": 0.1,
+        "exceedance_percentile": 95.0,
+        "exceedance_loss_weight": 0.05,
+        "episode_gt_aligned_peak_weight": 0.0,
+        "exceedance_loss_mode": "mse",
+        "slope_lambda": 0.01,
+        "slope_mask_s": 0.1,
+        "slope_robust": "charb",
+        "slope_charb_eps": 0.001,
+        "slope_huber_delta": 0.05,
+        "scheduler": "cosine",
+        "min_lr": 1e-06,
+        "warmup_epochs": 5,
+        "warmup_start_factor": 0.1,
+        "rop_factor": 0.5,
+        "rop_patience": 20,
+        "rop_threshold": 0.0001,
+        "rop_cooldown": 0,
+        "rop_min_lr": 1e-06,
+        "rop_metric": "val_all_rmse",
+        "num_workers": 0,
+        "pin_memory": false,
+        "persistent_workers": false,
+        "prefetch_factor": 0,
+        "mp_context": "fork",
+        "torch_threads": 1,
+        "tf32": true,
+        "amp": true,
+        "amp_dtype": "bf16",
+        "model": "perceiver3",
+        "encoder_type": "GraphSAGE",
+        "cnn_intermediate_channel": 29,
+        "head_type": "single",
+        "head_dropout": 0.05,
+        "exceedance_head_experiment": null,
+        "exceedance_gate_pooling": "mean",
+        "gate_mode": "window",
+        "dual_mode": "exceedance",
+        "dual_loss": 0,
+        "dual_ablation": "none",
+        "body_loss_weight": 1.0,
+        "excess_loss_weight": 1.0,
+        "excess_loss_mode": "mse",
+        "excess_formulation": "direct",
+        "shape_loss_weight": 0.0,
+        "severity_shape_eps": 1e-06,
+        "excess_amp_loss_weight": 0.0,
+        "gate_loss_weight": 1.0,
+        "max_grad_norm": 0.0,
+        "deterministic": 0,
+        "temporal_block": "Transformer",
+        "node_read_heads": 8,
+        "time_read_heads": 8,
+        "transformer_layers": 2,
+        "transformer_ff_mult": 4.0,
+        "transformer_dropout": 0.0,
+        "max_time_steps": 32,
+        "checkpoint_selection": "overall",
+        "run_tag": "CMIP6_CNRM_Boston_future_year_G0_T0500_EP0000_20260930_233312",
+        "output_dir": "/home/exouser/media/share/PACT/FormalRuns_0925/CMIP6_Boston_QuickCheck_0929/future_year/CMIP6_CNRM_Boston_future_year_G0_T0500_EP0000__20260930_233312",
+        "device": "auto",
+        "use_station_meta": 1
+      }
+    },
+    {
+      "group": "future_year",
+      "dataset": "CMIP6_CNRM",
+      "variant": "T0000_EP0100",
+      "tail_mse_weight": "0.0",
+      "episode_gt_aligned_peak_mse_weight": "0.01",
+      "config_path": "/home/exouser/StormSurge/configs/CMIP6_Boston_QuickCheck_0929/future_year/train_config_CMIP6_CNRM_Boston_future_year_G0_T0000_EP0100.sh",
+      "result_path": "/home/exouser/media/share/PACT/FormalRuns_0925/CMIP6_Boston_QuickCheck_0929/future_year/CMIP6_CNRM_Boston_future_year_G0_T0000_EP0100__20260930_233312",
+      "template_path": "/home/exouser/StormSurge/configs/single_tail_episodepeak_4x4/train_config_NCEP_Boston_G0_T0000_EP0100.sh",
+      "primary_checkpoint": "overall",
+      "runstamp": "20260930_233312",
+      "queue_label": "QB0929F_CNRM_T0000_EP0100",
+      "passed": true,
+      "config_sha256": "abcca65e34734e0efd7c33e23721dc32c7e722f442552678b74a3671ee818d1e",
+      "template_sha256": "ec21eeee3823b78bf92f8137c4ff345d38819fe89ae1ec09b31327008710d357",
+      "assignment_changes": {
+        "ROOT_DIR": {
+          "template": "\"./Data/Grid4_New/NCEP/graphs\"",
+          "quick_check": "\"./Data/Grid4_New/CMIP6_CNRM/graphs\""
+        },
+        "TRAIN_RATIO": {
+          "template": "\"0.6\"",
+          "quick_check": "\"0.4545454545\""
+        },
+        "VAL_RATIO": {
+          "template": "\"0.2\"",
+          "quick_check": "\"0.0909090909\""
+        },
+        "CHECKPOINT_SELECTION": {
+          "template": "\"exceedance\"",
+          "quick_check": "\"overall\""
+        },
+        "ALL_RESULTS_ROOT": {
+          "template": "\"/home/exouser/media/share/PACT/FormalRuns_0925/single_tail_episodepeak_4x4\"",
+          "quick_check": "\"/home/exouser/media/share/PACT/FormalRuns_0925/CMIP6_Boston_QuickCheck_0929/future_year\""
+        },
+        "PACT_RUN_NAME": {
+          "template": "\"NCEP_Boston_G0_T0000_EP0100\"",
+          "quick_check": "\"CMIP6_CNRM_Boston_future_year_G0_T0000_EP0100\""
+        },
+        "PYTHON_RUN_TAG_BASE": {
+          "template": "\"NCEP_Boston_G0_T0000_EP0100\"",
+          "quick_check": "\"CMIP6_CNRM_Boston_future_year_G0_T0000_EP0100\""
+        }
+      },
+      "argument_changes": {
+        "root_dir": {
+          "template": "./Data/Grid4_New/NCEP/graphs",
+          "quick_check": "./Data/Grid4_New/CMIP6_CNRM/graphs"
+        },
+        "train_ratio": {
+          "template": 0.6,
+          "quick_check": 0.4545454545
+        },
+        "val_ratio": {
+          "template": 0.2,
+          "quick_check": 0.0909090909
+        },
+        "checkpoint_selection": {
+          "template": "exceedance",
+          "quick_check": "overall"
+        },
+        "run_tag": {
+          "template": "NCEP_Boston_G0_T0000_EP0100_20260930_233312",
+          "quick_check": "CMIP6_CNRM_Boston_future_year_G0_T0000_EP0100_20260930_233312"
+        },
+        "output_dir": {
+          "template": "/home/exouser/media/share/PACT/FormalRuns_0925/single_tail_episodepeak_4x4/NCEP_Boston_G0_T0000_EP0100__20260930_233312",
+          "quick_check": "/home/exouser/media/share/PACT/FormalRuns_0925/CMIP6_Boston_QuickCheck_0929/future_year/CMIP6_CNRM_Boston_future_year_G0_T0000_EP0100__20260930_233312"
+        }
+      },
+      "resolved_arguments": {
+        "root_dir": "./Data/Grid4_New/CMIP6_CNRM/graphs",
+        "test_root_dir": "",
+        "filter": null,
+        "station": "Boston",
+        "station_json_dir": "station_json",
+        "use_site_elevation": 0,
+        "use_bathymetry": 0,
+        "train_ratio": 0.4545454545,
+        "val_ratio": 0.0909090909,
+        "shuffle_years": 0,
+        "future_only": 0,
+        "future_year_threshold": 2030,
+        "batch_size": 256,
+        "grad_accum_steps": 4,
+        "epochs": 300,
+        "lr": 0.005,
+        "hidden_channels": 128,
+        "seed": 42,
+        "num_layers": 2,
+        "dropout": 0.05,
+        "history_hours": 24,
+        "x_norm": "zscore",
+        "x_p_lo": 1.0,
+        "x_p_hi": 99.0,
+        "x_nodes_per_graph": 0,
+        "x_clip": 0.0,
+        "x_aug": 0,
+        "x_aug_prob": 0.0,
+        "x_aug_scale": 0.0,
+        "x_aug_bias": 0.0,
+        "loss_mode": "mse",
+        "wqe_quantile_tau": 0.25,
+        "wqe_expectile_tau": 0.82,
+        "wqe_quantile_weight": 0.16666666666666666,
+        "wqe_expectile_weight": 0.8333333333333334,
+        "wmse_alpha": 4.0,
+        "wmse_s": 0.1,
+        "exceedance_percentile": 95.0,
+        "exceedance_loss_weight": 0.0,
+        "episode_gt_aligned_peak_weight": 0.01,
+        "exceedance_loss_mode": "mse",
+        "slope_lambda": 0.01,
+        "slope_mask_s": 0.1,
+        "slope_robust": "charb",
+        "slope_charb_eps": 0.001,
+        "slope_huber_delta": 0.05,
+        "scheduler": "cosine",
+        "min_lr": 1e-06,
+        "warmup_epochs": 5,
+        "warmup_start_factor": 0.1,
+        "rop_factor": 0.5,
+        "rop_patience": 20,
+        "rop_threshold": 0.0001,
+        "rop_cooldown": 0,
+        "rop_min_lr": 1e-06,
+        "rop_metric": "val_all_rmse",
+        "num_workers": 0,
+        "pin_memory": false,
+        "persistent_workers": false,
+        "prefetch_factor": 0,
+        "mp_context": "fork",
+        "torch_threads": 1,
+        "tf32": true,
+        "amp": true,
+        "amp_dtype": "bf16",
+        "model": "perceiver3",
+        "encoder_type": "GraphSAGE",
+        "cnn_intermediate_channel": 29,
+        "head_type": "single",
+        "head_dropout": 0.05,
+        "exceedance_head_experiment": null,
+        "exceedance_gate_pooling": "mean",
+        "gate_mode": "window",
+        "dual_mode": "exceedance",
+        "dual_loss": 0,
+        "dual_ablation": "none",
+        "body_loss_weight": 1.0,
+        "excess_loss_weight": 1.0,
+        "excess_loss_mode": "mse",
+        "excess_formulation": "direct",
+        "shape_loss_weight": 0.0,
+        "severity_shape_eps": 1e-06,
+        "excess_amp_loss_weight": 0.0,
+        "gate_loss_weight": 1.0,
+        "max_grad_norm": 0.0,
+        "deterministic": 0,
+        "temporal_block": "Transformer",
+        "node_read_heads": 8,
+        "time_read_heads": 8,
+        "transformer_layers": 2,
+        "transformer_ff_mult": 4.0,
+        "transformer_dropout": 0.0,
+        "max_time_steps": 32,
+        "checkpoint_selection": "overall",
+        "run_tag": "CMIP6_CNRM_Boston_future_year_G0_T0000_EP0100_20260930_233312",
+        "output_dir": "/home/exouser/media/share/PACT/FormalRuns_0925/CMIP6_Boston_QuickCheck_0929/future_year/CMIP6_CNRM_Boston_future_year_G0_T0000_EP0100__20260930_233312",
+        "device": "auto",
+        "use_station_meta": 1
+      }
+    },
+    {
+      "group": "future_year",
+      "dataset": "CMIP6_EC_EARTH",
+      "variant": "T0500_EP0000",
+      "tail_mse_weight": "0.05",
+      "episode_gt_aligned_peak_mse_weight": "0.0",
+      "config_path": "/home/exouser/StormSurge/configs/CMIP6_Boston_QuickCheck_0929/future_year/train_config_CMIP6_EC_EARTH_Boston_future_year_G0_T0500_EP0000.sh",
+      "result_path": "/home/exouser/media/share/PACT/FormalRuns_0925/CMIP6_Boston_QuickCheck_0929/future_year/CMIP6_EC_EARTH_Boston_future_year_G0_T0500_EP0000__20260930_233312",
+      "template_path": "/home/exouser/StormSurge/configs/single_tail_episodepeak_4x4/train_config_NCEP_Boston_G0_T0500_EP0000.sh",
+      "primary_checkpoint": "overall",
+      "runstamp": "20260930_233312",
+      "queue_label": "QB0929F_EC_EARTH_T0500_EP0000",
+      "passed": true,
+      "config_sha256": "3e1dfd23e0de20ab363dd3adcf2ca525f4a4867138e26a36c873d6313d1a570e",
+      "template_sha256": "619dee824fcd1b79adaba632a01519095294bfbd49c0e76798c382c858c3f9d1",
+      "assignment_changes": {
+        "ROOT_DIR": {
+          "template": "\"./Data/Grid4_New/NCEP/graphs\"",
+          "quick_check": "\"./Data/Grid4_New/CMIP6_EC_EARTH/graphs\""
+        },
+        "TRAIN_RATIO": {
+          "template": "\"0.6\"",
+          "quick_check": "\"0.4545454545\""
+        },
+        "VAL_RATIO": {
+          "template": "\"0.2\"",
+          "quick_check": "\"0.0909090909\""
+        },
+        "CHECKPOINT_SELECTION": {
+          "template": "\"exceedance\"",
+          "quick_check": "\"overall\""
+        },
+        "ALL_RESULTS_ROOT": {
+          "template": "\"/home/exouser/media/share/PACT/FormalRuns_0925/single_tail_episodepeak_4x4\"",
+          "quick_check": "\"/home/exouser/media/share/PACT/FormalRuns_0925/CMIP6_Boston_QuickCheck_0929/future_year\""
+        },
+        "PACT_RUN_NAME": {
+          "template": "\"NCEP_Boston_G0_T0500_EP0000\"",
+          "quick_check": "\"CMIP6_EC_EARTH_Boston_future_year_G0_T0500_EP0000\""
+        },
+        "PYTHON_RUN_TAG_BASE": {
+          "template": "\"NCEP_Boston_G0_T0500_EP0000\"",
+          "quick_check": "\"CMIP6_EC_EARTH_Boston_future_year_G0_T0500_EP0000\""
+        }
+      },
+      "argument_changes": {
+        "root_dir": {
+          "template": "./Data/Grid4_New/NCEP/graphs",
+          "quick_check": "./Data/Grid4_New/CMIP6_EC_EARTH/graphs"
+        },
+        "train_ratio": {
+          "template": 0.6,
+          "quick_check": 0.4545454545
+        },
+        "val_ratio": {
+          "template": 0.2,
+          "quick_check": 0.0909090909
+        },
+        "checkpoint_selection": {
+          "template": "exceedance",
+          "quick_check": "overall"
+        },
+        "run_tag": {
+          "template": "NCEP_Boston_G0_T0500_EP0000_20260930_233312",
+          "quick_check": "CMIP6_EC_EARTH_Boston_future_year_G0_T0500_EP0000_20260930_233312"
+        },
+        "output_dir": {
+          "template": "/home/exouser/media/share/PACT/FormalRuns_0925/single_tail_episodepeak_4x4/NCEP_Boston_G0_T0500_EP0000__20260930_233312",
+          "quick_check": "/home/exouser/media/share/PACT/FormalRuns_0925/CMIP6_Boston_QuickCheck_0929/future_year/CMIP6_EC_EARTH_Boston_future_year_G0_T0500_EP0000__20260930_233312"
+        }
+      },
+      "resolved_arguments": {
+        "root_dir": "./Data/Grid4_New/CMIP6_EC_EARTH/graphs",
+        "test_root_dir": "",
+        "filter": null,
+        "station": "Boston",
+        "station_json_dir": "station_json",
+        "use_site_elevation": 0,
+        "use_bathymetry": 0,
+        "train_ratio": 0.4545454545,
+        "val_ratio": 0.0909090909,
+        "shuffle_years": 0,
+        "future_only": 0,
+        "future_year_threshold": 2030,
+        "batch_size": 256,
+        "grad_accum_steps": 4,
+        "epochs": 300,
+        "lr": 0.005,
+        "hidden_channels": 128,
+        "seed": 42,
+        "num_layers": 2,
+        "dropout": 0.05,
+        "history_hours": 24,
+        "x_norm": "zscore",
+        "x_p_lo": 1.0,
+        "x_p_hi": 99.0,
+        "x_nodes_per_graph": 0,
+        "x_clip": 0.0,
+        "x_aug": 0,
+        "x_aug_prob": 0.0,
+        "x_aug_scale": 0.0,
+        "x_aug_bias": 0.0,
+        "loss_mode": "mse",
+        "wqe_quantile_tau": 0.25,
+        "wqe_expectile_tau": 0.82,
+        "wqe_quantile_weight": 0.16666666666666666,
+        "wqe_expectile_weight": 0.8333333333333334,
+        "wmse_alpha": 4.0,
+        "wmse_s": 0.1,
+        "exceedance_percentile": 95.0,
+        "exceedance_loss_weight": 0.05,
+        "episode_gt_aligned_peak_weight": 0.0,
+        "exceedance_loss_mode": "mse",
+        "slope_lambda": 0.01,
+        "slope_mask_s": 0.1,
+        "slope_robust": "charb",
+        "slope_charb_eps": 0.001,
+        "slope_huber_delta": 0.05,
+        "scheduler": "cosine",
+        "min_lr": 1e-06,
+        "warmup_epochs": 5,
+        "warmup_start_factor": 0.1,
+        "rop_factor": 0.5,
+        "rop_patience": 20,
+        "rop_threshold": 0.0001,
+        "rop_cooldown": 0,
+        "rop_min_lr": 1e-06,
+        "rop_metric": "val_all_rmse",
+        "num_workers": 0,
+        "pin_memory": false,
+        "persistent_workers": false,
+        "prefetch_factor": 0,
+        "mp_context": "fork",
+        "torch_threads": 1,
+        "tf32": true,
+        "amp": true,
+        "amp_dtype": "bf16",
+        "model": "perceiver3",
+        "encoder_type": "GraphSAGE",
+        "cnn_intermediate_channel": 29,
+        "head_type": "single",
+        "head_dropout": 0.05,
+        "exceedance_head_experiment": null,
+        "exceedance_gate_pooling": "mean",
+        "gate_mode": "window",
+        "dual_mode": "exceedance",
+        "dual_loss": 0,
+        "dual_ablation": "none",
+        "body_loss_weight": 1.0,
+        "excess_loss_weight": 1.0,
+        "excess_loss_mode": "mse",
+        "excess_formulation": "direct",
+        "shape_loss_weight": 0.0,
+        "severity_shape_eps": 1e-06,
+        "excess_amp_loss_weight": 0.0,
+        "gate_loss_weight": 1.0,
+        "max_grad_norm": 0.0,
+        "deterministic": 0,
+        "temporal_block": "Transformer",
+        "node_read_heads": 8,
+        "time_read_heads": 8,
+        "transformer_layers": 2,
+        "transformer_ff_mult": 4.0,
+        "transformer_dropout": 0.0,
+        "max_time_steps": 32,
+        "checkpoint_selection": "overall",
+        "run_tag": "CMIP6_EC_EARTH_Boston_future_year_G0_T0500_EP0000_20260930_233312",
+        "output_dir": "/home/exouser/media/share/PACT/FormalRuns_0925/CMIP6_Boston_QuickCheck_0929/future_year/CMIP6_EC_EARTH_Boston_future_year_G0_T0500_EP0000__20260930_233312",
+        "device": "auto",
+        "use_station_meta": 1
+      }
+    },
+    {
+      "group": "future_year",
+      "dataset": "CMIP6_EC_EARTH",
+      "variant": "T0000_EP0100",
+      "tail_mse_weight": "0.0",
+      "episode_gt_aligned_peak_mse_weight": "0.01",
+      "config_path": "/home/exouser/StormSurge/configs/CMIP6_Boston_QuickCheck_0929/future_year/train_config_CMIP6_EC_EARTH_Boston_future_year_G0_T0000_EP0100.sh",
+      "result_path": "/home/exouser/media/share/PACT/FormalRuns_0925/CMIP6_Boston_QuickCheck_0929/future_year/CMIP6_EC_EARTH_Boston_future_year_G0_T0000_EP0100__20260930_233312",
+      "template_path": "/home/exouser/StormSurge/configs/single_tail_episodepeak_4x4/train_config_NCEP_Boston_G0_T0000_EP0100.sh",
+      "primary_checkpoint": "overall",
+      "runstamp": "20260930_233312",
+      "queue_label": "QB0929F_EC_EARTH_T0000_EP0100",
+      "passed": true,
+      "config_sha256": "94eeb8182e6b976c315056d3892c7b492e758ee49b97b63addc34546142ea381",
+      "template_sha256": "ec21eeee3823b78bf92f8137c4ff345d38819fe89ae1ec09b31327008710d357",
+      "assignment_changes": {
+        "ROOT_DIR": {
+          "template": "\"./Data/Grid4_New/NCEP/graphs\"",
+          "quick_check": "\"./Data/Grid4_New/CMIP6_EC_EARTH/graphs\""
+        },
+        "TRAIN_RATIO": {
+          "template": "\"0.6\"",
+          "quick_check": "\"0.4545454545\""
+        },
+        "VAL_RATIO": {
+          "template": "\"0.2\"",
+          "quick_check": "\"0.0909090909\""
+        },
+        "CHECKPOINT_SELECTION": {
+          "template": "\"exceedance\"",
+          "quick_check": "\"overall\""
+        },
+        "ALL_RESULTS_ROOT": {
+          "template": "\"/home/exouser/media/share/PACT/FormalRuns_0925/single_tail_episodepeak_4x4\"",
+          "quick_check": "\"/home/exouser/media/share/PACT/FormalRuns_0925/CMIP6_Boston_QuickCheck_0929/future_year\""
+        },
+        "PACT_RUN_NAME": {
+          "template": "\"NCEP_Boston_G0_T0000_EP0100\"",
+          "quick_check": "\"CMIP6_EC_EARTH_Boston_future_year_G0_T0000_EP0100\""
+        },
+        "PYTHON_RUN_TAG_BASE": {
+          "template": "\"NCEP_Boston_G0_T0000_EP0100\"",
+          "quick_check": "\"CMIP6_EC_EARTH_Boston_future_year_G0_T0000_EP0100\""
+        }
+      },
+      "argument_changes": {
+        "root_dir": {
+          "template": "./Data/Grid4_New/NCEP/graphs",
+          "quick_check": "./Data/Grid4_New/CMIP6_EC_EARTH/graphs"
+        },
+        "train_ratio": {
+          "template": 0.6,
+          "quick_check": 0.4545454545
+        },
+        "val_ratio": {
+          "template": 0.2,
+          "quick_check": 0.0909090909
+        },
+        "checkpoint_selection": {
+          "template": "exceedance",
+          "quick_check": "overall"
+        },
+        "run_tag": {
+          "template": "NCEP_Boston_G0_T0000_EP0100_20260930_233312",
+          "quick_check": "CMIP6_EC_EARTH_Boston_future_year_G0_T0000_EP0100_20260930_233312"
+        },
+        "output_dir": {
+          "template": "/home/exouser/media/share/PACT/FormalRuns_0925/single_tail_episodepeak_4x4/NCEP_Boston_G0_T0000_EP0100__20260930_233312",
+          "quick_check": "/home/exouser/media/share/PACT/FormalRuns_0925/CMIP6_Boston_QuickCheck_0929/future_year/CMIP6_EC_EARTH_Boston_future_year_G0_T0000_EP0100__20260930_233312"
+        }
+      },
+      "resolved_arguments": {
+        "root_dir": "./Data/Grid4_New/CMIP6_EC_EARTH/graphs",
+        "test_root_dir": "",
+        "filter": null,
+        "station": "Boston",
+        "station_json_dir": "station_json",
+        "use_site_elevation": 0,
+        "use_bathymetry": 0,
+        "train_ratio": 0.4545454545,
+        "val_ratio": 0.0909090909,
+        "shuffle_years": 0,
+        "future_only": 0,
+        "future_year_threshold": 2030,
+        "batch_size": 256,
+        "grad_accum_steps": 4,
+        "epochs": 300,
+        "lr": 0.005,
+        "hidden_channels": 128,
+        "seed": 42,
+        "num_layers": 2,
+        "dropout": 0.05,
+        "history_hours": 24,
+        "x_norm": "zscore",
+        "x_p_lo": 1.0,
+        "x_p_hi": 99.0,
+        "x_nodes_per_graph": 0,
+        "x_clip": 0.0,
+        "x_aug": 0,
+        "x_aug_prob": 0.0,
+        "x_aug_scale": 0.0,
+        "x_aug_bias": 0.0,
+        "loss_mode": "mse",
+        "wqe_quantile_tau": 0.25,
+        "wqe_expectile_tau": 0.82,
+        "wqe_quantile_weight": 0.16666666666666666,
+        "wqe_expectile_weight": 0.8333333333333334,
+        "wmse_alpha": 4.0,
+        "wmse_s": 0.1,
+        "exceedance_percentile": 95.0,
+        "exceedance_loss_weight": 0.0,
+        "episode_gt_aligned_peak_weight": 0.01,
+        "exceedance_loss_mode": "mse",
+        "slope_lambda": 0.01,
+        "slope_mask_s": 0.1,
+        "slope_robust": "charb",
+        "slope_charb_eps": 0.001,
+        "slope_huber_delta": 0.05,
+        "scheduler": "cosine",
+        "min_lr": 1e-06,
+        "warmup_epochs": 5,
+        "warmup_start_factor": 0.1,
+        "rop_factor": 0.5,
+        "rop_patience": 20,
+        "rop_threshold": 0.0001,
+        "rop_cooldown": 0,
+        "rop_min_lr": 1e-06,
+        "rop_metric": "val_all_rmse",
+        "num_workers": 0,
+        "pin_memory": false,
+        "persistent_workers": false,
+        "prefetch_factor": 0,
+        "mp_context": "fork",
+        "torch_threads": 1,
+        "tf32": true,
+        "amp": true,
+        "amp_dtype": "bf16",
+        "model": "perceiver3",
+        "encoder_type": "GraphSAGE",
+        "cnn_intermediate_channel": 29,
+        "head_type": "single",
+        "head_dropout": 0.05,
+        "exceedance_head_experiment": null,
+        "exceedance_gate_pooling": "mean",
+        "gate_mode": "window",
+        "dual_mode": "exceedance",
+        "dual_loss": 0,
+        "dual_ablation": "none",
+        "body_loss_weight": 1.0,
+        "excess_loss_weight": 1.0,
+        "excess_loss_mode": "mse",
+        "excess_formulation": "direct",
+        "shape_loss_weight": 0.0,
+        "severity_shape_eps": 1e-06,
+        "excess_amp_loss_weight": 0.0,
+        "gate_loss_weight": 1.0,
+        "max_grad_norm": 0.0,
+        "deterministic": 0,
+        "temporal_block": "Transformer",
+        "node_read_heads": 8,
+        "time_read_heads": 8,
+        "transformer_layers": 2,
+        "transformer_ff_mult": 4.0,
+        "transformer_dropout": 0.0,
+        "max_time_steps": 32,
+        "checkpoint_selection": "overall",
+        "run_tag": "CMIP6_EC_EARTH_Boston_future_year_G0_T0000_EP0100_20260930_233312",
+        "output_dir": "/home/exouser/media/share/PACT/FormalRuns_0925/CMIP6_Boston_QuickCheck_0929/future_year/CMIP6_EC_EARTH_Boston_future_year_G0_T0000_EP0100__20260930_233312",
+        "device": "auto",
+        "use_station_meta": 1
+      }
+    },
+    {
+      "group": "future_year",
+      "dataset": "CMIP6_MPI",
+      "variant": "T0500_EP0000",
+      "tail_mse_weight": "0.05",
+      "episode_gt_aligned_peak_mse_weight": "0.0",
+      "config_path": "/home/exouser/StormSurge/configs/CMIP6_Boston_QuickCheck_0929/future_year/train_config_CMIP6_MPI_Boston_future_year_G0_T0500_EP0000.sh",
+      "result_path": "/home/exouser/media/share/PACT/FormalRuns_0925/CMIP6_Boston_QuickCheck_0929/future_year/CMIP6_MPI_Boston_future_year_G0_T0500_EP0000__20260930_233312",
+      "template_path": "/home/exouser/StormSurge/configs/single_tail_episodepeak_4x4/train_config_NCEP_Boston_G0_T0500_EP0000.sh",
+      "primary_checkpoint": "overall",
+      "runstamp": "20260930_233312",
+      "queue_label": "QB0929F_MPI_T0500_EP0000",
+      "passed": true,
+      "config_sha256": "9281d8582331d5cd60363de6de4f9d095a19b2d08d17012bec68409289d975a5",
+      "template_sha256": "619dee824fcd1b79adaba632a01519095294bfbd49c0e76798c382c858c3f9d1",
+      "assignment_changes": {
+        "ROOT_DIR": {
+          "template": "\"./Data/Grid4_New/NCEP/graphs\"",
+          "quick_check": "\"./Data/Grid4_New/CMIP6_MPI/graphs\""
+        },
+        "TRAIN_RATIO": {
+          "template": "\"0.6\"",
+          "quick_check": "\"0.4545454545\""
+        },
+        "VAL_RATIO": {
+          "template": "\"0.2\"",
+          "quick_check": "\"0.0909090909\""
+        },
+        "CHECKPOINT_SELECTION": {
+          "template": "\"exceedance\"",
+          "quick_check": "\"overall\""
+        },
+        "ALL_RESULTS_ROOT": {
+          "template": "\"/home/exouser/media/share/PACT/FormalRuns_0925/single_tail_episodepeak_4x4\"",
+          "quick_check": "\"/home/exouser/media/share/PACT/FormalRuns_0925/CMIP6_Boston_QuickCheck_0929/future_year\""
+        },
+        "PACT_RUN_NAME": {
+          "template": "\"NCEP_Boston_G0_T0500_EP0000\"",
+          "quick_check": "\"CMIP6_MPI_Boston_future_year_G0_T0500_EP0000\""
+        },
+        "PYTHON_RUN_TAG_BASE": {
+          "template": "\"NCEP_Boston_G0_T0500_EP0000\"",
+          "quick_check": "\"CMIP6_MPI_Boston_future_year_G0_T0500_EP0000\""
+        }
+      },
+      "argument_changes": {
+        "root_dir": {
+          "template": "./Data/Grid4_New/NCEP/graphs",
+          "quick_check": "./Data/Grid4_New/CMIP6_MPI/graphs"
+        },
+        "train_ratio": {
+          "template": 0.6,
+          "quick_check": 0.4545454545
+        },
+        "val_ratio": {
+          "template": 0.2,
+          "quick_check": 0.0909090909
+        },
+        "checkpoint_selection": {
+          "template": "exceedance",
+          "quick_check": "overall"
+        },
+        "run_tag": {
+          "template": "NCEP_Boston_G0_T0500_EP0000_20260930_233312",
+          "quick_check": "CMIP6_MPI_Boston_future_year_G0_T0500_EP0000_20260930_233312"
+        },
+        "output_dir": {
+          "template": "/home/exouser/media/share/PACT/FormalRuns_0925/single_tail_episodepeak_4x4/NCEP_Boston_G0_T0500_EP0000__20260930_233312",
+          "quick_check": "/home/exouser/media/share/PACT/FormalRuns_0925/CMIP6_Boston_QuickCheck_0929/future_year/CMIP6_MPI_Boston_future_year_G0_T0500_EP0000__20260930_233312"
+        }
+      },
+      "resolved_arguments": {
+        "root_dir": "./Data/Grid4_New/CMIP6_MPI/graphs",
+        "test_root_dir": "",
+        "filter": null,
+        "station": "Boston",
+        "station_json_dir": "station_json",
+        "use_site_elevation": 0,
+        "use_bathymetry": 0,
+        "train_ratio": 0.4545454545,
+        "val_ratio": 0.0909090909,
+        "shuffle_years": 0,
+        "future_only": 0,
+        "future_year_threshold": 2030,
+        "batch_size": 256,
+        "grad_accum_steps": 4,
+        "epochs": 300,
+        "lr": 0.005,
+        "hidden_channels": 128,
+        "seed": 42,
+        "num_layers": 2,
+        "dropout": 0.05,
+        "history_hours": 24,
+        "x_norm": "zscore",
+        "x_p_lo": 1.0,
+        "x_p_hi": 99.0,
+        "x_nodes_per_graph": 0,
+        "x_clip": 0.0,
+        "x_aug": 0,
+        "x_aug_prob": 0.0,
+        "x_aug_scale": 0.0,
+        "x_aug_bias": 0.0,
+        "loss_mode": "mse",
+        "wqe_quantile_tau": 0.25,
+        "wqe_expectile_tau": 0.82,
+        "wqe_quantile_weight": 0.16666666666666666,
+        "wqe_expectile_weight": 0.8333333333333334,
+        "wmse_alpha": 4.0,
+        "wmse_s": 0.1,
+        "exceedance_percentile": 95.0,
+        "exceedance_loss_weight": 0.05,
+        "episode_gt_aligned_peak_weight": 0.0,
+        "exceedance_loss_mode": "mse",
+        "slope_lambda": 0.01,
+        "slope_mask_s": 0.1,
+        "slope_robust": "charb",
+        "slope_charb_eps": 0.001,
+        "slope_huber_delta": 0.05,
+        "scheduler": "cosine",
+        "min_lr": 1e-06,
+        "warmup_epochs": 5,
+        "warmup_start_factor": 0.1,
+        "rop_factor": 0.5,
+        "rop_patience": 20,
+        "rop_threshold": 0.0001,
+        "rop_cooldown": 0,
+        "rop_min_lr": 1e-06,
+        "rop_metric": "val_all_rmse",
+        "num_workers": 0,
+        "pin_memory": false,
+        "persistent_workers": false,
+        "prefetch_factor": 0,
+        "mp_context": "fork",
+        "torch_threads": 1,
+        "tf32": true,
+        "amp": true,
+        "amp_dtype": "bf16",
+        "model": "perceiver3",
+        "encoder_type": "GraphSAGE",
+        "cnn_intermediate_channel": 29,
+        "head_type": "single",
+        "head_dropout": 0.05,
+        "exceedance_head_experiment": null,
+        "exceedance_gate_pooling": "mean",
+        "gate_mode": "window",
+        "dual_mode": "exceedance",
+        "dual_loss": 0,
+        "dual_ablation": "none",
+        "body_loss_weight": 1.0,
+        "excess_loss_weight": 1.0,
+        "excess_loss_mode": "mse",
+        "excess_formulation": "direct",
+        "shape_loss_weight": 0.0,
+        "severity_shape_eps": 1e-06,
+        "excess_amp_loss_weight": 0.0,
+        "gate_loss_weight": 1.0,
+        "max_grad_norm": 0.0,
+        "deterministic": 0,
+        "temporal_block": "Transformer",
+        "node_read_heads": 8,
+        "time_read_heads": 8,
+        "transformer_layers": 2,
+        "transformer_ff_mult": 4.0,
+        "transformer_dropout": 0.0,
+        "max_time_steps": 32,
+        "checkpoint_selection": "overall",
+        "run_tag": "CMIP6_MPI_Boston_future_year_G0_T0500_EP0000_20260930_233312",
+        "output_dir": "/home/exouser/media/share/PACT/FormalRuns_0925/CMIP6_Boston_QuickCheck_0929/future_year/CMIP6_MPI_Boston_future_year_G0_T0500_EP0000__20260930_233312",
+        "device": "auto",
+        "use_station_meta": 1
+      }
+    },
+    {
+      "group": "future_year",
+      "dataset": "CMIP6_MPI",
+      "variant": "T0000_EP0100",
+      "tail_mse_weight": "0.0",
+      "episode_gt_aligned_peak_mse_weight": "0.01",
+      "config_path": "/home/exouser/StormSurge/configs/CMIP6_Boston_QuickCheck_0929/future_year/train_config_CMIP6_MPI_Boston_future_year_G0_T0000_EP0100.sh",
+      "result_path": "/home/exouser/media/share/PACT/FormalRuns_0925/CMIP6_Boston_QuickCheck_0929/future_year/CMIP6_MPI_Boston_future_year_G0_T0000_EP0100__20260930_233312",
+      "template_path": "/home/exouser/StormSurge/configs/single_tail_episodepeak_4x4/train_config_NCEP_Boston_G0_T0000_EP0100.sh",
+      "primary_checkpoint": "overall",
+      "runstamp": "20260930_233312",
+      "queue_label": "QB0929F_MPI_T0000_EP0100",
+      "passed": true,
+      "config_sha256": "9418fe8f6a1e329ada548edad436841db5a560a2cae122cd83fea292caccce6c",
+      "template_sha256": "ec21eeee3823b78bf92f8137c4ff345d38819fe89ae1ec09b31327008710d357",
+      "assignment_changes": {
+        "ROOT_DIR": {
+          "template": "\"./Data/Grid4_New/NCEP/graphs\"",
+          "quick_check": "\"./Data/Grid4_New/CMIP6_MPI/graphs\""
+        },
+        "TRAIN_RATIO": {
+          "template": "\"0.6\"",
+          "quick_check": "\"0.4545454545\""
+        },
+        "VAL_RATIO": {
+          "template": "\"0.2\"",
+          "quick_check": "\"0.0909090909\""
+        },
+        "CHECKPOINT_SELECTION": {
+          "template": "\"exceedance\"",
+          "quick_check": "\"overall\""
+        },
+        "ALL_RESULTS_ROOT": {
+          "template": "\"/home/exouser/media/share/PACT/FormalRuns_0925/single_tail_episodepeak_4x4\"",
+          "quick_check": "\"/home/exouser/media/share/PACT/FormalRuns_0925/CMIP6_Boston_QuickCheck_0929/future_year\""
+        },
+        "PACT_RUN_NAME": {
+          "template": "\"NCEP_Boston_G0_T0000_EP0100\"",
+          "quick_check": "\"CMIP6_MPI_Boston_future_year_G0_T0000_EP0100\""
+        },
+        "PYTHON_RUN_TAG_BASE": {
+          "template": "\"NCEP_Boston_G0_T0000_EP0100\"",
+          "quick_check": "\"CMIP6_MPI_Boston_future_year_G0_T0000_EP0100\""
+        }
+      },
+      "argument_changes": {
+        "root_dir": {
+          "template": "./Data/Grid4_New/NCEP/graphs",
+          "quick_check": "./Data/Grid4_New/CMIP6_MPI/graphs"
+        },
+        "train_ratio": {
+          "template": 0.6,
+          "quick_check": 0.4545454545
+        },
+        "val_ratio": {
+          "template": 0.2,
+          "quick_check": 0.0909090909
+        },
+        "checkpoint_selection": {
+          "template": "exceedance",
+          "quick_check": "overall"
+        },
+        "run_tag": {
+          "template": "NCEP_Boston_G0_T0000_EP0100_20260930_233312",
+          "quick_check": "CMIP6_MPI_Boston_future_year_G0_T0000_EP0100_20260930_233312"
+        },
+        "output_dir": {
+          "template": "/home/exouser/media/share/PACT/FormalRuns_0925/single_tail_episodepeak_4x4/NCEP_Boston_G0_T0000_EP0100__20260930_233312",
+          "quick_check": "/home/exouser/media/share/PACT/FormalRuns_0925/CMIP6_Boston_QuickCheck_0929/future_year/CMIP6_MPI_Boston_future_year_G0_T0000_EP0100__20260930_233312"
+        }
+      },
+      "resolved_arguments": {
+        "root_dir": "./Data/Grid4_New/CMIP6_MPI/graphs",
+        "test_root_dir": "",
+        "filter": null,
+        "station": "Boston",
+        "station_json_dir": "station_json",
+        "use_site_elevation": 0,
+        "use_bathymetry": 0,
+        "train_ratio": 0.4545454545,
+        "val_ratio": 0.0909090909,
+        "shuffle_years": 0,
+        "future_only": 0,
+        "future_year_threshold": 2030,
+        "batch_size": 256,
+        "grad_accum_steps": 4,
+        "epochs": 300,
+        "lr": 0.005,
+        "hidden_channels": 128,
+        "seed": 42,
+        "num_layers": 2,
+        "dropout": 0.05,
+        "history_hours": 24,
+        "x_norm": "zscore",
+        "x_p_lo": 1.0,
+        "x_p_hi": 99.0,
+        "x_nodes_per_graph": 0,
+        "x_clip": 0.0,
+        "x_aug": 0,
+        "x_aug_prob": 0.0,
+        "x_aug_scale": 0.0,
+        "x_aug_bias": 0.0,
+        "loss_mode": "mse",
+        "wqe_quantile_tau": 0.25,
+        "wqe_expectile_tau": 0.82,
+        "wqe_quantile_weight": 0.16666666666666666,
+        "wqe_expectile_weight": 0.8333333333333334,
+        "wmse_alpha": 4.0,
+        "wmse_s": 0.1,
+        "exceedance_percentile": 95.0,
+        "exceedance_loss_weight": 0.0,
+        "episode_gt_aligned_peak_weight": 0.01,
+        "exceedance_loss_mode": "mse",
+        "slope_lambda": 0.01,
+        "slope_mask_s": 0.1,
+        "slope_robust": "charb",
+        "slope_charb_eps": 0.001,
+        "slope_huber_delta": 0.05,
+        "scheduler": "cosine",
+        "min_lr": 1e-06,
+        "warmup_epochs": 5,
+        "warmup_start_factor": 0.1,
+        "rop_factor": 0.5,
+        "rop_patience": 20,
+        "rop_threshold": 0.0001,
+        "rop_cooldown": 0,
+        "rop_min_lr": 1e-06,
+        "rop_metric": "val_all_rmse",
+        "num_workers": 0,
+        "pin_memory": false,
+        "persistent_workers": false,
+        "prefetch_factor": 0,
+        "mp_context": "fork",
+        "torch_threads": 1,
+        "tf32": true,
+        "amp": true,
+        "amp_dtype": "bf16",
+        "model": "perceiver3",
+        "encoder_type": "GraphSAGE",
+        "cnn_intermediate_channel": 29,
+        "head_type": "single",
+        "head_dropout": 0.05,
+        "exceedance_head_experiment": null,
+        "exceedance_gate_pooling": "mean",
+        "gate_mode": "window",
+        "dual_mode": "exceedance",
+        "dual_loss": 0,
+        "dual_ablation": "none",
+        "body_loss_weight": 1.0,
+        "excess_loss_weight": 1.0,
+        "excess_loss_mode": "mse",
+        "excess_formulation": "direct",
+        "shape_loss_weight": 0.0,
+        "severity_shape_eps": 1e-06,
+        "excess_amp_loss_weight": 0.0,
+        "gate_loss_weight": 1.0,
+        "max_grad_norm": 0.0,
+        "deterministic": 0,
+        "temporal_block": "Transformer",
+        "node_read_heads": 8,
+        "time_read_heads": 8,
+        "transformer_layers": 2,
+        "transformer_ff_mult": 4.0,
+        "transformer_dropout": 0.0,
+        "max_time_steps": 32,
+        "checkpoint_selection": "overall",
+        "run_tag": "CMIP6_MPI_Boston_future_year_G0_T0000_EP0100_20260930_233312",
+        "output_dir": "/home/exouser/media/share/PACT/FormalRuns_0925/CMIP6_Boston_QuickCheck_0929/future_year/CMIP6_MPI_Boston_future_year_G0_T0000_EP0100__20260930_233312",
+        "device": "auto",
+        "use_station_meta": 1
+      }
+    },
+    {
+      "group": "future_year",
+      "dataset": "CMIP6_MRI",
+      "variant": "T0500_EP0000",
+      "tail_mse_weight": "0.05",
+      "episode_gt_aligned_peak_mse_weight": "0.0",
+      "config_path": "/home/exouser/StormSurge/configs/CMIP6_Boston_QuickCheck_0929/future_year/train_config_CMIP6_MRI_Boston_future_year_G0_T0500_EP0000.sh",
+      "result_path": "/home/exouser/media/share/PACT/FormalRuns_0925/CMIP6_Boston_QuickCheck_0929/future_year/CMIP6_MRI_Boston_future_year_G0_T0500_EP0000__20260930_233312",
+      "template_path": "/home/exouser/StormSurge/configs/single_tail_episodepeak_4x4/train_config_NCEP_Boston_G0_T0500_EP0000.sh",
+      "primary_checkpoint": "overall",
+      "runstamp": "20260930_233312",
+      "queue_label": "QB0929F_MRI_T0500_EP0000",
+      "passed": true,
+      "config_sha256": "9cf4ac488651140acf5c51a5ff3a39121294edc2450c2b812fbb33e74d5e58ba",
+      "template_sha256": "619dee824fcd1b79adaba632a01519095294bfbd49c0e76798c382c858c3f9d1",
+      "assignment_changes": {
+        "ROOT_DIR": {
+          "template": "\"./Data/Grid4_New/NCEP/graphs\"",
+          "quick_check": "\"./Data/Grid4_New/CMIP6_MRI/graphs\""
+        },
+        "TRAIN_RATIO": {
+          "template": "\"0.6\"",
+          "quick_check": "\"0.4545454545\""
+        },
+        "VAL_RATIO": {
+          "template": "\"0.2\"",
+          "quick_check": "\"0.0909090909\""
+        },
+        "CHECKPOINT_SELECTION": {
+          "template": "\"exceedance\"",
+          "quick_check": "\"overall\""
+        },
+        "ALL_RESULTS_ROOT": {
+          "template": "\"/home/exouser/media/share/PACT/FormalRuns_0925/single_tail_episodepeak_4x4\"",
+          "quick_check": "\"/home/exouser/media/share/PACT/FormalRuns_0925/CMIP6_Boston_QuickCheck_0929/future_year\""
+        },
+        "PACT_RUN_NAME": {
+          "template": "\"NCEP_Boston_G0_T0500_EP0000\"",
+          "quick_check": "\"CMIP6_MRI_Boston_future_year_G0_T0500_EP0000\""
+        },
+        "PYTHON_RUN_TAG_BASE": {
+          "template": "\"NCEP_Boston_G0_T0500_EP0000\"",
+          "quick_check": "\"CMIP6_MRI_Boston_future_year_G0_T0500_EP0000\""
+        }
+      },
+      "argument_changes": {
+        "root_dir": {
+          "template": "./Data/Grid4_New/NCEP/graphs",
+          "quick_check": "./Data/Grid4_New/CMIP6_MRI/graphs"
+        },
+        "train_ratio": {
+          "template": 0.6,
+          "quick_check": 0.4545454545
+        },
+        "val_ratio": {
+          "template": 0.2,
+          "quick_check": 0.0909090909
+        },
+        "checkpoint_selection": {
+          "template": "exceedance",
+          "quick_check": "overall"
+        },
+        "run_tag": {
+          "template": "NCEP_Boston_G0_T0500_EP0000_20260930_233312",
+          "quick_check": "CMIP6_MRI_Boston_future_year_G0_T0500_EP0000_20260930_233312"
+        },
+        "output_dir": {
+          "template": "/home/exouser/media/share/PACT/FormalRuns_0925/single_tail_episodepeak_4x4/NCEP_Boston_G0_T0500_EP0000__20260930_233312",
+          "quick_check": "/home/exouser/media/share/PACT/FormalRuns_0925/CMIP6_Boston_QuickCheck_0929/future_year/CMIP6_MRI_Boston_future_year_G0_T0500_EP0000__20260930_233312"
+        }
+      },
+      "resolved_arguments": {
+        "root_dir": "./Data/Grid4_New/CMIP6_MRI/graphs",
+        "test_root_dir": "",
+        "filter": null,
+        "station": "Boston",
+        "station_json_dir": "station_json",
+        "use_site_elevation": 0,
+        "use_bathymetry": 0,
+        "train_ratio": 0.4545454545,
+        "val_ratio": 0.0909090909,
+        "shuffle_years": 0,
+        "future_only": 0,
+        "future_year_threshold": 2030,
+        "batch_size": 256,
+        "grad_accum_steps": 4,
+        "epochs": 300,
+        "lr": 0.005,
+        "hidden_channels": 128,
+        "seed": 42,
+        "num_layers": 2,
+        "dropout": 0.05,
+        "history_hours": 24,
+        "x_norm": "zscore",
+        "x_p_lo": 1.0,
+        "x_p_hi": 99.0,
+        "x_nodes_per_graph": 0,
+        "x_clip": 0.0,
+        "x_aug": 0,
+        "x_aug_prob": 0.0,
+        "x_aug_scale": 0.0,
+        "x_aug_bias": 0.0,
+        "loss_mode": "mse",
+        "wqe_quantile_tau": 0.25,
+        "wqe_expectile_tau": 0.82,
+        "wqe_quantile_weight": 0.16666666666666666,
+        "wqe_expectile_weight": 0.8333333333333334,
+        "wmse_alpha": 4.0,
+        "wmse_s": 0.1,
+        "exceedance_percentile": 95.0,
+        "exceedance_loss_weight": 0.05,
+        "episode_gt_aligned_peak_weight": 0.0,
+        "exceedance_loss_mode": "mse",
+        "slope_lambda": 0.01,
+        "slope_mask_s": 0.1,
+        "slope_robust": "charb",
+        "slope_charb_eps": 0.001,
+        "slope_huber_delta": 0.05,
+        "scheduler": "cosine",
+        "min_lr": 1e-06,
+        "warmup_epochs": 5,
+        "warmup_start_factor": 0.1,
+        "rop_factor": 0.5,
+        "rop_patience": 20,
+        "rop_threshold": 0.0001,
+        "rop_cooldown": 0,
+        "rop_min_lr": 1e-06,
+        "rop_metric": "val_all_rmse",
+        "num_workers": 0,
+        "pin_memory": false,
+        "persistent_workers": false,
+        "prefetch_factor": 0,
+        "mp_context": "fork",
+        "torch_threads": 1,
+        "tf32": true,
+        "amp": true,
+        "amp_dtype": "bf16",
+        "model": "perceiver3",
+        "encoder_type": "GraphSAGE",
+        "cnn_intermediate_channel": 29,
+        "head_type": "single",
+        "head_dropout": 0.05,
+        "exceedance_head_experiment": null,
+        "exceedance_gate_pooling": "mean",
+        "gate_mode": "window",
+        "dual_mode": "exceedance",
+        "dual_loss": 0,
+        "dual_ablation": "none",
+        "body_loss_weight": 1.0,
+        "excess_loss_weight": 1.0,
+        "excess_loss_mode": "mse",
+        "excess_formulation": "direct",
+        "shape_loss_weight": 0.0,
+        "severity_shape_eps": 1e-06,
+        "excess_amp_loss_weight": 0.0,
+        "gate_loss_weight": 1.0,
+        "max_grad_norm": 0.0,
+        "deterministic": 0,
+        "temporal_block": "Transformer",
+        "node_read_heads": 8,
+        "time_read_heads": 8,
+        "transformer_layers": 2,
+        "transformer_ff_mult": 4.0,
+        "transformer_dropout": 0.0,
+        "max_time_steps": 32,
+        "checkpoint_selection": "overall",
+        "run_tag": "CMIP6_MRI_Boston_future_year_G0_T0500_EP0000_20260930_233312",
+        "output_dir": "/home/exouser/media/share/PACT/FormalRuns_0925/CMIP6_Boston_QuickCheck_0929/future_year/CMIP6_MRI_Boston_future_year_G0_T0500_EP0000__20260930_233312",
+        "device": "auto",
+        "use_station_meta": 1
+      }
+    },
+    {
+      "group": "future_year",
+      "dataset": "CMIP6_MRI",
+      "variant": "T0000_EP0100",
+      "tail_mse_weight": "0.0",
+      "episode_gt_aligned_peak_mse_weight": "0.01",
+      "config_path": "/home/exouser/StormSurge/configs/CMIP6_Boston_QuickCheck_0929/future_year/train_config_CMIP6_MRI_Boston_future_year_G0_T0000_EP0100.sh",
+      "result_path": "/home/exouser/media/share/PACT/FormalRuns_0925/CMIP6_Boston_QuickCheck_0929/future_year/CMIP6_MRI_Boston_future_year_G0_T0000_EP0100__20260930_233312",
+      "template_path": "/home/exouser/StormSurge/configs/single_tail_episodepeak_4x4/train_config_NCEP_Boston_G0_T0000_EP0100.sh",
+      "primary_checkpoint": "overall",
+      "runstamp": "20260930_233312",
+      "queue_label": "QB0929F_MRI_T0000_EP0100",
+      "passed": true,
+      "config_sha256": "5381ceff860be359a56d6ba0116acaf6eafade8469bab1adf2319e1397db8ebb",
+      "template_sha256": "ec21eeee3823b78bf92f8137c4ff345d38819fe89ae1ec09b31327008710d357",
+      "assignment_changes": {
+        "ROOT_DIR": {
+          "template": "\"./Data/Grid4_New/NCEP/graphs\"",
+          "quick_check": "\"./Data/Grid4_New/CMIP6_MRI/graphs\""
+        },
+        "TRAIN_RATIO": {
+          "template": "\"0.6\"",
+          "quick_check": "\"0.4545454545\""
+        },
+        "VAL_RATIO": {
+          "template": "\"0.2\"",
+          "quick_check": "\"0.0909090909\""
+        },
+        "CHECKPOINT_SELECTION": {
+          "template": "\"exceedance\"",
+          "quick_check": "\"overall\""
+        },
+        "ALL_RESULTS_ROOT": {
+          "template": "\"/home/exouser/media/share/PACT/FormalRuns_0925/single_tail_episodepeak_4x4\"",
+          "quick_check": "\"/home/exouser/media/share/PACT/FormalRuns_0925/CMIP6_Boston_QuickCheck_0929/future_year\""
+        },
+        "PACT_RUN_NAME": {
+          "template": "\"NCEP_Boston_G0_T0000_EP0100\"",
+          "quick_check": "\"CMIP6_MRI_Boston_future_year_G0_T0000_EP0100\""
+        },
+        "PYTHON_RUN_TAG_BASE": {
+          "template": "\"NCEP_Boston_G0_T0000_EP0100\"",
+          "quick_check": "\"CMIP6_MRI_Boston_future_year_G0_T0000_EP0100\""
+        }
+      },
+      "argument_changes": {
+        "root_dir": {
+          "template": "./Data/Grid4_New/NCEP/graphs",
+          "quick_check": "./Data/Grid4_New/CMIP6_MRI/graphs"
+        },
+        "train_ratio": {
+          "template": 0.6,
+          "quick_check": 0.4545454545
+        },
+        "val_ratio": {
+          "template": 0.2,
+          "quick_check": 0.0909090909
+        },
+        "checkpoint_selection": {
+          "template": "exceedance",
+          "quick_check": "overall"
+        },
+        "run_tag": {
+          "template": "NCEP_Boston_G0_T0000_EP0100_20260930_233312",
+          "quick_check": "CMIP6_MRI_Boston_future_year_G0_T0000_EP0100_20260930_233312"
+        },
+        "output_dir": {
+          "template": "/home/exouser/media/share/PACT/FormalRuns_0925/single_tail_episodepeak_4x4/NCEP_Boston_G0_T0000_EP0100__20260930_233312",
+          "quick_check": "/home/exouser/media/share/PACT/FormalRuns_0925/CMIP6_Boston_QuickCheck_0929/future_year/CMIP6_MRI_Boston_future_year_G0_T0000_EP0100__20260930_233312"
+        }
+      },
+      "resolved_arguments": {
+        "root_dir": "./Data/Grid4_New/CMIP6_MRI/graphs",
+        "test_root_dir": "",
+        "filter": null,
+        "station": "Boston",
+        "station_json_dir": "station_json",
+        "use_site_elevation": 0,
+        "use_bathymetry": 0,
+        "train_ratio": 0.4545454545,
+        "val_ratio": 0.0909090909,
+        "shuffle_years": 0,
+        "future_only": 0,
+        "future_year_threshold": 2030,
+        "batch_size": 256,
+        "grad_accum_steps": 4,
+        "epochs": 300,
+        "lr": 0.005,
+        "hidden_channels": 128,
+        "seed": 42,
+        "num_layers": 2,
+        "dropout": 0.05,
+        "history_hours": 24,
+        "x_norm": "zscore",
+        "x_p_lo": 1.0,
+        "x_p_hi": 99.0,
+        "x_nodes_per_graph": 0,
+        "x_clip": 0.0,
+        "x_aug": 0,
+        "x_aug_prob": 0.0,
+        "x_aug_scale": 0.0,
+        "x_aug_bias": 0.0,
+        "loss_mode": "mse",
+        "wqe_quantile_tau": 0.25,
+        "wqe_expectile_tau": 0.82,
+        "wqe_quantile_weight": 0.16666666666666666,
+        "wqe_expectile_weight": 0.8333333333333334,
+        "wmse_alpha": 4.0,
+        "wmse_s": 0.1,
+        "exceedance_percentile": 95.0,
+        "exceedance_loss_weight": 0.0,
+        "episode_gt_aligned_peak_weight": 0.01,
+        "exceedance_loss_mode": "mse",
+        "slope_lambda": 0.01,
+        "slope_mask_s": 0.1,
+        "slope_robust": "charb",
+        "slope_charb_eps": 0.001,
+        "slope_huber_delta": 0.05,
+        "scheduler": "cosine",
+        "min_lr": 1e-06,
+        "warmup_epochs": 5,
+        "warmup_start_factor": 0.1,
+        "rop_factor": 0.5,
+        "rop_patience": 20,
+        "rop_threshold": 0.0001,
+        "rop_cooldown": 0,
+        "rop_min_lr": 1e-06,
+        "rop_metric": "val_all_rmse",
+        "num_workers": 0,
+        "pin_memory": false,
+        "persistent_workers": false,
+        "prefetch_factor": 0,
+        "mp_context": "fork",
+        "torch_threads": 1,
+        "tf32": true,
+        "amp": true,
+        "amp_dtype": "bf16",
+        "model": "perceiver3",
+        "encoder_type": "GraphSAGE",
+        "cnn_intermediate_channel": 29,
+        "head_type": "single",
+        "head_dropout": 0.05,
+        "exceedance_head_experiment": null,
+        "exceedance_gate_pooling": "mean",
+        "gate_mode": "window",
+        "dual_mode": "exceedance",
+        "dual_loss": 0,
+        "dual_ablation": "none",
+        "body_loss_weight": 1.0,
+        "excess_loss_weight": 1.0,
+        "excess_loss_mode": "mse",
+        "excess_formulation": "direct",
+        "shape_loss_weight": 0.0,
+        "severity_shape_eps": 1e-06,
+        "excess_amp_loss_weight": 0.0,
+        "gate_loss_weight": 1.0,
+        "max_grad_norm": 0.0,
+        "deterministic": 0,
+        "temporal_block": "Transformer",
+        "node_read_heads": 8,
+        "time_read_heads": 8,
+        "transformer_layers": 2,
+        "transformer_ff_mult": 4.0,
+        "transformer_dropout": 0.0,
+        "max_time_steps": 32,
+        "checkpoint_selection": "overall",
+        "run_tag": "CMIP6_MRI_Boston_future_year_G0_T0000_EP0100_20260930_233312",
+        "output_dir": "/home/exouser/media/share/PACT/FormalRuns_0925/CMIP6_Boston_QuickCheck_0929/future_year/CMIP6_MRI_Boston_future_year_G0_T0000_EP0100__20260930_233312",
         "device": "auto",
         "use_station_meta": 1
       }
