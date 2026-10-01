@@ -158,3 +158,87 @@ class InferenceReportingTests(unittest.TestCase):
                 self.assertEqual(len(gt_event_episodes(data['y_true'], data['target_timestamps'], 3., split_ids=data['split_ids'])), expected)
                 self.assertEqual(data['split'].item(), 'external' if external else 'mixed')
                 self.assertEqual(set(data['split_ids']), {'external'} if external else {'train', 'val'})
+
+    def test_empty_source_test_requires_external_or_explicit_all(self):
+        checkpoint = torch.load(self.ckpt, weights_only=False)
+        checkpoint['split_tags']['test'] = []
+        torch.save(checkpoint, self.ckpt)
+        for scope in ([], ['--scope', 'test']):
+            with self.subTest(scope=scope), contextlib.redirect_stdout(io.StringIO()), \
+                    patch.object(infer, 'run_epoch') as run, \
+                    patch.object(infer, 'ForcingGraphStore') as store:
+                with self.assertRaisesRegex(ValueError, 'Checkpoint has no held-out source TEST split.*--test_root_dir.*--scope all'):
+                    infer.main(['--ckpt', str(self.ckpt), '--root_dir', str(self.graphs), '--device', 'cpu', *scope])
+                run.assert_not_called()
+                store.assert_not_called()
+        for name, options in (('no_test_external', ['--test_root_dir', str(self.graphs)]),
+                              ('no_test_all', ['--scope', 'all'])):
+            report, _ = self.evaluate(name, options)
+            self.assertEqual(report['evaluated_years'], sorted(self.truth))
+
+    def test_strict_years_fail_before_forward_and_preserve_permissive_default(self):
+        cases = [
+            ('1979_1980,2012_2013', 'missing from target: 2012_2013', True),
+            ('1979_1980,1979_1980', 'Duplicate requested', True),
+            ('1979_1981', 'Invalid requested', True),
+            (', ,', 'at least one', True),
+            ('2014_2015', 'do not match requested years within the selected scope', False),
+        ]
+        for years, error, external in cases:
+            out = self.root / 'strict_failure'
+            options = ['--ckpt', str(self.ckpt), '--root_dir', str(self.graphs), '--out_dir', str(out),
+                       '--device', 'cpu', '--strict_years', '--years', years]
+            if external:
+                options += ['--test_root_dir', str(self.graphs)]
+            with self.subTest(years=years), contextlib.redirect_stdout(io.StringIO()), \
+                    patch.object(infer, 'run_epoch') as run:
+                with self.assertRaisesRegex(ValueError, error):
+                    infer.main(options)
+                run.assert_not_called()
+                self.assertFalse(out.exists())
+        report, _ = self.evaluate('permissive', ['--years', '1979_1980,2012_2013'])
+        self.assertEqual(report['requested_year_count'], 2)
+        self.assertEqual(report['evaluated_years'], ['1979_1980'])
+        self.assertFalse(report['strict_years'])
+        with contextlib.redirect_stderr(io.StringIO()), self.assertRaises(SystemExit):
+            infer.parse_args(['--ckpt', str(self.ckpt), '--root_dir', str(self.graphs), '--strict_years'])
+
+    def test_strict_external_provenance_retains_source_stats_and_tau(self):
+        checkpoint = torch.load(self.ckpt, weights_only=False)
+        checkpoint['split_tags']['test'] = []
+        torch.save(checkpoint, self.ckpt)
+        source = self.root / 'unmounted_source'
+        out = self.root / 'strict_external'
+        with contextlib.redirect_stdout(io.StringIO()), \
+                patch('emulator.data.fit_statistics', side_effect=AssertionError('target normalization fit')), \
+                patch('emulator.data.fit_loss_thresholds', side_effect=AssertionError('target threshold fit')), \
+                patch.object(infer, 'run_epoch', wraps=infer.run_epoch) as run:
+            infer.main(['--ckpt', str(self.ckpt), '--root_dir', str(source), '--test_root_dir', str(self.graphs),
+                        '--source_name', 'NCEP', '--target_name', 'AWI', '--out_dir', str(out),
+                        '--years', '2099_2100, 2070_2071', '--strict_years', '--save_npz',
+                        '--device', 'cpu', '--num_workers', '0', '--batch_size', '2'])
+        self.assertEqual(run.call_count, 2)
+        for call in run.call_args_list:
+            self.assertEqual(call.kwargs['tau_physical'], checkpoint['threshold_metadata']['tau_physical'])
+            for key, value in checkpoint['normalization'].items():
+                torch.testing.assert_close(call.args[3][key], value, rtol=0, atol=0)
+        expected = dict(source_name='NCEP', target_name='AWI', source_root=str(source),
+                        target_root=str(self.graphs), checkpoint=str(self.ckpt),
+                        requested_years=['2070_2071', '2099_2100'], evaluated_years=['2070_2071', '2099_2100'],
+                        requested_year_count=2, evaluated_year_count=2, strict_years=True,
+                        evaluation_threshold_origin='source_checkpoint_train', source_tau_physical=3.,
+                        source_exceedance_percentile=95., tau_physical=3., exceedance_percentile=95.,
+                        threshold_schema='train_hourly_q95_v1', normalization_origin='source_checkpoint_train')
+        metrics = json.loads((out / 'metrics.json').read_text())
+        report = json.loads(next(out.glob('metrics_per_year_*.json')).read_text())
+        with np.load(out / 'predictions.npz', allow_pickle=False) as arrays:
+            for document in (metrics, report, arrays):
+                for key, value in expected.items():
+                    np.testing.assert_equal(document[key], value, err_msg=key)
+            np.testing.assert_allclose(arrays['y_pred'], np.tile([.25, -.5], (5, 1)))
+            from emulator.training.metrics import evaluate_metrics
+            reference = evaluate_metrics(arrays['y_pred'], arrays['y_true'], 3.,
+                                         target_timestamps=arrays['target_timestamps'], split_ids=arrays['split_ids'])
+            self.assertEqual(metrics['metrics'], reference)
+            self.assertEqual(set(arrays['split_ids']), {'external'})
+        self.assertEqual(metrics['threshold_metadata'], checkpoint['threshold_metadata'])

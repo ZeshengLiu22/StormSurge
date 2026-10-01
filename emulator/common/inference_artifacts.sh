@@ -22,6 +22,7 @@ write_infer_config_snapshot() {
   local output_path="$1" name value
   local config_vars=(
     INFER_PY PYTHON_BIN USE_TMUX ROOT_DIR TEST_ROOT_DIR STATION STATION_JSON_DIR MODEL MODEL_LABEL
+    SOURCE_NAME TARGET_NAME SOURCE_ROOT TARGET_ROOT STRICT_YEARS EXPERIMENT_GROUP EXPECTED_YEAR_COUNT
     USE_SITE_ELEVATION USE_BATHYMETRY
     ENCODER_TYPE TEMPORAL_BLOCK HEAD_TYPE HISTORY_HOURS BATCH_SIZE YEARS
     CNN_INTERMEDIATE_CHANNEL DUAL_DIAGNOSTICS
@@ -37,8 +38,9 @@ write_infer_config_snapshot() {
     for name in "${config_vars[@]}"; do
       if [[ -v "${name}" ]]; then
         value="${!name}"
+        if [[ "${name}" == "TARGET_ROOT" ]]; then value="${TEST_ROOT_DIR:-}"; fi
         case "${name}" in
-          INFER_PY|ROOT_DIR|TEST_ROOT_DIR|STATION_JSON_DIR|CONDA_SH|INFERENCE_RESULTS_ROOT)
+          INFER_PY|ROOT_DIR|TEST_ROOT_DIR|SOURCE_ROOT|TARGET_ROOT|STATION_JSON_DIR|CONDA_SH|INFERENCE_RESULTS_ROOT)
             if [[ -n "${value}" && "${value}" != /* ]]; then
               value="${WORKDIR}/${value#./}"
             fi ;;

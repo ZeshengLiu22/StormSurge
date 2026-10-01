@@ -1,0 +1,61 @@
+{
+  "unit_tests": {
+    "passed": 64,
+    "failed": 0,
+    "suites": {
+      "test_inference_reporting": 7,
+      "test_cross_dataset_infer": 4,
+      "test_dual_experiments + test_hourly_metrics + test_hourly_threshold + test_pipeline + test_config_interfaces": 53
+    }
+  },
+  "shell_syntax_files": 73,
+  "config_counts": {
+    "past_only": 36,
+    "future_year": 30,
+    "total": 66
+  },
+  "year_counts": {
+    "past_only": 7,
+    "future_year": 30
+  },
+  "representative_dry_runs": [
+    "past_only/NCEP/NCEP_to_AWI.sh",
+    "future_year/NCEP/NCEP_to_AWI.sh",
+    "future_year/CNRM/CNRM_to_EC_EARTH.sh"
+  ],
+  "group_dry_run": "future_year/NCEP (5 pairs; no inference)",
+  "smoke": {
+    "output_dir": "/media/share/PACT/FormalRuns_0925/CrossDatasetInference_dev/smoke/smoke_future_year_Boston_NCEP_to_AWI_20261001_180948/outputs",
+    "samples": 600,
+    "all_rmse": 0.18069831464951266,
+    "runtime_seconds": 2.930841909023002,
+    "wall_seconds": 45.17959530395456,
+    "source_test_tags_empty": true,
+    "production_future_year_count_after_smoke": 30,
+    "batch_size": 256,
+    "source_name": "NCEP",
+    "target_name": "AWI",
+    "requested_years": [
+      "2070_2071"
+    ],
+    "evaluated_years": [
+      "2070_2071"
+    ],
+    "requested_year_count": 1,
+    "evaluated_year_count": 1,
+    "evaluation_threshold_origin": "source_checkpoint_train",
+    "source_tau_physical": 0.31119676977395994,
+    "tau_physical": 0.31119676977395994,
+    "source_exceedance_percentile": 95.0,
+    "normalization_origin": "source_checkpoint_train",
+    "strict_years": true,
+    "station": "Boston",
+    "model": "perceiver3",
+    "encoder_type": "GraphSAGE",
+    "temporal_block": "Transformer",
+    "head_type": "single",
+    "history_hours": 24
+  },
+  "real_inference_runs": 1,
+  "production_matrix_launched": false
+}

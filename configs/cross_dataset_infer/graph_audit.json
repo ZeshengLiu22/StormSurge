@@ -1,0 +1,321 @@
+[
+  {
+    "group": "past_only",
+    "target": "NCEP",
+    "root": "./Data/Grid4_New/NCEP/graphs",
+    "inspected_year": "2008_2009",
+    "graphs_in_year": 600,
+    "node_counts": [
+      702
+    ],
+    "batch_node_counts": [
+      702,
+      702
+    ],
+    "batch_x_shape": [
+      1404,
+      5
+    ],
+    "batch_x_hist_shape": [
+      1404,
+      5,
+      5
+    ],
+    "batch_y_shape": [
+      2,
+      6
+    ],
+    "grid_H": 26,
+    "grid_W": 27
+  },
+  {
+    "group": "past_only",
+    "target": "AWI",
+    "root": "./Data/Grid4_New_PastOnly/CMIP6_AWI/graphs",
+    "inspected_year": "2008_2009",
+    "graphs_in_year": 600,
+    "node_counts": [
+      3776
+    ],
+    "batch_node_counts": [
+      3776,
+      3776
+    ],
+    "batch_x_shape": [
+      7552,
+      5
+    ],
+    "batch_x_hist_shape": [
+      7552,
+      5,
+      5
+    ],
+    "batch_y_shape": [
+      2,
+      6
+    ],
+    "grid_H": 59,
+    "grid_W": 64
+  },
+  {
+    "group": "past_only",
+    "target": "CNRM",
+    "root": "./Data/Grid4_New_PastOnly/CMIP6_CNRM/graphs",
+    "inspected_year": "2008_2009",
+    "graphs_in_year": 600,
+    "node_counts": [
+      1677
+    ],
+    "batch_node_counts": [
+      1677,
+      1677
+    ],
+    "batch_x_shape": [
+      3354,
+      5
+    ],
+    "batch_x_hist_shape": [
+      3354,
+      5,
+      5
+    ],
+    "batch_y_shape": [
+      2,
+      6
+    ],
+    "grid_H": 39,
+    "grid_W": 43
+  },
+  {
+    "group": "past_only",
+    "target": "EC_EARTH",
+    "root": "./Data/Grid4_New_PastOnly/CMIP6_EC_EARTH/graphs",
+    "inspected_year": "2008_2009",
+    "graphs_in_year": 600,
+    "node_counts": [
+      6708
+    ],
+    "batch_node_counts": [
+      6708,
+      6708
+    ],
+    "batch_x_shape": [
+      13416,
+      5
+    ],
+    "batch_x_hist_shape": [
+      13416,
+      5,
+      5
+    ],
+    "batch_y_shape": [
+      2,
+      6
+    ],
+    "grid_H": 78,
+    "grid_W": 86
+  },
+  {
+    "group": "past_only",
+    "target": "MPI",
+    "root": "./Data/Grid4_New_PastOnly/CMIP6_MPI/graphs",
+    "inspected_year": "2008_2009",
+    "graphs_in_year": 600,
+    "node_counts": [
+      3776
+    ],
+    "batch_node_counts": [
+      3776,
+      3776
+    ],
+    "batch_x_shape": [
+      7552,
+      5
+    ],
+    "batch_x_hist_shape": [
+      7552,
+      5,
+      5
+    ],
+    "batch_y_shape": [
+      2,
+      6
+    ],
+    "grid_H": 59,
+    "grid_W": 64
+  },
+  {
+    "group": "past_only",
+    "target": "MRI",
+    "root": "./Data/Grid4_New_PastOnly/CMIP6_MRI/graphs",
+    "inspected_year": "2008_2009",
+    "graphs_in_year": 600,
+    "node_counts": [
+      2597
+    ],
+    "batch_node_counts": [
+      2597,
+      2597
+    ],
+    "batch_x_shape": [
+      5194,
+      5
+    ],
+    "batch_x_hist_shape": [
+      5194,
+      5,
+      5
+    ],
+    "batch_y_shape": [
+      2,
+      6
+    ],
+    "grid_H": 49,
+    "grid_W": 53
+  },
+  {
+    "group": "future_year",
+    "target": "AWI",
+    "root": "./Data/Grid4_New/CMIP6_AWI/graphs",
+    "inspected_year": "2070_2071",
+    "graphs_in_year": 600,
+    "node_counts": [
+      3776
+    ],
+    "batch_node_counts": [
+      3776,
+      3776
+    ],
+    "batch_x_shape": [
+      7552,
+      5
+    ],
+    "batch_x_hist_shape": [
+      7552,
+      5,
+      5
+    ],
+    "batch_y_shape": [
+      2,
+      6
+    ],
+    "grid_H": 59,
+    "grid_W": 64
+  },
+  {
+    "group": "future_year",
+    "target": "CNRM",
+    "root": "./Data/Grid4_New/CMIP6_CNRM/graphs",
+    "inspected_year": "2070_2071",
+    "graphs_in_year": 600,
+    "node_counts": [
+      1677
+    ],
+    "batch_node_counts": [
+      1677,
+      1677
+    ],
+    "batch_x_shape": [
+      3354,
+      5
+    ],
+    "batch_x_hist_shape": [
+      3354,
+      5,
+      5
+    ],
+    "batch_y_shape": [
+      2,
+      6
+    ],
+    "grid_H": 39,
+    "grid_W": 43
+  },
+  {
+    "group": "future_year",
+    "target": "EC_EARTH",
+    "root": "./Data/Grid4_New/CMIP6_EC_EARTH/graphs",
+    "inspected_year": "2070_2071",
+    "graphs_in_year": 600,
+    "node_counts": [
+      6708
+    ],
+    "batch_node_counts": [
+      6708,
+      6708
+    ],
+    "batch_x_shape": [
+      13416,
+      5
+    ],
+    "batch_x_hist_shape": [
+      13416,
+      5,
+      5
+    ],
+    "batch_y_shape": [
+      2,
+      6
+    ],
+    "grid_H": 78,
+    "grid_W": 86
+  },
+  {
+    "group": "future_year",
+    "target": "MPI",
+    "root": "./Data/Grid4_New/CMIP6_MPI/graphs",
+    "inspected_year": "2070_2071",
+    "graphs_in_year": 600,
+    "node_counts": [
+      3776
+    ],
+    "batch_node_counts": [
+      3776,
+      3776
+    ],
+    "batch_x_shape": [
+      7552,
+      5
+    ],
+    "batch_x_hist_shape": [
+      7552,
+      5,
+      5
+    ],
+    "batch_y_shape": [
+      2,
+      6
+    ],
+    "grid_H": 59,
+    "grid_W": 64
+  },
+  {
+    "group": "future_year",
+    "target": "MRI",
+    "root": "./Data/Grid4_New/CMIP6_MRI/graphs",
+    "inspected_year": "2070_2071",
+    "graphs_in_year": 600,
+    "node_counts": [
+      2597
+    ],
+    "batch_node_counts": [
+      2597,
+      2597
+    ],
+    "batch_x_shape": [
+      5194,
+      5
+    ],
+    "batch_x_hist_shape": [
+      5194,
+      5,
+      5
+    ],
+    "batch_y_shape": [
+      2,
+      6
+    ],
+    "grid_H": 49,
+    "grid_W": 53
+  }
+]

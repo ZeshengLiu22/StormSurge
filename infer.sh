@@ -13,7 +13,7 @@ source "$(dirname "${BASH_SOURCE[0]}")/emulator/common/inference_artifacts.sh"
 # ============================================================
 # infer.sh
 # - Launch inference inside tmux (interactive use)
-# - Sources configs/infer_config.sh (single source of truth)
+# - Sources exactly one pair config: bash infer.sh <pair-config.sh>
 # - Passes ONLY arguments that exist in infer.py
 # ============================================================
 
@@ -30,6 +30,14 @@ set +u
 # shellcheck disable=SC1090
 source "${CONFIG_PATH}"
 set -u
+
+# Pair labels/roots are optional for older configs.
+if [[ -v SOURCE_ROOT ]]; then ROOT_DIR="${SOURCE_ROOT}"; fi
+if [[ -v TARGET_ROOT ]]; then TEST_ROOT_DIR="${TARGET_ROOT}"; fi
+if [[ -n "${SOURCE_NAME:-}${TARGET_NAME:-}${EXPERIMENT_GROUP:-}" ]] && [[ -z "${TEST_ROOT_DIR:-}" ]]; then
+  echo "[FATAL] Named pair configs require a nonempty TARGET_ROOT / TEST_ROOT_DIR, including diagonal pairs."
+  exit 2
+fi
 
 # Safe defaults (older configs won’t break)
 : "${INFER_PY:=infer.py}"
@@ -49,6 +57,8 @@ set -u
 : "${USE_SITE_ELEVATION:=1}"
 : "${USE_BATHYMETRY:=0}"
 : "${YEARS:=}"
+: "${STRICT_YEARS:=0}"
+: "${DRY_RUN:=0}"
 
 # Debug defaults (if not set in config)
 : "${CUDA_LAUNCH_BLOCKING_FLAG:=0}"
@@ -129,18 +139,20 @@ case "${INFERENCE_RESULTS_ROOT}" in
   *) RESULTS_ROOT="${WORKDIR}/${INFERENCE_RESULTS_ROOT#./}"; RESULTS_ROOT="${RESULTS_ROOT%/}" ;;
 esac
 
-SOURCE_TAG="$(infer_dataset_tag "${ROOT_DIR}")"
-TARGET_ROOT="${TEST_ROOT_DIR:-${ROOT_DIR}}"
-TARGET_TAG="$(infer_dataset_tag "${TARGET_ROOT}")"
+SOURCE_TAG="${SOURCE_NAME:-$(infer_dataset_tag "${ROOT_DIR}")}"
+SOURCE_ROOT="${SOURCE_ROOT:-${ROOT_DIR}}"
+TARGET_ROOT="${TEST_ROOT_DIR}"
+TARGET_TAG="${TARGET_NAME:-$(infer_dataset_tag "${TEST_ROOT_DIR:-${ROOT_DIR}}")}"
 RUN_BASE="$(safe_run_component "${STATION}_${MODEL_LABEL}_${SOURCE_TAG}_To_${TARGET_TAG}")"
+if [[ -n "${EXPERIMENT_GROUP:-}" ]]; then
+  RUN_BASE="$(safe_run_component "${EXPERIMENT_GROUP}_${STATION}_${SOURCE_TAG}_to_${TARGET_TAG}")"
+fi
 RUNSTAMP=$(date +"%Y%m%d_%H%M%S")
 RUN_FOLDER_NAME="${RUN_BASE}_${RUNSTAMP}"
 RUN_DIR="${RESULTS_ROOT}/${RUN_FOLDER_NAME}"
-mkdir -p "${RUN_DIR}"
 SESSION_NAME="${SESSION_NAME:-${RUN_FOLDER_NAME}}"
 
 OUT_DIR="${RUN_DIR}/outputs"
-mkdir -p "${OUT_DIR}"
 
 TEST_TAG="${TARGET_TAG}"
 
@@ -166,7 +178,19 @@ echo "Station feats: site_elevation=${USE_SITE_ELEVATION} bathymetry=${USE_BATHY
 echo "History hours: ${HISTORY_HOURS}"
 echo "Batch size:    ${BATCH_SIZE}"
 echo "Years:         ${YEARS:-<all>}"
+echo "Strict years:  ${STRICT_YEARS}"
+if [[ -n "${YEARS}" ]]; then
+  IFS=',' read -r -a REQUESTED_YEAR_TAGS <<< "${YEARS}"
+  echo "Year count:    ${#REQUESTED_YEAR_TAGS[@]}"
+fi
+echo "Threshold:     source_checkpoint_train (saved tau; no refit)"
 echo "========================================="
+
+if [[ "${DRY_RUN}" == "1" ]]; then
+  echo "[DRY RUN] Configuration resolved; infer.py was not executed and no result directory was created."
+  exit 0
+fi
+mkdir -p "${OUT_DIR}"
 
 RUNNER="${RUN_DIR}/run_infer.sh"
 CONFIG_SNAPSHOT="${RUN_DIR}/infer_config_used.sh"
@@ -284,6 +308,7 @@ if [[ -n "${TEST_ROOT_DIR}" ]]; then TEST_ARGS=(--test_root_dir "${TEST_ROOT_DIR
 
 YEARS_ARGS=()
 if [[ -n "${YEARS}" ]]; then YEARS_ARGS=(--years "${YEARS}"); fi
+if [[ "${STRICT_YEARS}" == "1" ]]; then YEARS_ARGS+=(--strict_years); fi
 
 DL_ARGS=(--num_workers "${NUM_WORKERS}" --prefetch_factor "${PREFETCH_FACTOR}" --mp_context "${MP_CONTEXT}")
 if [[ "${PIN_MEMORY}" -eq 1 ]]; then DL_ARGS+=(--pin_memory); fi
@@ -297,6 +322,8 @@ if [[ -n "${CNN_INTERMEDIATE_CHANNEL}" ]]; then ARCH_ARGS+=(--cnn_intermediate_c
 CMD=(
   "${PYTHON_BIN}" -u "${INFER_PY}"
   --root_dir "${ROOT_DIR}"
+  --source_name "${SOURCE_NAME:-}"
+  --target_name "${TARGET_NAME:-}"
   "${TEST_ARGS[@]}"
   "${STATION_ARGS[@]}"
   --station_json_dir "${STATION_JSON_DIR}"

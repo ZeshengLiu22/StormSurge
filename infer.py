@@ -33,6 +33,8 @@ def parse_args(argv=None):
         help="Train/val root used for year-split test if --test_root_dir is empty",
     )
     parser.add_argument("--test_root_dir", type=str, default="", help="If set: use ALL years from this root (e.g., CMIP6)")
+    parser.add_argument("--source_name", default="", help="Source label for pair provenance; defaults to the source root name.")
+    parser.add_argument("--target_name", default="", help="Target label for pair provenance; defaults to the evaluation root name.")
     parser.add_argument("--station", type=str, default=None)
     parser.add_argument("--station_json_dir", type=str, default="./station_json")
     parser.add_argument(
@@ -127,10 +129,14 @@ def parse_args(argv=None):
     )
     parser.add_argument("--scope", choices=("test", "all"), default=None,
                         help="Optional explicit scope; test uses saved tags, all uses every sample in the supplied root.")
+    parser.add_argument("--strict_years", action="store_true",
+                        help="Require every requested --years group and exactly that evaluated year set.")
     parser.add_argument("--device", choices=("auto", "cpu", "cuda"), default="auto")
     args = parser.parse_args(argv)
     if args.test_root_dir and args.scope == "test":
         parser.error("--test_root_dir selects external data; it cannot be combined with --scope test.")
+    if args.strict_years and not args.years.strip():
+        parser.error("--strict_years requires an explicit --years list.")
     if args.batch_size < 1 or args.torch_threads < 1:
         parser.error("Batch size and thread count must be positive.")
     return args
@@ -184,6 +190,10 @@ def main(argv=None):
     all_years = external or args.scope == "all"
     evaluation_scope = "external_all_years" if external else ("source_all_years" if all_years else "held_out_years")
     root = args.test_root_dir or args.root_dir
+    if not all_years and not checkpoint["split_tags"]["test"]:
+        raise ValueError("Checkpoint has no held-out source TEST split. "
+                         "Provide --test_root_dir for external transfer evaluation, "
+                         "or explicitly use --scope all if source-all evaluation is intended.")
     # Station filtering is always strict; missing station data never selects other stations.
     store = ForcingGraphStore(root, station)
     if all_years:
@@ -194,13 +204,45 @@ def main(argv=None):
         if missing:
             raise ValueError(f"Saved test samples are missing: {len(missing)}. Select --test_root_dir for external data.")
         indices = [i for i, tag in enumerate(store.graph_tags) if tag in expected_tags]
+    requested_years = [year.strip() for year in args.years.split(",") if year.strip()]
+    if args.strict_years:
+        if not requested_years:
+            raise ValueError("--strict_years requires at least one evaluation year group.")
+        if len(requested_years) != len(set(requested_years)):
+            raise ValueError("Duplicate requested evaluation year groups are not allowed with --strict_years.")
+        invalid = [year for year in requested_years if not re.fullmatch(r"\d{4}_\d{4}", year)
+                   or int(year[5:]) != int(year[:4]) + 1]
+        if invalid:
+            raise ValueError(f"Invalid requested evaluation year groups: {', '.join(invalid)}")
+        missing_years = set(requested_years) - set(store.year_to_indices)
+        if missing_years:
+            raise ValueError("Requested evaluation year groups missing from target: " + ", ".join(sorted(missing_years)))
+    requested_years = sorted(set(requested_years))
     if args.years:
-        years = {year.strip() for year in args.years.split(",") if year.strip()}
-        indices = [i for i in indices if "_".join(store.graph_tags[i].split("_")[:2]) in years]
+        indices = [i for i in indices if "_".join(store.graph_tags[i].split("_")[:2]) in requested_years]
+    evaluated_years = sorted({"_".join(store.graph_tags[i].split("_")[:2]) for i in indices})
+    if args.strict_years and evaluated_years != requested_years:
+        raise ValueError("Evaluated year groups do not match requested years within the selected scope: "
+                         f"requested={requested_years}, evaluated={evaluated_years}")
     if not indices:
         raise ValueError("The requested evaluation set is empty.")
-    source, target = infer_dataset_tag(args.root_dir), infer_dataset_tag(root)
+    source = args.source_name or infer_dataset_tag(args.root_dir)
+    target = args.target_name or infer_dataset_tag(root)
     model_name, station_tag = expected["model"], station or "ALL"
+    pair_metadata = dict(
+        source_name=source, target_name=target,
+        source_root=str(Path(args.root_dir).expanduser().resolve()),
+        target_root=str(Path(root).expanduser().resolve()),
+        checkpoint=str(Path(args.ckpt).expanduser().resolve()),
+        requested_years=requested_years, evaluated_years=evaluated_years,
+        requested_year_count=len(requested_years), evaluated_year_count=len(evaluated_years),
+        strict_years=args.strict_years, station=station_tag, model=model_name,
+        encoder_type=config.encoder_type, temporal_block=config.temporal_block,
+        head_type=config.head_type, history_steps=config.history_steps, history_hours=config.history_steps * 6,
+        normalization_origin="source_checkpoint_train", normalization_type=training.get("x_norm", ""),
+        evaluation_threshold_origin="source_checkpoint_train", source_tau_physical=tau_physical,
+        source_exceedance_percentile=threshold_metadata["exceedance_percentile"],
+    )
     label = args.model_label.strip()
     if not label:
         stem = Path(args.ckpt).stem
@@ -285,7 +327,7 @@ def main(argv=None):
                            exceedance_percentile=threshold_metadata["exceedance_percentile"],
                            metric_schema=threshold_metadata["metric_schema"],
                            threshold_schema=threshold_metadata["threshold_schema"],
-                           station=station_tag, split="external" if external else ("mixed" if all_years else "test"))
+                           **pair_metadata, split="external" if external else ("mixed" if all_years else "test"))
     if args.save_npz:
         np.savez_compressed(out_dir / "predictions.npz", **arrays, **export_metadata)
     if args.dual_diagnostics:
@@ -313,7 +355,7 @@ def main(argv=None):
     metadata = {"metrics": metrics, "model_parameters": model_parameters, "runtime_seconds": elapsed, "wall_seconds": wall_seconds,
                 "samples": len(indices), "scope": evaluation_scope, "method": threshold_label(threshold_metadata),
                 "years": sorted(year_to_indices), "results": results, "dual_metadata": dual_metadata,
-                "threshold_metadata": threshold_metadata, **threshold_metadata}
+                "threshold_metadata": threshold_metadata, **threshold_metadata, **pair_metadata}
     (out_dir / "metrics.json").write_text(json.dumps(metadata, indent=2))
     report = dict(timestamp=datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S UTC"),
                   test_tag=test_tag, source_tag=source, target_tag=target, station=station_tag,
@@ -337,6 +379,9 @@ def main(argv=None):
                       "Argmax ties use the earliest timestamp; timing is in hours. "
                       "All extreme populations use the saved TRAIN hourly tau_physical.",
                   x_clip=training["x_clip"], dual_metadata=dual_metadata, dual_ablation=config.dual_ablation)
+    report.update(pair_metadata)
+    report.update({key: threshold_metadata[key] for key in
+                   ("tau_physical", "exceedance_percentile", "metric_schema", "threshold_schema")})
     (out_dir / f"metrics_per_year_{report_stem}.json").write_text(json.dumps(report, indent=2, default=str))
     (out_dir / "metrics.md").write_text(metric_report(metrics, threshold_metadata))
     log_message(format_metrics("External" if external else ("SourceAll" if all_years else "Test"), metrics))
