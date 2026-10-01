@@ -1,6 +1,7 @@
 """CPU graph storage and deterministic splits by complete year groups."""
 
 from collections import defaultdict
+import math
 from pathlib import Path
 import random
 
@@ -51,8 +52,10 @@ class ForcingGraphStore:
 
     def split(self, train_ratio=0.6, val_ratio=0.2, shuffle_years=False, seed=42,
               future_only=False, future_year_threshold=2030):
-        if not 0 < train_ratio < 1 or not 0 < val_ratio < 1 or train_ratio + val_ratio >= 1:
-            raise ValueError("Train/val ratios must be positive and sum to less than one.")
+        ratio_sum = train_ratio + val_ratio
+        no_heldout_test = math.isclose(ratio_sum, 1.0)
+        if not train_ratio > 0 or not val_ratio > 0 or (ratio_sum > 1 and not no_heldout_test):
+            raise ValueError("Train/val ratios must be positive and sum to at most one.")
         years = sorted(year for year in self.year_to_indices if not future_only
                        or any(int(y) > future_year_threshold for y in year.split("_")))
         if not years:
@@ -60,13 +63,19 @@ class ForcingGraphStore:
         if shuffle_years:
             random.Random(seed).shuffle(years)
         count = len(years)
-        n_train, n_val = max(1, round(train_ratio * count)), max(1, round(val_ratio * count))
-        if count <= 2:
-            n_train, n_val = 1, count - 1
-        elif n_train + n_val >= count:
-            n_train, n_val = count - 2, 1
-        groups = {"train": years[:n_train], "val": years[n_train:n_train + n_val],
-                  "test": years[n_train + n_val:]}
+        if no_heldout_test:
+            if count < 2:
+                raise ValueError("TRAIN/VAL-only splitting requires at least two year groups.")
+            n_train = min(count - 1, max(1, round(train_ratio * count)))
+            groups = {"train": years[:n_train], "val": years[n_train:], "test": []}
+        else:
+            n_train, n_val = max(1, round(train_ratio * count)), max(1, round(val_ratio * count))
+            if count <= 2:
+                n_train, n_val = 1, count - 1
+            elif n_train + n_val >= count:
+                n_train, n_val = count - 2, 1
+            groups = {"train": years[:n_train], "val": years[n_train:n_train + n_val],
+                      "test": years[n_train + n_val:]}
         return {part: sorted(i for year in selected for i in self.year_to_indices[year])
                 for part, selected in groups.items()}
 

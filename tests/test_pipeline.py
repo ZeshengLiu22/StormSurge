@@ -208,6 +208,8 @@ class PipelineTests(unittest.TestCase):
                 self.assertEqual(summary["best_val_rmse"], summary["val"]["all_rmse"])
                 self.assertEqual(summary["best_epoch"], checkpoint["epoch"])
                 self.assertTrue(set(METRIC_KEYS).issubset(summary["test"]))
+                self.assertEqual(summary["test_scope"], "held_out_years")
+                self.assertIs(summary["test_is_val_mirror"], False)
                 self.assertTrue((output / "best_overall.pt").exists())
                 self.assertTrue((output / "best_exceedance.pt").exists())
                 self.assertTrue((output / "checkpoint_comparison.md").exists())
@@ -231,6 +233,122 @@ class PipelineTests(unittest.TestCase):
                     np.testing.assert_allclose(trained["y_pred"], restored["y_pred"], rtol=1e-6, atol=1e-6)
                 with self.assertRaises((FileExistsError, ValueError)), contextlib.redirect_stdout(io.StringIO()):
                     train.main(args)
+
+    def test_train_val_only_split_covers_all_years_with_float_tolerance(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            graphs, _ = make_fixture(Path(temporary), years=36)
+            store = ForcingGraphStore(graphs, "Battery")
+            years = sorted(store.year_to_indices)
+            for delta, shuffle in itertools.product((0., -1e-12, 1e-12), (False, True)):
+                with self.subTest(delta=delta, shuffle=shuffle):
+                    options = dict(train_ratio=5/6, val_ratio=1/6 + delta, shuffle_years=shuffle, seed=42)
+                    splits = store.split(**options)
+                    groups = {part: {"_".join(store.graph_tags[i].split("_")[:2]) for i in indices}
+                              for part, indices in splits.items()}
+                    self.assertEqual(set(splits), {"train", "val", "test"})
+                    self.assertEqual(splits["test"], [])
+                    self.assertEqual((len(groups["train"]), len(groups["val"])), (30, 6))
+                    self.assertFalse(groups["train"] & groups["val"])
+                    self.assertEqual(groups["train"] | groups["val"], set(years))
+                    self.assertEqual(sorted(splits["train"] + splits["val"]), list(range(len(store.graphs))))
+                    self.assertEqual(splits, store.split(**options))
+                    if not shuffle:
+                        self.assertEqual(sorted(groups["train"]), years[:30])
+                        self.assertEqual(sorted(groups["val"]), years[30:])
+
+    def test_train_val_only_split_guards_and_rounding(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            graphs, _ = make_fixture(Path(temporary), years=2)
+            store = ForcingGraphStore(graphs, "Battery")
+            for train_ratio, val_ratio in ((0., 1.), (1., 0.), (-.1, 1.1), (.8, .3), (float("nan"), .5)):
+                with self.subTest(train_ratio=train_ratio, val_ratio=val_ratio), self.assertRaises(ValueError):
+                    store.split(train_ratio=train_ratio, val_ratio=val_ratio)
+            for train_ratio in (1e-12, 5/6, 1 - 1e-12):
+                splits = store.split(train_ratio=train_ratio, val_ratio=1 - train_ratio)
+                self.assertEqual(splits, dict(train=store.year_to_indices["2000_2001"],
+                                              val=store.year_to_indices["2001_2002"], test=[]))
+            with self.assertRaisesRegex(ValueError, "at least two year groups"):
+                store.split(train_ratio=5/6, val_ratio=1/6, future_only=True, future_year_threshold=2001)
+
+    def test_standard_split_preserves_small_dataset_guards_rounding_and_shuffle(self):
+        cases = ((1, .6, .2, (1, 0, 0)), (2, .6, .2, (1, 1, 0)), (3, .6, .2, (1, 1, 1)),
+                 (5, .6, .2, (3, 1, 1)), (5, .5, .25, (2, 1, 2)), (6, .5, .25, (3, 2, 1)))
+        for count, train_ratio, val_ratio, expected in cases:
+            with self.subTest(count=count, train_ratio=train_ratio), tempfile.TemporaryDirectory() as temporary:
+                graphs, _ = make_fixture(Path(temporary), years=count)
+                store = ForcingGraphStore(graphs, "Battery")
+                splits = store.split(train_ratio=train_ratio, val_ratio=val_ratio)
+                groups = [sorted({"_".join(store.graph_tags[i].split("_")[:2]) for i in indices})
+                          for indices in splits.values()]
+                self.assertEqual(tuple(map(len, groups)), expected)
+                self.assertEqual([year for part in groups for year in part], sorted(store.year_to_indices))
+                self.assertEqual([i for indices in splits.values() for i in indices], list(range(len(store.graphs))))
+                if count == 5 and train_ratio == .6:
+                    shuffled = store.split(train_ratio=.6, val_ratio=.2, shuffle_years=True, seed=42)
+                    actual = [{store.graph_tags[i].split("_")[0] for i in indices} for indices in shuffled.values()]
+                    self.assertEqual(actual, [{"2001", "2002", "2003"}, {"2004"}, {"2000"}])
+
+    def test_train_val_only_final_reporting_and_external_inference(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            graphs, stations = make_fixture(root, years=6)
+            external_root = root / "external"
+            external_root.mkdir()
+            external_graphs, _ = make_fixture(external_root, years=2)
+            store = ForcingGraphStore(graphs, "Battery")
+            splits = store.split(train_ratio=5/6, val_ratio=1/6)
+            split_tags = {part: [store.graph_tags[i] for i in indices] for part, indices in splits.items()}
+            external_tags = ForcingGraphStore(external_graphs, "Battery").graph_tags
+            for external in (False, True):
+                with self.subTest(external=external):
+                    output = root / f"train_{external}"
+                    args = ["--root_dir", str(graphs), "--station", "Battery", "--station_json_dir", str(stations),
+                            "--output_dir", str(output), "--device", "cpu", "--model", "perceiver3", "--head_type", "single",
+                            "--encoder_type", "GraphSAGE", "--temporal_block", "Transformer", "--history_hours", "24",
+                            "--hidden_channels", "16", "--node_read_heads", "2", "--time_read_heads", "2", "--transformer_layers", "1",
+                            "--train_ratio", str(5/6), "--val_ratio", str(1/6), "--checkpoint_selection", "overall",
+                            "--exceedance_loss_weight", ".05", "--episode_gt_aligned_peak_weight", ".01",
+                            "--epochs", "1", "--warmup_epochs", "0", "--batch_size", "4", "--num_workers", "0", "--x_aug", "0"]
+                    if external:
+                        args += ["--test_root_dir", str(external_graphs)]
+                    console = io.StringIO()
+                    with contextlib.redirect_stdout(console), patch.object(train, "run_epoch", wraps=train.run_epoch) as observed:
+                        train.main(args)
+                    self.assertEqual(observed.call_count, 6)  # TRAIN/VAL, then both roles' final VAL/TEST.
+                    for checkpoint_path in [*output.glob("*.pt"), *output.glob("*.pth")]:
+                        checkpoint = torch.load(checkpoint_path, weights_only=False)
+                        self.assertEqual(checkpoint["split_tags"], split_tags)
+                        self.assertEqual(checkpoint["split_tags"]["test"], [])
+                        self.assertEqual(checkpoint["selection_split"], "val")
+                    scope = "external_all_years" if external else "val_mirror_no_heldout_test"
+                    summary = json.loads(next(output.glob("summary_*.json")).read_text())
+                    self.assertEqual(summary["test_scope"], scope)
+                    self.assertIs(summary["test_is_val_mirror"], not external)
+                    self.assertTrue((output / "checkpoint_comparison.md").exists())
+                    warning_path = output / "TEST_IS_VAL_MIRROR_WARNING.txt"
+                    self.assertEqual(warning_path.exists(), not external)
+                    if not external:
+                        warning = warning_path.read_text()
+                        self.assertIn("MUST NOT BE REPORTED AS HELD-OUT PERFORMANCE", warning)
+                        self.assertIn(warning, console.getvalue())
+                        self.assertLess(console.getvalue().index(warning), console.getvalue().index("FINAL MULTI-CHECKPOINT RE-EVALUATION"))
+                    for role in ("overall", "exceedance"):
+                        with np.load(output / f"test_predictions_{role}.npz") as test, np.load(output / f"val_predictions_{role}.npz") as val:
+                            self.assertEqual(test["test_scope"].item(), scope)
+                            self.assertIs(test["test_is_val_mirror"].item(), not external)
+                            np.testing.assert_array_equal(test["tags"], external_tags if external else split_tags["val"])
+                            if not external:
+                                np.testing.assert_array_equal(test["y_pred"], val["y_pred"])
+                    inferred = root / f"infer_{external}"
+                    with contextlib.redirect_stdout(io.StringIO()):
+                        infer.main(["--ckpt", str(output / "best.pt"), "--root_dir", str(graphs),
+                                    "--test_root_dir", str(external_graphs), "--out_dir", str(inferred),
+                                    "--device", "cpu", "--num_workers", "0", "--save_npz"])
+                    metrics = json.loads((inferred / "metrics.json").read_text())
+                    self.assertEqual(metrics["scope"], "external_all_years")
+                    self.assertEqual(metrics["samples"], len(external_tags))
+                    with np.load(inferred / "predictions.npz") as predictions:
+                        np.testing.assert_array_equal(predictions["tags"], external_tags)
 
     def test_station_filter_precedes_loading_and_split_is_by_year(self):
         with tempfile.TemporaryDirectory() as temporary:

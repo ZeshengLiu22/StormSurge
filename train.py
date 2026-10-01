@@ -243,10 +243,27 @@ def train(args, device, distributed, rank, wall_start):
         if args.test_root_dir:
             test_store = ForcingGraphStore(args.test_root_dir, args.station)
             test_indices = list(range(len(test_store.graphs)))
-        else:
+            test_scope, test_is_val_mirror = "external_all_years", False
+        elif splits["test"]:
             test_store, test_indices = store, splits["test"]
+            test_scope, test_is_val_mirror = "held_out_years", False
+        else:
+            # Final reporting only: preserve the canonical empty TEST in checkpoints.
+            test_store, test_indices = store, splits["val"]
+            test_scope, test_is_val_mirror = "val_mirror_no_heldout_test", True
         test_data = ForcingGraphView(test_store, test_indices, history_steps)
         evaluations = {}
+        if test_is_val_mirror:
+            warning = "\n".join((
+                "=" * 72,
+                "WARNING: THIS RUN HAS NO HELD-OUT TEST SPLIT.",
+                'FINAL "TEST" EVALUATION IS A MIRROR OF VALIDATION DATA ONLY.',
+                "THESE TEST METRICS MUST NOT BE REPORTED AS HELD-OUT PERFORMANCE.",
+                "USE EXTERNAL INFERENCE FOR REAL EVALUATION.",
+                "=" * 72,
+            ))
+            print(warning, flush=True)
+            (output_dir / "TEST_IS_VAL_MIRROR_WARNING.txt").write_text(warning + "\n")
         log_message("FINAL MULTI-CHECKPOINT RE-EVALUATION")
         log_message("Water-level errors and biases are displayed in mm; timing is displayed in hours.")
         for role in ROLES:
@@ -264,6 +281,8 @@ def train(args, device, distributed, rank, wall_start):
                                 exceedance_percentile=args.exceedance_percentile,
                                 metric_schema=fitted["metric_schema"], threshold_schema=fitted["threshold_schema"],
                                 station=args.station or "ALL", split=split)
+                if split == "test":
+                    exported.update(test_scope=test_scope, test_is_val_mirror=test_is_val_mirror)
                 np.savez_compressed(output_dir / f"{split}_predictions_{role}.npz", **exported)
                 if role == args.checkpoint_selection and split == "test":
                     np.savez_compressed(output_dir / f"test_preds_{stem}.npz", **exported)
@@ -280,7 +299,7 @@ def train(args, device, distributed, rank, wall_start):
                    "model_parameters": model_parameters, "val": primary["val"], "test": primary["test"],
                    "checkpoint_selection": tracker.selection_summary(args.checkpoint_selection),
                    "checkpoint_comparison": evaluations,
-                   "test_scope": "external_all_years" if args.test_root_dir else "held_out_years"}
+                   "test_scope": test_scope, "test_is_val_mirror": test_is_val_mirror}
         if device.type == "cuda":
             torch.cuda.synchronize(device)
         wall_seconds = time.perf_counter() - wall_start
