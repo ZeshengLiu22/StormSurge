@@ -1,0 +1,2058 @@
+{
+  "station": "Lewes",
+  "group": "future_year",
+  "audited_at_utc": "2026-10-03T05:20:24.997712+00:00",
+  "scope": "Station/year filenames, nonempty archives, metadata, and actual chronological split; tensor contents were not loaded.",
+  "datasets": {
+    "CMIP6_AWI": {
+      "root": "/home/exouser/StormSurge/Data/Grid4_New/CMIP6_AWI/graphs",
+      "file_count": 66,
+      "split": {
+        "train": [
+          "1979_1980",
+          "1980_1981",
+          "1981_1982",
+          "1982_1983",
+          "1983_1984",
+          "1984_1985",
+          "1985_1986",
+          "1986_1987",
+          "1987_1988",
+          "1988_1989",
+          "1989_1990",
+          "1990_1991",
+          "1991_1992",
+          "1992_1993",
+          "1993_1994",
+          "1994_1995",
+          "1995_1996",
+          "1996_1997",
+          "1997_1998",
+          "1998_1999",
+          "1999_2000",
+          "2000_2001",
+          "2001_2002",
+          "2002_2003",
+          "2003_2004",
+          "2004_2005",
+          "2005_2006",
+          "2006_2007",
+          "2007_2008",
+          "2008_2009"
+        ],
+        "val": [
+          "2009_2010",
+          "2010_2011",
+          "2011_2012",
+          "2012_2013",
+          "2013_2014",
+          "2014_2015"
+        ],
+        "test": [
+          "2070_2071",
+          "2071_2072",
+          "2072_2073",
+          "2073_2074",
+          "2074_2075",
+          "2075_2076",
+          "2076_2077",
+          "2077_2078",
+          "2078_2079",
+          "2079_2080",
+          "2080_2081",
+          "2081_2082",
+          "2082_2083",
+          "2083_2084",
+          "2084_2085",
+          "2085_2086",
+          "2086_2087",
+          "2087_2088",
+          "2088_2089",
+          "2089_2090",
+          "2090_2091",
+          "2091_2092",
+          "2092_2093",
+          "2093_2094",
+          "2094_2095",
+          "2095_2096",
+          "2096_2097",
+          "2097_2098",
+          "2098_2099",
+          "2099_2100"
+        ]
+      },
+      "files": [
+        {
+          "name": "1979_1980_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 411854340,
+          "mtime_ns": 1788641223741734411
+        },
+        {
+          "name": "1980_1981_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 409128384,
+          "mtime_ns": 1788641225817743825
+        },
+        {
+          "name": "1981_1982_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 409128384,
+          "mtime_ns": 1788641228361755362
+        },
+        {
+          "name": "1982_1983_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 409128384,
+          "mtime_ns": 1788641230860766695
+        },
+        {
+          "name": "1983_1984_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 411854340,
+          "mtime_ns": 1788641233014776465
+        },
+        {
+          "name": "1984_1985_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 409128384,
+          "mtime_ns": 1788641235408787325
+        },
+        {
+          "name": "1985_1986_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 409128384,
+          "mtime_ns": 1788641237667797572
+        },
+        {
+          "name": "1986_1987_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 409128384,
+          "mtime_ns": 1788641240648811097
+        },
+        {
+          "name": "1987_1988_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 411854340,
+          "mtime_ns": 1788641243428823710
+        },
+        {
+          "name": "1988_1989_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 409128384,
+          "mtime_ns": 1788641245908834963
+        },
+        {
+          "name": "1989_1990_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 409128384,
+          "mtime_ns": 1788641247983844379
+        },
+        {
+          "name": "1990_1991_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 409128384,
+          "mtime_ns": 1788641249980853442
+        },
+        {
+          "name": "1991_1992_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 411854340,
+          "mtime_ns": 1788641252091863023
+        },
+        {
+          "name": "1992_1993_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 409128384,
+          "mtime_ns": 1788641254894875745
+        },
+        {
+          "name": "1993_1994_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 409128384,
+          "mtime_ns": 1788641257502887583
+        },
+        {
+          "name": "1994_1995_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 409128384,
+          "mtime_ns": 1788641259789897965
+        },
+        {
+          "name": "1995_1996_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 411854340,
+          "mtime_ns": 1788641262140908638
+        },
+        {
+          "name": "1996_1997_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 409128384,
+          "mtime_ns": 1788641264343918640
+        },
+        {
+          "name": "1997_1998_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 409128384,
+          "mtime_ns": 1788641266659929156
+        },
+        {
+          "name": "1998_1999_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 409128384,
+          "mtime_ns": 1788641268803938891
+        },
+        {
+          "name": "1999_2000_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 411854340,
+          "mtime_ns": 1788641271615951661
+        },
+        {
+          "name": "2000_2001_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 409128384,
+          "mtime_ns": 1788641273647960889
+        },
+        {
+          "name": "2001_2002_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 409128384,
+          "mtime_ns": 1788641276065971871
+        },
+        {
+          "name": "2002_2003_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 409128384,
+          "mtime_ns": 1788641279384986946
+        },
+        {
+          "name": "2003_2004_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 411854340,
+          "mtime_ns": 1788641282155999534
+        },
+        {
+          "name": "2004_2005_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 409128384,
+          "mtime_ns": 1788641284120008456
+        },
+        {
+          "name": "2005_2006_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 409128384,
+          "mtime_ns": 1788641286171017775
+        },
+        {
+          "name": "2006_2007_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 409128384,
+          "mtime_ns": 1788641288560028629
+        },
+        {
+          "name": "2007_2008_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 411854340,
+          "mtime_ns": 1788641290667038203
+        },
+        {
+          "name": "2008_2009_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 409128384,
+          "mtime_ns": 1788641292997048791
+        },
+        {
+          "name": "2009_2010_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 409128384,
+          "mtime_ns": 1788641295415059780
+        },
+        {
+          "name": "2010_2011_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 409128384,
+          "mtime_ns": 1788641297797070605
+        },
+        {
+          "name": "2011_2012_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 411854340,
+          "mtime_ns": 1788641300177081422
+        },
+        {
+          "name": "2012_2013_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 409128384,
+          "mtime_ns": 1788641302277090968
+        },
+        {
+          "name": "2013_2014_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 409128384,
+          "mtime_ns": 1788641304449100842
+        },
+        {
+          "name": "2014_2015_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 166519388,
+          "mtime_ns": 1788641305375105053
+        },
+        {
+          "name": "2070_2071_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 409128384,
+          "mtime_ns": 1788641307483114636
+        },
+        {
+          "name": "2071_2072_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 411854340,
+          "mtime_ns": 1788641309582124180
+        },
+        {
+          "name": "2072_2073_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 409128384,
+          "mtime_ns": 1788641311714133874
+        },
+        {
+          "name": "2073_2074_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 409128384,
+          "mtime_ns": 1788641314045144473
+        },
+        {
+          "name": "2074_2075_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 409128384,
+          "mtime_ns": 1788641316204154292
+        },
+        {
+          "name": "2075_2076_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 411854340,
+          "mtime_ns": 1788641318365164119
+        },
+        {
+          "name": "2076_2077_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 409128384,
+          "mtime_ns": 1788641320464173665
+        },
+        {
+          "name": "2077_2078_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 409128384,
+          "mtime_ns": 1788641322558183189
+        },
+        {
+          "name": "2078_2079_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 409128384,
+          "mtime_ns": 1788641324780193296
+        },
+        {
+          "name": "2079_2080_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 411854340,
+          "mtime_ns": 1788641327116203922
+        },
+        {
+          "name": "2080_2081_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 409128384,
+          "mtime_ns": 1788641329687215618
+        },
+        {
+          "name": "2081_2082_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 409128384,
+          "mtime_ns": 1788641331947225900
+        },
+        {
+          "name": "2082_2083_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 409128384,
+          "mtime_ns": 1788641334059235509
+        },
+        {
+          "name": "2083_2084_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 411854340,
+          "mtime_ns": 1788641336186245186
+        },
+        {
+          "name": "2084_2085_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 409128384,
+          "mtime_ns": 1788641338367255111
+        },
+        {
+          "name": "2085_2086_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 409128384,
+          "mtime_ns": 1788641340573265149
+        },
+        {
+          "name": "2086_2087_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 409128384,
+          "mtime_ns": 1788641342865275580
+        },
+        {
+          "name": "2087_2088_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 411854340,
+          "mtime_ns": 1788641345412287172
+        },
+        {
+          "name": "2088_2089_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 409128384,
+          "mtime_ns": 1788641347807298073
+        },
+        {
+          "name": "2089_2090_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 409128384,
+          "mtime_ns": 1788641350024308164
+        },
+        {
+          "name": "2090_2091_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 409128384,
+          "mtime_ns": 1788641352240318251
+        },
+        {
+          "name": "2091_2092_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 411854340,
+          "mtime_ns": 1788641355203331740
+        },
+        {
+          "name": "2092_2093_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 409128384,
+          "mtime_ns": 1788641357346341496
+        },
+        {
+          "name": "2093_2094_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 409128384,
+          "mtime_ns": 1788641359595351735
+        },
+        {
+          "name": "2094_2095_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 409128384,
+          "mtime_ns": 1788641361909362271
+        },
+        {
+          "name": "2095_2096_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 411854340,
+          "mtime_ns": 1788641364065372088
+        },
+        {
+          "name": "2096_2097_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 409128384,
+          "mtime_ns": 1788641366198381801
+        },
+        {
+          "name": "2097_2098_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 409128384,
+          "mtime_ns": 1788641368434391984
+        },
+        {
+          "name": "2098_2099_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 409128384,
+          "mtime_ns": 1788641370579401752
+        },
+        {
+          "name": "2099_2100_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 166519388,
+          "mtime_ns": 1788641371478405846
+        }
+      ]
+    },
+    "CMIP6_CNRM": {
+      "root": "/home/exouser/StormSurge/Data/Grid4_New/CMIP6_CNRM/graphs",
+      "file_count": 66,
+      "split": {
+        "train": [
+          "1979_1980",
+          "1980_1981",
+          "1981_1982",
+          "1982_1983",
+          "1983_1984",
+          "1984_1985",
+          "1985_1986",
+          "1986_1987",
+          "1987_1988",
+          "1988_1989",
+          "1989_1990",
+          "1990_1991",
+          "1991_1992",
+          "1992_1993",
+          "1993_1994",
+          "1994_1995",
+          "1995_1996",
+          "1996_1997",
+          "1997_1998",
+          "1998_1999",
+          "1999_2000",
+          "2000_2001",
+          "2001_2002",
+          "2002_2003",
+          "2003_2004",
+          "2004_2005",
+          "2005_2006",
+          "2006_2007",
+          "2007_2008",
+          "2008_2009"
+        ],
+        "val": [
+          "2009_2010",
+          "2010_2011",
+          "2011_2012",
+          "2012_2013",
+          "2013_2014",
+          "2014_2015"
+        ],
+        "test": [
+          "2070_2071",
+          "2071_2072",
+          "2072_2073",
+          "2073_2074",
+          "2074_2075",
+          "2075_2076",
+          "2076_2077",
+          "2077_2078",
+          "2078_2079",
+          "2079_2080",
+          "2080_2081",
+          "2081_2082",
+          "2082_2083",
+          "2083_2084",
+          "2084_2085",
+          "2085_2086",
+          "2086_2087",
+          "2087_2088",
+          "2088_2089",
+          "2089_2090",
+          "2090_2091",
+          "2091_2092",
+          "2092_2093",
+          "2093_2094",
+          "2094_2095",
+          "2095_2096",
+          "2096_2097",
+          "2097_2098",
+          "2098_2099",
+          "2099_2100"
+        ]
+      },
+      "files": [
+        {
+          "name": "1979_1980_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 183534980,
+          "mtime_ns": 1788641382710457010
+        },
+        {
+          "name": "1980_1981_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 182320192,
+          "mtime_ns": 1788641383881462345
+        },
+        {
+          "name": "1981_1982_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 182320192,
+          "mtime_ns": 1788641385054467689
+        },
+        {
+          "name": "1982_1983_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 182320192,
+          "mtime_ns": 1788641386171472777
+        },
+        {
+          "name": "1983_1984_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 183534980,
+          "mtime_ns": 1788641387167477315
+        },
+        {
+          "name": "1984_1985_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 182320192,
+          "mtime_ns": 1788641388315482545
+        },
+        {
+          "name": "1985_1986_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 182320192,
+          "mtime_ns": 1788641389306487060
+        },
+        {
+          "name": "1986_1987_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 182320192,
+          "mtime_ns": 1788641390337491758
+        },
+        {
+          "name": "1987_1988_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 183534980,
+          "mtime_ns": 1788641391581497426
+        },
+        {
+          "name": "1988_1989_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 182320192,
+          "mtime_ns": 1788641392843503177
+        },
+        {
+          "name": "1989_1990_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 182320192,
+          "mtime_ns": 1788641393867507843
+        },
+        {
+          "name": "1990_1991_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 182320192,
+          "mtime_ns": 1788641395270514237
+        },
+        {
+          "name": "1991_1992_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 183534980,
+          "mtime_ns": 1788641396343519126
+        },
+        {
+          "name": "1992_1993_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 182320192,
+          "mtime_ns": 1788641397572524727
+        },
+        {
+          "name": "1993_1994_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 182320192,
+          "mtime_ns": 1788641398618529494
+        },
+        {
+          "name": "1994_1995_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 182320192,
+          "mtime_ns": 1788641399654534215
+        },
+        {
+          "name": "1995_1996_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 183534980,
+          "mtime_ns": 1788641400717539060
+        },
+        {
+          "name": "1996_1997_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 182320192,
+          "mtime_ns": 1788641401733543690
+        },
+        {
+          "name": "1997_1998_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 182320192,
+          "mtime_ns": 1788641402755548348
+        },
+        {
+          "name": "1998_1999_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 182320192,
+          "mtime_ns": 1788641403730552792
+        },
+        {
+          "name": "1999_2000_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 183534980,
+          "mtime_ns": 1788641404687557154
+        },
+        {
+          "name": "2000_2001_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 182320192,
+          "mtime_ns": 1788641405735561931
+        },
+        {
+          "name": "2001_2002_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 182320192,
+          "mtime_ns": 1788641406722566430
+        },
+        {
+          "name": "2002_2003_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 182320192,
+          "mtime_ns": 1788641407688570833
+        },
+        {
+          "name": "2003_2004_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 183534980,
+          "mtime_ns": 1788641408656575245
+        },
+        {
+          "name": "2004_2005_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 182320192,
+          "mtime_ns": 1788641409626579667
+        },
+        {
+          "name": "2005_2006_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 182320192,
+          "mtime_ns": 1788641410584584034
+        },
+        {
+          "name": "2006_2007_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 182320192,
+          "mtime_ns": 1788641411591588624
+        },
+        {
+          "name": "2007_2008_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 183534980,
+          "mtime_ns": 1788641412555593019
+        },
+        {
+          "name": "2008_2009_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 182320192,
+          "mtime_ns": 1788641413627597906
+        },
+        {
+          "name": "2009_2010_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 182320192,
+          "mtime_ns": 1788641414673602675
+        },
+        {
+          "name": "2010_2011_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 182320192,
+          "mtime_ns": 1788641416000608725
+        },
+        {
+          "name": "2011_2012_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 183534980,
+          "mtime_ns": 1788641417285614583
+        },
+        {
+          "name": "2012_2013_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 179890680,
+          "mtime_ns": 1788641418413619726
+        },
+        {
+          "name": "2013_2014_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 182320192,
+          "mtime_ns": 1788641419502624691
+        },
+        {
+          "name": "2014_2015_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 74205148,
+          "mtime_ns": 1788641420015627030
+        },
+        {
+          "name": "2070_2071_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 182320192,
+          "mtime_ns": 1788641421178632333
+        },
+        {
+          "name": "2071_2072_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 183534980,
+          "mtime_ns": 1788641422156636793
+        },
+        {
+          "name": "2072_2073_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 182320192,
+          "mtime_ns": 1788641423162641380
+        },
+        {
+          "name": "2073_2074_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 182320192,
+          "mtime_ns": 1788641424280646478
+        },
+        {
+          "name": "2074_2075_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 182320192,
+          "mtime_ns": 1788641425196650655
+        },
+        {
+          "name": "2075_2076_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 183534980,
+          "mtime_ns": 1788641426152655014
+        },
+        {
+          "name": "2076_2077_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 182320192,
+          "mtime_ns": 1788641427110659383
+        },
+        {
+          "name": "2077_2078_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 182320192,
+          "mtime_ns": 1788641428050663669
+        },
+        {
+          "name": "2078_2079_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 182320192,
+          "mtime_ns": 1788641429001668007
+        },
+        {
+          "name": "2079_2080_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 183534980,
+          "mtime_ns": 1788641429935672266
+        },
+        {
+          "name": "2080_2081_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 182320192,
+          "mtime_ns": 1788641430895676644
+        },
+        {
+          "name": "2081_2082_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 182320192,
+          "mtime_ns": 1788641431871681095
+        },
+        {
+          "name": "2082_2083_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 182320192,
+          "mtime_ns": 1788641432866685633
+        },
+        {
+          "name": "2083_2084_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 183534980,
+          "mtime_ns": 1788641433839690071
+        },
+        {
+          "name": "2084_2085_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 182320192,
+          "mtime_ns": 1788641434763694285
+        },
+        {
+          "name": "2085_2086_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 182320192,
+          "mtime_ns": 1788641435737698728
+        },
+        {
+          "name": "2086_2087_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 182320192,
+          "mtime_ns": 1788641437270705720
+        },
+        {
+          "name": "2087_2088_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 183534980,
+          "mtime_ns": 1788641438236710126
+        },
+        {
+          "name": "2088_2089_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 182320192,
+          "mtime_ns": 1788641439242714714
+        },
+        {
+          "name": "2089_2090_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 182320192,
+          "mtime_ns": 1788641440219719171
+        },
+        {
+          "name": "2090_2091_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 182320192,
+          "mtime_ns": 1788641441180723555
+        },
+        {
+          "name": "2091_2092_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 183534980,
+          "mtime_ns": 1788641442118727834
+        },
+        {
+          "name": "2092_2093_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 182320192,
+          "mtime_ns": 1788641443134732469
+        },
+        {
+          "name": "2093_2094_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 182320192,
+          "mtime_ns": 1788641444066736720
+        },
+        {
+          "name": "2094_2095_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 182320192,
+          "mtime_ns": 1788641445006741008
+        },
+        {
+          "name": "2095_2096_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 183534980,
+          "mtime_ns": 1788641445966745388
+        },
+        {
+          "name": "2096_2097_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 182320192,
+          "mtime_ns": 1788641447003750118
+        },
+        {
+          "name": "2097_2098_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 182320192,
+          "mtime_ns": 1788641448040754849
+        },
+        {
+          "name": "2098_2099_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 182320192,
+          "mtime_ns": 1788641449105759708
+        },
+        {
+          "name": "2099_2100_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 74205148,
+          "mtime_ns": 1788641449536761675
+        }
+      ]
+    },
+    "CMIP6_EC_EARTH": {
+      "root": "/home/exouser/StormSurge/Data/Grid4_New/CMIP6_EC_EARTH/graphs",
+      "file_count": 66,
+      "split": {
+        "train": [
+          "1979_1980",
+          "1980_1981",
+          "1981_1982",
+          "1982_1983",
+          "1983_1984",
+          "1984_1985",
+          "1985_1986",
+          "1986_1987",
+          "1987_1988",
+          "1988_1989",
+          "1989_1990",
+          "1990_1991",
+          "1991_1992",
+          "1992_1993",
+          "1993_1994",
+          "1994_1995",
+          "1995_1996",
+          "1996_1997",
+          "1997_1998",
+          "1998_1999",
+          "1999_2000",
+          "2000_2001",
+          "2001_2002",
+          "2002_2003",
+          "2003_2004",
+          "2004_2005",
+          "2005_2006",
+          "2006_2007",
+          "2007_2008",
+          "2008_2009"
+        ],
+        "val": [
+          "2009_2010",
+          "2010_2011",
+          "2011_2012",
+          "2012_2013",
+          "2013_2014",
+          "2014_2015"
+        ],
+        "test": [
+          "2070_2071",
+          "2071_2072",
+          "2072_2073",
+          "2073_2074",
+          "2074_2075",
+          "2075_2076",
+          "2076_2077",
+          "2077_2078",
+          "2078_2079",
+          "2079_2080",
+          "2080_2081",
+          "2081_2082",
+          "2082_2083",
+          "2083_2084",
+          "2084_2085",
+          "2085_2086",
+          "2086_2087",
+          "2087_2088",
+          "2088_2089",
+          "2089_2090",
+          "2090_2091",
+          "2091_2092",
+          "2092_2093",
+          "2093_2094",
+          "2094_2095",
+          "2095_2096",
+          "2096_2097",
+          "2097_2098",
+          "2098_2099",
+          "2099_2100"
+        ]
+      },
+      "files": [
+        {
+          "name": "1979_1980_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 730798084,
+          "mtime_ns": 1788641510553089081
+        },
+        {
+          "name": "1980_1981_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 725961152,
+          "mtime_ns": 1788641514099108189
+        },
+        {
+          "name": "1981_1982_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 725961152,
+          "mtime_ns": 1788641517837128312
+        },
+        {
+          "name": "1982_1983_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 725961152,
+          "mtime_ns": 1788641521958150474
+        },
+        {
+          "name": "1983_1984_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 730798084,
+          "mtime_ns": 1788641525472169354
+        },
+        {
+          "name": "1984_1985_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 725961152,
+          "mtime_ns": 1788641529551191250
+        },
+        {
+          "name": "1985_1986_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 725961152,
+          "mtime_ns": 1788641533350211623
+        },
+        {
+          "name": "1986_1987_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 725961152,
+          "mtime_ns": 1788641536915230725
+        },
+        {
+          "name": "1987_1988_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 730798084,
+          "mtime_ns": 1788641541051252865
+        },
+        {
+          "name": "1988_1989_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 725961152,
+          "mtime_ns": 1788641544993273947
+        },
+        {
+          "name": "1989_1990_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 725961152,
+          "mtime_ns": 1788641550031300862
+        },
+        {
+          "name": "1990_1991_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 725961152,
+          "mtime_ns": 1788641553621320022
+        },
+        {
+          "name": "1991_1992_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 730798084,
+          "mtime_ns": 1788641557164338916
+        },
+        {
+          "name": "1992_1993_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 725961152,
+          "mtime_ns": 1788641561452361762
+        },
+        {
+          "name": "1993_1994_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 725961152,
+          "mtime_ns": 1788641564976380522
+        },
+        {
+          "name": "1994_1995_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 725961152,
+          "mtime_ns": 1788641568551399538
+        },
+        {
+          "name": "1995_1996_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 730798084,
+          "mtime_ns": 1788641572078418283
+        },
+        {
+          "name": "1996_1997_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 725961152,
+          "mtime_ns": 1788641575863438383
+        },
+        {
+          "name": "1997_1998_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 725961152,
+          "mtime_ns": 1788641579908459846
+        },
+        {
+          "name": "1998_1999_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 725961152,
+          "mtime_ns": 1788641583869480845
+        },
+        {
+          "name": "1999_2000_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 730798084,
+          "mtime_ns": 1788641587744501370
+        },
+        {
+          "name": "2000_2001_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 725961152,
+          "mtime_ns": 1788641591695522281
+        },
+        {
+          "name": "2001_2002_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 725961152,
+          "mtime_ns": 1788641596548547941
+        },
+        {
+          "name": "2002_2003_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 725961152,
+          "mtime_ns": 1788641600692569831
+        },
+        {
+          "name": "2003_2004_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 730798084,
+          "mtime_ns": 1788641604815591592
+        },
+        {
+          "name": "2004_2005_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 725961152,
+          "mtime_ns": 1788641609570616664
+        },
+        {
+          "name": "2005_2006_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 725961152,
+          "mtime_ns": 1788641614181640953
+        },
+        {
+          "name": "2006_2007_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 725961152,
+          "mtime_ns": 1788641618925665918
+        },
+        {
+          "name": "2007_2008_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 730798084,
+          "mtime_ns": 1788641623526690107
+        },
+        {
+          "name": "2008_2009_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 725961152,
+          "mtime_ns": 1788641627984713523
+        },
+        {
+          "name": "2009_2010_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 725961152,
+          "mtime_ns": 1788641632458737002
+        },
+        {
+          "name": "2010_2011_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 725961152,
+          "mtime_ns": 1788641637042761036
+        },
+        {
+          "name": "2011_2012_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 730798084,
+          "mtime_ns": 1788641641584784829
+        },
+        {
+          "name": "2012_2013_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 725961152,
+          "mtime_ns": 1788641645973807799
+        },
+        {
+          "name": "2013_2014_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 725961152,
+          "mtime_ns": 1788641651320835757
+        },
+        {
+          "name": "2014_2015_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 290638360,
+          "mtime_ns": 1788641653066844880
+        },
+        {
+          "name": "2070_2071_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 725961152,
+          "mtime_ns": 1788641658026870781
+        },
+        {
+          "name": "2071_2072_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 730798084,
+          "mtime_ns": 1788641661793890434
+        },
+        {
+          "name": "2072_2073_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 725961152,
+          "mtime_ns": 1788641665849911580
+        },
+        {
+          "name": "2073_2074_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 725961152,
+          "mtime_ns": 1788641670804937391
+        },
+        {
+          "name": "2074_2075_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 725961152,
+          "mtime_ns": 1788641674689957612
+        },
+        {
+          "name": "2075_2076_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 730798084,
+          "mtime_ns": 1788641679509982679
+        },
+        {
+          "name": "2076_2077_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 725961152,
+          "mtime_ns": 1788641684005006036
+        },
+        {
+          "name": "2077_2078_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 725961152,
+          "mtime_ns": 1788641688788030866
+        },
+        {
+          "name": "2078_2079_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 725961152,
+          "mtime_ns": 1788641693328054417
+        },
+        {
+          "name": "2079_2080_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 730798084,
+          "mtime_ns": 1788641698075079022
+        },
+        {
+          "name": "2080_2081_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 725961152,
+          "mtime_ns": 1788641702773103352
+        },
+        {
+          "name": "2081_2082_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 725961152,
+          "mtime_ns": 1788641708737134208
+        },
+        {
+          "name": "2082_2083_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 725961152,
+          "mtime_ns": 1788641713103156779
+        },
+        {
+          "name": "2083_2084_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 730798084,
+          "mtime_ns": 1788641717674180392
+        },
+        {
+          "name": "2084_2085_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 725961152,
+          "mtime_ns": 1788641722253204027
+        },
+        {
+          "name": "2085_2086_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 725961152,
+          "mtime_ns": 1788641726887227927
+        },
+        {
+          "name": "2086_2087_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 725961152,
+          "mtime_ns": 1788641731817253332
+        },
+        {
+          "name": "2087_2088_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 730798084,
+          "mtime_ns": 1788641736604277980
+        },
+        {
+          "name": "2088_2089_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 725961152,
+          "mtime_ns": 1788641741259301928
+        },
+        {
+          "name": "2089_2090_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 725961152,
+          "mtime_ns": 1788641745967326131
+        },
+        {
+          "name": "2090_2091_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 725961152,
+          "mtime_ns": 1788641750741350653
+        },
+        {
+          "name": "2091_2092_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 730798084,
+          "mtime_ns": 1788641755588375531
+        },
+        {
+          "name": "2092_2093_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 725961152,
+          "mtime_ns": 1788641760334399871
+        },
+        {
+          "name": "2093_2094_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 725961152,
+          "mtime_ns": 1788641766251430191
+        },
+        {
+          "name": "2094_2095_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 725961152,
+          "mtime_ns": 1788641770531452105
+        },
+        {
+          "name": "2095_2096_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 730798084,
+          "mtime_ns": 1788641775100475482
+        },
+        {
+          "name": "2096_2097_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 725961152,
+          "mtime_ns": 1788641779816499594
+        },
+        {
+          "name": "2097_2098_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 725961152,
+          "mtime_ns": 1788641784904525588
+        },
+        {
+          "name": "2098_2099_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 725961152,
+          "mtime_ns": 1788641789862550899
+        },
+        {
+          "name": "2099_2100_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 295475292,
+          "mtime_ns": 1788641791794560757
+        }
+      ]
+    },
+    "CMIP6_MPI": {
+      "root": "/home/exouser/StormSurge/Data/Grid4_New/CMIP6_MPI/graphs",
+      "file_count": 66,
+      "split": {
+        "train": [
+          "1979_1980",
+          "1980_1981",
+          "1981_1982",
+          "1982_1983",
+          "1983_1984",
+          "1984_1985",
+          "1985_1986",
+          "1986_1987",
+          "1987_1988",
+          "1988_1989",
+          "1989_1990",
+          "1990_1991",
+          "1991_1992",
+          "1992_1993",
+          "1993_1994",
+          "1994_1995",
+          "1995_1996",
+          "1996_1997",
+          "1997_1998",
+          "1998_1999",
+          "1999_2000",
+          "2000_2001",
+          "2001_2002",
+          "2002_2003",
+          "2003_2004",
+          "2004_2005",
+          "2005_2006",
+          "2006_2007",
+          "2007_2008",
+          "2008_2009"
+        ],
+        "val": [
+          "2009_2010",
+          "2010_2011",
+          "2011_2012",
+          "2012_2013",
+          "2013_2014",
+          "2014_2015"
+        ],
+        "test": [
+          "2070_2071",
+          "2071_2072",
+          "2072_2073",
+          "2073_2074",
+          "2074_2075",
+          "2075_2076",
+          "2076_2077",
+          "2077_2078",
+          "2078_2079",
+          "2079_2080",
+          "2080_2081",
+          "2081_2082",
+          "2082_2083",
+          "2083_2084",
+          "2084_2085",
+          "2085_2086",
+          "2086_2087",
+          "2087_2088",
+          "2088_2089",
+          "2089_2090",
+          "2090_2091",
+          "2091_2092",
+          "2092_2093",
+          "2093_2094",
+          "2094_2095",
+          "2095_2096",
+          "2096_2097",
+          "2097_2098",
+          "2098_2099",
+          "2099_2100"
+        ]
+      },
+      "files": [
+        {
+          "name": "1979_1980_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 411854340,
+          "mtime_ns": 1788641815686682427
+        },
+        {
+          "name": "1980_1981_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 409128384,
+          "mtime_ns": 1788641817878693569
+        },
+        {
+          "name": "1981_1982_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 409128384,
+          "mtime_ns": 1788641819961704154
+        },
+        {
+          "name": "1982_1983_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 409128384,
+          "mtime_ns": 1788641822485716975
+        },
+        {
+          "name": "1983_1984_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 411854340,
+          "mtime_ns": 1788641824455726979
+        },
+        {
+          "name": "1984_1985_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 409128384,
+          "mtime_ns": 1788641827495742410
+        },
+        {
+          "name": "1985_1986_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 409128384,
+          "mtime_ns": 1788641829561752894
+        },
+        {
+          "name": "1986_1987_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 409128384,
+          "mtime_ns": 1788641831764764069
+        },
+        {
+          "name": "1987_1988_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 411854340,
+          "mtime_ns": 1788641833834774568
+        },
+        {
+          "name": "1988_1989_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 409128384,
+          "mtime_ns": 1788641835952785306
+        },
+        {
+          "name": "1989_1990_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 409128384,
+          "mtime_ns": 1788641838806799771
+        },
+        {
+          "name": "1990_1991_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 409128384,
+          "mtime_ns": 1788641841066811221
+        },
+        {
+          "name": "1991_1992_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 411854340,
+          "mtime_ns": 1788641843219822126
+        },
+        {
+          "name": "1992_1993_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 409128384,
+          "mtime_ns": 1788641845437833355
+        },
+        {
+          "name": "1993_1994_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 409128384,
+          "mtime_ns": 1788641847783845230
+        },
+        {
+          "name": "1994_1995_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 409128384,
+          "mtime_ns": 1788641850392858431
+        },
+        {
+          "name": "1995_1996_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 411854340,
+          "mtime_ns": 1788641852684870024
+        },
+        {
+          "name": "1996_1997_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 409128384,
+          "mtime_ns": 1788641854726880351
+        },
+        {
+          "name": "1997_1998_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 409128384,
+          "mtime_ns": 1788641857393893833
+        },
+        {
+          "name": "1998_1999_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 409128384,
+          "mtime_ns": 1788641859592904946
+        },
+        {
+          "name": "1999_2000_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 411854340,
+          "mtime_ns": 1788641861645915318
+        },
+        {
+          "name": "2000_2001_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 409128384,
+          "mtime_ns": 1788641863760926000
+        },
+        {
+          "name": "2001_2002_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 409128384,
+          "mtime_ns": 1788641865908936845
+        },
+        {
+          "name": "2002_2003_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 409128384,
+          "mtime_ns": 1788641868136948092
+        },
+        {
+          "name": "2003_2004_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 411854340,
+          "mtime_ns": 1788641870234958679
+        },
+        {
+          "name": "2004_2005_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 409128384,
+          "mtime_ns": 1788641872278968991
+        },
+        {
+          "name": "2005_2006_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 409128384,
+          "mtime_ns": 1788641874483980112
+        },
+        {
+          "name": "2006_2007_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 409128384,
+          "mtime_ns": 1788641876528990423
+        },
+        {
+          "name": "2007_2008_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 411854340,
+          "mtime_ns": 1788641878594000832
+        },
+        {
+          "name": "2008_2009_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 409128384,
+          "mtime_ns": 1788641880715011521
+        },
+        {
+          "name": "2009_2010_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 409128384,
+          "mtime_ns": 1788641882857022313
+        },
+        {
+          "name": "2010_2011_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 409128384,
+          "mtime_ns": 1788641884887032537
+        },
+        {
+          "name": "2011_2012_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 411854340,
+          "mtime_ns": 1788641886944042894
+        },
+        {
+          "name": "2012_2013_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 409128384,
+          "mtime_ns": 1788641889121053853
+        },
+        {
+          "name": "2013_2014_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 409128384,
+          "mtime_ns": 1788641891301064824
+        },
+        {
+          "name": "2014_2015_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 166519388,
+          "mtime_ns": 1788641892142069056
+        },
+        {
+          "name": "2070_2071_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 409128384,
+          "mtime_ns": 1788641895055083710
+        },
+        {
+          "name": "2071_2072_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 411854340,
+          "mtime_ns": 1788641898185099450
+        },
+        {
+          "name": "2072_2073_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 409128384,
+          "mtime_ns": 1788641900495111064
+        },
+        {
+          "name": "2073_2074_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 409128384,
+          "mtime_ns": 1788641902647121880
+        },
+        {
+          "name": "2074_2075_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 409128384,
+          "mtime_ns": 1788641904858132989
+        },
+        {
+          "name": "2075_2076_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 411854340,
+          "mtime_ns": 1788641907421145863
+        },
+        {
+          "name": "2076_2077_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 409128384,
+          "mtime_ns": 1788641909605156831
+        },
+        {
+          "name": "2077_2078_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 409128384,
+          "mtime_ns": 1788641911738167539
+        },
+        {
+          "name": "2078_2079_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 409128384,
+          "mtime_ns": 1788641913882178299
+        },
+        {
+          "name": "2079_2080_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 411854340,
+          "mtime_ns": 1788641916360190732
+        },
+        {
+          "name": "2080_2081_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 409128384,
+          "mtime_ns": 1788641918368200804
+        },
+        {
+          "name": "2081_2082_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 409128384,
+          "mtime_ns": 1788641920471211351
+        },
+        {
+          "name": "2082_2083_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 409128384,
+          "mtime_ns": 1788641922529221669
+        },
+        {
+          "name": "2083_2084_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 411854340,
+          "mtime_ns": 1788641924484231468
+        },
+        {
+          "name": "2084_2085_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 409128384,
+          "mtime_ns": 1788641926454241341
+        },
+        {
+          "name": "2085_2086_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 409128384,
+          "mtime_ns": 1788641928371250945
+        },
+        {
+          "name": "2086_2087_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 409128384,
+          "mtime_ns": 1788641930303260622
+        },
+        {
+          "name": "2087_2088_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 411854340,
+          "mtime_ns": 1788641932262270432
+        },
+        {
+          "name": "2088_2089_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 409128384,
+          "mtime_ns": 1788641934625282262
+        },
+        {
+          "name": "2089_2090_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 409128384,
+          "mtime_ns": 1788641936588292088
+        },
+        {
+          "name": "2090_2091_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 409128384,
+          "mtime_ns": 1788641938647302391
+        },
+        {
+          "name": "2091_2092_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 411854340,
+          "mtime_ns": 1788641940719312757
+        },
+        {
+          "name": "2092_2093_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 409128384,
+          "mtime_ns": 1788641943174325036
+        },
+        {
+          "name": "2093_2094_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 409128384,
+          "mtime_ns": 1788641945249335411
+        },
+        {
+          "name": "2094_2095_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 409128384,
+          "mtime_ns": 1788641947325345790
+        },
+        {
+          "name": "2095_2096_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 411854340,
+          "mtime_ns": 1788641949493356625
+        },
+        {
+          "name": "2096_2097_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 409128384,
+          "mtime_ns": 1788641951445366378
+        },
+        {
+          "name": "2097_2098_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 409128384,
+          "mtime_ns": 1788641953431376299
+        },
+        {
+          "name": "2098_2099_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 409128384,
+          "mtime_ns": 1788641955365385958
+        },
+        {
+          "name": "2099_2100_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 166519388,
+          "mtime_ns": 1788641956192390088
+        }
+      ]
+    },
+    "CMIP6_MRI": {
+      "root": "/home/exouser/StormSurge/Data/Grid4_New/CMIP6_MRI/graphs",
+      "file_count": 66,
+      "split": {
+        "train": [
+          "1979_1980",
+          "1980_1981",
+          "1981_1982",
+          "1982_1983",
+          "1983_1984",
+          "1984_1985",
+          "1985_1986",
+          "1986_1987",
+          "1987_1988",
+          "1988_1989",
+          "1989_1990",
+          "1990_1991",
+          "1991_1992",
+          "1992_1993",
+          "1993_1994",
+          "1994_1995",
+          "1995_1996",
+          "1996_1997",
+          "1997_1998",
+          "1998_1999",
+          "1999_2000",
+          "2000_2001",
+          "2001_2002",
+          "2002_2003",
+          "2003_2004",
+          "2004_2005",
+          "2005_2006",
+          "2006_2007",
+          "2007_2008",
+          "2008_2009"
+        ],
+        "val": [
+          "2009_2010",
+          "2010_2011",
+          "2011_2012",
+          "2012_2013",
+          "2013_2014",
+          "2014_2015"
+        ],
+        "test": [
+          "2070_2071",
+          "2071_2072",
+          "2072_2073",
+          "2073_2074",
+          "2074_2075",
+          "2075_2076",
+          "2076_2077",
+          "2077_2078",
+          "2078_2079",
+          "2079_2080",
+          "2080_2081",
+          "2081_2082",
+          "2082_2083",
+          "2083_2084",
+          "2084_2085",
+          "2085_2086",
+          "2086_2087",
+          "2087_2088",
+          "2088_2089",
+          "2089_2090",
+          "2090_2091",
+          "2091_2092",
+          "2092_2093",
+          "2093_2094",
+          "2094_2095",
+          "2095_2096",
+          "2096_2097",
+          "2097_2098",
+          "2098_2099",
+          "2099_2100"
+        ]
+      },
+      "files": [
+        {
+          "name": "1979_1980_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 283596292,
+          "mtime_ns": 1788641971598466950
+        },
+        {
+          "name": "1980_1981_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 281719232,
+          "mtime_ns": 1788641973029474084
+        },
+        {
+          "name": "1981_1982_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 281719232,
+          "mtime_ns": 1788641974525481539
+        },
+        {
+          "name": "1982_1983_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 281719232,
+          "mtime_ns": 1788641975922488501
+        },
+        {
+          "name": "1983_1984_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 283596292,
+          "mtime_ns": 1788641977317495451
+        },
+        {
+          "name": "1984_1985_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 281719232,
+          "mtime_ns": 1788641978786502770
+        },
+        {
+          "name": "1985_1986_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 281719232,
+          "mtime_ns": 1788641980174509683
+        },
+        {
+          "name": "1986_1987_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 281719232,
+          "mtime_ns": 1788641981647517018
+        },
+        {
+          "name": "1987_1988_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 283596292,
+          "mtime_ns": 1788641983161524557
+        },
+        {
+          "name": "1988_1989_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 281719232,
+          "mtime_ns": 1788641984885533140
+        },
+        {
+          "name": "1989_1990_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 281719232,
+          "mtime_ns": 1788641986285540108
+        },
+        {
+          "name": "1990_1991_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 281719232,
+          "mtime_ns": 1788641987676547031
+        },
+        {
+          "name": "1991_1992_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 283596292,
+          "mtime_ns": 1788641989290555062
+        },
+        {
+          "name": "1992_1993_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 281719232,
+          "mtime_ns": 1788641990731562231
+        },
+        {
+          "name": "1993_1994_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 281719232,
+          "mtime_ns": 1788641992140569240
+        },
+        {
+          "name": "1994_1995_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 281719232,
+          "mtime_ns": 1788641993564576322
+        },
+        {
+          "name": "1995_1996_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 283596292,
+          "mtime_ns": 1788641995072583822
+        },
+        {
+          "name": "1996_1997_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 281719232,
+          "mtime_ns": 1788641996827592548
+        },
+        {
+          "name": "1997_1998_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 281719232,
+          "mtime_ns": 1788641998542601073
+        },
+        {
+          "name": "1998_1999_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 281719232,
+          "mtime_ns": 1788642000011608374
+        },
+        {
+          "name": "1999_2000_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 283596292,
+          "mtime_ns": 1788642001476615654
+        },
+        {
+          "name": "2000_2001_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 281719232,
+          "mtime_ns": 1788642002918622819
+        },
+        {
+          "name": "2001_2002_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 281719232,
+          "mtime_ns": 1788642004401630187
+        },
+        {
+          "name": "2002_2003_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 281719232,
+          "mtime_ns": 1788642005841637340
+        },
+        {
+          "name": "2003_2004_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 283596292,
+          "mtime_ns": 1788642007362644895
+        },
+        {
+          "name": "2004_2005_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 281719232,
+          "mtime_ns": 1788642009045653252
+        },
+        {
+          "name": "2005_2006_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 281719232,
+          "mtime_ns": 1788642011324664567
+        },
+        {
+          "name": "2006_2007_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 281719232,
+          "mtime_ns": 1788642012798671884
+        },
+        {
+          "name": "2007_2008_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 283596292,
+          "mtime_ns": 1788642014346679567
+        },
+        {
+          "name": "2008_2009_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 281719232,
+          "mtime_ns": 1788642015833686946
+        },
+        {
+          "name": "2009_2010_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 281719232,
+          "mtime_ns": 1788642017274694096
+        },
+        {
+          "name": "2010_2011_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 281719232,
+          "mtime_ns": 1788642018676701051
+        },
+        {
+          "name": "2011_2012_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 283596292,
+          "mtime_ns": 1788642020116708194
+        },
+        {
+          "name": "2012_2013_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 281719232,
+          "mtime_ns": 1788642021527715192
+        },
+        {
+          "name": "2013_2014_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 281719232,
+          "mtime_ns": 1788642022949722243
+        },
+        {
+          "name": "2014_2015_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 112784920,
+          "mtime_ns": 1788642023631725625
+        },
+        {
+          "name": "2070_2071_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 281719232,
+          "mtime_ns": 1788642025150733156
+        },
+        {
+          "name": "2071_2072_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 283596292,
+          "mtime_ns": 1788642026707740874
+        },
+        {
+          "name": "2072_2073_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 281719232,
+          "mtime_ns": 1788642028292748730
+        },
+        {
+          "name": "2073_2074_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 281719232,
+          "mtime_ns": 1788642029796756184
+        },
+        {
+          "name": "2074_2075_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 281719232,
+          "mtime_ns": 1788642031322763745
+        },
+        {
+          "name": "2075_2076_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 283596292,
+          "mtime_ns": 1788642032812771126
+        },
+        {
+          "name": "2076_2077_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 281719232,
+          "mtime_ns": 1788642035482784350
+        },
+        {
+          "name": "2077_2078_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 281719232,
+          "mtime_ns": 1788642036942791581
+        },
+        {
+          "name": "2078_2079_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 281719232,
+          "mtime_ns": 1788642038341798508
+        },
+        {
+          "name": "2079_2080_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 283596292,
+          "mtime_ns": 1788642039824805849
+        },
+        {
+          "name": "2080_2081_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 281719232,
+          "mtime_ns": 1788642041304813175
+        },
+        {
+          "name": "2081_2082_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 281719232,
+          "mtime_ns": 1788642042704820104
+        },
+        {
+          "name": "2082_2083_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 281719232,
+          "mtime_ns": 1788642044079826909
+        },
+        {
+          "name": "2083_2084_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 283596292,
+          "mtime_ns": 1788642045855835697
+        },
+        {
+          "name": "2084_2085_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 281719232,
+          "mtime_ns": 1788642047461843642
+        },
+        {
+          "name": "2085_2086_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 281719232,
+          "mtime_ns": 1788642048887850696
+        },
+        {
+          "name": "2086_2087_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 281719232,
+          "mtime_ns": 1788642051124861760
+        },
+        {
+          "name": "2087_2088_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 283596292,
+          "mtime_ns": 1788642052691869508
+        },
+        {
+          "name": "2088_2089_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 281719232,
+          "mtime_ns": 1788642054507878486
+        },
+        {
+          "name": "2089_2090_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 281719232,
+          "mtime_ns": 1788642055909885417
+        },
+        {
+          "name": "2090_2091_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 281719232,
+          "mtime_ns": 1788642057455893058
+        },
+        {
+          "name": "2091_2092_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 283596292,
+          "mtime_ns": 1788642058967900530
+        },
+        {
+          "name": "2092_2093_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 281719232,
+          "mtime_ns": 1788642060437907794
+        },
+        {
+          "name": "2093_2094_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 281719232,
+          "mtime_ns": 1788642061814914597
+        },
+        {
+          "name": "2094_2095_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 281719232,
+          "mtime_ns": 1788642063223921558
+        },
+        {
+          "name": "2095_2096_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 283596292,
+          "mtime_ns": 1788642064599928354
+        },
+        {
+          "name": "2096_2097_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 281719232,
+          "mtime_ns": 1788642065940934977
+        },
+        {
+          "name": "2097_2098_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 281719232,
+          "mtime_ns": 1788642067283941608
+        },
+        {
+          "name": "2098_2099_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 281719232,
+          "mtime_ns": 1788642069009950130
+        },
+        {
+          "name": "2099_2100_Lewes_peryear_hist48_graphs.pt",
+          "bytes": 114661980,
+          "mtime_ns": 1788642069663953359
+        }
+      ]
+    }
+  }
+}

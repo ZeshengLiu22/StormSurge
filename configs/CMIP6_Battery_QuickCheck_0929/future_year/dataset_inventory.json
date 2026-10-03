@@ -1,0 +1,2058 @@
+{
+  "station": "Battery",
+  "group": "future_year",
+  "audited_at_utc": "2026-10-03T05:20:28.389124+00:00",
+  "scope": "Station/year filenames, nonempty archives, metadata, and actual chronological split; tensor contents were not loaded.",
+  "datasets": {
+    "CMIP6_AWI": {
+      "root": "/home/exouser/StormSurge/Data/Grid4_New/CMIP6_AWI/graphs",
+      "file_count": 66,
+      "split": {
+        "train": [
+          "1979_1980",
+          "1980_1981",
+          "1981_1982",
+          "1982_1983",
+          "1983_1984",
+          "1984_1985",
+          "1985_1986",
+          "1986_1987",
+          "1987_1988",
+          "1988_1989",
+          "1989_1990",
+          "1990_1991",
+          "1991_1992",
+          "1992_1993",
+          "1993_1994",
+          "1994_1995",
+          "1995_1996",
+          "1996_1997",
+          "1997_1998",
+          "1998_1999",
+          "1999_2000",
+          "2000_2001",
+          "2001_2002",
+          "2002_2003",
+          "2003_2004",
+          "2004_2005",
+          "2005_2006",
+          "2006_2007",
+          "2007_2008",
+          "2008_2009"
+        ],
+        "val": [
+          "2009_2010",
+          "2010_2011",
+          "2011_2012",
+          "2012_2013",
+          "2013_2014",
+          "2014_2015"
+        ],
+        "test": [
+          "2070_2071",
+          "2071_2072",
+          "2072_2073",
+          "2073_2074",
+          "2074_2075",
+          "2075_2076",
+          "2076_2077",
+          "2077_2078",
+          "2078_2079",
+          "2079_2080",
+          "2080_2081",
+          "2081_2082",
+          "2082_2083",
+          "2083_2084",
+          "2084_2085",
+          "2085_2086",
+          "2086_2087",
+          "2087_2088",
+          "2088_2089",
+          "2089_2090",
+          "2090_2091",
+          "2091_2092",
+          "2092_2093",
+          "2093_2094",
+          "2094_2095",
+          "2095_2096",
+          "2096_2097",
+          "2097_2098",
+          "2098_2099",
+          "2099_2100"
+        ]
+      },
+      "files": [
+        {
+          "name": "1979_1980_Battery_peryear_hist48_graphs.pt",
+          "bytes": 411860394,
+          "mtime_ns": 1788641221849725832
+        },
+        {
+          "name": "1980_1981_Battery_peryear_hist48_graphs.pt",
+          "bytes": 409134398,
+          "mtime_ns": 1788641224256736746
+        },
+        {
+          "name": "1981_1982_Battery_peryear_hist48_graphs.pt",
+          "bytes": 409134398,
+          "mtime_ns": 1788641226344746215
+        },
+        {
+          "name": "1982_1983_Battery_peryear_hist48_graphs.pt",
+          "bytes": 409134398,
+          "mtime_ns": 1788641228895757784
+        },
+        {
+          "name": "1983_1984_Battery_peryear_hist48_graphs.pt",
+          "bytes": 411860394,
+          "mtime_ns": 1788641231386769081
+        },
+        {
+          "name": "1984_1985_Battery_peryear_hist48_graphs.pt",
+          "bytes": 409134398,
+          "mtime_ns": 1788641233533778819
+        },
+        {
+          "name": "1985_1986_Battery_peryear_hist48_graphs.pt",
+          "bytes": 409134398,
+          "mtime_ns": 1788641235932789702
+        },
+        {
+          "name": "1986_1987_Battery_peryear_hist48_graphs.pt",
+          "bytes": 409134398,
+          "mtime_ns": 1788641238255800240
+        },
+        {
+          "name": "1987_1988_Battery_peryear_hist48_graphs.pt",
+          "bytes": 411860394,
+          "mtime_ns": 1788641241189813551
+        },
+        {
+          "name": "1988_1989_Battery_peryear_hist48_graphs.pt",
+          "bytes": 409134398,
+          "mtime_ns": 1788641244223827317
+        },
+        {
+          "name": "1989_1990_Battery_peryear_hist48_graphs.pt",
+          "bytes": 409134398,
+          "mtime_ns": 1788641246447837409
+        },
+        {
+          "name": "1990_1991_Battery_peryear_hist48_graphs.pt",
+          "bytes": 409134398,
+          "mtime_ns": 1788641248482846644
+        },
+        {
+          "name": "1991_1992_Battery_peryear_hist48_graphs.pt",
+          "bytes": 411860394,
+          "mtime_ns": 1788641250495855779
+        },
+        {
+          "name": "1992_1993_Battery_peryear_hist48_graphs.pt",
+          "bytes": 409134398,
+          "mtime_ns": 1788641252819866327
+        },
+        {
+          "name": "1993_1994_Battery_peryear_hist48_graphs.pt",
+          "bytes": 409134398,
+          "mtime_ns": 1788641255401878047
+        },
+        {
+          "name": "1994_1995_Battery_peryear_hist48_graphs.pt",
+          "bytes": 409134398,
+          "mtime_ns": 1788641258010889889
+        },
+        {
+          "name": "1995_1996_Battery_peryear_hist48_graphs.pt",
+          "bytes": 411860394,
+          "mtime_ns": 1788641260320900376
+        },
+        {
+          "name": "1996_1997_Battery_peryear_hist48_graphs.pt",
+          "bytes": 409134398,
+          "mtime_ns": 1788641262639910904
+        },
+        {
+          "name": "1997_1998_Battery_peryear_hist48_graphs.pt",
+          "bytes": 409134398,
+          "mtime_ns": 1788641264846920924
+        },
+        {
+          "name": "1998_1999_Battery_peryear_hist48_graphs.pt",
+          "bytes": 409134398,
+          "mtime_ns": 1788641267302932075
+        },
+        {
+          "name": "1999_2000_Battery_peryear_hist48_graphs.pt",
+          "bytes": 411860394,
+          "mtime_ns": 1788641269285941080
+        },
+        {
+          "name": "2000_2001_Battery_peryear_hist48_graphs.pt",
+          "bytes": 409134398,
+          "mtime_ns": 1788641272169954177
+        },
+        {
+          "name": "2001_2002_Battery_peryear_hist48_graphs.pt",
+          "bytes": 409134398,
+          "mtime_ns": 1788641274149963169
+        },
+        {
+          "name": "2002_2003_Battery_peryear_hist48_graphs.pt",
+          "bytes": 409134398,
+          "mtime_ns": 1788641276600974301
+        },
+        {
+          "name": "2003_2004_Battery_peryear_hist48_graphs.pt",
+          "bytes": 411860394,
+          "mtime_ns": 1788641280575992356
+        },
+        {
+          "name": "2004_2005_Battery_peryear_hist48_graphs.pt",
+          "bytes": 409134398,
+          "mtime_ns": 1788641282635001710
+        },
+        {
+          "name": "2005_2006_Battery_peryear_hist48_graphs.pt",
+          "bytes": 409134398,
+          "mtime_ns": 1788641284629010769
+        },
+        {
+          "name": "2006_2007_Battery_peryear_hist48_graphs.pt",
+          "bytes": 409134398,
+          "mtime_ns": 1788641286832020778
+        },
+        {
+          "name": "2007_2008_Battery_peryear_hist48_graphs.pt",
+          "bytes": 411860394,
+          "mtime_ns": 1788641289100031083
+        },
+        {
+          "name": "2008_2009_Battery_peryear_hist48_graphs.pt",
+          "bytes": 409134398,
+          "mtime_ns": 1788641291180040534
+        },
+        {
+          "name": "2009_2010_Battery_peryear_hist48_graphs.pt",
+          "bytes": 409134398,
+          "mtime_ns": 1788641293602051541
+        },
+        {
+          "name": "2010_2011_Battery_peryear_hist48_graphs.pt",
+          "bytes": 409134398,
+          "mtime_ns": 1788641295960062257
+        },
+        {
+          "name": "2011_2012_Battery_peryear_hist48_graphs.pt",
+          "bytes": 411860394,
+          "mtime_ns": 1788641298479073705
+        },
+        {
+          "name": "2012_2013_Battery_peryear_hist48_graphs.pt",
+          "bytes": 409134398,
+          "mtime_ns": 1788641300693083768
+        },
+        {
+          "name": "2013_2014_Battery_peryear_hist48_graphs.pt",
+          "bytes": 409134398,
+          "mtime_ns": 1788641302800093346
+        },
+        {
+          "name": "2014_2015_Battery_peryear_hist48_graphs.pt",
+          "bytes": 166521842,
+          "mtime_ns": 1788641304690101938
+        },
+        {
+          "name": "2070_2071_Battery_peryear_hist48_graphs.pt",
+          "bytes": 409134398,
+          "mtime_ns": 1788641305892107403
+        },
+        {
+          "name": "2071_2072_Battery_peryear_hist48_graphs.pt",
+          "bytes": 411860394,
+          "mtime_ns": 1788641307998116978
+        },
+        {
+          "name": "2072_2073_Battery_peryear_hist48_graphs.pt",
+          "bytes": 409134398,
+          "mtime_ns": 1788641310114126598
+        },
+        {
+          "name": "2073_2074_Battery_peryear_hist48_graphs.pt",
+          "bytes": 409134398,
+          "mtime_ns": 1788641312251136315
+        },
+        {
+          "name": "2074_2075_Battery_peryear_hist48_graphs.pt",
+          "bytes": 409134398,
+          "mtime_ns": 1788641314626147115
+        },
+        {
+          "name": "2075_2076_Battery_peryear_hist48_graphs.pt",
+          "bytes": 411860394,
+          "mtime_ns": 1788641316749156770
+        },
+        {
+          "name": "2076_2077_Battery_peryear_hist48_graphs.pt",
+          "bytes": 409134398,
+          "mtime_ns": 1788641318872166425
+        },
+        {
+          "name": "2077_2078_Battery_peryear_hist48_graphs.pt",
+          "bytes": 409134398,
+          "mtime_ns": 1788641320972175976
+        },
+        {
+          "name": "2078_2079_Battery_peryear_hist48_graphs.pt",
+          "bytes": 409134398,
+          "mtime_ns": 1788641323109185696
+        },
+        {
+          "name": "2079_2080_Battery_peryear_hist48_graphs.pt",
+          "bytes": 411860394,
+          "mtime_ns": 1788641325299195657
+        },
+        {
+          "name": "2080_2081_Battery_peryear_hist48_graphs.pt",
+          "bytes": 409134398,
+          "mtime_ns": 1788641327657206383
+        },
+        {
+          "name": "2081_2082_Battery_peryear_hist48_graphs.pt",
+          "bytes": 409134398,
+          "mtime_ns": 1788641330270218270
+        },
+        {
+          "name": "2082_2083_Battery_peryear_hist48_graphs.pt",
+          "bytes": 409134398,
+          "mtime_ns": 1788641332480228325
+        },
+        {
+          "name": "2083_2084_Battery_peryear_hist48_graphs.pt",
+          "bytes": 411860394,
+          "mtime_ns": 1788641334596237952
+        },
+        {
+          "name": "2084_2085_Battery_peryear_hist48_graphs.pt",
+          "bytes": 409134398,
+          "mtime_ns": 1788641336708247562
+        },
+        {
+          "name": "2085_2086_Battery_peryear_hist48_graphs.pt",
+          "bytes": 409134398,
+          "mtime_ns": 1788641338895257514
+        },
+        {
+          "name": "2086_2087_Battery_peryear_hist48_graphs.pt",
+          "bytes": 409134398,
+          "mtime_ns": 1788641341278268358
+        },
+        {
+          "name": "2087_2088_Battery_peryear_hist48_graphs.pt",
+          "bytes": 411860394,
+          "mtime_ns": 1788641343411278065
+        },
+        {
+          "name": "2088_2089_Battery_peryear_hist48_graphs.pt",
+          "bytes": 409134398,
+          "mtime_ns": 1788641346073290181
+        },
+        {
+          "name": "2089_2090_Battery_peryear_hist48_graphs.pt",
+          "bytes": 409134398,
+          "mtime_ns": 1788641348362300599
+        },
+        {
+          "name": "2090_2091_Battery_peryear_hist48_graphs.pt",
+          "bytes": 409134398,
+          "mtime_ns": 1788641350575310672
+        },
+        {
+          "name": "2091_2092_Battery_peryear_hist48_graphs.pt",
+          "bytes": 411860394,
+          "mtime_ns": 1788641352791320760
+        },
+        {
+          "name": "2092_2093_Battery_peryear_hist48_graphs.pt",
+          "bytes": 409134398,
+          "mtime_ns": 1788641355724334111
+        },
+        {
+          "name": "2093_2094_Battery_peryear_hist48_graphs.pt",
+          "bytes": 409134398,
+          "mtime_ns": 1788641357891343977
+        },
+        {
+          "name": "2094_2095_Battery_peryear_hist48_graphs.pt",
+          "bytes": 409134398,
+          "mtime_ns": 1788641360138354207
+        },
+        {
+          "name": "2095_2096_Battery_peryear_hist48_graphs.pt",
+          "bytes": 411860394,
+          "mtime_ns": 1788641362448364725
+        },
+        {
+          "name": "2096_2097_Battery_peryear_hist48_graphs.pt",
+          "bytes": 409134398,
+          "mtime_ns": 1788641364631374665
+        },
+        {
+          "name": "2097_2098_Battery_peryear_hist48_graphs.pt",
+          "bytes": 409134398,
+          "mtime_ns": 1788641366739384265
+        },
+        {
+          "name": "2098_2099_Battery_peryear_hist48_graphs.pt",
+          "bytes": 409134398,
+          "mtime_ns": 1788641368966394407
+        },
+        {
+          "name": "2099_2100_Battery_peryear_hist48_graphs.pt",
+          "bytes": 166521842,
+          "mtime_ns": 1788641370811402809
+        }
+      ]
+    },
+    "CMIP6_CNRM": {
+      "root": "/home/exouser/StormSurge/Data/Grid4_New/CMIP6_CNRM/graphs",
+      "file_count": 66,
+      "split": {
+        "train": [
+          "1979_1980",
+          "1980_1981",
+          "1981_1982",
+          "1982_1983",
+          "1983_1984",
+          "1984_1985",
+          "1985_1986",
+          "1986_1987",
+          "1987_1988",
+          "1988_1989",
+          "1989_1990",
+          "1990_1991",
+          "1991_1992",
+          "1992_1993",
+          "1993_1994",
+          "1994_1995",
+          "1995_1996",
+          "1996_1997",
+          "1997_1998",
+          "1998_1999",
+          "1999_2000",
+          "2000_2001",
+          "2001_2002",
+          "2002_2003",
+          "2003_2004",
+          "2004_2005",
+          "2005_2006",
+          "2006_2007",
+          "2007_2008",
+          "2008_2009"
+        ],
+        "val": [
+          "2009_2010",
+          "2010_2011",
+          "2011_2012",
+          "2012_2013",
+          "2013_2014",
+          "2014_2015"
+        ],
+        "test": [
+          "2070_2071",
+          "2071_2072",
+          "2072_2073",
+          "2073_2074",
+          "2074_2075",
+          "2075_2076",
+          "2076_2077",
+          "2077_2078",
+          "2078_2079",
+          "2079_2080",
+          "2080_2081",
+          "2081_2082",
+          "2082_2083",
+          "2083_2084",
+          "2084_2085",
+          "2085_2086",
+          "2086_2087",
+          "2087_2088",
+          "2088_2089",
+          "2089_2090",
+          "2090_2091",
+          "2091_2092",
+          "2092_2093",
+          "2093_2094",
+          "2094_2095",
+          "2095_2096",
+          "2096_2097",
+          "2097_2098",
+          "2098_2099",
+          "2099_2100"
+        ]
+      },
+      "files": [
+        {
+          "name": "1979_1980_Battery_peryear_hist48_graphs.pt",
+          "bytes": 183541034,
+          "mtime_ns": 1788641381916453393
+        },
+        {
+          "name": "1980_1981_Battery_peryear_hist48_graphs.pt",
+          "bytes": 182326206,
+          "mtime_ns": 1788641382967458181
+        },
+        {
+          "name": "1981_1982_Battery_peryear_hist48_graphs.pt",
+          "bytes": 182326206,
+          "mtime_ns": 1788641384156463598
+        },
+        {
+          "name": "1982_1983_Battery_peryear_hist48_graphs.pt",
+          "bytes": 182326206,
+          "mtime_ns": 1788641385301468814
+        },
+        {
+          "name": "1983_1984_Battery_peryear_hist48_graphs.pt",
+          "bytes": 183541034,
+          "mtime_ns": 1788641386412473875
+        },
+        {
+          "name": "1984_1985_Battery_peryear_hist48_graphs.pt",
+          "bytes": 182326206,
+          "mtime_ns": 1788641387419478463
+        },
+        {
+          "name": "1985_1986_Battery_peryear_hist48_graphs.pt",
+          "bytes": 182326206,
+          "mtime_ns": 1788641388559483657
+        },
+        {
+          "name": "1986_1987_Battery_peryear_hist48_graphs.pt",
+          "bytes": 182326206,
+          "mtime_ns": 1788641389568488254
+        },
+        {
+          "name": "1987_1988_Battery_peryear_hist48_graphs.pt",
+          "bytes": 183541034,
+          "mtime_ns": 1788641390586492893
+        },
+        {
+          "name": "1988_1989_Battery_peryear_hist48_graphs.pt",
+          "bytes": 182326206,
+          "mtime_ns": 1788641392100499791
+        },
+        {
+          "name": "1989_1990_Battery_peryear_hist48_graphs.pt",
+          "bytes": 182326206,
+          "mtime_ns": 1788641393108504384
+        },
+        {
+          "name": "1990_1991_Battery_peryear_hist48_graphs.pt",
+          "bytes": 182326206,
+          "mtime_ns": 1788641394114508969
+        },
+        {
+          "name": "1991_1992_Battery_peryear_hist48_graphs.pt",
+          "bytes": 183541034,
+          "mtime_ns": 1788641395516515357
+        },
+        {
+          "name": "1992_1993_Battery_peryear_hist48_graphs.pt",
+          "bytes": 182326206,
+          "mtime_ns": 1788641396696520734
+        },
+        {
+          "name": "1993_1994_Battery_peryear_hist48_graphs.pt",
+          "bytes": 182326206,
+          "mtime_ns": 1788641397818525848
+        },
+        {
+          "name": "1994_1995_Battery_peryear_hist48_graphs.pt",
+          "bytes": 182326206,
+          "mtime_ns": 1788641398889530729
+        },
+        {
+          "name": "1995_1996_Battery_peryear_hist48_graphs.pt",
+          "bytes": 183541034,
+          "mtime_ns": 1788641399899535332
+        },
+        {
+          "name": "1996_1997_Battery_peryear_hist48_graphs.pt",
+          "bytes": 182326206,
+          "mtime_ns": 1788641400983540272
+        },
+        {
+          "name": "1997_1998_Battery_peryear_hist48_graphs.pt",
+          "bytes": 182326206,
+          "mtime_ns": 1788641401975544793
+        },
+        {
+          "name": "1998_1999_Battery_peryear_hist48_graphs.pt",
+          "bytes": 182326206,
+          "mtime_ns": 1788641402998549456
+        },
+        {
+          "name": "1999_2000_Battery_peryear_hist48_graphs.pt",
+          "bytes": 183541034,
+          "mtime_ns": 1788641403962553850
+        },
+        {
+          "name": "2000_2001_Battery_peryear_hist48_graphs.pt",
+          "bytes": 182326206,
+          "mtime_ns": 1788641404928558253
+        },
+        {
+          "name": "2001_2002_Battery_peryear_hist48_graphs.pt",
+          "bytes": 182326206,
+          "mtime_ns": 1788641405987563080
+        },
+        {
+          "name": "2002_2003_Battery_peryear_hist48_graphs.pt",
+          "bytes": 182326206,
+          "mtime_ns": 1788641406961567519
+        },
+        {
+          "name": "2003_2004_Battery_peryear_hist48_graphs.pt",
+          "bytes": 183541034,
+          "mtime_ns": 1788641407925571913
+        },
+        {
+          "name": "2004_2005_Battery_peryear_hist48_graphs.pt",
+          "bytes": 182326206,
+          "mtime_ns": 1788641408885576289
+        },
+        {
+          "name": "2005_2006_Battery_peryear_hist48_graphs.pt",
+          "bytes": 182326206,
+          "mtime_ns": 1788641409868580770
+        },
+        {
+          "name": "2006_2007_Battery_peryear_hist48_graphs.pt",
+          "bytes": 182326206,
+          "mtime_ns": 1788641410836585183
+        },
+        {
+          "name": "2007_2008_Battery_peryear_hist48_graphs.pt",
+          "bytes": 183541034,
+          "mtime_ns": 1788641411831589718
+        },
+        {
+          "name": "2008_2009_Battery_peryear_hist48_graphs.pt",
+          "bytes": 182326206,
+          "mtime_ns": 1788641412806594163
+        },
+        {
+          "name": "2009_2010_Battery_peryear_hist48_graphs.pt",
+          "bytes": 182326206,
+          "mtime_ns": 1788641413875599037
+        },
+        {
+          "name": "2010_2011_Battery_peryear_hist48_graphs.pt",
+          "bytes": 182326206,
+          "mtime_ns": 1788641414970604029
+        },
+        {
+          "name": "2011_2012_Battery_peryear_hist48_graphs.pt",
+          "bytes": 183541034,
+          "mtime_ns": 1788641416246609846
+        },
+        {
+          "name": "2012_2013_Battery_peryear_hist48_graphs.pt",
+          "bytes": 179896614,
+          "mtime_ns": 1788641417540615746
+        },
+        {
+          "name": "2013_2014_Battery_peryear_hist48_graphs.pt",
+          "bytes": 182326206,
+          "mtime_ns": 1788641418680620944
+        },
+        {
+          "name": "2014_2015_Battery_peryear_hist48_graphs.pt",
+          "bytes": 74207602,
+          "mtime_ns": 1788641419647625353
+        },
+        {
+          "name": "2070_2071_Battery_peryear_hist48_graphs.pt",
+          "bytes": 182326206,
+          "mtime_ns": 1788641420455629037
+        },
+        {
+          "name": "2071_2072_Battery_peryear_hist48_graphs.pt",
+          "bytes": 183541034,
+          "mtime_ns": 1788641421411633396
+        },
+        {
+          "name": "2072_2073_Battery_peryear_hist48_graphs.pt",
+          "bytes": 182326206,
+          "mtime_ns": 1788641422442638097
+        },
+        {
+          "name": "2073_2074_Battery_peryear_hist48_graphs.pt",
+          "bytes": 182326206,
+          "mtime_ns": 1788641423393642433
+        },
+        {
+          "name": "2074_2075_Battery_peryear_hist48_graphs.pt",
+          "bytes": 182326206,
+          "mtime_ns": 1788641424509647522
+        },
+        {
+          "name": "2075_2076_Battery_peryear_hist48_graphs.pt",
+          "bytes": 183541034,
+          "mtime_ns": 1788641425451651818
+        },
+        {
+          "name": "2076_2077_Battery_peryear_hist48_graphs.pt",
+          "bytes": 182326206,
+          "mtime_ns": 1788641426383656068
+        },
+        {
+          "name": "2077_2078_Battery_peryear_hist48_graphs.pt",
+          "bytes": 182326206,
+          "mtime_ns": 1788641427341660436
+        },
+        {
+          "name": "2078_2079_Battery_peryear_hist48_graphs.pt",
+          "bytes": 182326206,
+          "mtime_ns": 1788641428293664778
+        },
+        {
+          "name": "2079_2080_Battery_peryear_hist48_graphs.pt",
+          "bytes": 183541034,
+          "mtime_ns": 1788641429238669087
+        },
+        {
+          "name": "2080_2081_Battery_peryear_hist48_graphs.pt",
+          "bytes": 182326206,
+          "mtime_ns": 1788641430192673438
+        },
+        {
+          "name": "2081_2082_Battery_peryear_hist48_graphs.pt",
+          "bytes": 182326206,
+          "mtime_ns": 1788641431122677680
+        },
+        {
+          "name": "2082_2083_Battery_peryear_hist48_graphs.pt",
+          "bytes": 182326206,
+          "mtime_ns": 1788641432151682372
+        },
+        {
+          "name": "2083_2084_Battery_peryear_hist48_graphs.pt",
+          "bytes": 183541034,
+          "mtime_ns": 1788641433093686668
+        },
+        {
+          "name": "2084_2085_Battery_peryear_hist48_graphs.pt",
+          "bytes": 182326206,
+          "mtime_ns": 1788641434063691092
+        },
+        {
+          "name": "2085_2086_Battery_peryear_hist48_graphs.pt",
+          "bytes": 182326206,
+          "mtime_ns": 1788641435046695576
+        },
+        {
+          "name": "2086_2087_Battery_peryear_hist48_graphs.pt",
+          "bytes": 182326206,
+          "mtime_ns": 1788641436584702591
+        },
+        {
+          "name": "2087_2088_Battery_peryear_hist48_graphs.pt",
+          "bytes": 183541034,
+          "mtime_ns": 1788641437526706887
+        },
+        {
+          "name": "2088_2089_Battery_peryear_hist48_graphs.pt",
+          "bytes": 182326206,
+          "mtime_ns": 1788641438486711266
+        },
+        {
+          "name": "2089_2090_Battery_peryear_hist48_graphs.pt",
+          "bytes": 182326206,
+          "mtime_ns": 1788641439498715882
+        },
+        {
+          "name": "2090_2091_Battery_peryear_hist48_graphs.pt",
+          "bytes": 182326206,
+          "mtime_ns": 1788641440449720220
+        },
+        {
+          "name": "2091_2092_Battery_peryear_hist48_graphs.pt",
+          "bytes": 183541034,
+          "mtime_ns": 1788641441421724655
+        },
+        {
+          "name": "2092_2093_Battery_peryear_hist48_graphs.pt",
+          "bytes": 182326206,
+          "mtime_ns": 1788641442344728865
+        },
+        {
+          "name": "2093_2094_Battery_peryear_hist48_graphs.pt",
+          "bytes": 182326206,
+          "mtime_ns": 1788641443359733495
+        },
+        {
+          "name": "2094_2095_Battery_peryear_hist48_graphs.pt",
+          "bytes": 182326206,
+          "mtime_ns": 1788641444300737788
+        },
+        {
+          "name": "2095_2096_Battery_peryear_hist48_graphs.pt",
+          "bytes": 183541034,
+          "mtime_ns": 1788641445244742093
+        },
+        {
+          "name": "2096_2097_Battery_peryear_hist48_graphs.pt",
+          "bytes": 182326206,
+          "mtime_ns": 1788641446199746450
+        },
+        {
+          "name": "2097_2098_Battery_peryear_hist48_graphs.pt",
+          "bytes": 182326206,
+          "mtime_ns": 1788641447282751391
+        },
+        {
+          "name": "2098_2099_Battery_peryear_hist48_graphs.pt",
+          "bytes": 182326206,
+          "mtime_ns": 1788641448281755949
+        },
+        {
+          "name": "2099_2100_Battery_peryear_hist48_graphs.pt",
+          "bytes": 74207602,
+          "mtime_ns": 1788641449210760187
+        }
+      ]
+    },
+    "CMIP6_EC_EARTH": {
+      "root": "/home/exouser/StormSurge/Data/Grid4_New/CMIP6_EC_EARTH/graphs",
+      "file_count": 66,
+      "split": {
+        "train": [
+          "1979_1980",
+          "1980_1981",
+          "1981_1982",
+          "1982_1983",
+          "1983_1984",
+          "1984_1985",
+          "1985_1986",
+          "1986_1987",
+          "1987_1988",
+          "1988_1989",
+          "1989_1990",
+          "1990_1991",
+          "1991_1992",
+          "1992_1993",
+          "1993_1994",
+          "1994_1995",
+          "1995_1996",
+          "1996_1997",
+          "1997_1998",
+          "1998_1999",
+          "1999_2000",
+          "2000_2001",
+          "2001_2002",
+          "2002_2003",
+          "2003_2004",
+          "2004_2005",
+          "2005_2006",
+          "2006_2007",
+          "2007_2008",
+          "2008_2009"
+        ],
+        "val": [
+          "2009_2010",
+          "2010_2011",
+          "2011_2012",
+          "2012_2013",
+          "2013_2014",
+          "2014_2015"
+        ],
+        "test": [
+          "2070_2071",
+          "2071_2072",
+          "2072_2073",
+          "2073_2074",
+          "2074_2075",
+          "2075_2076",
+          "2076_2077",
+          "2077_2078",
+          "2078_2079",
+          "2079_2080",
+          "2080_2081",
+          "2081_2082",
+          "2082_2083",
+          "2083_2084",
+          "2084_2085",
+          "2085_2086",
+          "2086_2087",
+          "2087_2088",
+          "2088_2089",
+          "2089_2090",
+          "2090_2091",
+          "2091_2092",
+          "2092_2093",
+          "2093_2094",
+          "2094_2095",
+          "2095_2096",
+          "2096_2097",
+          "2097_2098",
+          "2098_2099",
+          "2099_2100"
+        ]
+      },
+      "files": [
+        {
+          "name": "1979_1980_Battery_peryear_hist48_graphs.pt",
+          "bytes": 730804138,
+          "mtime_ns": 1788641507970075154
+        },
+        {
+          "name": "1980_1981_Battery_peryear_hist48_graphs.pt",
+          "bytes": 725967166,
+          "mtime_ns": 1788641511433093826
+        },
+        {
+          "name": "1981_1982_Battery_peryear_hist48_graphs.pt",
+          "bytes": 725967166,
+          "mtime_ns": 1788641514944112740
+        },
+        {
+          "name": "1982_1983_Battery_peryear_hist48_graphs.pt",
+          "bytes": 725967166,
+          "mtime_ns": 1788641518701132960
+        },
+        {
+          "name": "1983_1984_Battery_peryear_hist48_graphs.pt",
+          "bytes": 730804138,
+          "mtime_ns": 1788641522804155021
+        },
+        {
+          "name": "1984_1985_Battery_peryear_hist48_graphs.pt",
+          "bytes": 725967166,
+          "mtime_ns": 1788641526312173865
+        },
+        {
+          "name": "1985_1986_Battery_peryear_hist48_graphs.pt",
+          "bytes": 725967166,
+          "mtime_ns": 1788641530427195949
+        },
+        {
+          "name": "1986_1987_Battery_peryear_hist48_graphs.pt",
+          "bytes": 725967166,
+          "mtime_ns": 1788641534303216731
+        },
+        {
+          "name": "1987_1988_Battery_peryear_hist48_graphs.pt",
+          "bytes": 730804138,
+          "mtime_ns": 1788641537818235560
+        },
+        {
+          "name": "1988_1989_Battery_peryear_hist48_graphs.pt",
+          "bytes": 725967166,
+          "mtime_ns": 1788641541942257631
+        },
+        {
+          "name": "1989_1990_Battery_peryear_hist48_graphs.pt",
+          "bytes": 725967166,
+          "mtime_ns": 1788641545877278672
+        },
+        {
+          "name": "1990_1991_Battery_peryear_hist48_graphs.pt",
+          "bytes": 725967166,
+          "mtime_ns": 1788641551004306056
+        },
+        {
+          "name": "1991_1992_Battery_peryear_hist48_graphs.pt",
+          "bytes": 730804138,
+          "mtime_ns": 1788641554515324791
+        },
+        {
+          "name": "1992_1993_Battery_peryear_hist48_graphs.pt",
+          "bytes": 725967166,
+          "mtime_ns": 1788641558722347219
+        },
+        {
+          "name": "1993_1994_Battery_peryear_hist48_graphs.pt",
+          "bytes": 725967166,
+          "mtime_ns": 1788641562320366385
+        },
+        {
+          "name": "1994_1995_Battery_peryear_hist48_graphs.pt",
+          "bytes": 725967166,
+          "mtime_ns": 1788641565821385018
+        },
+        {
+          "name": "1995_1996_Battery_peryear_hist48_graphs.pt",
+          "bytes": 730804138,
+          "mtime_ns": 1788641569507404620
+        },
+        {
+          "name": "1996_1997_Battery_peryear_hist48_graphs.pt",
+          "bytes": 725967166,
+          "mtime_ns": 1788641572958422958
+        },
+        {
+          "name": "1997_1998_Battery_peryear_hist48_graphs.pt",
+          "bytes": 725967166,
+          "mtime_ns": 1788641576800443357
+        },
+        {
+          "name": "1998_1999_Battery_peryear_hist48_graphs.pt",
+          "bytes": 725967166,
+          "mtime_ns": 1788641580876464979
+        },
+        {
+          "name": "1999_2000_Battery_peryear_hist48_graphs.pt",
+          "bytes": 730804138,
+          "mtime_ns": 1788641584795485752
+        },
+        {
+          "name": "2000_2001_Battery_peryear_hist48_graphs.pt",
+          "bytes": 725967166,
+          "mtime_ns": 1788641588620506008
+        },
+        {
+          "name": "2001_2002_Battery_peryear_hist48_graphs.pt",
+          "bytes": 725967166,
+          "mtime_ns": 1788641592930528814
+        },
+        {
+          "name": "2002_2003_Battery_peryear_hist48_graphs.pt",
+          "bytes": 725967166,
+          "mtime_ns": 1788641597548553225
+        },
+        {
+          "name": "2003_2004_Battery_peryear_hist48_graphs.pt",
+          "bytes": 730804138,
+          "mtime_ns": 1788641601600574625
+        },
+        {
+          "name": "2004_2005_Battery_peryear_hist48_graphs.pt",
+          "bytes": 725967166,
+          "mtime_ns": 1788641605970597684
+        },
+        {
+          "name": "2005_2006_Battery_peryear_hist48_graphs.pt",
+          "bytes": 725967166,
+          "mtime_ns": 1788641610644622323
+        },
+        {
+          "name": "2006_2007_Battery_peryear_hist48_graphs.pt",
+          "bytes": 725967166,
+          "mtime_ns": 1788641615405647396
+        },
+        {
+          "name": "2007_2008_Battery_peryear_hist48_graphs.pt",
+          "bytes": 730804138,
+          "mtime_ns": 1788641619985671493
+        },
+        {
+          "name": "2008_2009_Battery_peryear_hist48_graphs.pt",
+          "bytes": 725967166,
+          "mtime_ns": 1788641624617695840
+        },
+        {
+          "name": "2009_2010_Battery_peryear_hist48_graphs.pt",
+          "bytes": 725967166,
+          "mtime_ns": 1788641629071719230
+        },
+        {
+          "name": "2010_2011_Battery_peryear_hist48_graphs.pt",
+          "bytes": 725967166,
+          "mtime_ns": 1788641633576742866
+        },
+        {
+          "name": "2011_2012_Battery_peryear_hist48_graphs.pt",
+          "bytes": 730804138,
+          "mtime_ns": 1788641638162766905
+        },
+        {
+          "name": "2012_2013_Battery_peryear_hist48_graphs.pt",
+          "bytes": 725967166,
+          "mtime_ns": 1788641642646790389
+        },
+        {
+          "name": "2013_2014_Battery_peryear_hist48_graphs.pt",
+          "bytes": 725967166,
+          "mtime_ns": 1788641647083813606
+        },
+        {
+          "name": "2014_2015_Battery_peryear_hist48_graphs.pt",
+          "bytes": 290640774,
+          "mtime_ns": 1788641651723837863
+        },
+        {
+          "name": "2070_2071_Battery_peryear_hist48_graphs.pt",
+          "bytes": 725967166,
+          "mtime_ns": 1788641654099850276
+        },
+        {
+          "name": "2071_2072_Battery_peryear_hist48_graphs.pt",
+          "bytes": 730804138,
+          "mtime_ns": 1788641658908875383
+        },
+        {
+          "name": "2072_2073_Battery_peryear_hist48_graphs.pt",
+          "bytes": 725967166,
+          "mtime_ns": 1788641662769895524
+        },
+        {
+          "name": "2073_2074_Battery_peryear_hist48_graphs.pt",
+          "bytes": 725967166,
+          "mtime_ns": 1788641666968917411
+        },
+        {
+          "name": "2074_2075_Battery_peryear_hist48_graphs.pt",
+          "bytes": 725967166,
+          "mtime_ns": 1788641671711942113
+        },
+        {
+          "name": "2075_2076_Battery_peryear_hist48_graphs.pt",
+          "bytes": 730804138,
+          "mtime_ns": 1788641675800963392
+        },
+        {
+          "name": "2076_2077_Battery_peryear_hist48_graphs.pt",
+          "bytes": 725967166,
+          "mtime_ns": 1788641680608988392
+        },
+        {
+          "name": "2077_2078_Battery_peryear_hist48_graphs.pt",
+          "bytes": 725967166,
+          "mtime_ns": 1788641685133011894
+        },
+        {
+          "name": "2078_2079_Battery_peryear_hist48_graphs.pt",
+          "bytes": 725967166,
+          "mtime_ns": 1788641689896036616
+        },
+        {
+          "name": "2079_2080_Battery_peryear_hist48_graphs.pt",
+          "bytes": 730804138,
+          "mtime_ns": 1788641694484060410
+        },
+        {
+          "name": "2080_2081_Battery_peryear_hist48_graphs.pt",
+          "bytes": 725967166,
+          "mtime_ns": 1788641699230085004
+        },
+        {
+          "name": "2081_2082_Battery_peryear_hist48_graphs.pt",
+          "bytes": 725967166,
+          "mtime_ns": 1788641703965109521
+        },
+        {
+          "name": "2082_2083_Battery_peryear_hist48_graphs.pt",
+          "bytes": 725967166,
+          "mtime_ns": 1788641709742139405
+        },
+        {
+          "name": "2083_2084_Battery_peryear_hist48_graphs.pt",
+          "bytes": 730804138,
+          "mtime_ns": 1788641714240162653
+        },
+        {
+          "name": "2084_2085_Battery_peryear_hist48_graphs.pt",
+          "bytes": 725967166,
+          "mtime_ns": 1788641718817186294
+        },
+        {
+          "name": "2085_2086_Battery_peryear_hist48_graphs.pt",
+          "bytes": 725967166,
+          "mtime_ns": 1788641723395209918
+        },
+        {
+          "name": "2086_2087_Battery_peryear_hist48_graphs.pt",
+          "bytes": 725967166,
+          "mtime_ns": 1788641728055233949
+        },
+        {
+          "name": "2087_2088_Battery_peryear_hist48_graphs.pt",
+          "bytes": 730804138,
+          "mtime_ns": 1788641732980259322
+        },
+        {
+          "name": "2088_2089_Battery_peryear_hist48_graphs.pt",
+          "bytes": 725967166,
+          "mtime_ns": 1788641737759283923
+        },
+        {
+          "name": "2089_2090_Battery_peryear_hist48_graphs.pt",
+          "bytes": 725967166,
+          "mtime_ns": 1788641742444308022
+        },
+        {
+          "name": "2090_2091_Battery_peryear_hist48_graphs.pt",
+          "bytes": 725967166,
+          "mtime_ns": 1788641747177332348
+        },
+        {
+          "name": "2091_2092_Battery_peryear_hist48_graphs.pt",
+          "bytes": 730804138,
+          "mtime_ns": 1788641751929356753
+        },
+        {
+          "name": "2092_2093_Battery_peryear_hist48_graphs.pt",
+          "bytes": 725967166,
+          "mtime_ns": 1788641756787381682
+        },
+        {
+          "name": "2093_2094_Battery_peryear_hist48_graphs.pt",
+          "bytes": 725967166,
+          "mtime_ns": 1788641761959408201
+        },
+        {
+          "name": "2094_2095_Battery_peryear_hist48_graphs.pt",
+          "bytes": 725967166,
+          "mtime_ns": 1788641767334435737
+        },
+        {
+          "name": "2095_2096_Battery_peryear_hist48_graphs.pt",
+          "bytes": 730804138,
+          "mtime_ns": 1788641771656457862
+        },
+        {
+          "name": "2096_2097_Battery_peryear_hist48_graphs.pt",
+          "bytes": 725967166,
+          "mtime_ns": 1788641776253481379
+        },
+        {
+          "name": "2097_2098_Battery_peryear_hist48_graphs.pt",
+          "bytes": 725967166,
+          "mtime_ns": 1788641781043505864
+        },
+        {
+          "name": "2098_2099_Battery_peryear_hist48_graphs.pt",
+          "bytes": 725967166,
+          "mtime_ns": 1788641786147531936
+        },
+        {
+          "name": "2099_2100_Battery_peryear_hist48_graphs.pt",
+          "bytes": 295477746,
+          "mtime_ns": 1788641790394553614
+        }
+      ]
+    },
+    "CMIP6_MPI": {
+      "root": "/home/exouser/StormSurge/Data/Grid4_New/CMIP6_MPI/graphs",
+      "file_count": 66,
+      "split": {
+        "train": [
+          "1979_1980",
+          "1980_1981",
+          "1981_1982",
+          "1982_1983",
+          "1983_1984",
+          "1984_1985",
+          "1985_1986",
+          "1986_1987",
+          "1987_1988",
+          "1988_1989",
+          "1989_1990",
+          "1990_1991",
+          "1991_1992",
+          "1992_1993",
+          "1993_1994",
+          "1994_1995",
+          "1995_1996",
+          "1996_1997",
+          "1997_1998",
+          "1998_1999",
+          "1999_2000",
+          "2000_2001",
+          "2001_2002",
+          "2002_2003",
+          "2003_2004",
+          "2004_2005",
+          "2005_2006",
+          "2006_2007",
+          "2007_2008",
+          "2008_2009"
+        ],
+        "val": [
+          "2009_2010",
+          "2010_2011",
+          "2011_2012",
+          "2012_2013",
+          "2013_2014",
+          "2014_2015"
+        ],
+        "test": [
+          "2070_2071",
+          "2071_2072",
+          "2072_2073",
+          "2073_2074",
+          "2074_2075",
+          "2075_2076",
+          "2076_2077",
+          "2077_2078",
+          "2078_2079",
+          "2079_2080",
+          "2080_2081",
+          "2081_2082",
+          "2082_2083",
+          "2083_2084",
+          "2084_2085",
+          "2085_2086",
+          "2086_2087",
+          "2087_2088",
+          "2088_2089",
+          "2089_2090",
+          "2090_2091",
+          "2091_2092",
+          "2092_2093",
+          "2093_2094",
+          "2094_2095",
+          "2095_2096",
+          "2096_2097",
+          "2097_2098",
+          "2098_2099",
+          "2099_2100"
+        ]
+      },
+      "files": [
+        {
+          "name": "1979_1980_Battery_peryear_hist48_graphs.pt",
+          "bytes": 411860394,
+          "mtime_ns": 1788641813892673306
+        },
+        {
+          "name": "1980_1981_Battery_peryear_hist48_graphs.pt",
+          "bytes": 409134398,
+          "mtime_ns": 1788641816227685177
+        },
+        {
+          "name": "1981_1982_Battery_peryear_hist48_graphs.pt",
+          "bytes": 409134398,
+          "mtime_ns": 1788641818399696216
+        },
+        {
+          "name": "1982_1983_Battery_peryear_hist48_graphs.pt",
+          "bytes": 409134398,
+          "mtime_ns": 1788641820452706648
+        },
+        {
+          "name": "1983_1984_Battery_peryear_hist48_graphs.pt",
+          "bytes": 411860394,
+          "mtime_ns": 1788641822976719469
+        },
+        {
+          "name": "1984_1985_Battery_peryear_hist48_graphs.pt",
+          "bytes": 409134398,
+          "mtime_ns": 1788641825783733721
+        },
+        {
+          "name": "1985_1986_Battery_peryear_hist48_graphs.pt",
+          "bytes": 409134398,
+          "mtime_ns": 1788641827973744836
+        },
+        {
+          "name": "1986_1987_Battery_peryear_hist48_graphs.pt",
+          "bytes": 409134398,
+          "mtime_ns": 1788641830030755274
+        },
+        {
+          "name": "1987_1988_Battery_peryear_hist48_graphs.pt",
+          "bytes": 411860394,
+          "mtime_ns": 1788641832303766803
+        },
+        {
+          "name": "1988_1989_Battery_peryear_hist48_graphs.pt",
+          "bytes": 409134398,
+          "mtime_ns": 1788641834315777006
+        },
+        {
+          "name": "1989_1990_Battery_peryear_hist48_graphs.pt",
+          "bytes": 409134398,
+          "mtime_ns": 1788641836520788185
+        },
+        {
+          "name": "1990_1991_Battery_peryear_hist48_graphs.pt",
+          "bytes": 409134398,
+          "mtime_ns": 1788641839404802801
+        },
+        {
+          "name": "1991_1992_Battery_peryear_hist48_graphs.pt",
+          "bytes": 411860394,
+          "mtime_ns": 1788641841587813860
+        },
+        {
+          "name": "1992_1993_Battery_peryear_hist48_graphs.pt",
+          "bytes": 409134398,
+          "mtime_ns": 1788641843722824673
+        },
+        {
+          "name": "1993_1994_Battery_peryear_hist48_graphs.pt",
+          "bytes": 409134398,
+          "mtime_ns": 1788641845972836064
+        },
+        {
+          "name": "1994_1995_Battery_peryear_hist48_graphs.pt",
+          "bytes": 409134398,
+          "mtime_ns": 1788641848379848246
+        },
+        {
+          "name": "1995_1996_Battery_peryear_hist48_graphs.pt",
+          "bytes": 411860394,
+          "mtime_ns": 1788641850960861305
+        },
+        {
+          "name": "1996_1997_Battery_peryear_hist48_graphs.pt",
+          "bytes": 409134398,
+          "mtime_ns": 1788641853203872649
+        },
+        {
+          "name": "1997_1998_Battery_peryear_hist48_graphs.pt",
+          "bytes": 409134398,
+          "mtime_ns": 1788641855318883344
+        },
+        {
+          "name": "1998_1999_Battery_peryear_hist48_graphs.pt",
+          "bytes": 409134398,
+          "mtime_ns": 1788641858014896972
+        },
+        {
+          "name": "1999_2000_Battery_peryear_hist48_graphs.pt",
+          "bytes": 411860394,
+          "mtime_ns": 1788641860138907705
+        },
+        {
+          "name": "2000_2001_Battery_peryear_hist48_graphs.pt",
+          "bytes": 409134398,
+          "mtime_ns": 1788641862199918116
+        },
+        {
+          "name": "2001_2002_Battery_peryear_hist48_graphs.pt",
+          "bytes": 409134398,
+          "mtime_ns": 1788641864240928424
+        },
+        {
+          "name": "2002_2003_Battery_peryear_hist48_graphs.pt",
+          "bytes": 409134398,
+          "mtime_ns": 1788641866640940540
+        },
+        {
+          "name": "2003_2004_Battery_peryear_hist48_graphs.pt",
+          "bytes": 411860394,
+          "mtime_ns": 1788641868749951185
+        },
+        {
+          "name": "2004_2005_Battery_peryear_hist48_graphs.pt",
+          "bytes": 409134398,
+          "mtime_ns": 1788641870749961277
+        },
+        {
+          "name": "2005_2006_Battery_peryear_hist48_graphs.pt",
+          "bytes": 409134398,
+          "mtime_ns": 1788641873011972688
+        },
+        {
+          "name": "2006_2007_Battery_peryear_hist48_graphs.pt",
+          "bytes": 409134398,
+          "mtime_ns": 1788641875040982921
+        },
+        {
+          "name": "2007_2008_Battery_peryear_hist48_graphs.pt",
+          "bytes": 411860394,
+          "mtime_ns": 1788641877046993035
+        },
+        {
+          "name": "2008_2009_Battery_peryear_hist48_graphs.pt",
+          "bytes": 409134398,
+          "mtime_ns": 1788641879105003408
+        },
+        {
+          "name": "2009_2010_Battery_peryear_hist48_graphs.pt",
+          "bytes": 409134398,
+          "mtime_ns": 1788641881274014338
+        },
+        {
+          "name": "2010_2011_Battery_peryear_hist48_graphs.pt",
+          "bytes": 409134398,
+          "mtime_ns": 1788641883357024831
+        },
+        {
+          "name": "2011_2012_Battery_peryear_hist48_graphs.pt",
+          "bytes": 411860394,
+          "mtime_ns": 1788641885377035004
+        },
+        {
+          "name": "2012_2013_Battery_peryear_hist48_graphs.pt",
+          "bytes": 409134398,
+          "mtime_ns": 1788641887466045522
+        },
+        {
+          "name": "2013_2014_Battery_peryear_hist48_graphs.pt",
+          "bytes": 409134398,
+          "mtime_ns": 1788641889673056632
+        },
+        {
+          "name": "2014_2015_Battery_peryear_hist48_graphs.pt",
+          "bytes": 166521842,
+          "mtime_ns": 1788641891505065851
+        },
+        {
+          "name": "2070_2071_Battery_peryear_hist48_graphs.pt",
+          "bytes": 409134398,
+          "mtime_ns": 1788641893562076200
+        },
+        {
+          "name": "2071_2072_Battery_peryear_hist48_graphs.pt",
+          "bytes": 411860394,
+          "mtime_ns": 1788641895539086144
+        },
+        {
+          "name": "2072_2073_Battery_peryear_hist48_graphs.pt",
+          "bytes": 409134398,
+          "mtime_ns": 1788641898736102221
+        },
+        {
+          "name": "2073_2074_Battery_peryear_hist48_graphs.pt",
+          "bytes": 409134398,
+          "mtime_ns": 1788641901000113602
+        },
+        {
+          "name": "2074_2075_Battery_peryear_hist48_graphs.pt",
+          "bytes": 409134398,
+          "mtime_ns": 1788641903233124825
+        },
+        {
+          "name": "2075_2076_Battery_peryear_hist48_graphs.pt",
+          "bytes": 411860394,
+          "mtime_ns": 1788641905695137194
+        },
+        {
+          "name": "2076_2077_Battery_peryear_hist48_graphs.pt",
+          "bytes": 409134398,
+          "mtime_ns": 1788641907969148615
+        },
+        {
+          "name": "2077_2078_Battery_peryear_hist48_graphs.pt",
+          "bytes": 409134398,
+          "mtime_ns": 1788641910195159793
+        },
+        {
+          "name": "2078_2079_Battery_peryear_hist48_graphs.pt",
+          "bytes": 409134398,
+          "mtime_ns": 1788641912259170154
+        },
+        {
+          "name": "2079_2080_Battery_peryear_hist48_graphs.pt",
+          "bytes": 411860394,
+          "mtime_ns": 1788641914820183006
+        },
+        {
+          "name": "2080_2081_Battery_peryear_hist48_graphs.pt",
+          "bytes": 409134398,
+          "mtime_ns": 1788641916839193135
+        },
+        {
+          "name": "2081_2082_Battery_peryear_hist48_graphs.pt",
+          "bytes": 409134398,
+          "mtime_ns": 1788641918867203307
+        },
+        {
+          "name": "2082_2083_Battery_peryear_hist48_graphs.pt",
+          "bytes": 409134398,
+          "mtime_ns": 1788641921061214309
+        },
+        {
+          "name": "2083_2084_Battery_peryear_hist48_graphs.pt",
+          "bytes": 411860394,
+          "mtime_ns": 1788641923005224055
+        },
+        {
+          "name": "2084_2085_Battery_peryear_hist48_graphs.pt",
+          "bytes": 409134398,
+          "mtime_ns": 1788641924969233899
+        },
+        {
+          "name": "2085_2086_Battery_peryear_hist48_graphs.pt",
+          "bytes": 409134398,
+          "mtime_ns": 1788641926933243741
+        },
+        {
+          "name": "2086_2087_Battery_peryear_hist48_graphs.pt",
+          "bytes": 409134398,
+          "mtime_ns": 1788641928841253299
+        },
+        {
+          "name": "2087_2088_Battery_peryear_hist48_graphs.pt",
+          "bytes": 411860394,
+          "mtime_ns": 1788641930781263016
+        },
+        {
+          "name": "2088_2089_Battery_peryear_hist48_graphs.pt",
+          "bytes": 409134398,
+          "mtime_ns": 1788641932757272911
+        },
+        {
+          "name": "2089_2090_Battery_peryear_hist48_graphs.pt",
+          "bytes": 409134398,
+          "mtime_ns": 1788641935134284810
+        },
+        {
+          "name": "2090_2091_Battery_peryear_hist48_graphs.pt",
+          "bytes": 409134398,
+          "mtime_ns": 1788641937097294635
+        },
+        {
+          "name": "2091_2092_Battery_peryear_hist48_graphs.pt",
+          "bytes": 411860394,
+          "mtime_ns": 1788641939185305083
+        },
+        {
+          "name": "2092_2093_Battery_peryear_hist48_graphs.pt",
+          "bytes": 409134398,
+          "mtime_ns": 1788641941729317809
+        },
+        {
+          "name": "2093_2094_Battery_peryear_hist48_graphs.pt",
+          "bytes": 409134398,
+          "mtime_ns": 1788641943660327466
+        },
+        {
+          "name": "2094_2095_Battery_peryear_hist48_graphs.pt",
+          "bytes": 409134398,
+          "mtime_ns": 1788641945728337806
+        },
+        {
+          "name": "2095_2096_Battery_peryear_hist48_graphs.pt",
+          "bytes": 411860394,
+          "mtime_ns": 1788641947978349053
+        },
+        {
+          "name": "2096_2097_Battery_peryear_hist48_graphs.pt",
+          "bytes": 409134398,
+          "mtime_ns": 1788641949955358933
+        },
+        {
+          "name": "2097_2098_Battery_peryear_hist48_graphs.pt",
+          "bytes": 409134398,
+          "mtime_ns": 1788641951957368936
+        },
+        {
+          "name": "2098_2099_Battery_peryear_hist48_graphs.pt",
+          "bytes": 409134398,
+          "mtime_ns": 1788641953930378791
+        },
+        {
+          "name": "2099_2100_Battery_peryear_hist48_graphs.pt",
+          "bytes": 166521842,
+          "mtime_ns": 1788641955560386932
+        }
+      ]
+    },
+    "CMIP6_MRI": {
+      "root": "/home/exouser/StormSurge/Data/Grid4_New/CMIP6_MRI/graphs",
+      "file_count": 66,
+      "split": {
+        "train": [
+          "1979_1980",
+          "1980_1981",
+          "1981_1982",
+          "1982_1983",
+          "1983_1984",
+          "1984_1985",
+          "1985_1986",
+          "1986_1987",
+          "1987_1988",
+          "1988_1989",
+          "1989_1990",
+          "1990_1991",
+          "1991_1992",
+          "1992_1993",
+          "1993_1994",
+          "1994_1995",
+          "1995_1996",
+          "1996_1997",
+          "1997_1998",
+          "1998_1999",
+          "1999_2000",
+          "2000_2001",
+          "2001_2002",
+          "2002_2003",
+          "2003_2004",
+          "2004_2005",
+          "2005_2006",
+          "2006_2007",
+          "2007_2008",
+          "2008_2009"
+        ],
+        "val": [
+          "2009_2010",
+          "2010_2011",
+          "2011_2012",
+          "2012_2013",
+          "2013_2014",
+          "2014_2015"
+        ],
+        "test": [
+          "2070_2071",
+          "2071_2072",
+          "2072_2073",
+          "2073_2074",
+          "2074_2075",
+          "2075_2076",
+          "2076_2077",
+          "2077_2078",
+          "2078_2079",
+          "2079_2080",
+          "2080_2081",
+          "2081_2082",
+          "2082_2083",
+          "2083_2084",
+          "2084_2085",
+          "2085_2086",
+          "2086_2087",
+          "2087_2088",
+          "2088_2089",
+          "2089_2090",
+          "2090_2091",
+          "2091_2092",
+          "2092_2093",
+          "2093_2094",
+          "2094_2095",
+          "2095_2096",
+          "2096_2097",
+          "2097_2098",
+          "2098_2099",
+          "2099_2100"
+        ]
+      },
+      "files": [
+        {
+          "name": "1979_1980_Battery_peryear_hist48_graphs.pt",
+          "bytes": 283602346,
+          "mtime_ns": 1788641970500461477
+        },
+        {
+          "name": "1980_1981_Battery_peryear_hist48_graphs.pt",
+          "bytes": 281725246,
+          "mtime_ns": 1788641971964468775
+        },
+        {
+          "name": "1981_1982_Battery_peryear_hist48_graphs.pt",
+          "bytes": 281725246,
+          "mtime_ns": 1788641973430476082
+        },
+        {
+          "name": "1982_1983_Battery_peryear_hist48_graphs.pt",
+          "bytes": 281725246,
+          "mtime_ns": 1788641974866483239
+        },
+        {
+          "name": "1983_1984_Battery_peryear_hist48_graphs.pt",
+          "bytes": 283602346,
+          "mtime_ns": 1788641976276490265
+        },
+        {
+          "name": "1984_1985_Battery_peryear_hist48_graphs.pt",
+          "bytes": 281725246,
+          "mtime_ns": 1788641977656497140
+        },
+        {
+          "name": "1985_1986_Battery_peryear_hist48_graphs.pt",
+          "bytes": 281725246,
+          "mtime_ns": 1788641979134504503
+        },
+        {
+          "name": "1986_1987_Battery_peryear_hist48_graphs.pt",
+          "bytes": 281725246,
+          "mtime_ns": 1788641980535511480
+        },
+        {
+          "name": "1987_1988_Battery_peryear_hist48_graphs.pt",
+          "bytes": 283602346,
+          "mtime_ns": 1788641981981518681
+        },
+        {
+          "name": "1988_1989_Battery_peryear_hist48_graphs.pt",
+          "bytes": 281725246,
+          "mtime_ns": 1788641983497526230
+        },
+        {
+          "name": "1989_1990_Battery_peryear_hist48_graphs.pt",
+          "bytes": 281725246,
+          "mtime_ns": 1788641985237534892
+        },
+        {
+          "name": "1990_1991_Battery_peryear_hist48_graphs.pt",
+          "bytes": 281725246,
+          "mtime_ns": 1788641986637541860
+        },
+        {
+          "name": "1991_1992_Battery_peryear_hist48_graphs.pt",
+          "bytes": 283602346,
+          "mtime_ns": 1788641988034548812
+        },
+        {
+          "name": "1992_1993_Battery_peryear_hist48_graphs.pt",
+          "bytes": 281725246,
+          "mtime_ns": 1788641989644556824
+        },
+        {
+          "name": "1993_1994_Battery_peryear_hist48_graphs.pt",
+          "bytes": 281725246,
+          "mtime_ns": 1788641991114564137
+        },
+        {
+          "name": "1994_1995_Battery_peryear_hist48_graphs.pt",
+          "bytes": 281725246,
+          "mtime_ns": 1788641992480570931
+        },
+        {
+          "name": "1995_1996_Battery_peryear_hist48_graphs.pt",
+          "bytes": 283602346,
+          "mtime_ns": 1788641993914578063
+        },
+        {
+          "name": "1996_1997_Battery_peryear_hist48_graphs.pt",
+          "bytes": 281725246,
+          "mtime_ns": 1788641995435585627
+        },
+        {
+          "name": "1997_1998_Battery_peryear_hist48_graphs.pt",
+          "bytes": 281725246,
+          "mtime_ns": 1788641997200594402
+        },
+        {
+          "name": "1998_1999_Battery_peryear_hist48_graphs.pt",
+          "bytes": 281725246,
+          "mtime_ns": 1788641998905602877
+        },
+        {
+          "name": "1999_2000_Battery_peryear_hist48_graphs.pt",
+          "bytes": 283602346,
+          "mtime_ns": 1788642000360610109
+        },
+        {
+          "name": "2000_2001_Battery_peryear_hist48_graphs.pt",
+          "bytes": 281725246,
+          "mtime_ns": 1788642001833617428
+        },
+        {
+          "name": "2001_2002_Battery_peryear_hist48_graphs.pt",
+          "bytes": 281725246,
+          "mtime_ns": 1788642003326624846
+        },
+        {
+          "name": "2002_2003_Battery_peryear_hist48_graphs.pt",
+          "bytes": 281725246,
+          "mtime_ns": 1788642004773632035
+        },
+        {
+          "name": "2003_2004_Battery_peryear_hist48_graphs.pt",
+          "bytes": 283602346,
+          "mtime_ns": 1788642006192639084
+        },
+        {
+          "name": "2004_2005_Battery_peryear_hist48_graphs.pt",
+          "bytes": 281725246,
+          "mtime_ns": 1788642007744646792
+        },
+        {
+          "name": "2005_2006_Battery_peryear_hist48_graphs.pt",
+          "bytes": 281725246,
+          "mtime_ns": 1788642009416655094
+        },
+        {
+          "name": "2006_2007_Battery_peryear_hist48_graphs.pt",
+          "bytes": 281725246,
+          "mtime_ns": 1788642011662666245
+        },
+        {
+          "name": "2007_2008_Battery_peryear_hist48_graphs.pt",
+          "bytes": 283602346,
+          "mtime_ns": 1788642013151673636
+        },
+        {
+          "name": "2008_2009_Battery_peryear_hist48_graphs.pt",
+          "bytes": 281725246,
+          "mtime_ns": 1788642014689681269
+        },
+        {
+          "name": "2009_2010_Battery_peryear_hist48_graphs.pt",
+          "bytes": 281725246,
+          "mtime_ns": 1788642016197688752
+        },
+        {
+          "name": "2010_2011_Battery_peryear_hist48_graphs.pt",
+          "bytes": 281725246,
+          "mtime_ns": 1788642017613695778
+        },
+        {
+          "name": "2011_2012_Battery_peryear_hist48_graphs.pt",
+          "bytes": 283602346,
+          "mtime_ns": 1788642019072703016
+        },
+        {
+          "name": "2012_2013_Battery_peryear_hist48_graphs.pt",
+          "bytes": 281725246,
+          "mtime_ns": 1788642020466709930
+        },
+        {
+          "name": "2013_2014_Battery_peryear_hist48_graphs.pt",
+          "bytes": 281725246,
+          "mtime_ns": 1788642021860716843
+        },
+        {
+          "name": "2014_2015_Battery_peryear_hist48_graphs.pt",
+          "bytes": 112787334,
+          "mtime_ns": 1788642023126723121
+        },
+        {
+          "name": "2070_2071_Battery_peryear_hist48_graphs.pt",
+          "bytes": 281725246,
+          "mtime_ns": 1788642024030727603
+        },
+        {
+          "name": "2071_2072_Battery_peryear_hist48_graphs.pt",
+          "bytes": 283602346,
+          "mtime_ns": 1788642025553735154
+        },
+        {
+          "name": "2072_2073_Battery_peryear_hist48_graphs.pt",
+          "bytes": 281725246,
+          "mtime_ns": 1788642027076742703
+        },
+        {
+          "name": "2073_2074_Battery_peryear_hist48_graphs.pt",
+          "bytes": 281725246,
+          "mtime_ns": 1788642028697750737
+        },
+        {
+          "name": "2074_2075_Battery_peryear_hist48_graphs.pt",
+          "bytes": 281725246,
+          "mtime_ns": 1788642030140757888
+        },
+        {
+          "name": "2075_2076_Battery_peryear_hist48_graphs.pt",
+          "bytes": 283602346,
+          "mtime_ns": 1788642031728765756
+        },
+        {
+          "name": "2076_2077_Battery_peryear_hist48_graphs.pt",
+          "bytes": 281725246,
+          "mtime_ns": 1788642033918776604
+        },
+        {
+          "name": "2077_2078_Battery_peryear_hist48_graphs.pt",
+          "bytes": 281725246,
+          "mtime_ns": 1788642035824786044
+        },
+        {
+          "name": "2078_2079_Battery_peryear_hist48_graphs.pt",
+          "bytes": 281725246,
+          "mtime_ns": 1788642037307793388
+        },
+        {
+          "name": "2079_2080_Battery_peryear_hist48_graphs.pt",
+          "bytes": 283602346,
+          "mtime_ns": 1788642038672800146
+        },
+        {
+          "name": "2080_2081_Battery_peryear_hist48_graphs.pt",
+          "bytes": 281725246,
+          "mtime_ns": 1788642040271808062
+        },
+        {
+          "name": "2081_2082_Battery_peryear_hist48_graphs.pt",
+          "bytes": 281725246,
+          "mtime_ns": 1788642041695815110
+        },
+        {
+          "name": "2082_2083_Battery_peryear_hist48_graphs.pt",
+          "bytes": 281725246,
+          "mtime_ns": 1788642043046821797
+        },
+        {
+          "name": "2083_2084_Battery_peryear_hist48_graphs.pt",
+          "bytes": 283602346,
+          "mtime_ns": 1788642044631829641
+        },
+        {
+          "name": "2084_2085_Battery_peryear_hist48_graphs.pt",
+          "bytes": 281725246,
+          "mtime_ns": 1788642046192837364
+        },
+        {
+          "name": "2085_2086_Battery_peryear_hist48_graphs.pt",
+          "bytes": 281725246,
+          "mtime_ns": 1788642047819845413
+        },
+        {
+          "name": "2086_2087_Battery_peryear_hist48_graphs.pt",
+          "bytes": 281725246,
+          "mtime_ns": 1788642050110856745
+        },
+        {
+          "name": "2087_2088_Battery_peryear_hist48_graphs.pt",
+          "bytes": 283602346,
+          "mtime_ns": 1788642051479863515
+        },
+        {
+          "name": "2088_2089_Battery_peryear_hist48_graphs.pt",
+          "bytes": 281725246,
+          "mtime_ns": 1788642053047871268
+        },
+        {
+          "name": "2089_2090_Battery_peryear_hist48_graphs.pt",
+          "bytes": 281725246,
+          "mtime_ns": 1788642054850880182
+        },
+        {
+          "name": "2090_2091_Battery_peryear_hist48_graphs.pt",
+          "bytes": 281725246,
+          "mtime_ns": 1788642056272887211
+        },
+        {
+          "name": "2091_2092_Battery_peryear_hist48_graphs.pt",
+          "bytes": 283602346,
+          "mtime_ns": 1788642057808894802
+        },
+        {
+          "name": "2092_2093_Battery_peryear_hist48_graphs.pt",
+          "bytes": 281725246,
+          "mtime_ns": 1788642059314902245
+        },
+        {
+          "name": "2093_2094_Battery_peryear_hist48_graphs.pt",
+          "bytes": 281725246,
+          "mtime_ns": 1788642060779909484
+        },
+        {
+          "name": "2094_2095_Battery_peryear_hist48_graphs.pt",
+          "bytes": 281725246,
+          "mtime_ns": 1788642062185916430
+        },
+        {
+          "name": "2095_2096_Battery_peryear_hist48_graphs.pt",
+          "bytes": 283602346,
+          "mtime_ns": 1788642063569923267
+        },
+        {
+          "name": "2096_2097_Battery_peryear_hist48_graphs.pt",
+          "bytes": 281725246,
+          "mtime_ns": 1788642064933930003
+        },
+        {
+          "name": "2097_2098_Battery_peryear_hist48_graphs.pt",
+          "bytes": 281725246,
+          "mtime_ns": 1788642066273936621
+        },
+        {
+          "name": "2098_2099_Battery_peryear_hist48_graphs.pt",
+          "bytes": 281725246,
+          "mtime_ns": 1788642067693943633
+        },
+        {
+          "name": "2099_2100_Battery_peryear_hist48_graphs.pt",
+          "bytes": 114664434,
+          "mtime_ns": 1788642069172950935
+        }
+      ]
+    }
+  }
+}
