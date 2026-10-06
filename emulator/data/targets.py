@@ -88,8 +88,8 @@ def supervised_targets(store, indices):
     if not indices:
         raise ValueError("Cannot build a supervised target series from an empty split.")
     labels = np.stack([store.graphs[index].y.detach().cpu().numpy().reshape(-1) for index in indices]).astype(np.float64)
-    if not np.isfinite(labels).all():
-        raise ValueError("Supervised target labels must be finite.")
+    if np.isinf(labels).any():
+        raise ValueError("Supervised target labels must not contain infinity.")
     tags = getattr(store, "graph_tags", None)
     timestamps = np.stack([target_timestamps_from_graph(store.graphs[index], tags[index] if tags else str(index))
                            for index in indices])

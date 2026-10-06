@@ -43,11 +43,11 @@ def _threshold(value):
     return value
 
 
-def _values(value, name):
+def _values(value, name, *, allow_nonfinite=False):
     array = _numpy(value).astype(np.float64)
     if array.ndim != 2 or array.shape[1] == 0:
         raise ValueError(f"{name} must have shape [windows, horizons] with at least one horizon.")
-    if not np.isfinite(array).all():
+    if not allow_nonfinite and not np.isfinite(array).all():
         raise ValueError(f"Cannot evaluate nonfinite {name}.")
     return array
 
@@ -101,6 +101,21 @@ def _split_labels(split_ids, shape):
     return labels.astype(str)
 
 
+def _validate_unique_timestamps(times, labels):
+    """Validate all target hours and return chronological indices per split."""
+    groups = []
+    for label in np.unique(labels):
+        indices = np.flatnonzero(labels == label)
+        indices = indices[np.argsort(times[indices], kind="stable")]
+        sorted_times = times[indices]
+        duplicate = np.flatnonzero(np.diff(sorted_times) == 0)
+        if duplicate.size:
+            timestamp = np.datetime64(int(sorted_times[duplicate[0]]), "s")
+            raise ValueError(f"Duplicate target timestamp {timestamp} within split {label!r}; supervised target hours must occur exactly once.")
+        groups.append(indices)
+    return groups
+
+
 def gt_event_episodes(y_true, target_timestamps, tau_physical, *, split_ids=None):
     """Return chronologically ordered flat target indices for each GT episode.
 
@@ -115,14 +130,7 @@ def gt_event_episodes(y_true, target_timestamps, tau_physical, *, split_ids=None
     labels = _split_labels(split_ids, truth.shape).ravel()
     truth = truth.ravel()
     episodes = []
-    for label in np.unique(labels):
-        indices = np.flatnonzero(labels == label)
-        indices = indices[np.argsort(times[indices], kind="stable")]
-        sorted_times = times[indices]
-        duplicate = np.flatnonzero(np.diff(sorted_times) == 0)
-        if duplicate.size:
-            timestamp = np.datetime64(int(sorted_times[duplicate[0]]), "s")
-            raise ValueError(f"Duplicate target timestamp {timestamp} within split {label!r}; supervised target hours must occur exactly once.")
+    for indices in _validate_unique_timestamps(times, labels):
         extreme = indices[truth[indices] > tau]
         if extreme.size:
             breaks = np.flatnonzero(np.diff(times[extreme]) != 3600) + 1
@@ -156,18 +164,30 @@ def evaluate_metrics(y_pred, y_true, tau_physical, *, target_timestamps=None, sp
 
     Final episode populations use strict GT exceedance, exact hourly continuity
     and earliest maxima. Duplicate timestamps within a split are rejected.
+    Hourly metrics omit individual nonfinite targets; episode metrics omit their
+    entire windows. Predictions must be finite wherever targets are finite.
     """
-    prediction, truth = _values(y_pred, "y_pred"), _values(y_true, "y_true")
+    prediction = _values(y_pred, "y_pred", allow_nonfinite=True)
+    truth = _values(y_true, "y_true", allow_nonfinite=True)
     if prediction.shape != truth.shape:
         raise ValueError("y_pred and y_true must have identical [windows, horizons] shapes.")
+    point_valid = np.isfinite(truth)
+    if not np.isfinite(prediction[point_valid]).all():
+        raise ValueError("Cannot evaluate nonfinite y_pred where y_true is finite.")
     tau = _threshold(tau_physical)
     if split_ids is not None and target_timestamps is None:
         raise ValueError("split_ids require target_timestamps for split-isolated episode evaluation.")
-    error = prediction - truth
+    error = prediction[point_valid] - truth[point_valid]
     metrics = dict(**_errors(error, "all", bias=False),
-                   **_errors(error[truth > tau], "exceedance", bias=False))
+                   **_errors(error[truth[point_valid] > tau], "exceedance", bias=False))
     if target_timestamps is not None:
-        metrics.update(_episode_metrics(prediction, truth, target_timestamps, tau, split_ids))
+        times = _timestamp_seconds(target_timestamps, truth.shape)
+        labels = _split_labels(split_ids, truth.shape)
+        window_valid = point_valid.all(axis=1)
+        if not window_valid.all():
+            _validate_unique_timestamps(times.ravel(), labels.ravel())
+        metrics.update(_episode_metrics(prediction[window_valid], truth[window_valid],
+                                        times[window_valid], tau, labels[window_valid]))
     return metrics
 
 

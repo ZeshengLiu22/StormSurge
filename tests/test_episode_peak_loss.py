@@ -17,7 +17,7 @@ from emulator.models import ForecastOutput
 from emulator.training import ForecastLoss, LossConfig, run_epoch
 from emulator.training.episode_peaks import build_episode_peak_targets, validate_episode_peak_traversal
 from emulator.training.losses import episode_gt_aligned_peak_mse
-from emulator.training.metrics import METRIC_KEYS, evaluate_metrics, gt_event_episodes
+from emulator.training.metrics import EPISODE_METRIC_KEYS, METRIC_KEYS, evaluate_metrics, gt_event_episodes
 from test_pipeline import make_fixture
 from test_training import CountingModel
 import test_training
@@ -53,6 +53,78 @@ class EpisodePeakTests(unittest.TestCase):
         self.assertEqual(build_episode_peak_targets(truth, times, 1.).metadata['episode_count'], 1)
         self.assertEqual(build_episode_peak_targets(truth, times, 1.-1e-10).metadata['episode_count'], 2)
         self.assertEqual(build_episode_peak_targets(truth, times, 2.).metadata['episode_count'], 0)
+
+    def test_nan_window_has_no_peak_targets_and_breaks_episode_continuity(self):
+        truth = np.array([[3., 4., 5.], [9., np.nan, 8.], [6., 7., 8.]])
+        targets = build_episode_peak_targets(truth, self.times, 2.)
+        np.testing.assert_array_equal(targets.episode_id, [[0, 0, 0], [-1, -1, -1], [1, 1, 1]])
+        np.testing.assert_array_equal(targets.is_episode_gt_peak,
+                                      [[False, False, True], [False, False, False], [False, False, True]])
+        self.assertEqual(targets.metadata['episode_count'], 2)
+        self.assertEqual(targets.metadata['canonical_peak_target_count'], 2)
+        self.assertEqual(targets.metadata['eligible_target_count'], 6)
+        self.assertEqual(targets.metadata['p_episode_peak'], 2/6)
+        order = [2, 1, 0]
+        reordered = build_episode_peak_targets(truth[order], self.times[order], 2.)
+        np.testing.assert_array_equal(reordered.episode_id, targets.episode_id[order])
+        np.testing.assert_array_equal(reordered.is_episode_gt_peak, targets.is_episode_gt_peak[order])
+        # An excluded block still has to satisfy the timestamp contract.
+        duplicate_times = self.times.copy()
+        duplicate_times[1, 0] = duplicate_times[0, 2]
+        with self.assertRaisesRegex(ValueError, 'Duplicate target timestamp'):
+            build_episode_peak_targets(truth, duplicate_times, 2.)
+        empty = build_episode_peak_targets(truth[1:2], self.times[1:2], 2.)
+        np.testing.assert_array_equal(empty.episode_id, [[-1, -1, -1]])
+        self.assertFalse(empty.is_episode_gt_peak.any())
+        self.assertEqual(empty.metadata['eligible_target_count'], 0)
+        self.assertEqual(empty.metadata['p_episode_peak'], 0.)
+
+    def test_nan_window_contributes_no_peak_loss_or_peak_gradient(self):
+        truth = torch.tensor([[3., 4., 5.], [9., float('nan'), 8.], [6., 7., 8.]], dtype=torch.float64)
+        prediction = torch.tensor([[0., 0., 0.], [500., 600., 700.], [0., 0., 0.]],
+                                  dtype=torch.float64, requires_grad=True)
+        # Deliberately supplied flags in the invalid row must be excluded too.
+        mask = torch.tensor([[False, False, True], [True, True, True], [False, False, True]])
+        stats = dict(y_mean=torch.zeros(3), y_std=torch.ones(3))
+        criterion = ForecastLoss(LossConfig(episode_gt_aligned_peak_weight=.5), stats, 2., p_episode_peak=1/3)
+        global_only = ForecastLoss(LossConfig(), stats, 2.)
+        total = criterion(ForecastOutput(prediction), prediction, truth, episode_gt_peak_mask=mask)
+        baseline = global_only(ForecastOutput(prediction), prediction, truth)
+        peak = (total - baseline) / .5
+        self.assertAlmostEqual(peak.item(), (25+64)/2)
+        self.assertEqual(criterion.last_components['episode_peak_target_count'].item(), 2)
+        self.assertEqual(criterion.last_components['episode_gt_aligned_peak_mse_raw'].item(), (25+64)/2)
+        gradient = torch.autograd.grad(peak, prediction)[0]
+        expected = torch.zeros_like(prediction)
+        expected[0, 2], expected[2, 2] = -5., -8.
+        torch.testing.assert_close(gradient, expected)
+        valid = torch.tensor([True, False, True])
+        reference = criterion(ForecastOutput(prediction[valid]), prediction[valid], truth[valid],
+                              episode_gt_peak_mask=mask[valid])
+        reference_global = global_only(ForecastOutput(prediction[valid]), prediction[valid], truth[valid])
+        torch.testing.assert_close(peak.detach(), ((reference-reference_global)/.5).detach())
+        empty_prediction = torch.ones((1, 3), dtype=torch.float64, requires_grad=True)
+        criterion(ForecastOutput(empty_prediction), empty_prediction, truth[1:2],
+                  episode_gt_peak_mask=mask[1:2])
+        self.assertEqual(criterion.last_components['episode_gt_aligned_peak_mse_raw'].item(), 0.)
+        self.assertEqual(criterion.last_components['episode_peak_target_count'].item(), 0)
+        empty_total = criterion(ForecastOutput(empty_prediction), empty_prediction,
+                                torch.full_like(empty_prediction, float('nan')), episode_gt_peak_mask=mask[1:2])
+        self.assertEqual(empty_total.item(), 0.)
+        empty_total.backward()
+        torch.testing.assert_close(empty_prediction.grad, torch.zeros_like(empty_prediction))
+
+    def test_episode_metrics_exclude_nan_window_and_preserve_gap(self):
+        truth = np.array([[3., 4., 5.], [9., np.nan, 8.], [6., 7., 8.]])
+        prediction = np.array([[4., 9., 1.], [1000., np.nan, 1000.], [12., 2., 7.]])
+        metrics = evaluate_metrics(prediction, truth, 2., target_timestamps=self.times)
+        valid = np.isfinite(truth).all(axis=1)
+        reference = evaluate_metrics(prediction[valid], truth[valid], 2., target_timestamps=self.times[valid])
+        for key in EPISODE_METRIC_KEYS:
+            self.assertEqual(metrics[key], reference[key], key)
+        self.assertEqual(metrics['episode_peak_rmse'], 4.)
+        self.assertAlmostEqual(metrics['episode_gt_aligned_peak_rmse'], np.sqrt((16+1)/2))
+        self.assertEqual(metrics['episode_peak_timing_mae_hours'], 1.5)
 
     def test_duplicate_timestamps_cannot_reach_supervision(self):
         times = self.times.copy()

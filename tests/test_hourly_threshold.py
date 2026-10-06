@@ -7,7 +7,7 @@ import numpy as np
 import torch
 from torch_geometric.data import Data
 
-from emulator.data import (ForcingGraphView, fit_loss_thresholds, supervised_targets,
+from emulator.data import (ForcingGraphView, fit_loss_thresholds, fit_statistics, supervised_targets,
                            target_timestamps_from_graph, threshold_population, validate_target_timestamps)
 
 
@@ -21,6 +21,67 @@ def fixture():
 
 
 class HourlyThresholdTests(unittest.TestCase):
+    def test_y_statistics_ignore_missing_targets_per_horizon(self):
+        store = fixture()
+        baseline = fit_statistics(store, [0, 1])
+        store.graphs[0].y[2] = float("nan")
+        fitted = fit_statistics(store, [0, 1])
+        expected_mean = torch.tensor([3., 4., 8., 6., 7., 8.])
+        expected_std = torch.sqrt(torch.tensor([9., 9., 0., 9., 9., 9.]) + 1e-6)
+        torch.testing.assert_close(fitted["y_mean"], expected_mean)
+        torch.testing.assert_close(fitted["y_std"], expected_std)
+        self.assertTrue(torch.isfinite(fitted["y_mean"]).all())
+        self.assertTrue(torch.isfinite(fitted["y_std"]).all())
+        torch.testing.assert_close(fitted["x_center"], baseline["x_center"], rtol=0, atol=0)
+        torch.testing.assert_close(fitted["x_scale"], baseline["x_scale"], rtol=0, atol=0)
+
+    def test_y_statistics_preserve_finite_data_arithmetic(self):
+        store = fixture()
+        labels = torch.stack([graph.y.double() for graph in store.graphs[:2]])
+        mean = (labels.sum(dim=0) / len(labels)).float()
+        std = torch.sqrt((labels.square().sum(dim=0) / len(labels)).float() - mean.square() + 1e-6)
+        fitted = fit_statistics(store, [0, 1])
+        torch.testing.assert_close(fitted["y_mean"], mean, rtol=0, atol=0)
+        torch.testing.assert_close(fitted["y_std"], std, rtol=0, atol=0)
+
+    def test_y_statistics_reject_horizon_without_finite_train_targets(self):
+        store = fixture()
+        for graph in store.graphs[:2]:
+            graph.y[2] = float("nan")
+        with self.assertRaisesRegex(ValueError, "Every target horizon.*finite TRAIN target"):
+            fit_statistics(store, [0, 1])
+
+    def test_train_q95_and_population_exclude_entire_missing_window(self):
+        store = fixture()
+        store.graphs[1].y[2] = float("nan")
+        expected = fit_loss_thresholds(store, [0, 2])
+        actual = fit_loss_thresholds(store, [0, 1, 2])
+        self.assertEqual(actual, expected)
+        self.assertAlmostEqual(actual["tau_physical"], 545.)
+        self.assertEqual(actual["train_windows"], 2)
+        self.assertEqual(actual["train_target_hour_count"], 12)
+        self.assertEqual(actual["train_extreme_hour_count"], 1)
+        self.assertEqual(actual["train_event_window_count"], 1)
+        self.assertEqual(actual["train_episode_count"], 1)
+
+    def test_train_threshold_rejects_all_missing_windows(self):
+        store = fixture()
+        for graph in store.graphs[:2]:
+            graph.y[2] = float("nan")
+        with self.assertRaisesRegex(ValueError, "fully finite target window"):
+            fit_loss_thresholds(store, [0, 1])
+
+    def test_supervised_targets_allow_nan_but_reject_infinity(self):
+        store = fixture()
+        store.graphs[0].y[2] = float("nan")
+        labels, timestamps = supervised_targets(store, [0, 1])
+        self.assertTrue(np.isnan(labels[0, 2]))
+        np.testing.assert_array_equal(np.diff(timestamps.reshape(-1)), 3600)
+        for value in (float("inf"), float("-inf")):
+            store.graphs[0].y[2] = value
+            with self.assertRaisesRegex(ValueError, "must not contain infinity"):
+                supervised_targets(store, [0, 1])
+
     def test_physical_target_hours_only_and_explicit_linear_quantile(self):
         store = fixture()
         fitted = fit_loss_thresholds(store, [0, 1], 75., stats=dict(y_mean=torch.tensor([2.] * 6), y_std=torch.tensor([4.] * 6)))

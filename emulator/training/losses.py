@@ -222,6 +222,8 @@ class ForecastLoss(nn.Module):
         self.event_prior = event_prior
 
     def forward(self, output, prediction, target, *, episode_gt_peak_mask=None):
+        point_valid = torch.isfinite(target)
+        window_valid = point_valid.all(dim=1)
         c = self.config
         if c.episode_gt_aligned_peak_weight > 0 and output.body is not None:
             raise ValueError("Episode GT-aligned peak supervision requires Single.")
@@ -229,7 +231,12 @@ class ForecastLoss(nn.Module):
             raise ValueError("Excess-amplitude supervision requires the supervised dual exceedance head.")
         if output.body is None and c.shape_loss_weight > 0:
             raise ValueError("Shape supervision requires the severity_shape dual head.")
-        error = (prediction - target).square()
+        # Mask before squaring so missing targets cannot poison backward with NaNs.
+        safe_target = torch.where(point_valid, target, 0.0)
+        error = torch.where(point_valid, prediction - safe_target, 0.0).square()
+        global_mse = error.sum() / point_valid.sum().clamp_min(1)
+        eligible_target_count = (window_valid.sum() * target.size(1)).clamp_min(1)
+        tail_mask = window_valid[:, None] & (target.double() > self.tau_physical)
         core = c.loss_mode.removesuffix("_slope")
         if core == "wmse":
             weight = 1 + c.wmse_alpha * torch.sigmoid((target - self.tau_physical) / max(c.wmse_s, 1e-6))
@@ -239,28 +246,33 @@ class ForecastLoss(nn.Module):
                 quantile_tau=c.wqe_quantile_tau, expectile_tau=c.wqe_expectile_tau,
                 quantile_weight=c.wqe_quantile_weight, expectile_weight=c.wqe_expectile_weight).mean()
         else:
-            loss = weighted_error.mean() if core == "wmse" else error.mean()
+            loss = weighted_error.mean() if core == "wmse" else global_mse
         exceedance = error.new_zeros(())
         if c.exceedance_loss_weight:
             # Compare in FP64: a fitted threshold must not round to a target tie.
-            mask = target.double() > self.tau_physical
             tail_penalty = error
             if c.exceedance_loss_mode == "wqe":
                 tail_penalty = wqe_penalty(prediction, target, self.y_std,
                     quantile_tau=c.wqe_quantile_tau, expectile_tau=c.wqe_expectile_tau,
                     quantile_weight=c.wqe_quantile_weight, expectile_weight=c.wqe_expectile_weight)
-            exceedance = torch.where(mask, tail_penalty, 0.0).mean() / self.extreme_hour_prior
+            exceedance = (torch.where(tail_mask, tail_penalty, 0.0).sum()
+                          / eligible_target_count / self.extreme_hour_prior)
             loss = loss + c.exceedance_loss_weight * exceedance
         peak = error.sum() * 0.0
+        if (episode_gt_peak_mask is not None and episode_gt_peak_mask.dtype == torch.bool
+                and episode_gt_peak_mask.shape == error.shape):
+            episode_gt_peak_mask = episode_gt_peak_mask & window_valid[:, None]
         if c.episode_gt_aligned_peak_weight > 0 or (episode_gt_peak_mask is not None and self.p_episode_peak):
             peak = episode_gt_aligned_peak_mse(error, episode_gt_peak_mask, self.p_episode_peak)
+            # The helper averages over the full batch; exclude invalid windows from that denominator.
+            peak = peak * (error.numel() / eligible_target_count.to(error.dtype))
         if c.episode_gt_aligned_peak_weight:
             loss = loss + c.episode_gt_aligned_peak_weight * peak
         # Detached diagnostics never change the legacy objective or its gradients.
-        tail_mse = (torch.where(target.double() > self.tau_physical, error, 0.0).mean()
+        tail_mse = (torch.where(tail_mask, error, 0.0).sum() / eligible_target_count
                     / self.extreme_hour_prior if self.extreme_hour_prior else error.new_zeros(()))
         self.last_components = {
-            "global_mse_raw": error.mean().detach(),
+            "global_mse_raw": global_mse.detach(),
             "tail_mse_raw": tail_mse.detach(),
             "tail_weighted": (c.exceedance_loss_weight * exceedance).detach(),
             "episode_gt_aligned_peak_mse_raw": peak.detach(),

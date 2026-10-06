@@ -69,15 +69,19 @@ def fit_statistics(store, indices, x_norm="zscore", p_lo=1.0, p_hi=99.0,
     horizons = store.graphs[indices[0]].y.numel()
     total = torch.zeros(horizons, dtype=torch.float64, device=device)
     square = torch.zeros_like(total)
-    count = torch.zeros((), dtype=torch.float64, device=device)
+    count = torch.zeros_like(total)
     for i in local_indices:
         y = store.graphs[i].y.reshape(-1).to(device=device, dtype=torch.float64)
+        finite = torch.isfinite(y)
+        y = torch.where(finite, y, 0.)
         total += y
         square += y ** 2
-        count += 1.
+        count += finite
     if distributed:
         for value in (total, square, count):
             dist.all_reduce(value)
+    if (count == 0).any():
+        raise ValueError("Every target horizon requires at least one finite TRAIN target.")
     center = (total / count).float()
     variance = (square / count).float() - center ** 2
     stats.update(y_mean=center.cpu(), y_std=torch.sqrt(variance + 1e-6).cpu())
@@ -95,6 +99,10 @@ def fit_loss_thresholds(store, indices, exceedance_percentile=95.0, stats=None):
     if not 0 < exceedance_percentile < 100:
         raise ValueError("TRAIN exceedance_percentile must lie strictly between 0 and 100.")
     labels, timestamps = supervised_targets(store, indices)
+    window_valid = np.isfinite(labels).all(axis=1)
+    labels, timestamps = labels[window_valid], timestamps[window_valid]
+    if not len(labels):
+        raise ValueError("Cannot fit the TRAIN threshold without a fully finite target window.")
     chronological = np.argsort(timestamps, axis=None, kind="stable")
     hourly_values = labels.reshape(-1)[chronological]
     tau = float(np.quantile(hourly_values, exceedance_percentile / 100., method="linear"))

@@ -61,6 +61,61 @@ class TrainingTests(unittest.TestCase):
                 else:
                     np.testing.assert_allclose(result.metrics[name], value, rtol=2e-7)
 
+    def test_hourly_metrics_ignore_only_nonfinite_target_elements(self):
+        truth = np.array([[1., np.nan, 4.], [3., 5., 2.]])
+        prediction = np.array([[3., np.nan, 1.], [5., 9., 2.]])
+        metrics = evaluate_metrics(prediction, truth, 2.)
+        self.assertAlmostEqual(metrics["all_rmse"], math.sqrt(33 / 5))
+        self.assertAlmostEqual(metrics["all_mae"], 11 / 5)
+        self.assertAlmostEqual(metrics["exceedance_rmse"], math.sqrt(29 / 3))
+        self.assertAlmostEqual(metrics["exceedance_mae"], 3.)
+        # The two finite targets in the first window still contribute.
+        complete_only = evaluate_metrics(prediction[1:], truth[1:], 2.)
+        self.assertNotEqual(metrics["all_rmse"], complete_only["all_rmse"])
+        self.assertNotEqual(metrics["exceedance_rmse"], complete_only["exceedance_rmse"])
+        # With no missing targets the original finite-data reductions are exact.
+        truth[0, 1], prediction[0, 1] = 6., 7.
+        finite = evaluate_metrics(prediction, truth, 2.)
+        error = prediction - truth
+        self.assertEqual(finite["all_rmse"], float(np.sqrt(np.mean(error ** 2))))
+        self.assertEqual(finite["all_mae"], float(np.mean(np.abs(error))))
+        self.assertEqual(finite["exceedance_rmse"], float(np.sqrt(np.mean(error[truth > 2.] ** 2))))
+        self.assertEqual(finite["exceedance_mae"], float(np.mean(np.abs(error[truth > 2.]))))
+
+    def test_nonfinite_predictions_fail_where_targets_are_finite(self):
+        truth = np.array([[np.nan, 4.], [3., 5.]])
+        prediction = np.array([[np.nan, 3.], [2., 4.]])
+        times = np.arange(truth.size).reshape(truth.shape) * 3600
+        for bad in (np.nan, np.inf, -np.inf):
+            for index in ((0, 1), (1, 0)):
+                with self.subTest(bad=bad, index=index):
+                    invalid = prediction.copy()
+                    invalid[index] = bad
+                    with self.assertRaisesRegex(ValueError, "nonfinite y_pred.*y_true is finite"):
+                        evaluate_metrics(invalid, truth, 2., target_timestamps=times)
+        missing = evaluate_metrics(np.full((1, 2), np.nan), np.full((1, 2), np.nan), 2.,
+                                   target_timestamps=times[:1])
+        self.assertTrue(all(value is None for value in missing.values()))
+
+    def test_nan_target_survives_training_and_prediction_export(self):
+        data = [sample.clone() for sample in self.data[:5]]
+        data[2].y[0, 0] = float("nan")
+        model = CountingModel()
+        criterion = ForecastLoss(LossConfig(exceedance_loss_weight=1.), self.stats, 1.,
+                                 extreme_hour_prior=.25)
+        result = run_epoch(model, self.loader(data, batch_size=2), torch.device("cpu"), self.stats,
+                           tau_physical=1., optimizer=torch.optim.SGD(model.parameters(), lr=.001),
+                           criterion=criterion, save_predictions=True)
+        self.assertTrue(torch.isfinite(model.weight))
+        self.assertTrue(np.isnan(result.predictions["y_true"][2, 0]))
+        self.assertTrue(all(value is None or np.isfinite(value) for value in result.metrics.values()))
+        self.assertTrue(all(value is None or np.isfinite(value) for value in result.losses.values()))
+        truth, prediction = result.predictions["y_true"], result.predictions["y_pred"]
+        valid = np.isfinite(truth)
+        error = prediction.astype(np.float64)[valid] - truth[valid]
+        self.assertEqual(result.metrics["all_rmse"], float(np.sqrt(np.mean(error ** 2))))
+        self.assertEqual(result.metrics["all_mae"], float(np.mean(np.abs(error))))
+
     def test_normalization_does_not_mutate_aliased_source_features(self):
         source = torch.tensor([[5.]])
         sample = Data(x=source, x_hist=source.unsqueeze(1))

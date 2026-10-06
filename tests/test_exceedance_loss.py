@@ -32,6 +32,56 @@ class ExceedanceLossTests(unittest.TestCase):
         torch.testing.assert_close(prediction.grad, .3 * 2 * (prediction-target)*mask / (target.numel()*.25))
         self.assertEqual(torch.count_nonzero(prediction.grad).item(), 2)
 
+    def test_global_mse_keeps_finite_hours_in_nan_window_and_has_finite_gradient(self):
+        target = torch.tensor([[2., float('nan'), 1.], [.5, 3., -4.]], dtype=torch.float64)
+        prediction = torch.zeros_like(target, requires_grad=True)
+        actual = self.objective(prediction, target, weight=0.)
+        valid = torch.isfinite(target)
+        expected = (prediction[valid] - target[valid]).square().mean()
+        torch.testing.assert_close(actual, expected)
+        actual.backward()
+        expected_gradient = torch.zeros_like(prediction)
+        expected_gradient[valid] = 2 * (prediction.detach()[valid] - target[valid]) / valid.sum()
+        torch.testing.assert_close(prediction.grad, expected_gradient)
+        self.assertTrue(torch.isfinite(prediction.grad).all())
+        self.assertNotEqual(prediction.grad[0, 0].item(), 0.)
+        self.assertNotEqual(prediction.grad[0, 2].item(), 0.)
+
+    def test_nan_window_has_no_tail_loss_or_gradient_and_does_not_dilute_neighbors(self):
+        target = torch.tensor([[2., 0., 1.], [20., float('nan'), 30.], [.5, 3., -4.]],
+                              dtype=torch.float64)
+        prediction = torch.zeros_like(target, requires_grad=True)
+        valid_windows = torch.tensor([True, False, True])
+        actual = self.extra(prediction, target)
+        expected = self.extra(prediction[valid_windows], target[valid_windows])
+        torch.testing.assert_close(actual, expected)
+        actual.backward()
+        expected_gradient = torch.zeros_like(prediction)
+        expected_gradient[0, 0] = .3 * 2 * -2. / (6 * .25)
+        expected_gradient[2, 1] = .3 * 2 * -3. / (6 * .25)
+        torch.testing.assert_close(prediction.grad, expected_gradient)
+        self.assertTrue(torch.isfinite(prediction.grad).all())
+        for weight in (0., .3):
+            criterion = ForecastLoss(LossConfig(exceedance_loss_weight=weight),
+                                     dict(y_mean=torch.zeros(3), y_std=torch.ones(3)),
+                                     1., extreme_hour_prior=.25)
+            criterion(ForecastOutput(prediction), prediction, target)
+            self.assertAlmostEqual(criterion.last_components['tail_mse_raw'].item(), (4.+9.)/(6*.25))
+
+    def test_all_nan_targets_have_differentiable_zero_global_and_tail_loss(self):
+        target = torch.full((2, 3), float('nan'))
+        prediction = torch.ones_like(target, requires_grad=True)
+        criterion = ForecastLoss(LossConfig(exceedance_loss_weight=.3),
+                                 dict(y_mean=torch.zeros(3), y_std=torch.ones(3)),
+                                 1., extreme_hour_prior=.25)
+        loss = criterion(ForecastOutput(prediction), prediction, target)
+        self.assertEqual(loss.item(), 0.)
+        loss.backward()
+        torch.testing.assert_close(prediction.grad, torch.zeros_like(prediction), rtol=0, atol=0)
+        for component in criterion.last_components.values():
+            self.assertTrue(torch.isfinite(component))
+            self.assertEqual(component.item(), 0.)
+
     def test_tail_wqe_uses_shared_parameters_fixed_scale_and_strict_hourly_gradient(self):
         target = torch.tensor([[2., 0., 1.], [.5, 3., -4.]], dtype=torch.float64)
         prediction = torch.tensor([[.2, 5., -8.], [.8, 4., .1]], dtype=torch.float64, requires_grad=True)
