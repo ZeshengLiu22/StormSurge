@@ -194,16 +194,6 @@ def main(argv=None):
         raise ValueError("Checkpoint has no held-out source TEST split. "
                          "Provide --test_root_dir for external transfer evaluation, "
                          "or explicitly use --scope all if source-all evaluation is intended.")
-    # Station filtering is always strict; missing station data never selects other stations.
-    store = ForcingGraphStore(root, station)
-    if all_years:
-        indices = list(range(len(store.graphs)))
-    else:
-        expected_tags = set(checkpoint["split_tags"]["test"])
-        missing = expected_tags - set(store.graph_tags)
-        if missing:
-            raise ValueError(f"Saved test samples are missing: {len(missing)}. Select --test_root_dir for external data.")
-        indices = [i for i, tag in enumerate(store.graph_tags) if tag in expected_tags]
     requested_years = [year.strip() for year in args.years.split(",") if year.strip()]
     if args.strict_years:
         if not requested_years:
@@ -214,6 +204,30 @@ def main(argv=None):
                    or int(year[5:]) != int(year[:4]) + 1]
         if invalid:
             raise ValueError(f"Invalid requested evaluation year groups: {', '.join(invalid)}")
+    # External/source-all evaluations can load just the explicitly requested years.
+    # Held-out evaluation still loads the full store to validate all saved TEST tags.
+    if all_years and requested_years:
+        available_years = set()
+        for path in Path(root).glob("*graphs.pt"):
+            parts = path.stem.split("_")
+            if len(parts) >= 3 and (station is None or parts[2] == station):
+                available_years.add("_".join(parts[:2]))
+        missing_years = set(requested_years) - available_years
+        if args.strict_years and missing_years:
+            raise ValueError("Requested evaluation year groups missing from target: " + ", ".join(sorted(missing_years)))
+        if not set(requested_years) & available_years:
+            raise ValueError("The requested evaluation set is empty.")
+    # Station filtering is always strict; missing station data never selects other stations.
+    store = ForcingGraphStore(root, station, year_filter=requested_years if all_years and requested_years else None)
+    if all_years:
+        indices = list(range(len(store.graphs)))
+    else:
+        expected_tags = set(checkpoint["split_tags"]["test"])
+        missing = expected_tags - set(store.graph_tags)
+        if missing:
+            raise ValueError(f"Saved test samples are missing: {len(missing)}. Select --test_root_dir for external data.")
+        indices = [i for i, tag in enumerate(store.graph_tags) if tag in expected_tags]
+    if args.strict_years:
         missing_years = set(requested_years) - set(store.year_to_indices)
         if missing_years:
             raise ValueError("Requested evaluation year groups missing from target: " + ", ".join(sorted(missing_years)))

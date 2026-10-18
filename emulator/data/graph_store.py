@@ -14,11 +14,12 @@ from .targets import target_timestamps_from_graph, validate_target_timestamps
 
 
 class ForcingGraphStore:
-    def __init__(self, root_dir, station_filter=None, *, pattern="*graphs.pt", targets_only=False):
+    def __init__(self, root_dir, station_filter=None, *, pattern="*graphs.pt", targets_only=False, year_filter=None):
         self.graphs = []
         self.graph_tags = []
         self.year_to_indices = defaultdict(list)
-        # Filter filenames before loading: other stations never occupy RAM.
+        # Filter filenames before loading: other stations/years never occupy RAM.
+        selected_years = None if year_filter is None else set(year_filter)
         files = sorted(Path(root_dir).glob(pattern))
         for path in files:
             stem = path.name.removesuffix("_graphs.pt") if path.name.endswith("_graphs.pt") else path.stem
@@ -28,6 +29,8 @@ class ForcingGraphStore:
             if station_filter is not None and parts[2] != station_filter:
                 continue
             year = "_".join(parts[:2])
+            if selected_years is not None and year not in selected_years:
+                continue
             for index, graph in enumerate(torch.load(path, map_location="cpu", weights_only=False)):
                 self.year_to_indices[year].append(len(self.graphs))
                 self.graph_tags.append(f'{"_".join(parts)}_{index}')
