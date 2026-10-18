@@ -29,16 +29,21 @@ NCEP weight sweeps, four-station CMIP6 comparisons, historical NCEP training for
 future transfer, and cross-dataset inference. Each family retains its original
 data, split, checkpoint, and result provenance.
 
-Use [environment_training.yml](environment_training.yml) for model execution.
-Set the config's interpreter override for your machine, and provide the
-preprocessed graph data and station metadata referenced by that config.
+Use [environment.yml](environment.yml), exported from `derecho-ml`, for model
+execution. Activate `derecho-ml` before running either shell launcher. The
+launchers use the active environment's Python, including inside tmux; set
+`PYTHON_BIN` explicitly only when a different interpreter is needed.
+Config arguments are relative to the caller's working directory. Paths inside
+configs are relative to the repository root; the default graph directory is
+`./dataset/NCEP/graphs`. Provide the data, checkpoint, and output paths required
+by the selected config.
 Preview a training command before launching it:
 
 ```bash
-S0_PYTHON_BIN="$(command -v python)" DRY_RUN=1 USE_TMUX=0 bash train.sh \
+DRY_RUN=1 USE_TMUX=0 bash train.sh \
   configs_old/single_tail_episodepeak_4x4/train_config_NCEP_Boston_G0_T0250_EP0050.sh
 
-S0_PYTHON_BIN="$(command -v python)" USE_TMUX=0 bash train.sh \
+USE_TMUX=0 bash train.sh \
   configs_old/single_tail_episodepeak_4x4/train_config_NCEP_Boston_G0_T0250_EP0050.sh
 ```
 

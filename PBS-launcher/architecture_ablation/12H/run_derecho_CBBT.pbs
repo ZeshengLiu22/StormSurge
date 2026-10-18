@@ -1,0 +1,15 @@
+#!/bin/bash -l
+# Eight sequential architecture runs for CBBT, history=12H.
+# Submit from Derecho: qsub PBS-launcher/architecture_ablation/12H/run_derecho_CBBT.pbs
+#PBS -N aa12_CBBT
+#PBS -A ULHI0005
+#PBS -q main@desched1
+#PBS -l job_priority=economy
+#PBS -l select=1:ncpus=64:mem=487GB:mpiprocs=4:ompthreads=1:ngpus=4
+#PBS -l walltime=12:00:00
+#PBS -j oe
+#PBS -o /glade/u/home/zel/scratch/StormSurge/PBS-launcher/architecture_ablation/12H/
+
+set -euo pipefail
+cd /glade/u/home/zel/scratch/StormSurge
+exec bash PBS-launcher/architecture_ablation/run_station.sh CBBT 12H

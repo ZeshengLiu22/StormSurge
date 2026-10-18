@@ -1,47 +1,46 @@
 #!/usr/bin/env bash
+# Run single-node training with the already activated derecho-ml environment.
+# Usage: bash train.sh <train-config.sh>
+# The config argument is relative to the caller's working directory.
+# Paths inside the config are relative to this script's directory (repo root).
 set -euo pipefail
 
 cleanup() {
-  echo "[TRAP] got SIGINT/SIGTERM — cleaning up children"
-  pkill -P $$ 2>/dev/null || true
+  echo "[TRAP] Received SIGINT/SIGTERM; stopping child processes."
+  pkill -P "$$" 2>/dev/null || true
 }
 trap cleanup INT TERM
 
-# ============================================================
-# train.sh — single-node launcher (interactive idev OR non-Slurm host)
-#
-# - No srun: uses torchrun / torch.distributed.run directly.
-# - All experiment knobs live in a sourced config file.
-# - Supports lightweight sweeps over learning rate and history window.
-# ============================================================
-
-# =========================
-# Config loading
-# =========================
-# Usage:
-#   bash train.sh configs_old/<family>/train_config_*.sh
-#   USE_TMUX=1 bash train.sh configs_old/<family>/train_config_*.sh
-#
+# Locate the repository and config before changing the working directory.
+SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
+WORKDIR="${SCRIPT_DIR}"
 CONFIG_PATH="${1:-}"
 if [[ -z "${CONFIG_PATH}" || "${CONFIG_PATH}" == "--_tmux_inner" ]]; then
-  echo "Usage: bash train.sh configs_old/<family>/train_config_*.sh" >&2
+  echo "Usage: bash train.sh <train-config.sh>" >&2
   exit 2
 fi
 if [[ ! -f "${CONFIG_PATH}" ]]; then
-  echo "[FATAL] config not found: ${CONFIG_PATH}"
+  echo "[FATAL] Config not found: ${CONFIG_PATH}" >&2
   exit 2
 fi
+CONFIG_PATH="$(cd -- "$(dirname -- "${CONFIG_PATH}")" && pwd)/$(basename -- "${CONFIG_PATH}")"
+cd -- "${WORKDIR}"
 
-# Source config (allow omissions; we fill safe defaults below)
+SCRIPT_PATH="${SCRIPT_DIR}/$(basename -- "${BASH_SOURCE[0]}")"
+
+# Use the active environment; support interpreter overrides in older configs.
+PYTHON_BIN="${PYTHON_BIN:-${S0_PYTHON_BIN:-${CONDA_PREFIX:+${CONDA_PREFIX}/bin/python}}}"
+: "${PYTHON_BIN:=python}"
+: "${S0_PYTHON_BIN:=${PYTHON_BIN}}"
+
+# Load experiment settings; apply defaults for omitted values below.
 set +u
 # shellcheck disable=SC1090
 source "${CONFIG_PATH}"
 set -u
 
-# =========================
 # Runtime and data loading
-# =========================
-: "${TRAIN_PY:=train.py}"
+: "${TRAIN_PY:=./train.py}"
 : "${num_gpus:=1}"
 : "${USE_AMP:=0}"
 : "${AMP_DTYPE:=bf16}"             # bf16 | fp16
@@ -52,17 +51,11 @@ set -u
 : "${PERSISTENT_WORKERS:=0}"
 : "${PREFETCH_FACTOR:=2}"
 : "${MP_CONTEXT:=fork}"
-: "${USE_TMUX:=${USE_TMUX:-1}}"
-: "${DO_CONDA:=1}"
-: "${CONDA_MODULE:=anaconda}"
-: "${CONDA_SH:=/software/u22/anaconda/python3.9/etc/profile.d/conda.sh}"
-: "${CONDA_ENV:=torchpyg-cu124}"
+: "${USE_TMUX:=1}"
 : "${DRY_RUN:=0}"
 
-# =========================
 # Data, chronological splits, and TRAIN normalization
-# =========================
-: "${ROOT_DIR:=./Data/NCEP/graphs}"
+: "${ROOT_DIR:=./dataset/NCEP/graphs}"
 : "${TEST_ROOT_DIR:=}"
 : "${STATION:=}"
 : "${SEED:=42}"
@@ -85,9 +78,7 @@ set -u
 : "${X_AUG_BIAS:=0.02}"
 : "${DISABLE_OOD:=0}"
 
-# =========================
 # Model and history
-# =========================
 : "${MODEL:=baseline}"
 : "${ENCODER_TYPE:=GraphSAGE}"
 : "${CNN_INTERMEDIATE_CHANNEL:=29}"
@@ -104,9 +95,7 @@ set -u
 : "${MAX_TIME_STEPS:=32}"
 if [[ -z "${HISTORY_HOURS_LIST+x}" ]]; then HISTORY_HOURS_LIST=(24); fi
 
-# =========================
 # Optimization and scheduling
-# =========================
 : "${BATCH_SIZE:=256}"
 : "${GRAD_ACCUM_STEPS:=1}"
 : "${EPOCHS:=300}"
@@ -124,22 +113,18 @@ if [[ -z "${HISTORY_HOURS_LIST+x}" ]]; then HISTORY_HOURS_LIST=(24); fi
 : "${ROP_MIN_LR:=1e-6}"
 if [[ -z "${LR_LIST+x}" ]]; then LR_LIST=("3e-3"); fi
 
-# =========================
 # Objective: physical Global MSE + strict Tail MSE + episode peak MSE
-# =========================
 : "${EXCEEDANCE_PERCENTILE:=95}"
 : "${EXCEEDANCE_LOSS_WEIGHT:=0}"
 : "${EPISODE_GT_ALIGNED_PEAK_WEIGHT:=0.0}"
 
-# =========================
 # Checkpoint selection and output
-# =========================
 : "${CHECKPOINT_SELECTION:=exceedance}"  # exceedance (primary) | overall (sensitivity)
-: "${ALL_RESULTS_ROOT:=}"
+: "${ALL_RESULTS_ROOT:=./All_Results}"
 : "${RUN_DIR_NAME_STYLE:=timestamp_runname}"
 : "${PYTHON_RUN_TAG_BASE:=}"
 
-# Validate before environment setup or artifact creation.
+# Validate experiment settings before creating artifacts.
 case "${SHUFFLE_YEARS,,}" in
   1|true|yes|y|on) SHUFFLE_YEARS=1 ;;
   0|false|no|n|off) SHUFFLE_YEARS=0 ;;
@@ -175,46 +160,18 @@ if [[ ! "${GRAD_ACCUM_STEPS}" =~ ^[1-9][0-9]*$ ]]; then
   exit 1
 fi
 
-if [[ "${DRY_RUN}" == "1" ]]; then
-  DO_CONDA=0
-fi
-
-# =========================
-# (Optional) Conda activation
-# =========================
-if [[ "${DO_CONDA}" -eq 1 ]]; then
-  if [[ -f "${CONDA_SH}" ]]; then
-    set +u
-    if command -v module >/dev/null 2>&1; then
-      module load "${CONDA_MODULE}" || echo "[WARN] module load ${CONDA_MODULE} failed. Continuing with CONDA_SH=${CONDA_SH}."
-    else
-      echo "[WARN] module command not found. Continuing with CONDA_SH=${CONDA_SH}."
-    fi
-    # shellcheck disable=SC1090
-    source "${CONDA_SH}"
-    conda activate "${CONDA_ENV}"
-    hash -r
-    set -u
-  else
-    echo "[WARN] conda.sh not found at ${CONDA_SH}. Skipping conda activation."
-  fi
-fi
-
-if [[ -n "${PYTHON_BIN:-}" ]]; then
-  : # Honor an explicitly selected interpreter.
-elif [[ -n "${CONDA_PREFIX:-}" && -x "${CONDA_PREFIX}/bin/python" ]]; then
-  PYTHON_BIN="${CONDA_PREFIX}/bin/python"
-else
-  PYTHON_BIN="$(command -v python)"
-fi
-if ! command -v "${PYTHON_BIN}" >/dev/null 2>&1; then
+# Resolve the interpreter before creating artifacts or starting tmux.
+: "${PYTHON_BIN:=${S0_PYTHON_BIN}}"
+if ! PYTHON_EXECUTABLE="$(command -v -- "${PYTHON_BIN}")" || [[ ! -x "${PYTHON_EXECUTABLE}" ]]; then
   echo "[FATAL] Python interpreter not found or not executable: ${PYTHON_BIN}" >&2
   exit 2
 fi
+PYTHON_BIN="${PYTHON_EXECUTABLE}"
+if [[ "${PYTHON_BIN}" != /* ]]; then
+  PYTHON_BIN="${WORKDIR}/${PYTHON_BIN}"
+fi
 
-# =========================
-# Helper: infer dataset tag
-# =========================
+# Derive dataset labels from graph directories.
 infer_dataset_tag () {
   local p="$1"
   p="${p%/}"
@@ -232,18 +189,14 @@ else
   TEST_DATA_TAG="${TRAIN_DATA_TAG}"
 fi
 
-# =========================
-# Apply DISABLE_OOD override (common “ID-only” baseline)
-# =========================
+# Apply the in-distribution baseline settings when requested.
 if [[ "${DISABLE_OOD}" == "1" ]]; then
   X_NORM="zscore"
   X_CLIP="0"
   X_AUG="0"
 fi
 
-# =========================
-# DDP launcher setup (NO srun)
-# =========================
+# Configure distributed training on the current node.
 _ddp_ngpu="${SLURM_NTASKS_PER_NODE:-${num_gpus}}"
 num_gpus="${_ddp_ngpu}"
 
@@ -277,9 +230,7 @@ unset NCCL_ASYNC_ERROR_HANDLING
 export TORCH_NCCL_ASYNC_ERROR_HANDLING=1
 export TORCH_DISTRIBUTED_DEBUG=OFF
 
-# Use the active Python interpreter for DDP launch so we stay inside the
-# currently activated conda environment even if PATH or shell hashing points
-# somewhere unexpected.
+# Use the same interpreter for single-process and distributed training.
 TORCH_LAUNCH=("${PYTHON_BIN}" -m torch.distributed.run --nproc_per_node="${num_gpus}" --master_addr="${MASTER_ADDR}" --master_port="${MASTER_PORT}")
 if [[ "${num_gpus}" -le 1 ]]; then
   TRAIN_LAUNCH=("${PYTHON_BIN}" -u)
@@ -287,21 +238,14 @@ else
   TRAIN_LAUNCH=("${TORCH_LAUNCH[@]}")
 fi
 
-# Detect the tmux-inner invocation before setting up launcher logs.  The outer
-# invocation only starts tmux; the inner invocation owns the actual log folder.
+# The inner tmux invocation owns the run directory and launcher log.
 TMUX_INNER=0
-if [[ "${1:-}" == "${CONFIG_PATH}" && "${2:-}" == "--_tmux_inner" ]]; then
-  TMUX_INNER=1
-elif [[ "${1:-}" == "--_tmux_inner" ]]; then
+if [[ "${2:-}" == "--_tmux_inner" ]]; then
   TMUX_INNER=1
 fi
 
-# =========================
 # Launcher logging
-# =========================
-WORKDIR="$(pwd)"
 RUNSTAMP="${PACT_RUNSTAMP:-$(date +"%Y%m%d_%H%M%S")}"
-SCRIPT_PATH="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/$(basename "${BASH_SOURCE[0]}")"
 
 CONFIG_RUN_NAME="$(basename "${CONFIG_PATH}")"
 CONFIG_RUN_NAME="${CONFIG_RUN_NAME%.sh}"
@@ -317,10 +261,8 @@ if [[ "${USE_TMUX}" == "1" ]]; then
   SESSION_NAME="${SESSION_NAME:-${RUN_NAME_SAFE}_${RUNSTAMP}}"
 fi
 
-if [[ -z "${ALL_RESULTS_ROOT}" ]]; then
-  ALL_RESULTS_ROOT="${WORKDIR}/All_Results"
-elif [[ "${ALL_RESULTS_ROOT}" != /* ]]; then
-  ALL_RESULTS_ROOT="${WORKDIR}/${ALL_RESULTS_ROOT}"
+if [[ "${ALL_RESULTS_ROOT}" != /* ]]; then
+  ALL_RESULTS_ROOT="${WORKDIR}/${ALL_RESULTS_ROOT#./}"
 fi
 case "${RUN_DIR_NAME_STYLE}" in
   timestamp_runname) RUN_DIR="${ALL_RESULTS_ROOT}/${RUNSTAMP}_${RUN_NAME_SAFE}" ;;
@@ -348,7 +290,7 @@ write_resolved_config() {
     X_NORM X_P_LO X_P_HI X_NODES_PER_GRAPH X_CLIP X_AUG X_AUG_PROB
     X_AUG_SCALE X_AUG_BIAS DISABLE_OOD USE_AMP AMP_DTYPE USE_TF32
     TORCH_THREADS NUM_WORKERS PIN_MEMORY PERSISTENT_WORKERS PREFETCH_FACTOR
-    MP_CONTEXT USE_TMUX DO_CONDA CONDA_MODULE CONDA_SH CONDA_ENV
+    MP_CONTEXT USE_TMUX
     NODE_READ_HEADS TIME_READ_HEADS TRANSFORMER_LAYERS
     TRANSFORMER_FF_MULT TRANSFORMER_DROPOUT MAX_TIME_STEPS ALL_RESULTS_ROOT
     RUN_DIR_NAME_STYLE PACT_RUN_NAME PACT_RUNSTAMP SESSION_NAME PYTHON_RUN_TAG_BASE
@@ -367,9 +309,7 @@ write_resolved_config() {
   } > "${output_path}"
 }
 
-# When tmux wrapping is enabled, defer creation to the inner process so one
-# submitted job produces exactly one launcher directory.  Direct/no-tmux runs
-# and tmux-inner runs create it here as usual.
+# Create one artifact directory per launch, including launches through tmux.
 if [[ "${DRY_RUN}" != "1" ]] && { [[ "${USE_TMUX}" != "1" || "${TMUX_INNER}" == "1" ]] || ! command -v tmux >/dev/null 2>&1; }; then
   if [[ "${RUN_DIR_NAME_STYLE}" == "runname_timestamp" ]]; then
     mkdir -p "${ALL_RESULTS_ROOT}"
@@ -394,7 +334,7 @@ echo "Run name:      ${RUN_NAME}"
 echo "Run dir:       ${RUN_DIR}"
 echo "Run dir style: ${RUN_DIR_NAME_STYLE}"
 echo "Results root:  ${ALL_RESULTS_ROOT}"
-echo "Python:        ${PYTHON_BIN} (DO_CONDA=${DO_CONDA})"
+echo "Python:        ${PYTHON_BIN}"
 echo "tmux:          USE_TMUX=${USE_TMUX} SESSION_NAME=${SESSION_NAME:-<unset>} DRY_RUN=${DRY_RUN}"
 echo "LAUNCHER:      ${TRAIN_LAUNCH[*]}"
 echo "Train script:  ${TRAIN_PY}"
@@ -428,34 +368,30 @@ echo "DL:            workers=${NUM_WORKERS} pin=${PIN_MEMORY} pers=${PERSISTENT_
 echo "Precision:     AMP=${USE_AMP} AMP_DTYPE=${AMP_DTYPE} TF32=${USE_TF32}"
 echo "========================================="
 
-# =========================
-# Optional: tmux wrapper
-# =========================
+# Optionally launch in a detached tmux session.
 if [[ "${DRY_RUN}" != "1" && "${USE_TMUX}" == "1" && "${TMUX_INNER}" == "0" ]] && command -v tmux >/dev/null 2>&1; then
-  # qsub_local exports SESSION_NAME=<job-label>. Honor it so the queue worker
-  # can track this detached session and keep the single-GPU slot occupied.
+  # Preserve caller-provided session names and optional queue status files.
   STATUS_HANDOFF=""
   if [[ -n "${QSUB_LOCAL_STATUS_FILE:-}" ]]; then
     printf -v STATUS_HANDOFF 'printf "%%s\n" "$status" > %q; ' "${QSUB_LOCAL_STATUS_FILE}"
   fi
-  printf -v TMUX_INNER_CMD 'DRY_RUN=0 SESSION_NAME=%q PACT_RUNSTAMP=%q PACT_RUN_NAME=%q bash %q %q --_tmux_inner; status=$?; %s if [[ ${status} -ne 0 ]]; then echo; echo "[tmux] train.sh exited with status ${status}; closing failed session so the local queue can continue."; fi; exit "${status}"' "${SESSION_NAME}" "${RUNSTAMP}" "${RUN_NAME}" "${SCRIPT_PATH}" "${CONFIG_PATH}" "${STATUS_HANDOFF}"
-  printf -v TMUX_CMD 'bash -lc %q' "${TMUX_INNER_CMD}"
+  printf -v TMUX_INNER_CMD 'PYTHON_BIN=%q S0_PYTHON_BIN=%q DRY_RUN=0 SESSION_NAME=%q PACT_RUNSTAMP=%q PACT_RUN_NAME=%q bash %q %q --_tmux_inner; status=$?; %s if [[ ${status} -ne 0 ]]; then echo; echo "[tmux] train.sh exited with status ${status}; closing failed session so the local queue can continue."; fi; exit "${status}"' "${PYTHON_BIN}" "${PYTHON_BIN}" "${SESSION_NAME}" "${RUNSTAMP}" "${RUN_NAME}" "${SCRIPT_PATH}" "${CONFIG_PATH}" "${STATUS_HANDOFF}"
+  printf -v TMUX_CMD 'bash -c %q' "${TMUX_INNER_CMD}"
   echo "[INFO] launching inside tmux session: ${SESSION_NAME}"
-  tmux new-session -d -s "${SESSION_NAME}" -c "${WORKDIR}" "${TMUX_CMD}"
+  # Carry the active environment and GPU allocation into the detached session.
+  TMUX_ENV=(-e "PATH=${PATH}")
+  for name in CONDA_PREFIX CONDA_DEFAULT_ENV LD_LIBRARY_PATH CUDA_VISIBLE_DEVICES; do
+    if [[ -v "${name}" ]]; then
+      TMUX_ENV+=(-e "${name}=${!name}")
+    fi
+  done
+  tmux new-session -d -s "${SESSION_NAME}" -c "${WORKDIR}" "${TMUX_ENV[@]}" "${TMUX_CMD}"
   echo "Attach: tmux attach -t ${SESSION_NAME}"
   echo "Artifacts: ${RUN_DIR}"
   exit 0
 fi
-if [[ "${1:-}" == "${CONFIG_PATH}" && "${2:-}" == "--_tmux_inner" ]]; then
-  shift || true
-  shift || true
-elif [[ "${1:-}" == "--_tmux_inner" ]]; then
-  shift || true
-fi
 
-# =========================
-# Tags for readability
-# =========================
+# Build descriptive run tags.
 EXTRA_TAG=""
 case "${MODEL}" in
   baseline) EXTRA_TAG="" ;;
@@ -493,9 +429,7 @@ if (( GRAD_ACCUM_STEPS > 1 )); then
   ACCUM_TAG="_ga${GRAD_ACCUM_STEPS}"
 fi
 
-# =========================
-# Sweep loops
-# =========================
+# Run the learning-rate and history-window sweep.
 SWEEP_START_SECONDS=${SECONDS}
 for LR_CUR in "${LR_LIST[@]}"; do
   for H in "${HISTORY_HOURS_LIST[@]}"; do
@@ -576,7 +510,7 @@ for LR_CUR in "${LR_LIST[@]}"; do
       BASE_CMD+=(--grad_accum_steps "${GRAD_ACCUM_STEPS}")
     fi
 
-    # Speed flags
+    # Configure precision and data loading.
     if [[ "${USE_AMP}" -eq 1 ]]; then
       BASE_CMD+=(--amp --amp_dtype "${AMP_DTYPE}")
     fi
@@ -590,7 +524,7 @@ for LR_CUR in "${LR_LIST[@]}"; do
       BASE_CMD+=(--persistent_workers)
     fi
 
-    # Model-specific knobs
+    # Add the temporal architecture options for perceiver3.
     if [[ "${MODEL}" == "perceiver3" ]]; then
       BASE_CMD+=(--temporal_block "${TEMPORAL_BLOCK}"
                  --node_read_heads "${NODE_READ_HEADS}"
