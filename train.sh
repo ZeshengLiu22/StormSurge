@@ -12,19 +12,20 @@ trap cleanup INT TERM
 #
 # - No srun: uses torchrun / torch.distributed.run directly.
 # - All experiment knobs live in a sourced config file.
-# - Supports lightweight sweeps over LR / loss / history window, etc.
+# - Supports lightweight sweeps over learning rate and history window.
 # ============================================================
 
 # =========================
 # Config loading
 # =========================
 # Usage:
-#   bash train.sh configs/train_config_*.sh
-#   USE_TMUX=1 bash train.sh configs/train_config_*.sh
+#   bash train.sh configs_old/<family>/train_config_*.sh
+#   USE_TMUX=1 bash train.sh configs_old/<family>/train_config_*.sh
 #
-CONFIG_PATH="${1:-configs/baseline_ablation/train_config_NCEP_Battery_D0_DualBase.sh}"
-if [[ "${CONFIG_PATH}" == "--_tmux_inner" ]]; then
-  CONFIG_PATH="configs/baseline_ablation/train_config_NCEP_Battery_D0_DualBase.sh"
+CONFIG_PATH="${1:-}"
+if [[ -z "${CONFIG_PATH}" || "${CONFIG_PATH}" == "--_tmux_inner" ]]; then
+  echo "Usage: bash train.sh configs_old/<family>/train_config_*.sh" >&2
+  exit 2
 fi
 if [[ ! -f "${CONFIG_PATH}" ]]; then
   echo "[FATAL] config not found: ${CONFIG_PATH}"
@@ -38,37 +39,107 @@ source "${CONFIG_PATH}"
 set -u
 
 # =========================
-# Resolved configuration defaults
+# Runtime and data loading
 # =========================
 : "${TRAIN_PY:=train.py}"
 : "${num_gpus:=1}"
+: "${USE_AMP:=0}"
+: "${AMP_DTYPE:=bf16}"             # bf16 | fp16
+: "${USE_TF32:=0}"
+: "${TORCH_THREADS:=1}"
+: "${NUM_WORKERS:=4}"
+: "${PIN_MEMORY:=0}"
+: "${PERSISTENT_WORKERS:=0}"
+: "${PREFETCH_FACTOR:=2}"
+: "${MP_CONTEXT:=fork}"
+: "${USE_TMUX:=${USE_TMUX:-1}}"
+: "${DO_CONDA:=1}"
+: "${CONDA_MODULE:=anaconda}"
+: "${CONDA_SH:=/software/u22/anaconda/python3.9/etc/profile.d/conda.sh}"
+: "${CONDA_ENV:=torchpyg-cu124}"
+: "${DRY_RUN:=0}"
 
+# =========================
+# Data, chronological splits, and TRAIN normalization
+# =========================
 : "${ROOT_DIR:=./Data/NCEP/graphs}"
 : "${TEST_ROOT_DIR:=}"
 : "${STATION:=}"
-: "${MODEL:=baseline}"
-: "${ENCODER_TYPE:=GraphSAGE}"
-: "${CNN_INTERMEDIATE_CHANNEL:=29}"
-: "${TEMPORAL_BLOCK:=Transformer}"
-: "${HEAD_TYPE:=dual}"
-: "${STATION_JSON_DIR:=./station_json}"
-: "${USE_SITE_ELEVATION:=1}"
-: "${USE_BATHYMETRY:=0}"
-
-: "${BATCH_SIZE:=256}"
-: "${GRAD_ACCUM_STEPS:=1}"
-: "${EPOCHS:=300}"
-: "${HIDDEN_CHANNELS:=64}"
-: "${NUM_LAYERS:=2}"
-: "${DROPOUT:=0.05}"
-: "${HEAD_DROPOUT:=0.0}"
 : "${SEED:=42}"
 : "${TRAIN_RATIO:=0.6}"
 : "${VAL_RATIO:=0.2}"
 : "${SHUFFLE_YEARS:=0}"
 : "${FUTURE_ONLY:=0}"
 : "${FUTURE_YEAR_THRESHOLD:=2030}"
+: "${STATION_JSON_DIR:=./station_json}"
+: "${USE_SITE_ELEVATION:=1}"
+: "${USE_BATHYMETRY:=0}"
+: "${X_NORM:=robust}"              # zscore | robust | mag
+: "${X_P_LO:=1.0}"
+: "${X_P_HI:=99.0}"
+: "${X_NODES_PER_GRAPH:=256}"
+: "${X_CLIP:=5.0}"
+: "${X_AUG:=1}"
+: "${X_AUG_PROB:=1.0}"
+: "${X_AUG_SCALE:=0.05}"
+: "${X_AUG_BIAS:=0.02}"
+: "${DISABLE_OOD:=0}"
 
+# =========================
+# Model and history
+# =========================
+: "${MODEL:=baseline}"
+: "${ENCODER_TYPE:=GraphSAGE}"
+: "${CNN_INTERMEDIATE_CHANNEL:=29}"
+: "${TEMPORAL_BLOCK:=Transformer}"
+: "${HIDDEN_CHANNELS:=64}"
+: "${NUM_LAYERS:=2}"
+: "${DROPOUT:=0.05}"
+: "${HEAD_DROPOUT:=0.0}"
+: "${NODE_READ_HEADS:=8}"
+: "${TIME_READ_HEADS:=8}"
+: "${TRANSFORMER_LAYERS:=2}"
+: "${TRANSFORMER_FF_MULT:=4.0}"
+: "${TRANSFORMER_DROPOUT:=0.05}"
+: "${MAX_TIME_STEPS:=32}"
+if [[ -z "${HISTORY_HOURS_LIST+x}" ]]; then HISTORY_HOURS_LIST=(24); fi
+
+# =========================
+# Optimization and scheduling
+# =========================
+: "${BATCH_SIZE:=256}"
+: "${GRAD_ACCUM_STEPS:=1}"
+: "${EPOCHS:=300}"
+: "${SCHEDULER:=cosine}"           # cosine | rop
+: "${WARMUP_EPOCHS:=5}"
+: "${WARMUP_START_FACTOR:=0.1}"
+: "${MIN_LR:=1e-6}"
+: "${MAX_GRAD_NORM:=0}"
+: "${DETERMINISTIC:=0}"
+: "${ROP_METRIC:=val_all_rmse}"   # val_all_rmse | val_exceedance_rmse
+: "${ROP_FACTOR:=.5}"
+: "${ROP_PATIENCE:=20}"
+: "${ROP_THRESHOLD:=1e-4}"
+: "${ROP_COOLDOWN:=0}"
+: "${ROP_MIN_LR:=1e-6}"
+if [[ -z "${LR_LIST+x}" ]]; then LR_LIST=("3e-3"); fi
+
+# =========================
+# Objective: physical Global MSE + strict Tail MSE + episode peak MSE
+# =========================
+: "${EXCEEDANCE_PERCENTILE:=95}"
+: "${EXCEEDANCE_LOSS_WEIGHT:=0}"
+: "${EPISODE_GT_ALIGNED_PEAK_WEIGHT:=0.0}"
+
+# =========================
+# Checkpoint selection and output
+# =========================
+: "${CHECKPOINT_SELECTION:=exceedance}"  # exceedance (primary) | overall (sensitivity)
+: "${ALL_RESULTS_ROOT:=}"
+: "${RUN_DIR_NAME_STYLE:=timestamp_runname}"
+: "${PYTHON_RUN_TAG_BASE:=}"
+
+# Validate before environment setup or artifact creation.
 case "${SHUFFLE_YEARS,,}" in
   1|true|yes|y|on) SHUFFLE_YEARS=1 ;;
   0|false|no|n|off) SHUFFLE_YEARS=0 ;;
@@ -94,9 +165,9 @@ case "${TEMPORAL_BLOCK,,}" in
   *) echo "[FATAL] TEMPORAL_BLOCK must be MLP, LSTM, GRU, or Transformer; got '${TEMPORAL_BLOCK}'"; exit 1 ;;
 esac
 
-case "${HEAD_TYPE,,}" in
-  single|dual) HEAD_TYPE="${HEAD_TYPE,,}" ;;
-  *) echo "[FATAL] HEAD_TYPE must be single or dual; got '${HEAD_TYPE}'"; exit 1 ;;
+case "${CHECKPOINT_SELECTION}" in
+  overall|exceedance) ;;
+  *) echo "[FATAL] CHECKPOINT_SELECTION must be overall or exceedance." >&2; exit 2 ;;
 esac
 
 if [[ ! "${GRAD_ACCUM_STEPS}" =~ ^[1-9][0-9]*$ ]]; then
@@ -104,121 +175,6 @@ if [[ ! "${GRAD_ACCUM_STEPS}" =~ ^[1-9][0-9]*$ ]]; then
   exit 1
 fi
 
-# Arrays (declare if missing)
-if [[ -z "${LR_LIST+x}" ]]; then LR_LIST=("3e-3"); fi
-if [[ -z "${HISTORY_HOURS_LIST+x}" ]]; then HISTORY_HOURS_LIST=(24); fi
-if [[ -z "${LOSS_MODE_LIST+x}" ]]; then LOSS_MODE_LIST=("mse"); fi
-
-# Loss knobs
-: "${EXCEEDANCE_LOSS_WEIGHT:=0}"
-: "${EPISODE_GT_ALIGNED_PEAK_WEIGHT:=0.0}"
-: "${EXCEEDANCE_LOSS_MODE:=mse}"
-: "${EXCESS_LOSS_MODE:=mse}"
-: "${WQE_QUANTILE_TAU:=0.25}"
-: "${WQE_EXPECTILE_TAU:=0.82}"
-: "${WQE_QUANTILE_WEIGHT:=0.16666666666666667}"
-: "${WQE_EXPECTILE_WEIGHT:=0.83333333333333333}"
-: "${WMSE_ALPHA:=4.0}"
-: "${WMSE_S:=0.10}"
-
-# Slope knobs (only used for *_slope modes)
-if [[ -z "${SLOPE_LAMBDA_LIST+x}" ]]; then SLOPE_LAMBDA_LIST=("0.01"); fi
-if [[ -z "${SLOPE_MASK_S_LIST+x}" ]]; then SLOPE_MASK_S_LIST=("0.10"); fi
-: "${SLOPE_ROBUST:=charb}"
-: "${SLOPE_CHARB_EPS:=1e-3}"
-: "${SLOPE_HUBER_DELTA:=0.05}"
-
-# Scheduler knobs
-: "${SCHEDULER:=cosine}"           # cosine | rop
-: "${WARMUP_EPOCHS:=5}"
-: "${WARMUP_START_FACTOR:=0.1}"
-: "${MIN_LR:=1e-6}"
-# Reject removed architecture settings.
-if [[ "${STABILITY_GUARD:-0}" != "0" || -n "${STABLE_ARCH_VERSION:-}" ]]; then
-  echo "Old guard/version settings were removed from v2; remove them from this config." >&2
-  exit 2
-fi
-: "${MAX_GRAD_NORM:=0}"
-: "${DETERMINISTIC:=0}"
-: "${DUAL_MODE:=exceedance}"
-: "${DUAL_LOSS:=1}"
-: "${EXCEEDANCE_PERCENTILE:=95}"
-: "${DUAL_ABLATION:=none}"
-: "${BODY_LOSS_WEIGHT:=1}"
-: "${EXCESS_LOSS_WEIGHT:=1}"
-: "${EXCESS_FORMULATION:=direct}"
-: "${EXCEEDANCE_HEAD_EXPERIMENT:=}"  # empty keeps the production direct head
-: "${EXCEEDANCE_GATE_POOLING:=mean}"
-: "${SHAPE_LOSS_WEIGHT:=0}"
-: "${SEVERITY_SHAPE_EPS:=1e-6}"
-: "${EXCESS_AMP_LOSS_WEIGHT:=0}"
-: "${CHECKPOINT_SELECTION:=exceedance}"  # exceedance (primary) | overall (sensitivity)
-case "${CHECKPOINT_SELECTION}" in
-  overall|exceedance) ;;
-  *) echo "[FATAL] CHECKPOINT_SELECTION must be overall or exceedance." >&2; exit 2 ;;
-esac
-: "${GATE_LOSS_WEIGHT:=1}"
-: "${ROP_METRIC:=val_all_rmse}"   # val_all_rmse | val_exceedance_rmse
-
-: "${ROP_FACTOR:=.5}"
-: "${ROP_PATIENCE:=20}"
-: "${ROP_THRESHOLD:=1e-4}"
-: "${ROP_COOLDOWN:=0}"
-: "${ROP_MIN_LR:=1e-6}"
-
-# OOD knobs
-: "${X_NORM:=robust}"              # zscore | robust | mag
-: "${X_P_LO:=1.0}"
-: "${X_P_HI:=99.0}"
-: "${X_NODES_PER_GRAPH:=256}"
-: "${X_CLIP:=5.0}"
-
-: "${X_AUG:=1}"
-: "${X_AUG_PROB:=1.0}"
-: "${X_AUG_SCALE:=0.05}"
-: "${X_AUG_BIAS:=0.02}"
-
-: "${DISABLE_OOD:=0}"
-
-# Speed / loader knobs
-: "${USE_AMP:=0}"
-: "${AMP_DTYPE:=bf16}"             # bf16 | fp16
-: "${USE_TF32:=0}"
-: "${TORCH_THREADS:=1}"
-
-: "${NUM_WORKERS:=4}"
-: "${PIN_MEMORY:=0}"
-: "${PERSISTENT_WORKERS:=0}"
-: "${PREFETCH_FACTOR:=2}"
-: "${MP_CONTEXT:=fork}"
-
-# Optional tmux wrapper
-: "${USE_TMUX:=${USE_TMUX:-1}}"
-
-# Optional conda activation
-: "${DO_CONDA:=1}"
-: "${CONDA_MODULE:=anaconda}"
-: "${CONDA_SH:=/software/u22/anaconda/python3.9/etc/profile.d/conda.sh}"
-: "${CONDA_ENV:=torchpyg-cu124}"
-
-# Perceiver3 dual-head knobs (ignored when HEAD_TYPE=single)
-: "${GATE_MODE:=window}"
-
-: "${NODE_READ_HEADS:=8}"
-: "${TIME_READ_HEADS:=8}"
-: "${TRANSFORMER_LAYERS:=2}"
-: "${TRANSFORMER_FF_MULT:=4.0}"
-: "${TRANSFORMER_DROPOUT:=0.05}"
-: "${MAX_TIME_STEPS:=32}"
-
-# Unified training-artifact root. Relative paths are resolved from WORKDIR.
-: "${ALL_RESULTS_ROOT:=}"
-# Configuration controls artifact directory ordering.
-: "${RUN_DIR_NAME_STYLE:=timestamp_runname}"
-# Optional Python metadata tag; empty uses the automatic run description.
-: "${PYTHON_RUN_TAG_BASE:=}"
-
-: "${DRY_RUN:=0}"
 if [[ "${DRY_RUN}" == "1" ]]; then
   DO_CONDA=0
 fi
@@ -378,28 +334,22 @@ write_resolved_config() {
   local config_vars=(
     TRAIN_PY PYTHON_BIN num_gpus ROOT_DIR TEST_ROOT_DIR STATION MODEL ENCODER_TYPE
     CNN_INTERMEDIATE_CHANNEL
-    TEMPORAL_BLOCK HEAD_TYPE STATION_JSON_DIR USE_SITE_ELEVATION USE_BATHYMETRY
+    TEMPORAL_BLOCK STATION_JSON_DIR USE_SITE_ELEVATION USE_BATHYMETRY
     BATCH_SIZE GRAD_ACCUM_STEPS
     EPOCHS HIDDEN_CHANNELS NUM_LAYERS DROPOUT HEAD_DROPOUT SEED TRAIN_RATIO
     VAL_RATIO SHUFFLE_YEARS FUTURE_ONLY FUTURE_YEAR_THRESHOLD LR_LIST
-    HISTORY_HOURS_LIST LOSS_MODE_LIST EXCEEDANCE_LOSS_WEIGHT EXCEEDANCE_LOSS_MODE
+    HISTORY_HOURS_LIST EXCEEDANCE_LOSS_WEIGHT
     EPISODE_GT_ALIGNED_PEAK_WEIGHT
-    EXCESS_LOSS_MODE WQE_QUANTILE_TAU WQE_EXPECTILE_TAU WQE_QUANTILE_WEIGHT WQE_EXPECTILE_WEIGHT
-    WMSE_ALPHA WMSE_S SLOPE_LAMBDA_LIST SLOPE_MASK_S_LIST
-    SLOPE_ROBUST SLOPE_CHARB_EPS SLOPE_HUBER_DELTA SCHEDULER ROP_METRIC ROP_FACTOR ROP_PATIENCE
+    SCHEDULER ROP_METRIC ROP_FACTOR ROP_PATIENCE
     ROP_THRESHOLD ROP_COOLDOWN ROP_MIN_LR
     WARMUP_EPOCHS WARMUP_START_FACTOR MIN_LR MAX_GRAD_NORM
-    DETERMINISTIC DUAL_MODE DUAL_LOSS EXCEEDANCE_PERCENTILE DUAL_ABLATION
-    BODY_LOSS_WEIGHT EXCESS_LOSS_WEIGHT GATE_LOSS_WEIGHT
-    EXCESS_AMP_LOSS_WEIGHT
-    EXCESS_FORMULATION SHAPE_LOSS_WEIGHT SEVERITY_SHAPE_EPS
-    EXCEEDANCE_HEAD_EXPERIMENT EXCEEDANCE_GATE_POOLING
+    DETERMINISTIC EXCEEDANCE_PERCENTILE
     CHECKPOINT_SELECTION
     X_NORM X_P_LO X_P_HI X_NODES_PER_GRAPH X_CLIP X_AUG X_AUG_PROB
     X_AUG_SCALE X_AUG_BIAS DISABLE_OOD USE_AMP AMP_DTYPE USE_TF32
     TORCH_THREADS NUM_WORKERS PIN_MEMORY PERSISTENT_WORKERS PREFETCH_FACTOR
     MP_CONTEXT USE_TMUX DO_CONDA CONDA_MODULE CONDA_SH CONDA_ENV
-    GATE_MODE NODE_READ_HEADS TIME_READ_HEADS TRANSFORMER_LAYERS
+    NODE_READ_HEADS TIME_READ_HEADS TRANSFORMER_LAYERS
     TRANSFORMER_FF_MULT TRANSFORMER_DROPOUT MAX_TIME_STEPS ALL_RESULTS_ROOT
     RUN_DIR_NAME_STYLE PACT_RUN_NAME PACT_RUNSTAMP SESSION_NAME PYTHON_RUN_TAG_BASE
   )
@@ -452,7 +402,6 @@ echo "Model:         ${MODEL}"
 echo "Encoder:       ${ENCODER_TYPE}"
 echo "CNN width:     ${CNN_INTERMEDIATE_CHANNEL} (intermediate channels)"
 echo "Temporal:      ${TEMPORAL_BLOCK}"
-echo "Head:          ${HEAD_TYPE}"
 echo "Station feats: site_elevation=${USE_SITE_ELEVATION} bathymetry=${USE_BATHYMETRY} (PACT)"
 if (( GRAD_ACCUM_STEPS > 1 )); then
   echo "Grad accum:    ${GRAD_ACCUM_STEPS} (nominal effective batch=$((BATCH_SIZE * GRAD_ACCUM_STEPS)))"
@@ -462,18 +411,10 @@ echo "TEST_ROOT_DIR: ${TEST_ROOT_DIR:-<none>}"
 echo "TRAIN_DATA_TAG:${TRAIN_DATA_TAG}"
 echo "TEST_DATA_TAG: ${TEST_DATA_TAG}"
 echo "LR_LIST:       ${LR_LIST[*]}"
-echo "Loss modes:    ${LOSS_MODE_LIST[*]}"
-echo "Global prediction loss: ${LOSS_MODE_LIST[*]}"
+echo "Global prediction loss: MSE (physical units)"
+echo "Tail MSE weight: ${EXCEEDANCE_LOSS_WEIGHT} (strict GT > TRAIN Q95)"
 echo "Episode GT-aligned peak MSE weight: ${EPISODE_GT_ALIGNED_PEAK_WEIGHT}"
-echo "Tail loss: ${EXCEEDANCE_LOSS_MODE} (weight=${EXCEEDANCE_LOSS_WEIGHT})"
-if [[ "${MODEL}" == "perceiver3" && "${HEAD_TYPE}" == "dual" ]]; then
-  echo "Dual excess loss: ${EXCESS_LOSS_MODE}"
-else
-  echo "Dual excess loss: inactive (head_type=single)"
-fi
-echo "WQE: q_tau=${WQE_QUANTILE_TAU} e_tau=${WQE_EXPECTILE_TAU} q_weight=${WQE_QUANTILE_WEIGHT} e_weight=${WQE_EXPECTILE_WEIGHT}"
 echo "Checkpoint roles (VAL-only): overall, exceedance; primary=${CHECKPOINT_SELECTION}"
-echo "Loss weights:  body=${BODY_LOSS_WEIGHT} excess=${EXCESS_LOSS_WEIGHT} gate=${GATE_LOSS_WEIGHT} exceedance=${EXCEEDANCE_LOSS_WEIGHT} amplitude=${EXCESS_AMP_LOSS_WEIGHT} shape=${SHAPE_LOSS_WEIGHT} slope=${SLOPE_LAMBDA_LIST[*]} (terms enabled by head/loss mode)"
 echo "H_LIST:        ${HISTORY_HOURS_LIST[*]}"
 echo "Split:         train=${TRAIN_RATIO} val=${VAL_RATIO} shuffle_years=${SHUFFLE_YEARS} future_only=${FUTURE_ONLY} future_year_threshold=${FUTURE_YEAR_THRESHOLD} seed=${SEED}"
 echo "MASTER_ADDR:   ${MASTER_ADDR}"
@@ -520,15 +461,8 @@ case "${MODEL}" in
   baseline) EXTRA_TAG="" ;;
   perceiver3)
     EXTRA_TAG="_nrh${NODE_READ_HEADS}_trh${TIME_READ_HEADS}_L${TRANSFORMER_LAYERS}_ff${TRANSFORMER_FF_MULT}_td${TRANSFORMER_DROPOUT}"
-    EXTRA_TAG+="_stable1v3_${DUAL_MODE}"
-    if [[ "${HEAD_TYPE}" == "dual" ]]; then
-      EXTRA_TAG+="_gm${GATE_MODE}_eq${EXCEEDANCE_PERCENTILE}_da${DUAL_ABLATION}"
-      if [[ "${EXCESS_FORMULATION}" != "direct" ]]; then
-        EXTRA_TAG+="_ef${EXCESS_FORMULATION}"
-      fi
-    else
-      EXTRA_TAG+="_hsingle"
-    fi
+    # Preserve existing automatic Single run names.
+    EXTRA_TAG+="_stable1v3_exceedance_hsingle"
     ;;
   *) echo "[FATAL] Unknown MODEL='${MODEL}'. Use baseline|perceiver3"; exit 1 ;;
 esac
@@ -563,184 +497,132 @@ fi
 # Sweep loops
 # =========================
 SWEEP_START_SECONDS=${SECONDS}
-for LOSS_MODE in "${LOSS_MODE_LIST[@]}"; do
-  for LR_CUR in "${LR_LIST[@]}"; do
-    for H in "${HISTORY_HOURS_LIST[@]}"; do
-          LOSS_TAG="_loss${LOSS_MODE}_ex${EXCEEDANCE_LOSS_WEIGHT}"
-          if [[ "${EXCEEDANCE_LOSS_MODE}" != "mse" ]]; then
-            LOSS_TAG+="_tail${EXCEEDANCE_LOSS_MODE}"
-          fi
-          LOSS_ARGS=(--loss_mode "${LOSS_MODE}" --exceedance_loss_weight "${EXCEEDANCE_LOSS_WEIGHT}"
-                     --episode_gt_aligned_peak_weight "${EPISODE_GT_ALIGNED_PEAK_WEIGHT}"
-                     --exceedance_loss_mode "${EXCEEDANCE_LOSS_MODE}"
-                     --excess_loss_mode "${EXCESS_LOSS_MODE}"
-                     --wqe_quantile_tau "${WQE_QUANTILE_TAU}" --wqe_expectile_tau "${WQE_EXPECTILE_TAU}"
-                     --wqe_quantile_weight "${WQE_QUANTILE_WEIGHT}" --wqe_expectile_weight "${WQE_EXPECTILE_WEIGHT}"
-                     --wmse_alpha "${WMSE_ALPHA}" --wmse_s "${WMSE_S}")
+for LR_CUR in "${LR_LIST[@]}"; do
+  for H in "${HISTORY_HOURS_LIST[@]}"; do
+    LOSS_TAG="_lossmse_ex${EXCEEDANCE_LOSS_WEIGHT}"
+    LOSS_ARGS=(
+      --exceedance_loss_weight "${EXCEEDANCE_LOSS_WEIGHT}"
+      --episode_gt_aligned_peak_weight "${EPISODE_GT_ALIGNED_PEAK_WEIGHT}"
+    )
 
-          # Slope smoothness sweep (only used for *_slope modes)
-          for SLOPE_LAMBDA in "${SLOPE_LAMBDA_LIST[@]}"; do
-            for SLOPE_MASK_S in "${SLOPE_MASK_S_LIST[@]}"; do
-              if [[ "${LOSS_MODE}" != *_slope ]]; then
-                [[ "${SLOPE_LAMBDA}" != "${SLOPE_LAMBDA_LIST[0]}" ]] && continue
-                [[ "${SLOPE_MASK_S}" != "${SLOPE_MASK_S_LIST[0]}" ]] && continue
-              fi
+    SCHED_ARGS=(--scheduler "${SCHEDULER}" --warmup_epochs "${WARMUP_EPOCHS}"
+                --warmup_start_factor "${WARMUP_START_FACTOR}" --min_lr "${MIN_LR}")
+    if [[ "${SCHEDULER}" == "rop" ]]; then
+      SCHED_ARGS+=(--rop_factor "${ROP_FACTOR}")
+      SCHED_ARGS+=(--rop_patience "${ROP_PATIENCE}")
+      SCHED_ARGS+=(--rop_threshold "${ROP_THRESHOLD}")
+      SCHED_ARGS+=(--rop_cooldown "${ROP_COOLDOWN}")
+      SCHED_ARGS+=(--rop_min_lr "${ROP_MIN_LR}")
+      SCHED_ARGS+=(--rop_metric "${ROP_METRIC}")
+    fi
 
-              LOSS_TAG2="${LOSS_TAG}"
-              LOSS_ARGS2=("${LOSS_ARGS[@]}")
-              if [[ "${LOSS_MODE}" == *_slope ]]; then
-                LOSS_ARGS2+=(--slope_lambda "${SLOPE_LAMBDA}"
-                             --slope_mask_s "${SLOPE_MASK_S}"
-                             --slope_robust "${SLOPE_ROBUST}"
-                             --slope_charb_eps "${SLOPE_CHARB_EPS}")
-                if [[ "${SLOPE_ROBUST}" == "huber" ]]; then
-                  LOSS_ARGS2+=(--slope_huber_delta "${SLOPE_HUBER_DELTA}")
-                fi
-                LOSS_TAG2+="_sl${SLOPE_LAMBDA}_sms${SLOPE_MASK_S}_${SLOPE_ROBUST}"
-              fi
+    AUTO_RUN_TAG="${STATION:-ALL}_${TRAIN_DATA_TAG}to${TEST_DATA_TAG}_${MODEL}${ENCODER_TAG}${TEMPORAL_TAG}${ACCUM_TAG}${EXTRA_TAG}${SPLIT_TAG}${LOSS_TAG}_hist${H}h_hid${HIDDEN_CHANNELS}_L${NUM_LAYERS}_bs${BATCH_SIZE}_lr${LR_CUR}_ep${EPOCHS}_sch${SCHEDULER}_xn${X_NORM}"
+    RUN_TAG="${PYTHON_RUN_TAG_BASE:-${AUTO_RUN_TAG}}"
+    LOG_TAG="${RUN_TAG}"
+    if (( ${#LOG_TAG} > 240 )); then
+      LOG_HASH="$(printf '%s' "${RUN_TAG}" | sha256sum)"
+      LOG_TAG="${RUN_TAG:0:220}_${LOG_HASH:0:12}"
+    fi
+    LOG_FILE="${RUN_DIR}/train_${LOG_TAG}.log"
+    if [[ "${DRY_RUN}" != "1" ]]; then : > "${LOG_FILE}"; fi
 
-              SCHED_ARGS=(--scheduler "${SCHEDULER}" --warmup_epochs "${WARMUP_EPOCHS}"
-                          --warmup_start_factor "${WARMUP_START_FACTOR}" --min_lr "${MIN_LR}")
-              if [[ "${SCHEDULER}" == "rop" ]]; then
-                SCHED_ARGS+=(--rop_factor "${ROP_FACTOR}")
-                SCHED_ARGS+=(--rop_patience "${ROP_PATIENCE}")
-                SCHED_ARGS+=(--rop_threshold "${ROP_THRESHOLD}")
-                SCHED_ARGS+=(--rop_cooldown "${ROP_COOLDOWN}")
-                SCHED_ARGS+=(--rop_min_lr "${ROP_MIN_LR}")
-                SCHED_ARGS+=(--rop_metric "${ROP_METRIC}")
-              fi
+    BASE_CMD=(
+      "${TRAIN_PY}"
+      --root_dir "${ROOT_DIR}"
+      --model "${MODEL}"
+      --exceedance_percentile "${EXCEEDANCE_PERCENTILE}"
+      --checkpoint_selection "${CHECKPOINT_SELECTION}"
+      --encoder_type "${ENCODER_TYPE}"
+      --cnn_intermediate_channel "${CNN_INTERMEDIATE_CHANNEL}"
+      --batch_size "${BATCH_SIZE}"
+      --lr "${LR_CUR}"
+      --epochs "${EPOCHS}"
+      --hidden_channels "${HIDDEN_CHANNELS}"
+      --num_layers "${NUM_LAYERS}"
+      --dropout "${DROPOUT}"
+      --head_dropout "${HEAD_DROPOUT}"
+      --max_grad_norm "${MAX_GRAD_NORM}"
+      --deterministic "${DETERMINISTIC}"
+      --history_hours "${H}"
+      --seed "${SEED}"
+      --train_ratio "${TRAIN_RATIO}"
+      --val_ratio "${VAL_RATIO}"
+      --shuffle_years "${SHUFFLE_YEARS}"
+      --future_only "${FUTURE_ONLY}"
+      --future_year_threshold "${FUTURE_YEAR_THRESHOLD}"
+      --run_tag "${RUN_TAG}_${RUNSTAMP}"
+      --output_dir "${RUN_DIR}"
+      --torch_threads "${TORCH_THREADS}"
+      --num_workers "${NUM_WORKERS}"
+      --prefetch_factor "${PREFETCH_FACTOR}"
+      --mp_context "${MP_CONTEXT}"
+      --x_norm "${X_NORM}"
+      --x_p_lo "${X_P_LO}"
+      --x_p_hi "${X_P_HI}"
+      --x_nodes_per_graph "${X_NODES_PER_GRAPH}"
+      --x_clip "${X_CLIP}"
+      --x_aug "${X_AUG}"
+      --x_aug_prob "${X_AUG_PROB}"
+      --x_aug_scale "${X_AUG_SCALE}"
+      --x_aug_bias "${X_AUG_BIAS}"
+      --station_json_dir "${STATION_JSON_DIR}"
+      --use_site_elevation "${USE_SITE_ELEVATION}"
+      --use_bathymetry "${USE_BATHYMETRY}"
+    )
 
-              AUTO_RUN_TAG="${STATION:-ALL}_${TRAIN_DATA_TAG}to${TEST_DATA_TAG}_${MODEL}${ENCODER_TAG}${TEMPORAL_TAG}${ACCUM_TAG}${EXTRA_TAG}${SPLIT_TAG}${LOSS_TAG2}_hist${H}h_hid${HIDDEN_CHANNELS}_L${NUM_LAYERS}_bs${BATCH_SIZE}_lr${LR_CUR}_ep${EPOCHS}_sch${SCHEDULER}_xn${X_NORM}"
-              RUN_TAG="${PYTHON_RUN_TAG_BASE:-${AUTO_RUN_TAG}}"
-              LOG_TAG="${RUN_TAG}"
-              if (( ${#LOG_TAG} > 240 )); then
-                LOG_HASH="$(printf '%s' "${RUN_TAG}" | sha256sum)"
-                LOG_TAG="${RUN_TAG:0:220}_${LOG_HASH:0:12}"
-              fi
-              LOG_FILE="${RUN_DIR}/train_${LOG_TAG}.log"
-              if [[ "${DRY_RUN}" != "1" ]]; then : > "${LOG_FILE}"; fi
+    [[ -n "${STATION}" ]]       && BASE_CMD+=(--station "${STATION}")
+    [[ -n "${TEST_ROOT_DIR}" ]] && BASE_CMD+=(--test_root_dir "${TEST_ROOT_DIR}")
+    if (( GRAD_ACCUM_STEPS > 1 )); then
+      BASE_CMD+=(--grad_accum_steps "${GRAD_ACCUM_STEPS}")
+    fi
 
-              BASE_CMD=(
-                "${TRAIN_PY}"
-                --root_dir "${ROOT_DIR}"
-                --model "${MODEL}"
-                --exceedance_percentile "${EXCEEDANCE_PERCENTILE}"
-                --dual_ablation "${DUAL_ABLATION}"
-                --excess_amp_loss_weight "${EXCESS_AMP_LOSS_WEIGHT}"
-                --excess_formulation "${EXCESS_FORMULATION}"
-                --exceedance_gate_pooling "${EXCEEDANCE_GATE_POOLING}"
-                --shape_loss_weight "${SHAPE_LOSS_WEIGHT}"
-                --severity_shape_eps "${SEVERITY_SHAPE_EPS}"
-                --checkpoint_selection "${CHECKPOINT_SELECTION}"
-                --encoder_type "${ENCODER_TYPE}"
-                --cnn_intermediate_channel "${CNN_INTERMEDIATE_CHANNEL}"
-                --batch_size "${BATCH_SIZE}"
-                --lr "${LR_CUR}"
-                --epochs "${EPOCHS}"
-                --hidden_channels "${HIDDEN_CHANNELS}"
-                --num_layers "${NUM_LAYERS}"
-                --dropout "${DROPOUT}"
-                --head_dropout "${HEAD_DROPOUT}"
-                --max_grad_norm "${MAX_GRAD_NORM}"
-                --deterministic "${DETERMINISTIC}"
-                --history_hours "${H}"
-                --seed "${SEED}"
-                --train_ratio "${TRAIN_RATIO}"
-                --val_ratio "${VAL_RATIO}"
-                --shuffle_years "${SHUFFLE_YEARS}"
-                --future_only "${FUTURE_ONLY}"
-                --future_year_threshold "${FUTURE_YEAR_THRESHOLD}"
-                --run_tag "${RUN_TAG}_${RUNSTAMP}"
-                --output_dir "${RUN_DIR}"
-                --torch_threads "${TORCH_THREADS}"
-                --num_workers "${NUM_WORKERS}"
-                --prefetch_factor "${PREFETCH_FACTOR}"
-                --mp_context "${MP_CONTEXT}"
-                --x_norm "${X_NORM}"
-                --x_p_lo "${X_P_LO}"
-                --x_p_hi "${X_P_HI}"
-                --x_nodes_per_graph "${X_NODES_PER_GRAPH}"
-                --x_clip "${X_CLIP}"
-                --x_aug "${X_AUG}"
-                --x_aug_prob "${X_AUG_PROB}"
-                --x_aug_scale "${X_AUG_SCALE}"
-                --x_aug_bias "${X_AUG_BIAS}"
-                --station_json_dir "${STATION_JSON_DIR}"
-                --use_site_elevation "${USE_SITE_ELEVATION}"
-                --use_bathymetry "${USE_BATHYMETRY}"
-              )
+    # Speed flags
+    if [[ "${USE_AMP}" -eq 1 ]]; then
+      BASE_CMD+=(--amp --amp_dtype "${AMP_DTYPE}")
+    fi
+    if [[ "${USE_TF32}" -eq 1 ]]; then
+      BASE_CMD+=(--tf32)
+    fi
+    if [[ "${PIN_MEMORY}" -eq 1 ]]; then
+      BASE_CMD+=(--pin_memory)
+    fi
+    if [[ "${PERSISTENT_WORKERS}" -eq 1 ]]; then
+      BASE_CMD+=(--persistent_workers)
+    fi
 
-              [[ -n "${STATION}" ]]       && BASE_CMD+=(--station "${STATION}")
-              [[ -n "${TEST_ROOT_DIR}" ]] && BASE_CMD+=(--test_root_dir "${TEST_ROOT_DIR}")
-              if (( GRAD_ACCUM_STEPS > 1 )); then
-                BASE_CMD+=(--grad_accum_steps "${GRAD_ACCUM_STEPS}")
-              fi
+    # Model-specific knobs
+    if [[ "${MODEL}" == "perceiver3" ]]; then
+      BASE_CMD+=(--temporal_block "${TEMPORAL_BLOCK}"
+                 --node_read_heads "${NODE_READ_HEADS}"
+                 --time_read_heads "${TIME_READ_HEADS}"
+                 --transformer_layers "${TRANSFORMER_LAYERS}"
+                 --transformer_ff_mult "${TRANSFORMER_FF_MULT}"
+                 --transformer_dropout "${TRANSFORMER_DROPOUT}"
+                 --max_time_steps "${MAX_TIME_STEPS}")
+    fi
 
-              if [[ -n "${EXCEEDANCE_HEAD_EXPERIMENT}" ]]; then
-                BASE_CMD+=(--exceedance_head_experiment "${EXCEEDANCE_HEAD_EXPERIMENT}")
-              fi
+    BASE_CMD+=("${SCHED_ARGS[@]}")
+    BASE_CMD+=("${LOSS_ARGS[@]}")
 
-              # Speed flags
-              if [[ "${USE_AMP}" -eq 1 ]]; then
-                BASE_CMD+=(--amp --amp_dtype "${AMP_DTYPE}")
-              fi
-              if [[ "${USE_TF32}" -eq 1 ]]; then
-                BASE_CMD+=(--tf32)
-              fi
-              if [[ "${PIN_MEMORY}" -eq 1 ]]; then
-                BASE_CMD+=(--pin_memory)
-              fi
-              if [[ "${PERSISTENT_WORKERS}" -eq 1 ]]; then
-                BASE_CMD+=(--persistent_workers)
-              fi
+    if [[ "${DRY_RUN}" == "1" ]]; then
+      printf 'CMD: '
+      printf '%q ' "${BASE_CMD[@]}"
+      printf '\n'
+      continue
+    fi
 
-              # Model-specific knobs
-              if [[ "${MODEL}" == "perceiver3" ]]; then
-                BASE_CMD+=(--head_type "${HEAD_TYPE}"
-                           --dual_mode "${DUAL_MODE}"
-                           --temporal_block "${TEMPORAL_BLOCK}"
-                           --node_read_heads "${NODE_READ_HEADS}"
-                           --time_read_heads "${TIME_READ_HEADS}"
-                           --transformer_layers "${TRANSFORMER_LAYERS}"
-                           --transformer_ff_mult "${TRANSFORMER_FF_MULT}"
-                           --transformer_dropout "${TRANSFORMER_DROPOUT}"
-                           --max_time_steps "${MAX_TIME_STEPS}")
-                if [[ "${HEAD_TYPE}" == "dual" ]]; then
-                  BASE_CMD+=(--gate_mode "${GATE_MODE}")
-                  BASE_CMD+=(--dual_loss "${DUAL_LOSS}")
-                  BASE_CMD+=(--body_loss_weight "${BODY_LOSS_WEIGHT}"
-                             --excess_loss_weight "${EXCESS_LOSS_WEIGHT}"
-                             --gate_loss_weight "${GATE_LOSS_WEIGHT}")
-                fi
-              fi
+    {
+      echo "-----------------------------------------"
+      echo "RUN_TAG:  ${RUN_TAG}"
+      echo "LOG:      ${LOG_FILE}"
+      echo "LAUNCHER: ${TRAIN_LAUNCH[*]}"
+      echo "-----------------------------------------"
+      printf "CMD: "
+      printf "%q " "${BASE_CMD[@]}"
+      echo
+    } | tee -a "${LOG_FILE}"
 
-              BASE_CMD+=("${SCHED_ARGS[@]}")
-              BASE_CMD+=("${LOSS_ARGS2[@]}")
-
-              if [[ "${DRY_RUN}" == "1" ]]; then
-                printf 'CMD: '
-                printf '%q ' "${BASE_CMD[@]}"
-                printf '\n'
-                continue
-              fi
-
-              {
-                echo "-----------------------------------------"
-                echo "RUN_TAG:  ${RUN_TAG}"
-                echo "LOG:      ${LOG_FILE}"
-                echo "LAUNCHER: ${TRAIN_LAUNCH[*]}"
-                echo "-----------------------------------------"
-                printf "CMD: "
-                printf "%q " "${BASE_CMD[@]}"
-                echo
-              } | tee -a "${LOG_FILE}"
-
-              "${TRAIN_LAUNCH[@]}" "${BASE_CMD[@]}" 2>&1 | tee -a "${LOG_FILE}"
-
-            done
-          done
-
-    done
+    "${TRAIN_LAUNCH[@]}" "${BASE_CMD[@]}" 2>&1 | tee -a "${LOG_FILE}"
   done
 done
 

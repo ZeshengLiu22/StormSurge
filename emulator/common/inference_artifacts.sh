@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Shared artifact helpers for the single-run and multi-target launchers.
+# Checkpoint resolution and replay artifacts for the inference launcher.
 
 resolve_ckpt() {
   local pattern="$1" candidate newest=""
@@ -24,12 +24,12 @@ write_infer_config_snapshot() {
     INFER_PY PYTHON_BIN USE_TMUX ROOT_DIR TEST_ROOT_DIR STATION STATION_JSON_DIR MODEL MODEL_LABEL
     SOURCE_NAME TARGET_NAME SOURCE_ROOT TARGET_ROOT STRICT_YEARS EXPERIMENT_GROUP EXPECTED_YEAR_COUNT
     USE_SITE_ELEVATION USE_BATHYMETRY
-    ENCODER_TYPE TEMPORAL_BLOCK HEAD_TYPE HISTORY_HOURS BATCH_SIZE YEARS
-    CNN_INTERMEDIATE_CHANNEL DUAL_DIAGNOSTICS
+    ENCODER_TYPE TEMPORAL_BLOCK HISTORY_HOURS BATCH_SIZE YEARS
+    CNN_INTERMEDIATE_CHANNEL
     USE_AMP AMP_DTYPE USE_TF32 TORCH_THREADS NUM_WORKERS PIN_MEMORY
     PERSISTENT_WORKERS PREFETCH_FACTOR MP_CONTEXT DO_CONDA CONDA_MODULE
     CONDA_SH CONDA_ENV CUDA_LAUNCH_BLOCKING_FLAG TORCH_GPU_PROBE FAIL_IF_NO_SLURM
-    INFERENCE_RESULTS_ROOT WORKDIR RUN_DIR OUT_DIR RUNSTAMP TEST_TAG NAME
+    INFERENCE_RESULTS_ROOT WORKDIR RUN_DIR OUT_DIR RUNSTAMP TEST_TAG
   )
   {
     printf '#!/usr/bin/env bash\n# Fully resolved inference configuration; no source-config dependencies.\n'
@@ -50,10 +50,6 @@ write_infer_config_snapshot() {
     done
     printf 'CKPT_PATTERN=%q\n' "${CKPT_PATH}"
     printf 'CKPT_PATH=%q\nCKPT_RESOLVED=%q\n' "${CKPT_RESOLVED}" "${CKPT_RESOLVED}"
-    # A per-target snapshot replays only this target when passed to infer_multi.sh.
-    value="${TEST_ROOT_DIR:-}"
-    if [[ -n "${value}" && "${value}" != /* ]]; then value="${WORKDIR}/${value#./}"; fi
-    printf 'RUNS=(%q)\n' "${NAME:-snapshot}|${value}"
   } > "${output_path}"
 }
 

@@ -1,6 +1,6 @@
 # Run table
 
-Config paths are relative to `/home/exouser/StormSurge/configs/CMIP6_Boston_QuickCheck_0929`.
+Config paths are relative to `/home/exouser/StormSurge/configs_old/CMIP6_Boston_QuickCheck_0929`.
 
 Result paths are relative to `/home/exouser/media/share/PACT/FormalRuns_0925/CMIP6_Boston_QuickCheck_0929`.
 

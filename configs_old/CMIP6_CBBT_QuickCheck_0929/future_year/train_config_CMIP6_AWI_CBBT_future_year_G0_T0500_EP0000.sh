@@ -2,7 +2,6 @@
 # Single Global-MSE + Tail-MSE x EpisodeGTAlignedPeak-MSE: CBBT, T=0.05, EP=0.0.
 # CBBT CMIP6 quick check: CMIP6_AWI, future_year; matching NCEP formal template.
 # Primary selector: overall; secondary: exceedance (both retained by active code).
-# WQE and Dual defaults below are inactive for this Single/MSE objective.
 # Assignment-only configuration; contains no launch or submission command.
 
 TRAIN_PY="train.py"
@@ -19,7 +18,6 @@ MODEL="perceiver3"
 ENCODER_TYPE="GraphSAGE"
 CNN_INTERMEDIATE_CHANNEL=29
 TEMPORAL_BLOCK="Transformer"
-HEAD_TYPE="single"
 HISTORY_HOURS_LIST=(24)
 HIDDEN_CHANNELS=128
 NUM_LAYERS=2
@@ -81,31 +79,10 @@ PERSISTENT_WORKERS=0
 PREFETCH_FACTOR=0
 MP_CONTEXT="fork"
 
-LOSS_MODE_LIST=("mse")
-EXCESS_LOSS_MODE="mse"
-WQE_QUANTILE_TAU=0.25
-WQE_EXPECTILE_TAU=0.82
-WQE_QUANTILE_WEIGHT=0.16666666666666667
-WQE_EXPECTILE_WEIGHT=0.83333333333333333
-EXCEEDANCE_LOSS_MODE="mse"
 EXCEEDANCE_LOSS_WEIGHT=0.05
 EPISODE_GT_ALIGNED_PEAK_WEIGHT=0.0
-EXCESS_AMP_LOSS_WEIGHT=0
 
-# These head/branch settings are inactive for Single.
-DUAL_MODE="exceedance"
-EXCESS_FORMULATION="direct"
-EXCEEDANCE_HEAD_EXPERIMENT=""
-EXCEEDANCE_GATE_POOLING="mean"
-GATE_MODE="window"
-DUAL_ABLATION="none"
-DUAL_LOSS=0
 EXCEEDANCE_PERCENTILE=95
-BODY_LOSS_WEIGHT=1
-EXCESS_LOSS_WEIGHT=1
-GATE_LOSS_WEIGHT=1
-SHAPE_LOSS_WEIGHT=0
-SEVERITY_SHAPE_EPS=1e-6
 
 CHECKPOINT_SELECTION="overall"
 

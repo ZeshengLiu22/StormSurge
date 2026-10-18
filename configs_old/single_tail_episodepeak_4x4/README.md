@@ -14,14 +14,13 @@ GlobalMSE + lambda_T * TailMSE + lambda_P * EpisodeGTAlignedPeakMSE
 | Tail-MSE | {0, 0.0125, 0.025, 0.05} | T0000 / T0125 / T0250 / T0500 |
 | EpisodeGTAlignedPeak-MSE | {0, 0.0025, 0.005, 0.01} | EP0000 / EP0025 / EP0050 / EP0100 |
 
-There are **16 configs/station, 64 configs total** across CBBT, Lewes, Battery,
+There are **16 configs_old/station, 64 configs total** across CBBT, Lewes, Battery,
 and Boston. Tail varies slower; episode peak varies faster. Tokens encode weights
 multiplied by 10,000; each config stores the actual float values. The completed
 four-station gradient diagnostic retained this grid.
 
 Tail uses all strict `GT > TRAIN Q95` hours. Episode peak supervision uses one
 GT peak timestamp per physical TRAIN episode and fixed TRAIN prevalence `J/N`.
-WQE, Dual objectives, forecast-window peak loss, and timing loss are outside this grid.
 
 ## Canonical anchors
 
@@ -48,7 +47,7 @@ No launcher was generated. These are assignment-only configs used with the
 repository's `train.sh`. Preview a single config from the repository root:
 
 ```bash
-DRY_RUN=1 USE_TMUX=0 bash train.sh configs/single_tail_episodepeak_4x4/train_config_NCEP_Boston_G0_T0250_EP0050.sh
+DRY_RUN=1 USE_TMUX=0 bash train.sh configs_old/single_tail_episodepeak_4x4/train_config_NCEP_Boston_G0_T0250_EP0050.sh
 ```
 
 Future runs write under

@@ -32,7 +32,7 @@ for i in "${!CONFIGS[@]}"; do
     [[ "${STATION}" == "${STATION_TOKEN}" && "${SOURCE_NAME}" == "${SOURCE}" && "${TARGET_NAME}" == "${TARGETS[i]}" ]] || fail "Pair identity mismatch: ${config}"
     [[ -n "${TARGET_ROOT}" && "${TEST_ROOT_DIR}" == "${TARGET_ROOT}" && "${ROOT_DIR}" == "${SOURCE_ROOT}" ]] || fail "Explicit source/target roots required: ${config}"
     [[ "${STRICT_YEARS}" == 1 && "${EXPERIMENT_GROUP}" == "${GROUP}" && "${YEARS}" == "${EXPECTED_YEARS}" ]] || fail "Wrong strict year population: ${config}"
-    [[ "${MODEL}" == perceiver3 && "${ENCODER_TYPE}" == GraphSAGE && "${TEMPORAL_BLOCK}" == Transformer && "${HEAD_TYPE}" == single && "${HISTORY_HOURS}" == 24 ]] || fail "Wrong model configuration: ${config}"
+    [[ "${MODEL}" == perceiver3 && "${ENCODER_TYPE}" == GraphSAGE && "${TEMPORAL_BLOCK}" == Transformer && "${HISTORY_HOURS}" == 24 ]] || fail "Wrong model configuration: ${config}"
     [[ "${INFERENCE_RESULTS_ROOT}" == "${FOUR_STATION_RESULTS_ROOT}/${STATION_TOKEN}/${GROUP}" ]] || fail "Wrong production output root: ${config}"
     [[ -f "${CKPT_PATH}" && "${CKPT_PATH}" == /*G0_T0500_EP0100__*/best_overall.pt && "${CKPT_PATH}" != *\** ]] || fail "Missing exact final checkpoint: ${config}"
   )

@@ -44,7 +44,7 @@ The summary and exported TEST prediction NPZs record:
 - `overall` checkpoint selector; both checkpoint roles remain available.
 - 300 epochs, learning rate 0.005, batch size 256, four gradient accumulation steps.
 
-Architecture, runtime, and inactive Single/Dual defaults follow
+Architecture and runtime settings follow
 `../CMIP6_Boston_QuickCheck_0929/future_year/train_config_CMIP6_AWI_Boston_future_year_G0_T0500_EP0100.sh`.
 Results go under `/home/exouser/media/share/PACT/FormalRuns_0925/NCEP_future_transfer`.
 Each run creates `NCEP_<station>_future_transfer_G0_T0500_EP0100__<timestamp>/`
@@ -57,11 +57,11 @@ Run from `/home/exouser/StormSurge`. Audit and dry-run the three remaining stati
 
 ```bash
 /home/exouser/.conda/envs/torchpyg-cu12x/bin/python \
-  configs/NCEP_future_transfer/audit_split.py --stations Battery CBBT Lewes
+  configs_old/NCEP_future_transfer/audit_split.py --stations Battery CBBT Lewes
 
 for station in Battery CBBT Lewes; do
   DRY_RUN=1 bash train.sh \
-    "configs/NCEP_future_transfer/train_config_NCEP_${station}_future_transfer_G0_T0500_EP0100.sh" || break
+    "configs_old/NCEP_future_transfer/train_config_NCEP_${station}_future_transfer_G0_T0500_EP0100.sh" || break
 done
 ```
 
@@ -72,7 +72,7 @@ Launch one station with the usual tmux wrapper:
 
 ```bash
 bash train.sh \
-  configs/NCEP_future_transfer/train_config_NCEP_Battery_future_transfer_G0_T0500_EP0100.sh
+  configs_old/NCEP_future_transfer/train_config_NCEP_Battery_future_transfer_G0_T0500_EP0100.sh
 ```
 
 Or run all three remaining stations sequentially in the current shell:
@@ -80,7 +80,7 @@ Or run all three remaining stations sequentially in the current shell:
 ```bash
 for station in Battery CBBT Lewes; do
   USE_TMUX=0 bash train.sh \
-    "configs/NCEP_future_transfer/train_config_NCEP_${station}_future_transfer_G0_T0500_EP0100.sh" || break
+    "configs_old/NCEP_future_transfer/train_config_NCEP_${station}_future_transfer_G0_T0500_EP0100.sh" || break
 done
 ```
 

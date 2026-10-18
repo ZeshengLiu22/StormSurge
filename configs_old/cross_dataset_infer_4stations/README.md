@@ -14,7 +14,7 @@ and the manifest refer to the same GLADE files. Pair source and target roots are
 absolute; no repository-local `Data` symlink is needed. The generator maps original
 training data paths to the same exact Data-relative dataset identity when auditing
 relocated checkpoints. Training snapshots and checkpoint contents remain intact.
-The old `configs/cross_dataset_infer` and `CrossDatasetInference_dev_BostonONLY`
+The old `configs_old/cross_dataset_infer` and `CrossDatasetInference_dev_BostonONLY`
 are read-only references and are never written by this workflow. Exact source
 checkpoint and training-snapshot hashes are retained in the checkpoint audits.
 
@@ -54,7 +54,7 @@ GT-aligned Episode Peak MSE weight 0.01. Only exact absolute `best_overall.pt`
 paths are generated. Architecture: perceiver3/PACT, GraphSAGE, Transformer,
 single head, 24 h history; site elevation and bathymetry are disabled.
 Casper defaults are `USE_AMP=1`, `AMP_DTYPE=fp16`, `USE_TF32=0`, batch size 64,
-one Torch thread, zero loader workers, and disabled dual diagnostics. V100 has
+one Torch thread and zero loader workers. V100 has
 FP16 Tensor Cores; native BF16 and TF32 require newer GPU architectures. Batch
 and precision may be overridden explicitly, e.g. `BATCH_SIZE=32` or `USE_AMP=0`.
 FP16 results can differ slightly from the original H100 BF16 results.
@@ -108,29 +108,29 @@ cd /glade/u/home/zel/scratch/PACT-Derecho/PACT/StormSurge
 PYTHON=/glade/work/zel/conda-envs/pact-casper-cu126/bin/python
 
 # Audit and deterministically regenerate the pinned production configs.
-"$PYTHON" configs/cross_dataset_infer_4stations/generate_configs.py
+"$PYTHON" configs_old/cross_dataset_infer_4stations/generate_configs.py
 # Re-audit and compare generated files without writing.
-"$PYTHON" configs/cross_dataset_infer_4stations/generate_configs.py --check
-"$PYTHON" configs/cross_dataset_infer_4stations/audit_graphs.py
+"$PYTHON" configs_old/cross_dataset_infer_4stations/generate_configs.py --check
+"$PYTHON" configs_old/cross_dataset_infer_4stations/audit_graphs.py
 
 # One pair.
-bash infer.sh configs/cross_dataset_infer_4stations/Boston/past_only/NCEP/NCEP_to_AWI.sh
+bash infer.sh configs_old/cross_dataset_infer_4stations/Boston/past_only/NCEP/NCEP_to_AWI.sh
 
 # One station/period/source group (6 or 5 pairs).
-bash configs/cross_dataset_infer_4stations/run_group.sh configs/cross_dataset_infer_4stations/Lewes/future_year/NCEP
+bash configs_old/cross_dataset_infer_4stations/run_group.sh configs_old/cross_dataset_infer_4stations/Lewes/future_year/NCEP
 
 # One station (66 pairs).
-bash configs/cross_dataset_infer_4stations/run_station.sh Boston
+bash configs_old/cross_dataset_infer_4stations/run_station.sh Boston
 
 # All four stations, sequentially (264 pairs), followed by the complete summary.
-bash configs/cross_dataset_infer_4stations/run_all.sh && \
-  "$PYTHON" configs/cross_dataset_infer_4stations/summarize_results.py
+bash configs_old/cross_dataset_infer_4stations/run_all.sh && \
+  "$PYTHON" configs_old/cross_dataset_infer_4stations/summarize_results.py
 
 # Resolve all configs without creating inference outputs.
-DRY_RUN=1 bash configs/cross_dataset_infer_4stations/run_all.sh
+DRY_RUN=1 bash configs_old/cross_dataset_infer_4stations/run_all.sh
 
 # Rebuild summaries from raw production artifacts only.
-"$PYTHON" configs/cross_dataset_infer_4stations/summarize_results.py
+"$PYTHON" configs_old/cross_dataset_infer_4stations/summarize_results.py
 ```
 
 `run_group.sh` sorts target configs, checks every config in the group before
@@ -186,15 +186,15 @@ qsub -I -A ULHI0006 -q casper \
 
 # After PBS assigns a GPU compute node:
 cd /glade/u/home/zel/scratch/PACT-Derecho/PACT/StormSurge
-bash configs/cross_dataset_infer_4stations/check_casper_runtime.sh
+bash configs_old/cross_dataset_infer_4stations/check_casper_runtime.sh
 
 # One pair / one year, output under .../CrossDatasetInference_4Stations/smoke/Boston/.
-bash infer.sh configs/cross_dataset_infer_4stations/smoke/Boston_past_only_NCEP_to_AWI.sh
+bash infer.sh configs_old/cross_dataset_infer_4stations/smoke/Boston_past_only_NCEP_to_AWI.sh
 
 # After a successful smoke, all 264 pairs from scratch and automatic summary:
-bash configs/cross_dataset_infer_4stations/run_all.sh && \
+bash configs_old/cross_dataset_infer_4stations/run_all.sh && \
   /glade/work/zel/conda-envs/pact-casper-cu126/bin/python \
-  configs/cross_dataset_infer_4stations/summarize_results.py
+  configs_old/cross_dataset_infer_4stations/summarize_results.py
 ```
 
 Detach with **Ctrl+B, then D**. Reconnect to the same Casper login host and run
@@ -209,7 +209,7 @@ success. It continues independently of tmux/SSH, under the same PBS walltime:
 
 ```bash
 cd /glade/u/home/zel/scratch/PACT-Derecho/PACT/StormSurge
-qsub -A ULHI0006 configs/cross_dataset_infer_4stations/run_casper.pbs
+qsub -A ULHI0006 configs_old/cross_dataset_infer_4stations/run_casper.pbs
 ```
 
 Choose one production launch method for a fresh result tree.
@@ -236,10 +236,10 @@ Submit the four independent jobs from a Casper login node:
 
 ```bash
 cd /glade/u/home/zel/scratch/PACT-Derecho/PACT/StormSurge
-qsub configs/cross_dataset_infer_4stations/run_casper_Boston.pbs
-qsub configs/cross_dataset_infer_4stations/run_casper_CBBT.pbs
-qsub configs/cross_dataset_infer_4stations/run_casper_Lewes.pbs
-qsub configs/cross_dataset_infer_4stations/run_casper_Battery.pbs
+qsub configs_old/cross_dataset_infer_4stations/run_casper_Boston.pbs
+qsub configs_old/cross_dataset_infer_4stations/run_casper_CBBT.pbs
+qsub configs_old/cross_dataset_infer_4stations/run_casper_Lewes.pbs
+qsub configs_old/cross_dataset_infer_4stations/run_casper_Battery.pbs
 ```
 
 The existing summarizer requires all 264 pairs. Run it once after all four jobs
@@ -248,14 +248,14 @@ finish successfully; the station jobs do not write a shared partial summary:
 ```bash
 cd /glade/u/home/zel/scratch/PACT-Derecho/PACT/StormSurge
 /glade/work/zel/conda-envs/pact-casper-cu126/bin/python \
-  configs/cross_dataset_infer_4stations/summarize_results.py
+  configs_old/cross_dataset_infer_4stations/summarize_results.py
 ```
 
 Check all four scripts without requesting GPUs or creating production results:
 
 ```bash
 for station in Boston CBBT Lewes Battery; do
-  DRY_RUN=1 bash "configs/cross_dataset_infer_4stations/run_casper_${station}.pbs"
+  DRY_RUN=1 bash "configs_old/cross_dataset_infer_4stations/run_casper_${station}.pbs"
 done
 ```
 
@@ -272,7 +272,7 @@ Run in a GPU allocation:
 
 ```bash
 /glade/work/zel/conda-envs/pact-casper-cu126/bin/python \
-  configs/cross_dataset_infer_4stations/benchmark_runtime.py
+  configs_old/cross_dataset_infer_4stations/benchmark_runtime.py
 ```
 
 The 2026-10-06 report is in `audit/runtime_benchmark_20261006_084832/`.
@@ -354,23 +354,13 @@ The former all-years loader filled the 64 GiB allocation during the EC_EARTH
 smoke; that isolated diagnostic attempt was stopped before inference completed.
 Validation details and logs are under `CrossDatasetInference_4Stations/audit/`,
 including `casper_validation.json`. The production station directories remain
-absent; tomorrow's command starts a fresh matrix. Only audit/smoke outputs exist.
+absent in this recorded validation; production launches start a fresh matrix.
 
-Historical Jetstream2 validation before the Casper migration passed 70 focused tests, all 48 source
-checkpoint roles, 282 shell syntax checks, all 264 dry runs (including the 12
-required representatives), 44 target graph batches, and both Lewes smoke checks.
-Production requires a fresh result tree. `run_all.sh` starts all 264 pairs from
-scratch and refuses an existing production station directory; audit and smoke
-subdirectories are allowed. A detached tmux session remains subject to PBS walltime.
-
-The focused suite includes existing strict-year, empty-source-TEST, source
-normalization/threshold, physical-unit, and missing-label tests plus
-`tests/test_cross_dataset_infer_4stations.py`. A stale test fixture path was
-updated to the repository's existing `configs/Legacy_Configs/baseline_ablation`.
-`infer.sh`, the artifact helper, architecture, and metric definitions are unchanged.
-For external/source-all evaluations with explicit `YEARS`, `infer.py` and the graph
-store now filter year files before deserializing them. This avoids loading all 66
-years for a single-year smoke and excludes historical years from future production.
+Production requires a fresh result tree. `run_all.sh` starts all 264 pairs and
+refuses an existing production station directory; audit and smoke subdirectories
+are allowed. A detached tmux session remains subject to PBS walltime.
+External/source-all evaluations with explicit `YEARS` filter year files before
+deserializing them, avoiding unnecessary historical files in future evaluation.
 Held-out evaluation retains full saved-TEST-tag validation. Graph tags and target
 timestamps retain their identities; NPZ sample IDs index the selected in-memory store.
 The existing four-station test now expects the Casper default batch size 64.

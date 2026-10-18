@@ -7,8 +7,9 @@ import torch.distributed as dist
 from .targets import supervised_targets, threshold_population
 
 
-def fit_statistics(store, indices, x_norm="zscore", p_lo=1.0, p_hi=99.0,
-                   nodes_per_graph=256, seed=42, device=None):
+def fit_statistics(
+    store, indices, x_norm="zscore", p_lo=1.0, p_hi=99.0, nodes_per_graph=256, seed=42, device=None
+):
     """All ranks participate; return CPU statistics for checkpoint storage.
 
     X z-score uses FP32 squares, FP64 sums, then FP32 moments. Y uses FP64
@@ -35,11 +36,14 @@ def fit_statistics(store, indices, x_norm="zscore", p_lo=1.0, p_hi=99.0,
             for value in (total, square, count):
                 dist.all_reduce(value)
         center = (total / count).float()
-        variance = (square / count).float() - center ** 2
+        variance = (square / count).float() - center**2
         scale = torch.sqrt(variance + 1e-6)
     else:
-        if (x_norm not in ("robust", "mag") or not 0 < p_hi <= 100
-                or (x_norm == "robust" and not 0 <= p_lo < p_hi)):
+        if (
+            x_norm not in ("robust", "mag")
+            or not 0 < p_hi <= 100
+            or (x_norm == "robust" and not 0 <= p_lo < p_hi)
+        ):
             raise ValueError("Invalid feature percentile configuration.")
         # Zero and negative values select the original automatic sample size.
         nodes_per_graph = int(nodes_per_graph) if nodes_per_graph > 0 else 256
@@ -54,8 +58,10 @@ def fit_statistics(store, indices, x_norm="zscore", p_lo=1.0, p_hi=99.0,
                 sampled.append(x.astype(np.float32, copy=False))
             values = np.concatenate(sampled)
             if x_norm == "robust":
-                low, high = np.percentile(values, [p_lo, p_hi], axis=0, overwrite_input=True).astype(np.float32)
-                center, scale = .5 * (low + high), .5 * (high - low)
+                low, high = np.percentile(
+                    values, [p_lo, p_hi], axis=0, overwrite_input=True
+                ).astype(np.float32)
+                center, scale = 0.5 * (low + high), 0.5 * (high - low)
             else:
                 center = np.zeros(features, dtype=np.float32)
                 scale = np.percentile(np.abs(values), p_hi, axis=0, overwrite_input=True)
@@ -73,9 +79,9 @@ def fit_statistics(store, indices, x_norm="zscore", p_lo=1.0, p_hi=99.0,
     for i in local_indices:
         y = store.graphs[i].y.reshape(-1).to(device=device, dtype=torch.float64)
         finite = torch.isfinite(y)
-        y = torch.where(finite, y, 0.)
+        y = torch.where(finite, y, 0.0)
         total += y
-        square += y ** 2
+        square += y**2
         count += finite
     if distributed:
         for value in (total, square, count):
@@ -83,18 +89,17 @@ def fit_statistics(store, indices, x_norm="zscore", p_lo=1.0, p_hi=99.0,
     if (count == 0).any():
         raise ValueError("Every target horizon requires at least one finite TRAIN target.")
     center = (total / count).float()
-    variance = (square / count).float() - center ** 2
+    variance = (square / count).float() - center**2
     stats.update(y_mean=center.cpu(), y_std=torch.sqrt(variance + 1e-6).cpu())
 
     return stats
 
 
-def fit_loss_thresholds(store, indices, exceedance_percentile=95.0, stats=None):
+def fit_loss_thresholds(store, indices, exceedance_percentile=95.0):
     """Fit the one canonical threshold from unique TRAIN physical target hours.
 
     ``indices`` must contain only the source TRAIN split. All validation, test and
     transfer datasets reuse the returned threshold without calling this fitter.
-    Normalization is per horizon, so ``tau_normalized`` is a length-K vector.
     """
     if not 0 < exceedance_percentile < 100:
         raise ValueError("TRAIN exceedance_percentile must lie strictly between 0 and 100.")
@@ -105,17 +110,15 @@ def fit_loss_thresholds(store, indices, exceedance_percentile=95.0, stats=None):
         raise ValueError("Cannot fit the TRAIN threshold without a fully finite target window.")
     chronological = np.argsort(timestamps, axis=None, kind="stable")
     hourly_values = labels.reshape(-1)[chronological]
-    tau = float(np.quantile(hourly_values, exceedance_percentile / 100., method="linear"))
+    tau = float(np.quantile(hourly_values, exceedance_percentile / 100.0, method="linear"))
     population = threshold_population(labels, timestamps, tau)
-    normalized = None
-    if stats is not None:
-        center = torch.as_tensor(stats["y_mean"], dtype=torch.float64).detach().cpu().numpy()
-        scale = torch.as_tensor(stats["y_std"], dtype=torch.float64).detach().cpu().numpy()
-        if center.size != labels.shape[1] or scale.size != labels.shape[1] or not np.isfinite(center).all() or not np.isfinite(scale).all() or np.any(scale <= 0):
-            raise ValueError("Target normalization requires one finite mean and positive scale per horizon.")
-        normalized = ((tau - center) / scale).reshape(-1).tolist()
-    return dict(metric_schema="hourly_q95_v1", threshold_schema="train_hourly_q95_v1",
-                exceedance_percentile=float(exceedance_percentile), quantile_method="linear",
-                tau_physical=tau, tau_normalized=normalized, fitted_on="train",
-                event_prior=population["event_window_rate"], train_windows=len(labels),
-                **{f"train_{key}": value for key, value in population.items()})
+    return dict(
+        metric_schema="hourly_q95_v1",
+        threshold_schema="train_hourly_q95_v1",
+        exceedance_percentile=float(exceedance_percentile),
+        quantile_method="linear",
+        tau_physical=tau,
+        fitted_on="train",
+        train_windows=len(labels),
+        **{f"train_{key}": value for key, value in population.items()},
+    )

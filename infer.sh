@@ -10,17 +10,13 @@ trap cleanup INT TERM
 # shellcheck source=emulator/common/inference_artifacts.sh
 source "$(dirname "${BASH_SOURCE[0]}")/emulator/common/inference_artifacts.sh"
 
-# ============================================================
-# infer.sh
-# - Launch inference inside tmux (interactive use)
-# - Sources exactly one pair config: bash infer.sh <pair-config.sh>
-# - Passes ONLY arguments that exist in infer.py
-# ============================================================
-
-# =========================
-# Config loading
-# =========================
-CONFIG_PATH="${1:-configs/infer_config.sh}"
+# Evaluate one config, optionally inside tmux.
+# Usage: bash infer.sh configs_old/<family>/<pair-config>.sh
+CONFIG_PATH="${1:-}"
+if [[ -z "${CONFIG_PATH}" ]]; then
+  echo "Usage: bash infer.sh <inference-config.sh>"
+  exit 2
+fi
 if [[ ! -f "${CONFIG_PATH}" ]]; then
   echo "[FATAL] config not found: ${CONFIG_PATH}"
   exit 2
@@ -39,7 +35,7 @@ if [[ -n "${SOURCE_NAME:-}${TARGET_NAME:-}${EXPERIMENT_GROUP:-}" ]] && [[ -z "${
   exit 2
 fi
 
-# Safe defaults (older configs won’t break)
+# Data, architecture, and output defaults
 : "${INFER_PY:=infer.py}"
 : "${ROOT_DIR:=./Data/NCEP/graphs}"
 : "${TEST_ROOT_DIR:=}"
@@ -50,7 +46,6 @@ fi
 : "${ENCODER_TYPE:=GraphSAGE}"
 : "${CNN_INTERMEDIATE_CHANNEL:=}"
 : "${TEMPORAL_BLOCK:=Transformer}"
-: "${HEAD_TYPE:=dual}"
 : "${HISTORY_HOURS:=12}"
 : "${BATCH_SIZE:=1}"
 : "${STATION_JSON_DIR:=./station_json}"
@@ -60,7 +55,7 @@ fi
 : "${STRICT_YEARS:=0}"
 : "${DRY_RUN:=0}"
 
-# Debug defaults (if not set in config)
+# Runtime and environment
 : "${CUDA_LAUNCH_BLOCKING_FLAG:=0}"
 : "${TORCH_GPU_PROBE:=0}"
 : "${FAIL_IF_NO_SLURM:=0}"
@@ -70,7 +65,7 @@ fi
 : "${CONDA_SH:=/software/u22/anaconda/python3.9/etc/profile.d/conda.sh}"
 : "${CONDA_ENV:=torchpyg-cu124}"
 
-# Speed defaults (if not set in config)
+# Precision and data loading
 : "${USE_AMP:=1}"
 : "${AMP_DTYPE:=bf16}"
 : "${USE_TF32:=1}"
@@ -81,7 +76,6 @@ fi
 : "${PERSISTENT_WORKERS:=0}"
 : "${PREFETCH_FACTOR:=0}"
 : "${MP_CONTEXT:=fork}"
-: "${DUAL_DIAGNOSTICS:=0}"
 
 # Required
 : "${CKPT_PATH:=}"
@@ -99,14 +93,7 @@ case "${TEMPORAL_BLOCK,,}" in
   *) echo "[FATAL] TEMPORAL_BLOCK must be MLP, LSTM, GRU, or Transformer; got '${TEMPORAL_BLOCK}'"; exit 1 ;;
 esac
 
-case "${HEAD_TYPE,,}" in
-  single|dual) HEAD_TYPE="${HEAD_TYPE,,}" ;;
-  *) echo "[FATAL] HEAD_TYPE must be single or dual; got '${HEAD_TYPE}'"; exit 1 ;;
-esac
-
-# =========================
 # Dataset labels for artifact directories
-# =========================
 infer_dataset_tag () {
   local root="${1%/}"
   local leaf
@@ -130,9 +117,7 @@ if [[ -z "${CKPT_RESOLVED}" ]]; then
   exit 2
 fi
 
-# =========================
-# Logging / tmux
-# =========================
+# Resolve output paths before launching
 WORKDIR="$(pwd)"
 case "${INFERENCE_RESULTS_ROOT}" in
   /*) RESULTS_ROOT="${INFERENCE_RESULTS_ROOT%/}" ;;
@@ -173,7 +158,6 @@ echo "Model:         ${MODEL}"
 echo "Encoder:       ${ENCODER_TYPE}"
 echo "CNN width:     ${CNN_INTERMEDIATE_CHANNEL:-<checkpoint>}"
 echo "Temporal:      ${TEMPORAL_BLOCK}"
-echo "Head:          ${HEAD_TYPE}"
 echo "Station feats: site_elevation=${USE_SITE_ELEVATION} bathymetry=${USE_BATHYMETRY} (PACT)"
 echo "History hours: ${HISTORY_HOURS}"
 echo "Batch size:    ${BATCH_SIZE}"
@@ -296,8 +280,6 @@ TF32_ARGS=()
 if [[ "${USE_TF32}" -eq 1 ]]; then TF32_ARGS=(--tf32); fi
 
 AMP_ARGS=()
-DIAGNOSTIC_ARGS=()
-if [[ "${DUAL_DIAGNOSTICS}" == "1" ]]; then DIAGNOSTIC_ARGS+=(--dual_diagnostics); fi
 if [[ "${USE_AMP}" -eq 1 ]]; then AMP_ARGS=(--amp --amp_dtype "${AMP_DTYPE}"); fi
 
 STATION_ARGS=()
@@ -318,7 +300,7 @@ THREAD_ARGS=(--torch_threads "${TORCH_THREADS}")
 ARCH_ARGS=()
 if [[ -n "${CNN_INTERMEDIATE_CHANNEL}" ]]; then ARCH_ARGS+=(--cnn_intermediate_channel "${CNN_INTERMEDIATE_CHANNEL}"); fi
 
-# IMPORTANT: pass ONLY args that exist in infer.py
+# Build the replayable inference command
 CMD=(
   "${PYTHON_BIN}" -u "${INFER_PY}"
   --root_dir "${ROOT_DIR}"
@@ -334,13 +316,11 @@ CMD=(
   --encoder_type "${ENCODER_TYPE}"
   "${ARCH_ARGS[@]}"
   --temporal_block "${TEMPORAL_BLOCK}"
-  --head_type "${HEAD_TYPE}"
   --history_hours "${HISTORY_HOURS}"
   --batch_size "${BATCH_SIZE}"
   --ckpt "${CKPT_RESOLVED}"
   --out_dir "${OUT_DIR}"
   --save_npz
-  "${DIAGNOSTIC_ARGS[@]}"
   "${YEARS_ARGS[@]}"
   "${AMP_ARGS[@]}"
   "${TF32_ARGS[@]}"

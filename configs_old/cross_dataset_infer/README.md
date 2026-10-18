@@ -22,7 +22,7 @@ are pinned in the pair configs and [manifest.csv](manifest.csv).
 
 Each source directory contains only its six or five pair configs. Architecture
 and runtime settings live in [common.sh](common.sh); group settings define fixed
-years and result roots. The old `configs/configs_infer/` tree remains unchanged
+years and result roots. The old `configs_old/configs_infer/` tree remains unchanged
 as legacy reference.
 
 ## Scientific policy
@@ -53,19 +53,19 @@ cd /home/exouser/StormSurge
 
 # One pair (the full configured 30 target groups)
 bash infer.sh \
-  configs/cross_dataset_infer/future_year/NCEP/NCEP_to_AWI.sh
+  configs_old/cross_dataset_infer/future_year/NCEP/NCEP_to_AWI.sh
 
 # Resolve one pair without running Python or creating result directories
 DRY_RUN=1 bash infer.sh \
-  configs/cross_dataset_infer/past_only/NCEP/NCEP_to_AWI.sh
+  configs_old/cross_dataset_infer/past_only/NCEP/NCEP_to_AWI.sh
 
 # Dry-run one source group
-DRY_RUN=1 bash configs/cross_dataset_infer/run_group.sh \
-  configs/cross_dataset_infer/future_year/NCEP
+DRY_RUN=1 bash configs_old/cross_dataset_infer/run_group.sh \
+  configs_old/cross_dataset_infer/future_year/NCEP
 
 # Eventually run one source group, sequentially
-bash configs/cross_dataset_infer/run_group.sh \
-  configs/cross_dataset_infer/future_year/NCEP
+bash configs_old/cross_dataset_infer/run_group.sh \
+  configs_old/cross_dataset_infer/future_year/NCEP
 ```
 
 The group runner sorts configs, checks expected pair names/count and explicit
@@ -197,13 +197,13 @@ root, split, normalization, or threshold mismatches.
 PYTHON=/home/exouser/.conda/envs/torchpyg-cu12x/bin/python
 
 # Audit checkpoints/target filenames and compare deterministic outputs; no writes
-"$PYTHON" configs/cross_dataset_infer/generate_configs.py --check
+"$PYTHON" configs_old/cross_dataset_infer/generate_configs.py --check
 
 # Regenerate configs, group common files, manifest, and checkpoint audit
-"$PYTHON" configs/cross_dataset_infer/generate_configs.py
+"$PYTHON" configs_old/cross_dataset_infer/generate_configs.py
 
 # Inspect representative real target batches on CPU; no model forward
-"$PYTHON" configs/cross_dataset_infer/audit_graphs.py
+"$PYTHON" configs_old/cross_dataset_infer/audit_graphs.py
 ```
 
 The generator audits all checkpoints before writing configs and never runs
@@ -232,7 +232,7 @@ to `/media`, so canonical checkpoint paths below begin with `/media/share/`.
 [validation.json](validation.json) records the results:
 
 - **64 CPU tests passed**, including seven inference-reporting tests, four
-  config/launcher tests, and 53 existing dual-diagnostic, hourly-metric,
+  config/launcher tests, and 53 existing hourly-metric,
   threshold, pipeline, and config-interface tests. Tests cover no-TEST external
   transfer and explicit source-all scope, strict missing/duplicate/exact years,
   source normalization and tau retention, NPZ/JSON provenance, dry-run side
@@ -276,7 +276,7 @@ Focused and compatibility test commands:
 ```bash
 PYTHONPATH=.:tests /home/exouser/.conda/envs/torchpyg-cu12x/bin/python \
   -m unittest test_inference_reporting test_cross_dataset_infer \
-  test_dual_experiments test_hourly_metrics test_hourly_threshold \
+  test_hourly_metrics test_hourly_threshold \
   test_pipeline test_config_interfaces -v
 ```
 
@@ -284,5 +284,5 @@ Changed implementation files are `infer.py`, `infer.sh`, and
 `emulator/common/inference_artifacts.sh`. Tests extend
 `tests/test_inference_reporting.py` and add `tests/test_cross_dataset_infer.py`.
 This config tree contains the new configs, generator, audits, manifest, runner,
-and documentation. `infer_multi.sh`, the legacy config tree, training, model
+and documentation. Training, model
 code, normalization code, and metric definitions are unchanged.

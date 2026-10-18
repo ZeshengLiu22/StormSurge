@@ -18,7 +18,7 @@ args = parser.parse_args()
 data_folder = 'Grid4_New_PastOnly' if args.group == 'past_only' else 'Grid4_New'
 ratios = (.6, .2) if args.group == 'past_only' else (.4545454545, .0909090909)
 root = repo / 'Data' / data_folder
-output = repo / 'configs/CMIP6_Boston_QuickCheck_0929' / args.group / 'dataset_audit.json'
+output = repo / 'configs_old/CMIP6_Boston_QuickCheck_0929' / args.group / 'dataset_audit.json'
 prior = json.loads(args.reuse_validation.read_text()) if args.reuse_validation else None
 datasets = sorted(p for p in root.glob('CMIP6_*') if p.is_dir())
 expected_years = sorted({'_'.join(p.name.split('_')[:2]) for d in datasets for p in (d/'dicts').glob('*_Boston_*_dict.npz')})

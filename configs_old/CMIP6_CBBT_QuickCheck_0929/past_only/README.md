@@ -9,13 +9,13 @@ The prepared batch uses `PACT_RUNSTAMP=20261003_051753`; exact paths are in `man
 From `/home/exouser/StormSurge`, validate with:
 
 ```bash
-DRY_RUN=1 bash configs/CMIP6_CBBT_QuickCheck_0929/past_only/launch_all.sh
+DRY_RUN=1 bash configs_old/CMIP6_CBBT_QuickCheck_0929/past_only/launch_all.sh
 ```
 
 Submit this group with:
 
 ```bash
-bash configs/CMIP6_CBBT_QuickCheck_0929/past_only/launch_all.sh
+bash configs_old/CMIP6_CBBT_QuickCheck_0929/past_only/launch_all.sh
 ```
 
 For individual jobs, use `qsub_all.txt` in this folder. See [the station README](../README.md) for settings and scope.

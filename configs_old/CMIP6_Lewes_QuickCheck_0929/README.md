@@ -29,7 +29,7 @@ Single head; GraphSAGE + Transformer; 24 h history; hidden 128; LR 5e-3;
 BF16 AMP and TF32. Parameters match the station's NCEP templates and the Boston CMIP6 settings.
 The primary selector is **overall**; both `best_overall.pt` and `best_exceedance.pt` are retained.
 
-Config root: `/home/exouser/StormSurge/configs/CMIP6_Lewes_QuickCheck_0929`.
+Config root: `/home/exouser/StormSurge/configs_old/CMIP6_Lewes_QuickCheck_0929`.
 Results root: `/home/exouser/media/share/PACT/FormalRuns_0925/CMIP6_Lewes_QuickCheck_0929`.
 Both contain `past_only/` and `future_year/` subfolders.
 Each job creates `<group>/CMIP6_<GCM>_Lewes_<group>_G0_<variant>__20261003_051753`.
@@ -42,10 +42,10 @@ From `/home/exouser/StormSurge`:
 
 ```bash
 # Validate all 40 configs without submitting training.
-DRY_RUN=1 bash configs/CMIP6_Lewes_QuickCheck_0929/launch_all.sh
+DRY_RUN=1 bash configs_old/CMIP6_Lewes_QuickCheck_0929/launch_all.sh
 
 # Submit all 40 jobs through qsub_local, using one queue slot and tmux.
-bash configs/CMIP6_Lewes_QuickCheck_0929/launch_all.sh
+bash configs_old/CMIP6_Lewes_QuickCheck_0929/launch_all.sh
 ```
 
 Each group also has its own `launch_all.sh` for submitting 20 jobs.

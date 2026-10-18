@@ -39,7 +39,7 @@ Both `best_overall.pt` and `best_exceedance.pt` are retained and reevaluated on 
 
 ## Exact paths and launch
 
-Config root: `/home/exouser/StormSurge/configs/CMIP6_Boston_QuickCheck_0929`; separate `past_only/` and `future_year/` folders.
+Config root: `/home/exouser/StormSurge/configs_old/CMIP6_Boston_QuickCheck_0929`; separate `past_only/` and `future_year/` folders.
 
 Results root: `/home/exouser/media/share/PACT/FormalRuns_0925/CMIP6_Boston_QuickCheck_0929`; separate `past_only/` and `future_year/` folders.
 
@@ -63,8 +63,8 @@ only the disabled loss weight and run identifiers differ.
 Validate both complete groups from `/home/exouser/StormSurge`:
 
 ```bash
-/home/exouser/.conda/envs/torchpyg-cu12x/bin/python configs/CMIP6_Boston_QuickCheck_0929/audit_configs.py past_only
-/home/exouser/.conda/envs/torchpyg-cu12x/bin/python configs/CMIP6_Boston_QuickCheck_0929/audit_configs.py future_year
+/home/exouser/.conda/envs/torchpyg-cu12x/bin/python configs_old/CMIP6_Boston_QuickCheck_0929/audit_configs.py past_only
+/home/exouser/.conda/envs/torchpyg-cu12x/bin/python configs_old/CMIP6_Boston_QuickCheck_0929/audit_configs.py future_year
 ```
 
 The existing `launch_all.sh` scripts describe the original 20-run batch and keep its
