@@ -1,0 +1,37 @@
+#!/bin/bash -l
+# One station, 66 sequential pairs: 36 past_only + 30 future_year.
+# Submit on Casper: qsub configs/cross_dataset_infer_4stations/run_casper_Battery.pbs
+#PBS -N pact_Battery
+#PBS -A ULHI0006
+#PBS -q casper
+#PBS -l select=1:ncpus=4:mem=64GB:mpiprocs=1:ompthreads=1:ngpus=1:gpu_type=v100
+#PBS -l walltime=02:30:00
+#PBS -j oe
+#PBS -o /glade/u/home/zel/
+
+set -euo pipefail
+cd /glade/u/home/zel
+cd /glade/u/home/zel/scratch/PACT-Derecho/PACT/StormSurge
+source configs/cross_dataset_infer_4stations/common.sh
+export OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1
+export USE_TMUX=0 USE_AMP=1 AMP_DTYPE=fp16 USE_TF32=0
+
+STATION_RESULTS_ROOT="${FOUR_STATION_RESULTS_ROOT}/Battery"
+if [[ "${DRY_RUN:-0}" != 1 ]]; then
+  if [[ -e "${STATION_RESULTS_ROOT}" ]]; then
+    echo "[FATAL] Existing production station directory: ${STATION_RESULTS_ROOT}. Fresh run required; no pairs executed." >&2
+    exit 2
+  fi
+  bash configs/cross_dataset_infer_4stations/check_casper_runtime.sh
+  mkdir -p -- "${FOUR_STATION_RESULTS_ROOT}"
+  # Atomically claim this station so duplicate jobs cannot create duplicate pairs.
+  if ! mkdir -- "${STATION_RESULTS_ROOT}"; then
+    echo "[FATAL] Could not claim fresh station directory: ${STATION_RESULTS_ROOT}" >&2
+    exit 2
+  fi
+fi
+
+printf '[PBS] job=%s station=Battery python=%s\n' "${PBS_JOBID:-dry-run}" "${PYTHON_BIN}"
+START=$SECONDS
+bash configs/cross_dataset_infer_4stations/run_station.sh Battery
+printf '[PBS COMPLETE] Battery: 66 pairs; elapsed=%s s; DRY_RUN=%s\n' "$((SECONDS-START))" "${DRY_RUN:-0}"

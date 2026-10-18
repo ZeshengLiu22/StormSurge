@@ -1,0 +1,1158 @@
+{
+  "station": "CBBT",
+  "group": "past_only",
+  "audited_at_utc": "2026-10-03T05:20:21.979385+00:00",
+  "scope": "Station/year filenames, nonempty archives, metadata, and actual chronological split; tensor contents were not loaded.",
+  "datasets": {
+    "CMIP6_AWI": {
+      "root": "/home/exouser/StormSurge/Data/Grid4_New_PastOnly/CMIP6_AWI/graphs",
+      "file_count": 36,
+      "split": {
+        "train": [
+          "1979_1980",
+          "1980_1981",
+          "1981_1982",
+          "1982_1983",
+          "1983_1984",
+          "1984_1985",
+          "1985_1986",
+          "1986_1987",
+          "1987_1988",
+          "1988_1989",
+          "1989_1990",
+          "1990_1991",
+          "1991_1992",
+          "1992_1993",
+          "1993_1994",
+          "1994_1995",
+          "1995_1996",
+          "1996_1997",
+          "1997_1998",
+          "1998_1999",
+          "1999_2000",
+          "2000_2001"
+        ],
+        "val": [
+          "2001_2002",
+          "2002_2003",
+          "2003_2004",
+          "2004_2005",
+          "2005_2006",
+          "2006_2007",
+          "2007_2008"
+        ],
+        "test": [
+          "2008_2009",
+          "2009_2010",
+          "2010_2011",
+          "2011_2012",
+          "2012_2013",
+          "2013_2014",
+          "2014_2015"
+        ]
+      },
+      "files": [
+        {
+          "name": "1979_1980_CBBT_peryear_hist48_graphs.pt",
+          "bytes": 411851313,
+          "mtime_ns": 1788642148969343556
+        },
+        {
+          "name": "1980_1981_CBBT_peryear_hist48_graphs.pt",
+          "bytes": 409125377,
+          "mtime_ns": 1788642150974353388
+        },
+        {
+          "name": "1981_1982_CBBT_peryear_hist48_graphs.pt",
+          "bytes": 409125377,
+          "mtime_ns": 1788642153082363723
+        },
+        {
+          "name": "1982_1983_CBBT_peryear_hist48_graphs.pt",
+          "bytes": 409125377,
+          "mtime_ns": 1788642155796377028
+        },
+        {
+          "name": "1983_1984_CBBT_peryear_hist48_graphs.pt",
+          "bytes": 411851313,
+          "mtime_ns": 1788642157803386864
+        },
+        {
+          "name": "1984_1985_CBBT_peryear_hist48_graphs.pt",
+          "bytes": 409125377,
+          "mtime_ns": 1788642159810396698
+        },
+        {
+          "name": "1985_1986_CBBT_peryear_hist48_graphs.pt",
+          "bytes": 409125377,
+          "mtime_ns": 1788642161918407027
+        },
+        {
+          "name": "1986_1987_CBBT_peryear_hist48_graphs.pt",
+          "bytes": 409125377,
+          "mtime_ns": 1788642163896416717
+        },
+        {
+          "name": "1987_1988_CBBT_peryear_hist48_graphs.pt",
+          "bytes": 411851313,
+          "mtime_ns": 1788642165900426532
+        },
+        {
+          "name": "1988_1989_CBBT_peryear_hist48_graphs.pt",
+          "bytes": 409125377,
+          "mtime_ns": 1788642168658440039
+        },
+        {
+          "name": "1989_1990_CBBT_peryear_hist48_graphs.pt",
+          "bytes": 409125377,
+          "mtime_ns": 1788642170683449954
+        },
+        {
+          "name": "1990_1991_CBBT_peryear_hist48_graphs.pt",
+          "bytes": 409125377,
+          "mtime_ns": 1788642173470463597
+        },
+        {
+          "name": "1991_1992_CBBT_peryear_hist48_graphs.pt",
+          "bytes": 411851313,
+          "mtime_ns": 1788642176334477614
+        },
+        {
+          "name": "1992_1993_CBBT_peryear_hist48_graphs.pt",
+          "bytes": 409125377,
+          "mtime_ns": 1788642178720489289
+        },
+        {
+          "name": "1993_1994_CBBT_peryear_hist48_graphs.pt",
+          "bytes": 409125377,
+          "mtime_ns": 1788642181240501618
+        },
+        {
+          "name": "1994_1995_CBBT_peryear_hist48_graphs.pt",
+          "bytes": 409125377,
+          "mtime_ns": 1788642183624513280
+        },
+        {
+          "name": "1995_1996_CBBT_peryear_hist48_graphs.pt",
+          "bytes": 411851313,
+          "mtime_ns": 1788642185740523628
+        },
+        {
+          "name": "1996_1997_CBBT_peryear_hist48_graphs.pt",
+          "bytes": 409125377,
+          "mtime_ns": 1788642187793533668
+        },
+        {
+          "name": "1997_1998_CBBT_peryear_hist48_graphs.pt",
+          "bytes": 409125377,
+          "mtime_ns": 1788642189729543133
+        },
+        {
+          "name": "1998_1999_CBBT_peryear_hist48_graphs.pt",
+          "bytes": 409125377,
+          "mtime_ns": 1788642191672552632
+        },
+        {
+          "name": "1999_2000_CBBT_peryear_hist48_graphs.pt",
+          "bytes": 411851313,
+          "mtime_ns": 1788642193660562349
+        },
+        {
+          "name": "2000_2001_CBBT_peryear_hist48_graphs.pt",
+          "bytes": 409125377,
+          "mtime_ns": 1788642196445575959
+        },
+        {
+          "name": "2001_2002_CBBT_peryear_hist48_graphs.pt",
+          "bytes": 409125377,
+          "mtime_ns": 1788642198364585336
+        },
+        {
+          "name": "2002_2003_CBBT_peryear_hist48_graphs.pt",
+          "bytes": 409125377,
+          "mtime_ns": 1788642200363595102
+        },
+        {
+          "name": "2003_2004_CBBT_peryear_hist48_graphs.pt",
+          "bytes": 411851313,
+          "mtime_ns": 1788642202745606738
+        },
+        {
+          "name": "2004_2005_CBBT_peryear_hist48_graphs.pt",
+          "bytes": 409125377,
+          "mtime_ns": 1788642204714616354
+        },
+        {
+          "name": "2005_2006_CBBT_peryear_hist48_graphs.pt",
+          "bytes": 409125377,
+          "mtime_ns": 1788642206809626585
+        },
+        {
+          "name": "2006_2007_CBBT_peryear_hist48_graphs.pt",
+          "bytes": 409125377,
+          "mtime_ns": 1788642208970637136
+        },
+        {
+          "name": "2007_2008_CBBT_peryear_hist48_graphs.pt",
+          "bytes": 411851313,
+          "mtime_ns": 1788642210916646636
+        },
+        {
+          "name": "2008_2009_CBBT_peryear_hist48_graphs.pt",
+          "bytes": 409125377,
+          "mtime_ns": 1788642213081657204
+        },
+        {
+          "name": "2009_2010_CBBT_peryear_hist48_graphs.pt",
+          "bytes": 409125377,
+          "mtime_ns": 1788642215165667375
+        },
+        {
+          "name": "2010_2011_CBBT_peryear_hist48_graphs.pt",
+          "bytes": 409125377,
+          "mtime_ns": 1788642217081676725
+        },
+        {
+          "name": "2011_2012_CBBT_peryear_hist48_graphs.pt",
+          "bytes": 411851313,
+          "mtime_ns": 1788642219194687034
+        },
+        {
+          "name": "2012_2013_CBBT_peryear_hist48_graphs.pt",
+          "bytes": 409125377,
+          "mtime_ns": 1788642221268697152
+        },
+        {
+          "name": "2013_2014_CBBT_peryear_hist48_graphs.pt",
+          "bytes": 409125377,
+          "mtime_ns": 1788642223266706898
+        },
+        {
+          "name": "2014_2015_CBBT_peryear_hist48_graphs.pt",
+          "bytes": 166518161,
+          "mtime_ns": 1788642224573713272
+        }
+      ]
+    },
+    "CMIP6_CNRM": {
+      "root": "/home/exouser/StormSurge/Data/Grid4_New_PastOnly/CMIP6_CNRM/graphs",
+      "file_count": 36,
+      "split": {
+        "train": [
+          "1979_1980",
+          "1980_1981",
+          "1981_1982",
+          "1982_1983",
+          "1983_1984",
+          "1984_1985",
+          "1985_1986",
+          "1986_1987",
+          "1987_1988",
+          "1988_1989",
+          "1989_1990",
+          "1990_1991",
+          "1991_1992",
+          "1992_1993",
+          "1993_1994",
+          "1994_1995",
+          "1995_1996",
+          "1996_1997",
+          "1997_1998",
+          "1998_1999",
+          "1999_2000",
+          "2000_2001"
+        ],
+        "val": [
+          "2001_2002",
+          "2002_2003",
+          "2003_2004",
+          "2004_2005",
+          "2005_2006",
+          "2006_2007",
+          "2007_2008"
+        ],
+        "test": [
+          "2008_2009",
+          "2009_2010",
+          "2010_2011",
+          "2011_2012",
+          "2012_2013",
+          "2013_2014",
+          "2014_2015"
+        ]
+      },
+      "files": [
+        {
+          "name": "1979_1980_CBBT_peryear_hist48_graphs.pt",
+          "bytes": 183531953,
+          "mtime_ns": 1788642235500766545
+        },
+        {
+          "name": "1980_1981_CBBT_peryear_hist48_graphs.pt",
+          "bytes": 182317185,
+          "mtime_ns": 1788642236436771106
+        },
+        {
+          "name": "1981_1982_CBBT_peryear_hist48_graphs.pt",
+          "bytes": 182317185,
+          "mtime_ns": 1788642237397775789
+        },
+        {
+          "name": "1982_1983_CBBT_peryear_hist48_graphs.pt",
+          "bytes": 182317185,
+          "mtime_ns": 1788642238556781437
+        },
+        {
+          "name": "1983_1984_CBBT_peryear_hist48_graphs.pt",
+          "bytes": 183531953,
+          "mtime_ns": 1788642239601786528
+        },
+        {
+          "name": "1984_1985_CBBT_peryear_hist48_graphs.pt",
+          "bytes": 182317185,
+          "mtime_ns": 1788642240941793057
+        },
+        {
+          "name": "1985_1986_CBBT_peryear_hist48_graphs.pt",
+          "bytes": 182317185,
+          "mtime_ns": 1788642241903797743
+        },
+        {
+          "name": "1986_1987_CBBT_peryear_hist48_graphs.pt",
+          "bytes": 182317185,
+          "mtime_ns": 1788642242905802624
+        },
+        {
+          "name": "1987_1988_CBBT_peryear_hist48_graphs.pt",
+          "bytes": 183531953,
+          "mtime_ns": 1788642243954807734
+        },
+        {
+          "name": "1988_1989_CBBT_peryear_hist48_graphs.pt",
+          "bytes": 182317185,
+          "mtime_ns": 1788642244887812278
+        },
+        {
+          "name": "1989_1990_CBBT_peryear_hist48_graphs.pt",
+          "bytes": 182317185,
+          "mtime_ns": 1788642245809816769
+        },
+        {
+          "name": "1990_1991_CBBT_peryear_hist48_graphs.pt",
+          "bytes": 182317185,
+          "mtime_ns": 1788642246822821702
+        },
+        {
+          "name": "1991_1992_CBBT_peryear_hist48_graphs.pt",
+          "bytes": 183531953,
+          "mtime_ns": 1788642247800826465
+        },
+        {
+          "name": "1992_1993_CBBT_peryear_hist48_graphs.pt",
+          "bytes": 182317185,
+          "mtime_ns": 1788642248720830945
+        },
+        {
+          "name": "1993_1994_CBBT_peryear_hist48_graphs.pt",
+          "bytes": 182317185,
+          "mtime_ns": 1788642249947836919
+        },
+        {
+          "name": "1994_1995_CBBT_peryear_hist48_graphs.pt",
+          "bytes": 182317185,
+          "mtime_ns": 1788642250914841627
+        },
+        {
+          "name": "1995_1996_CBBT_peryear_hist48_graphs.pt",
+          "bytes": 183531953,
+          "mtime_ns": 1788642251922846534
+        },
+        {
+          "name": "1996_1997_CBBT_peryear_hist48_graphs.pt",
+          "bytes": 182317185,
+          "mtime_ns": 1788642252871851154
+        },
+        {
+          "name": "1997_1998_CBBT_peryear_hist48_graphs.pt",
+          "bytes": 182317185,
+          "mtime_ns": 1788642253841855876
+        },
+        {
+          "name": "1998_1999_CBBT_peryear_hist48_graphs.pt",
+          "bytes": 182317185,
+          "mtime_ns": 1788642254823860656
+        },
+        {
+          "name": "1999_2000_CBBT_peryear_hist48_graphs.pt",
+          "bytes": 183531953,
+          "mtime_ns": 1788642255843865620
+        },
+        {
+          "name": "2000_2001_CBBT_peryear_hist48_graphs.pt",
+          "bytes": 182317185,
+          "mtime_ns": 1788642256781870185
+        },
+        {
+          "name": "2001_2002_CBBT_peryear_hist48_graphs.pt",
+          "bytes": 182317185,
+          "mtime_ns": 1788642257856875417
+        },
+        {
+          "name": "2002_2003_CBBT_peryear_hist48_graphs.pt",
+          "bytes": 182317185,
+          "mtime_ns": 1788642258794879982
+        },
+        {
+          "name": "2003_2004_CBBT_peryear_hist48_graphs.pt",
+          "bytes": 183531953,
+          "mtime_ns": 1788642259869885213
+        },
+        {
+          "name": "2004_2005_CBBT_peryear_hist48_graphs.pt",
+          "bytes": 182317185,
+          "mtime_ns": 1788642260796889723
+        },
+        {
+          "name": "2005_2006_CBBT_peryear_hist48_graphs.pt",
+          "bytes": 182317185,
+          "mtime_ns": 1788642261709894166
+        },
+        {
+          "name": "2006_2007_CBBT_peryear_hist48_graphs.pt",
+          "bytes": 182317185,
+          "mtime_ns": 1788642263068900777
+        },
+        {
+          "name": "2007_2008_CBBT_peryear_hist48_graphs.pt",
+          "bytes": 183531953,
+          "mtime_ns": 1788642263999905307
+        },
+        {
+          "name": "2008_2009_CBBT_peryear_hist48_graphs.pt",
+          "bytes": 182317185,
+          "mtime_ns": 1788642264930909835
+        },
+        {
+          "name": "2009_2010_CBBT_peryear_hist48_graphs.pt",
+          "bytes": 182317185,
+          "mtime_ns": 1788642265863914373
+        },
+        {
+          "name": "2010_2011_CBBT_peryear_hist48_graphs.pt",
+          "bytes": 182317185,
+          "mtime_ns": 1788642267854924057
+        },
+        {
+          "name": "2011_2012_CBBT_peryear_hist48_graphs.pt",
+          "bytes": 183531953,
+          "mtime_ns": 1788642268733928332
+        },
+        {
+          "name": "2012_2013_CBBT_peryear_hist48_graphs.pt",
+          "bytes": 179887713,
+          "mtime_ns": 1788642269665932864
+        },
+        {
+          "name": "2013_2014_CBBT_peryear_hist48_graphs.pt",
+          "bytes": 182317185,
+          "mtime_ns": 1788642271237940508
+        },
+        {
+          "name": "2014_2015_CBBT_peryear_hist48_graphs.pt",
+          "bytes": 74203921,
+          "mtime_ns": 1788642271800943246
+        }
+      ]
+    },
+    "CMIP6_EC_EARTH": {
+      "root": "/home/exouser/StormSurge/Data/Grid4_New_PastOnly/CMIP6_EC_EARTH/graphs",
+      "file_count": 36,
+      "split": {
+        "train": [
+          "1979_1980",
+          "1980_1981",
+          "1981_1982",
+          "1982_1983",
+          "1983_1984",
+          "1984_1985",
+          "1985_1986",
+          "1986_1987",
+          "1987_1988",
+          "1988_1989",
+          "1989_1990",
+          "1990_1991",
+          "1991_1992",
+          "1992_1993",
+          "1993_1994",
+          "1994_1995",
+          "1995_1996",
+          "1996_1997",
+          "1997_1998",
+          "1998_1999",
+          "1999_2000",
+          "2000_2001"
+        ],
+        "val": [
+          "2001_2002",
+          "2002_2003",
+          "2003_2004",
+          "2004_2005",
+          "2005_2006",
+          "2006_2007",
+          "2007_2008"
+        ],
+        "test": [
+          "2008_2009",
+          "2009_2010",
+          "2010_2011",
+          "2011_2012",
+          "2012_2013",
+          "2013_2014",
+          "2014_2015"
+        ]
+      },
+      "files": [
+        {
+          "name": "1979_1980_CBBT_peryear_hist48_graphs.pt",
+          "bytes": 730795057,
+          "mtime_ns": 1788642318843171642
+        },
+        {
+          "name": "1980_1981_CBBT_peryear_hist48_graphs.pt",
+          "bytes": 725958145,
+          "mtime_ns": 1788642323183192681
+        },
+        {
+          "name": "1981_1982_CBBT_peryear_hist48_graphs.pt",
+          "bytes": 725958145,
+          "mtime_ns": 1788642326716209804
+        },
+        {
+          "name": "1982_1983_CBBT_peryear_hist48_graphs.pt",
+          "bytes": 725958145,
+          "mtime_ns": 1788642330392227618
+        },
+        {
+          "name": "1983_1984_CBBT_peryear_hist48_graphs.pt",
+          "bytes": 730795057,
+          "mtime_ns": 1788642333902244624
+        },
+        {
+          "name": "1984_1985_CBBT_peryear_hist48_graphs.pt",
+          "bytes": 725958145,
+          "mtime_ns": 1788642337849263742
+        },
+        {
+          "name": "1985_1986_CBBT_peryear_hist48_graphs.pt",
+          "bytes": 725958145,
+          "mtime_ns": 1788642341646282130
+        },
+        {
+          "name": "1986_1987_CBBT_peryear_hist48_graphs.pt",
+          "bytes": 725958145,
+          "mtime_ns": 1788642345774302118
+        },
+        {
+          "name": "1987_1988_CBBT_peryear_hist48_graphs.pt",
+          "bytes": 730795057,
+          "mtime_ns": 1788642349306319216
+        },
+        {
+          "name": "1988_1989_CBBT_peryear_hist48_graphs.pt",
+          "bytes": 725958145,
+          "mtime_ns": 1788642352881336518
+        },
+        {
+          "name": "1989_1990_CBBT_peryear_hist48_graphs.pt",
+          "bytes": 725958145,
+          "mtime_ns": 1788642356363353368
+        },
+        {
+          "name": "1990_1991_CBBT_peryear_hist48_graphs.pt",
+          "bytes": 725958145,
+          "mtime_ns": 1788642359985370891
+        },
+        {
+          "name": "1991_1992_CBBT_peryear_hist48_graphs.pt",
+          "bytes": 730795057,
+          "mtime_ns": 1788642363475387774
+        },
+        {
+          "name": "1992_1993_CBBT_peryear_hist48_graphs.pt",
+          "bytes": 725958145,
+          "mtime_ns": 1788642367087405243
+        },
+        {
+          "name": "1993_1994_CBBT_peryear_hist48_graphs.pt",
+          "bytes": 725958145,
+          "mtime_ns": 1788642371439426287
+        },
+        {
+          "name": "1994_1995_CBBT_peryear_hist48_graphs.pt",
+          "bytes": 725958145,
+          "mtime_ns": 1788642375378445329
+        },
+        {
+          "name": "1995_1996_CBBT_peryear_hist48_graphs.pt",
+          "bytes": 730795057,
+          "mtime_ns": 1788642378901462358
+        },
+        {
+          "name": "1996_1997_CBBT_peryear_hist48_graphs.pt",
+          "bytes": 725958145,
+          "mtime_ns": 1788642383093482617
+        },
+        {
+          "name": "1997_1998_CBBT_peryear_hist48_graphs.pt",
+          "bytes": 725958145,
+          "mtime_ns": 1788642387360503233
+        },
+        {
+          "name": "1998_1999_CBBT_peryear_hist48_graphs.pt",
+          "bytes": 725958145,
+          "mtime_ns": 1788642391643523922
+        },
+        {
+          "name": "1999_2000_CBBT_peryear_hist48_graphs.pt",
+          "bytes": 730795057,
+          "mtime_ns": 1788642395953544737
+        },
+        {
+          "name": "2000_2001_CBBT_peryear_hist48_graphs.pt",
+          "bytes": 725958145,
+          "mtime_ns": 1788642400421566311
+        },
+        {
+          "name": "2001_2002_CBBT_peryear_hist48_graphs.pt",
+          "bytes": 725958145,
+          "mtime_ns": 1788642404864587759
+        },
+        {
+          "name": "2002_2003_CBBT_peryear_hist48_graphs.pt",
+          "bytes": 725958145,
+          "mtime_ns": 1788642409104608222
+        },
+        {
+          "name": "2003_2004_CBBT_peryear_hist48_graphs.pt",
+          "bytes": 730795057,
+          "mtime_ns": 1788642413417629034
+        },
+        {
+          "name": "2004_2005_CBBT_peryear_hist48_graphs.pt",
+          "bytes": 725958145,
+          "mtime_ns": 1788642417731649847
+        },
+        {
+          "name": "2005_2006_CBBT_peryear_hist48_graphs.pt",
+          "bytes": 725958145,
+          "mtime_ns": 1788642422102670930
+        },
+        {
+          "name": "2006_2007_CBBT_peryear_hist48_graphs.pt",
+          "bytes": 725958145,
+          "mtime_ns": 1788642426292691136
+        },
+        {
+          "name": "2007_2008_CBBT_peryear_hist48_graphs.pt",
+          "bytes": 730795057,
+          "mtime_ns": 1788642430590711859
+        },
+        {
+          "name": "2008_2009_CBBT_peryear_hist48_graphs.pt",
+          "bytes": 725958145,
+          "mtime_ns": 1788642434771732014
+        },
+        {
+          "name": "2009_2010_CBBT_peryear_hist48_graphs.pt",
+          "bytes": 725958145,
+          "mtime_ns": 1788642439008752436
+        },
+        {
+          "name": "2010_2011_CBBT_peryear_hist48_graphs.pt",
+          "bytes": 725958145,
+          "mtime_ns": 1788642443329773258
+        },
+        {
+          "name": "2011_2012_CBBT_peryear_hist48_graphs.pt",
+          "bytes": 730795057,
+          "mtime_ns": 1788642447716794395
+        },
+        {
+          "name": "2012_2013_CBBT_peryear_hist48_graphs.pt",
+          "bytes": 725958145,
+          "mtime_ns": 1788642452066815348
+        },
+        {
+          "name": "2013_2014_CBBT_peryear_hist48_graphs.pt",
+          "bytes": 725958145,
+          "mtime_ns": 1788642456156835045
+        },
+        {
+          "name": "2014_2015_CBBT_peryear_hist48_graphs.pt",
+          "bytes": 290637153,
+          "mtime_ns": 1788642458408845889
+        }
+      ]
+    },
+    "CMIP6_MPI": {
+      "root": "/home/exouser/StormSurge/Data/Grid4_New_PastOnly/CMIP6_MPI/graphs",
+      "file_count": 36,
+      "split": {
+        "train": [
+          "1979_1980",
+          "1980_1981",
+          "1981_1982",
+          "1982_1983",
+          "1983_1984",
+          "1984_1985",
+          "1985_1986",
+          "1986_1987",
+          "1987_1988",
+          "1988_1989",
+          "1989_1990",
+          "1990_1991",
+          "1991_1992",
+          "1992_1993",
+          "1993_1994",
+          "1994_1995",
+          "1995_1996",
+          "1996_1997",
+          "1997_1998",
+          "1998_1999",
+          "1999_2000",
+          "2000_2001"
+        ],
+        "val": [
+          "2001_2002",
+          "2002_2003",
+          "2003_2004",
+          "2004_2005",
+          "2005_2006",
+          "2006_2007",
+          "2007_2008"
+        ],
+        "test": [
+          "2008_2009",
+          "2009_2010",
+          "2010_2011",
+          "2011_2012",
+          "2012_2013",
+          "2013_2014",
+          "2014_2015"
+        ]
+      },
+      "files": [
+        {
+          "name": "1979_1980_CBBT_peryear_hist48_graphs.pt",
+          "bytes": 411851313,
+          "mtime_ns": 1788642479830948991
+        },
+        {
+          "name": "1980_1981_CBBT_peryear_hist48_graphs.pt",
+          "bytes": 409125377,
+          "mtime_ns": 1788642481874958823
+        },
+        {
+          "name": "1981_1982_CBBT_peryear_hist48_graphs.pt",
+          "bytes": 409125377,
+          "mtime_ns": 1788642484768972743
+        },
+        {
+          "name": "1982_1983_CBBT_peryear_hist48_graphs.pt",
+          "bytes": 409125377,
+          "mtime_ns": 1788642486764982343
+        },
+        {
+          "name": "1983_1984_CBBT_peryear_hist48_graphs.pt",
+          "bytes": 411851313,
+          "mtime_ns": 1788642489092993538
+        },
+        {
+          "name": "1984_1985_CBBT_peryear_hist48_graphs.pt",
+          "bytes": 409125377,
+          "mtime_ns": 1788642491081003098
+        },
+        {
+          "name": "1985_1986_CBBT_peryear_hist48_graphs.pt",
+          "bytes": 409125377,
+          "mtime_ns": 1788642493687015628
+        },
+        {
+          "name": "1986_1987_CBBT_peryear_hist48_graphs.pt",
+          "bytes": 409125377,
+          "mtime_ns": 1788642495894026238
+        },
+        {
+          "name": "1987_1988_CBBT_peryear_hist48_graphs.pt",
+          "bytes": 411851313,
+          "mtime_ns": 1788642497951036126
+        },
+        {
+          "name": "1988_1989_CBBT_peryear_hist48_graphs.pt",
+          "bytes": 409125377,
+          "mtime_ns": 1788642500531048528
+        },
+        {
+          "name": "1989_1990_CBBT_peryear_hist48_graphs.pt",
+          "bytes": 409125377,
+          "mtime_ns": 1788642503203061371
+        },
+        {
+          "name": "1990_1991_CBBT_peryear_hist48_graphs.pt",
+          "bytes": 409125377,
+          "mtime_ns": 1788642505478072303
+        },
+        {
+          "name": "1991_1992_CBBT_peryear_hist48_graphs.pt",
+          "bytes": 411851313,
+          "mtime_ns": 1788642507587082438
+        },
+        {
+          "name": "1992_1993_CBBT_peryear_hist48_graphs.pt",
+          "bytes": 409125377,
+          "mtime_ns": 1788642509584092035
+        },
+        {
+          "name": "1993_1994_CBBT_peryear_hist48_graphs.pt",
+          "bytes": 409125377,
+          "mtime_ns": 1788642511615101793
+        },
+        {
+          "name": "1994_1995_CBBT_peryear_hist48_graphs.pt",
+          "bytes": 409125377,
+          "mtime_ns": 1788642532225200803
+        },
+        {
+          "name": "1995_1996_CBBT_peryear_hist48_graphs.pt",
+          "bytes": 411851313,
+          "mtime_ns": 1788642534896213626
+        },
+        {
+          "name": "1996_1997_CBBT_peryear_hist48_graphs.pt",
+          "bytes": 409125377,
+          "mtime_ns": 1788642536916223322
+        },
+        {
+          "name": "1997_1998_CBBT_peryear_hist48_graphs.pt",
+          "bytes": 409125377,
+          "mtime_ns": 1788642538946233066
+        },
+        {
+          "name": "1998_1999_CBBT_peryear_hist48_graphs.pt",
+          "bytes": 409125377,
+          "mtime_ns": 1788642540937242622
+        },
+        {
+          "name": "1999_2000_CBBT_peryear_hist48_graphs.pt",
+          "bytes": 411851313,
+          "mtime_ns": 1788642542930252187
+        },
+        {
+          "name": "2000_2001_CBBT_peryear_hist48_graphs.pt",
+          "bytes": 409125377,
+          "mtime_ns": 1788642544957261914
+        },
+        {
+          "name": "2001_2002_CBBT_peryear_hist48_graphs.pt",
+          "bytes": 409125377,
+          "mtime_ns": 1788642547127272328
+        },
+        {
+          "name": "2002_2003_CBBT_peryear_hist48_graphs.pt",
+          "bytes": 409125377,
+          "mtime_ns": 1788642549306282783
+        },
+        {
+          "name": "2003_2004_CBBT_peryear_hist48_graphs.pt",
+          "bytes": 411851313,
+          "mtime_ns": 1788642551404292848
+        },
+        {
+          "name": "2004_2005_CBBT_peryear_hist48_graphs.pt",
+          "bytes": 409125377,
+          "mtime_ns": 1788642553619303474
+        },
+        {
+          "name": "2005_2006_CBBT_peryear_hist48_graphs.pt",
+          "bytes": 409125377,
+          "mtime_ns": 1788642555731313605
+        },
+        {
+          "name": "2006_2007_CBBT_peryear_hist48_graphs.pt",
+          "bytes": 409125377,
+          "mtime_ns": 1788642557739323237
+        },
+        {
+          "name": "2007_2008_CBBT_peryear_hist48_graphs.pt",
+          "bytes": 411851313,
+          "mtime_ns": 1788642559748332872
+        },
+        {
+          "name": "2008_2009_CBBT_peryear_hist48_graphs.pt",
+          "bytes": 409125377,
+          "mtime_ns": 1788642561671342095
+        },
+        {
+          "name": "2009_2010_CBBT_peryear_hist48_graphs.pt",
+          "bytes": 409125377,
+          "mtime_ns": 1788642569453379411
+        },
+        {
+          "name": "2010_2011_CBBT_peryear_hist48_graphs.pt",
+          "bytes": 409125377,
+          "mtime_ns": 1788642572108392138
+        },
+        {
+          "name": "2011_2012_CBBT_peryear_hist48_graphs.pt",
+          "bytes": 411851313,
+          "mtime_ns": 1788642574780404947
+        },
+        {
+          "name": "2012_2013_CBBT_peryear_hist48_graphs.pt",
+          "bytes": 409125377,
+          "mtime_ns": 1788642577202416556
+        },
+        {
+          "name": "2013_2014_CBBT_peryear_hist48_graphs.pt",
+          "bytes": 409125377,
+          "mtime_ns": 1788642579846429228
+        },
+        {
+          "name": "2014_2015_CBBT_peryear_hist48_graphs.pt",
+          "bytes": 166518161,
+          "mtime_ns": 1788642581172435583
+        }
+      ]
+    },
+    "CMIP6_MRI": {
+      "root": "/home/exouser/StormSurge/Data/Grid4_New_PastOnly/CMIP6_MRI/graphs",
+      "file_count": 36,
+      "split": {
+        "train": [
+          "1979_1980",
+          "1980_1981",
+          "1981_1982",
+          "1982_1983",
+          "1983_1984",
+          "1984_1985",
+          "1985_1986",
+          "1986_1987",
+          "1987_1988",
+          "1988_1989",
+          "1989_1990",
+          "1990_1991",
+          "1991_1992",
+          "1992_1993",
+          "1993_1994",
+          "1994_1995",
+          "1995_1996",
+          "1996_1997",
+          "1997_1998",
+          "1998_1999",
+          "1999_2000",
+          "2000_2001"
+        ],
+        "val": [
+          "2001_2002",
+          "2002_2003",
+          "2003_2004",
+          "2004_2005",
+          "2005_2006",
+          "2006_2007",
+          "2007_2008"
+        ],
+        "test": [
+          "2008_2009",
+          "2009_2010",
+          "2010_2011",
+          "2011_2012",
+          "2012_2013",
+          "2013_2014",
+          "2014_2015"
+        ]
+      },
+      "files": [
+        {
+          "name": "1979_1980_CBBT_peryear_hist48_graphs.pt",
+          "bytes": 283593265,
+          "mtime_ns": 1788642598600519081
+        },
+        {
+          "name": "1980_1981_CBBT_peryear_hist48_graphs.pt",
+          "bytes": 281716225,
+          "mtime_ns": 1788642600006525815
+        },
+        {
+          "name": "1981_1982_CBBT_peryear_hist48_graphs.pt",
+          "bytes": 281716225,
+          "mtime_ns": 1788642601416532568
+        },
+        {
+          "name": "1982_1983_CBBT_peryear_hist48_graphs.pt",
+          "bytes": 281716225,
+          "mtime_ns": 1788642602825539316
+        },
+        {
+          "name": "1983_1984_CBBT_peryear_hist48_graphs.pt",
+          "bytes": 283593265,
+          "mtime_ns": 1788642604960549541
+        },
+        {
+          "name": "1984_1985_CBBT_peryear_hist48_graphs.pt",
+          "bytes": 281716225,
+          "mtime_ns": 1788642610249574865
+        },
+        {
+          "name": "1985_1986_CBBT_peryear_hist48_graphs.pt",
+          "bytes": 281716225,
+          "mtime_ns": 1788642635277694644
+        },
+        {
+          "name": "1986_1987_CBBT_peryear_hist48_graphs.pt",
+          "bytes": 281716225,
+          "mtime_ns": 1788642658985808018
+        },
+        {
+          "name": "1987_1988_CBBT_peryear_hist48_graphs.pt",
+          "bytes": 283593265,
+          "mtime_ns": 1788642681782916960
+        },
+        {
+          "name": "1988_1989_CBBT_peryear_hist48_graphs.pt",
+          "bytes": 281716225,
+          "mtime_ns": 1788642704791026839
+        },
+        {
+          "name": "1989_1990_CBBT_peryear_hist48_graphs.pt",
+          "bytes": 281716225,
+          "mtime_ns": 1788642728634140636
+        },
+        {
+          "name": "1990_1991_CBBT_peryear_hist48_graphs.pt",
+          "bytes": 281716225,
+          "mtime_ns": 1788642753351258529
+        },
+        {
+          "name": "1991_1992_CBBT_peryear_hist48_graphs.pt",
+          "bytes": 283593265,
+          "mtime_ns": 1788642777016371337
+        },
+        {
+          "name": "1992_1993_CBBT_peryear_hist48_graphs.pt",
+          "bytes": 281716225,
+          "mtime_ns": 1788642800713484234
+        },
+        {
+          "name": "1993_1994_CBBT_peryear_hist48_graphs.pt",
+          "bytes": 281716225,
+          "mtime_ns": 1788642823419592354
+        },
+        {
+          "name": "1994_1995_CBBT_peryear_hist48_graphs.pt",
+          "bytes": 281716225,
+          "mtime_ns": 1788642845897699335
+        },
+        {
+          "name": "1995_1996_CBBT_peryear_hist48_graphs.pt",
+          "bytes": 283593265,
+          "mtime_ns": 1788642868938808945
+        },
+        {
+          "name": "1996_1997_CBBT_peryear_hist48_graphs.pt",
+          "bytes": 281716225,
+          "mtime_ns": 1788642892817922491
+        },
+        {
+          "name": "1997_1998_CBBT_peryear_hist48_graphs.pt",
+          "bytes": 281716225,
+          "mtime_ns": 1788642916672035867
+        },
+        {
+          "name": "1998_1999_CBBT_peryear_hist48_graphs.pt",
+          "bytes": 281716225,
+          "mtime_ns": 1788642942672159379
+        },
+        {
+          "name": "1999_2000_CBBT_peryear_hist48_graphs.pt",
+          "bytes": 283593265,
+          "mtime_ns": 1788642957161228181
+        },
+        {
+          "name": "2000_2001_CBBT_peryear_hist48_graphs.pt",
+          "bytes": 281716225,
+          "mtime_ns": 1788642958615235085
+        },
+        {
+          "name": "2001_2002_CBBT_peryear_hist48_graphs.pt",
+          "bytes": 281716225,
+          "mtime_ns": 1788642960058241936
+        },
+        {
+          "name": "2002_2003_CBBT_peryear_hist48_graphs.pt",
+          "bytes": 281716225,
+          "mtime_ns": 1788642961635249423
+        },
+        {
+          "name": "2003_2004_CBBT_peryear_hist48_graphs.pt",
+          "bytes": 283593265,
+          "mtime_ns": 1788642963662259048
+        },
+        {
+          "name": "2004_2005_CBBT_peryear_hist48_graphs.pt",
+          "bytes": 281716225,
+          "mtime_ns": 1788642965459267579
+        },
+        {
+          "name": "2005_2006_CBBT_peryear_hist48_graphs.pt",
+          "bytes": 281716225,
+          "mtime_ns": 1788642966921274519
+        },
+        {
+          "name": "2006_2007_CBBT_peryear_hist48_graphs.pt",
+          "bytes": 281716225,
+          "mtime_ns": 1788642968530282158
+        },
+        {
+          "name": "2007_2008_CBBT_peryear_hist48_graphs.pt",
+          "bytes": 283593265,
+          "mtime_ns": 1788642970320290656
+        },
+        {
+          "name": "2008_2009_CBBT_peryear_hist48_graphs.pt",
+          "bytes": 281716225,
+          "mtime_ns": 1788642971972298499
+        },
+        {
+          "name": "2009_2010_CBBT_peryear_hist48_graphs.pt",
+          "bytes": 281716225,
+          "mtime_ns": 1788642973787307114
+        },
+        {
+          "name": "2010_2011_CBBT_peryear_hist48_graphs.pt",
+          "bytes": 281716225,
+          "mtime_ns": 1788642975255314083
+        },
+        {
+          "name": "2011_2012_CBBT_peryear_hist48_graphs.pt",
+          "bytes": 283593265,
+          "mtime_ns": 1788642977150323078
+        },
+        {
+          "name": "2012_2013_CBBT_peryear_hist48_graphs.pt",
+          "bytes": 281716225,
+          "mtime_ns": 1788642978889331333
+        },
+        {
+          "name": "2013_2014_CBBT_peryear_hist48_graphs.pt",
+          "bytes": 281716225,
+          "mtime_ns": 1788642980699339924
+        },
+        {
+          "name": "2014_2015_CBBT_peryear_hist48_graphs.pt",
+          "bytes": 112783713,
+          "mtime_ns": 1788642982149346806
+        }
+      ]
+    }
+  }
+}

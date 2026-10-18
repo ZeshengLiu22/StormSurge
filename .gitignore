@@ -49,7 +49,6 @@ predictions/
 checkpoints/
 cache/
 tmp/
-configs_old/
 test/
 tests/
 tools/

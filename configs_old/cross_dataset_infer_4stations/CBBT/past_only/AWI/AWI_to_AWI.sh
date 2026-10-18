@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+source "$(dirname "${BASH_SOURCE[0]}")/../common.sh"
+
+NAME="past_only_CBBT_AWI_to_AWI"
+SOURCE_NAME="AWI"
+TARGET_NAME="AWI"
+
+CKPT_PATH=/glade/u/home/zel/scratch/PACT-Derecho/PACT/FormalRuns_0925/CMIP6_CBBT_QuickCheck_0929/past_only/CMIP6_AWI_CBBT_past_only_G0_T0500_EP0100__20261003_051753/best_overall.pt
+
+SOURCE_ROOT="/glade/u/home/zel/scratch/PACT-Derecho/PACT/Data/Grid4_New_PastOnly/CMIP6_AWI/graphs"
+TARGET_ROOT="/glade/u/home/zel/scratch/PACT-Derecho/PACT/Data/Grid4_New_PastOnly/CMIP6_AWI/graphs"
+
+ROOT_DIR="${SOURCE_ROOT}"
+TEST_ROOT_DIR="${TARGET_ROOT}"

@@ -1,0 +1,13 @@
+#!/bin/bash -l
+# Submit from the Casper login node: qsub -A ULHI0006 configs/cross_dataset_infer_4stations/run_casper.pbs
+#PBS -N pact4
+#PBS -q casper
+#PBS -l select=1:ncpus=4:mem=64GB:ngpus=1:gpu_type=v100
+#PBS -l walltime=24:00:00
+#PBS -j oe
+set -euo pipefail
+cd /glade/u/home/zel/scratch/PACT-Derecho/PACT/StormSurge
+source configs/cross_dataset_infer_4stations/common.sh
+bash configs/cross_dataset_infer_4stations/check_casper_runtime.sh
+bash configs/cross_dataset_infer_4stations/run_all.sh && \
+  "${PYTHON_BIN}" configs/cross_dataset_infer_4stations/summarize_results.py
