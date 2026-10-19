@@ -13,15 +13,19 @@ def fit_statistics(
     """Fit feature normalization and per-horizon target moments on training graphs.
 
     Every distributed rank must call this function. Z-score feature statistics
-    use current forcing only, with FP32 squares and FP64 reductions. Target moments
-    use FP64 squares and reductions. Both moment paths cast to FP32 before computing
-    variance and add 1e-6 before the square root. Percentiles are fitted on rank zero,
+    use current forcing only, with FP32 squares and FP64 reductions. Absolute pressure
+    (raw channel 2 or anomaly_plus_mean channel 5) instead uses a second pass of FP64
+    squared deviations from the global FP64 mean to avoid cancellation. Anomaly mode
+    and all other channels retain the original moment arithmetic. Target moments use
+    FP64 squares and reductions, then cast to FP32 before computing variance. All
+    variances add 1e-6 before the square root. Percentiles are fitted on rank zero,
     scales are floored at 1e-6, and the result is broadcast. Stored history features
     do not contribute additional samples.
 
     Args:
         store: Graph store with unnormalized current features x [nodes, features] and
-            physical target vectors y [horizons].
+            physical target vectors y [horizons]. Its pressure_mode selects the stable
+            absolute-pressure variance; stores without that attribute use anomaly.
         indices: Nonempty sequence of source-training graph indices, identical across
             distributed ranks.
         x_norm: zscore uses all current node features; robust uses the midpoint and
@@ -65,6 +69,24 @@ def fit_statistics(
                 dist.all_reduce(value)
         center = (total / count).float()
         variance = (square / count).float() - center**2
+        pressure_channel = {"raw": 2, "anomaly_plus_mean": 5}.get(
+            getattr(store, "pressure_mode", "anomaly")
+        )
+        if pressure_channel is not None:
+            # Center in FP64 before squaring: absolute pressure can be near 1e5
+            # while its TRAIN variation is only a few Pa. Keep every other channel
+            # on the legacy path, including the anomaly channel in the six-feature mode.
+            pressure_mean = total[pressure_channel] / count
+            centered_square = torch.zeros((), dtype=torch.float64, device=device)
+            for i in local_indices:
+                pressure = store.graphs[i].x[:, pressure_channel].to(
+                    device=device, dtype=torch.float32, non_blocking=True
+                ).double()
+                centered_square += ((pressure - pressure_mean) ** 2).sum()
+            if distributed:
+                # All ranks participate, including those with no local TRAIN graphs.
+                dist.all_reduce(centered_square)
+            variance[pressure_channel] = (centered_square / count).float()
         scale = torch.sqrt(variance + 1e-6)
     else:
         if (

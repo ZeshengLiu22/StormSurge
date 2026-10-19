@@ -144,6 +144,7 @@ class ForcingGraphStore:
         """
         if pressure_mode not in PRESSURE_MODES:
             raise ValueError(f"Unknown pressure_mode {pressure_mode!r}; expected one of {PRESSURE_MODES}.")
+        self.pressure_mode = pressure_mode
         self.graphs = []
         self.graph_tags = []
         self.year_to_indices = defaultdict(list)

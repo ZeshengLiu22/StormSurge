@@ -82,6 +82,10 @@ selecting shorter history windows. Graph files remain unchanged; preprocessing
 does not need to be rerun. Missing or invalid pressure metadata raises an error
 for non-default modes; `anomaly` requires no pressure-mean metadata.
 
+For `zscore`, absolute-pressure channels use a two-pass FP64 variance calculation
+on TRAIN to retain small variations around large pressure means. Default `anomaly`
+statistics, other feature channels, and `robust`/`mag` normalization are unchanged.
+
 Existing configs retain the default anomaly features and run names. Automatic
 training run names gain `_praw` or `_panomaly_mean` for the other modes;
 explicit run names and output roots are preserved. New checkpoints record the
