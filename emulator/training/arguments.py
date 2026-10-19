@@ -13,6 +13,10 @@ def parse_args(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--root_dir", type=str, default="./Data/NCEP/graphs")
     parser.add_argument(
+        "--pressure_mode", choices=("anomaly", "raw", "anomaly_plus_mean"), default="anomaly",
+        help="Forcing pressure representation, applied before TRAIN normalization (default: anomaly).",
+    )
+    parser.add_argument(
         "--test_root_dir",
         type=str,
         default="",

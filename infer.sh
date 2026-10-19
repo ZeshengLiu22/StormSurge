@@ -89,6 +89,14 @@ fi
 # Required checkpoint path or glob
 : "${CKPT_PATH:=}"
 
+# An explicitly configured mode is an assertion; otherwise infer.py uses the checkpoint.
+if [[ -v PRESSURE_MODE ]]; then
+  case "${PRESSURE_MODE}" in
+    anomaly|raw|anomaly_plus_mean) ;;
+    *) echo "[FATAL] PRESSURE_MODE must be anomaly, raw, or anomaly_plus_mean; got '${PRESSURE_MODE}'" >&2; exit 2 ;;
+  esac
+fi
+
 case "${ENCODER_TYPE}" in
   GraphSAGE|CNN) ;;
   *) echo "[FATAL] ENCODER_TYPE must be GraphSAGE or CNN; got '${ENCODER_TYPE}'"; exit 1 ;;
@@ -173,6 +181,7 @@ echo "Target:        ${TARGET_TAG}"
 echo "Python:        ${PYTHON_BIN}"
 echo "Infer script:  ${INFER_PY}"
 echo "Checkpoint:    ${CKPT_RESOLVED}"
+echo "Pressure mode: ${PRESSURE_MODE:-<checkpoint>}"
 echo "ROOT_DIR:      ${ROOT_DIR}"
 echo "TEST_ROOT_DIR: ${TEST_ROOT_DIR:-<empty => ROOT_DIR year-split test>}"
 echo "Model:         ${MODEL}"
@@ -201,6 +210,12 @@ mkdir -p "${OUT_DIR}"
 RUNNER="${RUN_DIR}/run_infer.sh"
 CONFIG_SNAPSHOT="${RUN_DIR}/infer_config_used.sh"
 write_infer_config_snapshot "${CONFIG_SNAPSHOT}"
+# Capture absence as well as presence so replay cannot inherit an unrelated assertion.
+if [[ -v PRESSURE_MODE ]]; then
+  printf 'PRESSURE_MODE=%q\n' "${PRESSURE_MODE}" >> "${CONFIG_SNAPSHOT}"
+else
+  printf 'unset PRESSURE_MODE\n' >> "${CONFIG_SNAPSHOT}"
+fi
 {
   printf '#!/usr/bin/env bash\nset -euo pipefail\n'
   printf 'cd -- %q\n' "${WORKDIR}"
@@ -245,6 +260,7 @@ LOG_FILE="${RUN_DIR}/infer_${STATION}_${TEST_TAG}_${MODEL}_hist${HISTORY_HOURS}h
   echo "[tmux] CUDA_VISIBLE_DEVICES=${CUDA_VISIBLE_DEVICES:-<unset>}"
   echo "[tmux] CUDA_LAUNCH_BLOCKING=${CUDA_LAUNCH_BLOCKING:-0}"
   echo "[tmux] ckpt=${CKPT_RESOLVED}"
+  echo "[tmux] pressure_mode=${PRESSURE_MODE:-<checkpoint>}"
   echo "========================================="
 
   if command -v nvidia-smi >/dev/null 2>&1; then
@@ -296,6 +312,8 @@ if [[ "${PERSISTENT_WORKERS}" -eq 1 ]]; then DL_ARGS+=(--persistent_workers); fi
 THREAD_ARGS=(--torch_threads "${TORCH_THREADS}")
 ARCH_ARGS=()
 if [[ -n "${CNN_INTERMEDIATE_CHANNEL}" ]]; then ARCH_ARGS+=(--cnn_intermediate_channel "${CNN_INTERMEDIATE_CHANNEL}"); fi
+PRESSURE_ARGS=()
+if [[ -v PRESSURE_MODE ]]; then PRESSURE_ARGS=(--pressure_mode "${PRESSURE_MODE}"); fi
 
 # Build and record the inference command.
 CMD=(
@@ -316,6 +334,7 @@ CMD=(
   --history_hours "${HISTORY_HOURS}"
   --batch_size "${BATCH_SIZE}"
   --ckpt "${CKPT_RESOLVED}"
+  "${PRESSURE_ARGS[@]}"
   --out_dir "${OUT_DIR}"
   --save_npz
   "${YEARS_ARGS[@]}"

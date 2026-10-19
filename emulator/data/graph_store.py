@@ -1,6 +1,7 @@
 """CPU graph storage and deterministic splits by complete year groups."""
 
 from collections import defaultdict
+from copy import copy
 import math
 from pathlib import Path
 import random
@@ -13,8 +14,75 @@ from torch_geometric.data import Data
 from .targets import target_timestamps_from_graph, validate_target_timestamps
 
 
+PRESSURE_MODES = ("anomaly", "raw", "anomaly_plus_mean")
+
+
+def transform_pressure_features(graph, pressure_mode="anomaly", *, graph_tag=None):
+    """Represent unnormalized pressure over the complete stored forcing history.
+
+    The default returns the original graph untouched, including legacy graphs
+    without pressure metadata. Other modes return a shallow graph copy with new
+    float32 features, leaving shared input storage and all metadata unchanged.
+    History slicing and normalization happen later, through the existing path.
+    """
+    if pressure_mode not in PRESSURE_MODES:
+        raise ValueError(f"Unknown pressure_mode {pressure_mode!r}; expected one of {PRESSURE_MODES}.")
+    if pressure_mode == "anomaly":
+        return graph
+
+    context = f"pressure_mode={pressure_mode!r}, graph {graph_tag or getattr(graph, 'tag', None) or '<unknown>'}"
+
+    def invalid(message):
+        raise ValueError(f"{context}: {message}")
+
+    x, history = getattr(graph, "x", None), getattr(graph, "x_hist", None)
+    if not isinstance(x, torch.Tensor) or x.ndim != 2 or x.size(-1) != 5:
+        invalid("x must have the original shape [N, 5].")
+    if not isinstance(history, torch.Tensor) or history.ndim != 3 or history.size(-1) != 5:
+        invalid("x_hist must have the original shape [T, N, 5].")
+    if history.size(0) == 0 or history.size(1) != x.size(0):
+        invalid("x_hist must be nonempty and its node count must match x.")
+    if not x.is_floating_point() or not history.is_floating_point():
+        invalid("x and x_hist must have floating-point dtypes.")
+    if x.device != history.device:
+        invalid("x and x_hist must be on the same device.")
+
+    mean = getattr(graph, "p_mean_hist", None)
+    if mean is None:
+        invalid("missing required field p_mean_hist (absolute pressure means).")
+    if not isinstance(mean, torch.Tensor) or mean.ndim != 1 or mean.size(0) != history.size(0):
+        invalid("p_mean_hist must have shape [T], matching the complete x_hist length.")
+    if mean.is_complex() or mean.dtype == torch.bool:
+        invalid("p_mean_hist must contain real numeric pressure values.")
+    mean = mean.to(device=history.device, dtype=torch.float32)
+    if not torch.isfinite(mean).all():
+        invalid("p_mean_hist must contain finite float32 values.")
+    current = getattr(graph, "p_mean_curr", None)
+    if current is not None:
+        current = torch.as_tensor(current, device=history.device)
+        if current.numel() != 1 or current.is_complex() or current.dtype == torch.bool:
+            invalid("p_mean_curr must be a finite real scalar.")
+        current = current.to(dtype=torch.float32).reshape(())
+        if not torch.isfinite(current) or not torch.isclose(current, mean[-1], rtol=1e-6, atol=1e-5):
+            invalid("p_mean_curr must be finite and agree with p_mean_hist[-1].")
+
+    if pressure_mode == "raw":
+        transformed = history.to(dtype=torch.float32, copy=True)
+        transformed[..., 2] += mean[:, None]
+    else:
+        mean_feature = mean[:, None, None].expand(-1, history.size(1), 1)
+        transformed = torch.cat((history.to(dtype=torch.float32), mean_feature), dim=-1)
+    result = copy(graph)
+    result.x_hist = transformed
+    result.x = transformed[-1]
+    return result
+
+
 class ForcingGraphStore:
-    def __init__(self, root_dir, station_filter=None, *, pattern="*graphs.pt", targets_only=False, year_filter=None):
+    def __init__(self, root_dir, station_filter=None, *, pattern="*graphs.pt", targets_only=False, year_filter=None,
+                 pressure_mode="anomaly"):
+        if pressure_mode not in PRESSURE_MODES:
+            raise ValueError(f"Unknown pressure_mode {pressure_mode!r}; expected one of {PRESSURE_MODES}.")
         self.graphs = []
         self.graph_tags = []
         self.year_to_indices = defaultdict(list)
@@ -44,6 +112,8 @@ class ForcingGraphStore:
                         if value is not None:
                             target[name] = value.detach().clone() if isinstance(value, torch.Tensor) else value
                     graph = target
+                else:
+                    graph = transform_pressure_features(graph, pressure_mode, graph_tag=f"{path} [{index}]")
                 self.graphs.append(graph)
         if not self.graphs:
             raise ValueError(f"No graphs for station {station_filter!r} in {root_dir}.")

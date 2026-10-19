@@ -58,6 +58,12 @@ def parse_args(argv=None):
         default="",
         help="Target label for pair provenance; defaults to the evaluation root name.",
     )
+    parser.add_argument(
+        "--pressure_mode",
+        choices=("anomaly", "raw", "anomaly_plus_mean"),
+        default=None,
+        help="Expected pressure representation. Omit to read the checkpoint setting.",
+    )
     parser.add_argument("--station", type=str, default=None)
     parser.add_argument("--station_json_dir", type=str, default="./station_json")
     parser.add_argument(
@@ -177,6 +183,45 @@ def parse_args(argv=None):
     return args
 
 
+def resolve_pressure_mode(checkpoint, supplied=None):
+    """Recover forcing preprocessing, treating an explicit CLI mode as an assertion."""
+    saved = checkpoint["training_config"].get("pressure_mode", "anomaly")
+    if saved not in ("anomaly", "raw", "anomaly_plus_mean"):
+        raise ValueError(f"Unsupported checkpoint pressure_mode: {saved!r}.")
+    if supplied is not None and supplied != saved:
+        raise ValueError(
+            f"--pressure_mode={supplied} does not match checkpoint pressure_mode={saved}."
+        )
+    return saved
+
+
+def _validate_input_dimensions(store, indices, config, normalization, pressure_mode):
+    """Fail before inference if saved TRAIN statistics or forcing channels disagree."""
+    channels = config.in_channels
+    for name in ("x_center", "x_scale"):
+        value = normalization.get(name)
+        if not isinstance(value, torch.Tensor) or tuple(value.shape) != (channels,):
+            shape = tuple(value.shape) if isinstance(value, torch.Tensor) else None
+            raise ValueError(
+                f"Checkpoint normalization {name} has shape {shape}; expected ({channels},) "
+                f"for model_config.in_channels={channels} and pressure_mode={pressure_mode}."
+            )
+    for index in indices:
+        graph = store.graphs[index]
+        for name, rank in (("x", 2), ("x_hist", 3)):
+            value = getattr(graph, name, None)
+            # Historical zero-history anomaly graphs need not store x_hist.
+            if name == "x_hist" and value is None:
+                continue
+            if not isinstance(value, torch.Tensor) or value.ndim != rank or value.size(-1) != channels:
+                shape = tuple(value.shape) if isinstance(value, torch.Tensor) else None
+                raise ValueError(
+                    f"Graph {store.graph_tags[index]} {name} has shape {shape} after "
+                    f"pressure_mode={pressure_mode}; expected {rank} dimensions and "
+                    f"{channels} channels to match checkpoint model_config.in_channels."
+                )
+
+
 def _validate_checkpoint_options(args, config, training):
     """Treat architecture flags as assertions about the saved checkpoint."""
     expected = {
@@ -244,7 +289,10 @@ def _select_evaluation_samples(args, checkpoint, station, root, all_years):
 
     # Missing station data must never silently select other stations.
     store = ForcingGraphStore(
-        root, station, year_filter=requested_years if all_years and requested_years else None
+        root,
+        station,
+        pressure_mode=resolve_pressure_mode(checkpoint, getattr(args, "pressure_mode", None)),
+        year_filter=requested_years if all_years and requested_years else None,
     )
     if all_years:
         indices = list(range(len(store.graphs)))
@@ -583,7 +631,9 @@ def main(argv=None):
     tau_physical = threshold_metadata["tau_physical"]
     log_message(threshold_label(threshold_metadata))
     training = checkpoint["training_config"]
+    args.pressure_mode = resolve_pressure_mode(checkpoint, args.pressure_mode)
     model_name = _validate_checkpoint_options(args, config, training)
+    log_message(f"Pressure representation: {args.pressure_mode} (source checkpoint)")
 
     configure_runtime(
         training["seed"], args.torch_threads, bool(training["deterministic"]), args.tf32
@@ -596,7 +646,7 @@ def main(argv=None):
     log_message(format_parameter_counts(model_parameters))
 
     # Cross-dataset evaluation always retains the source TRAIN normalization.
-    stats = {name: value.to(device) for name, value in checkpoint["normalization"].items()}
+    stats = checkpoint["normalization"]
     station = args.station or checkpoint["station"]
     station_feat = checkpoint["station_feat"]
     if station != checkpoint["station"] and config.station_feat_dim:
@@ -618,6 +668,8 @@ def main(argv=None):
     store, indices, requested_years, evaluated_years = _select_evaluation_samples(
         args, checkpoint, station, root, all_years
     )
+    _validate_input_dimensions(store, indices, config, stats, args.pressure_mode)
+    stats = {name: value.to(device) for name, value in stats.items()}
     source = args.source_name or infer_dataset_tag(args.root_dir)
     target = args.target_name or infer_dataset_tag(root)
     station_tag = station or "ALL"
@@ -641,6 +693,7 @@ def main(argv=None):
         history_hours=config.history_steps * 6,
         normalization_origin="source_checkpoint_train",
         normalization_type=training.get("x_norm", ""),
+        pressure_mode=args.pressure_mode,
         evaluation_threshold_origin="source_checkpoint_train",
         source_tau_physical=tau_physical,
         source_exceedance_percentile=threshold_metadata["exceedance_percentile"],

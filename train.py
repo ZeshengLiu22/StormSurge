@@ -162,7 +162,7 @@ def _prepare_output_paths(args, distributed, rank):
 
 def _prepare_datasets(args, device, distributed, rank, output_dir):
     """Split by year and fit normalization, Q95 and episode targets on TRAIN only."""
-    store = ForcingGraphStore(args.root_dir, args.station)
+    store = ForcingGraphStore(args.root_dir, args.station, pressure_mode=args.pressure_mode)
     split_config = {
         name: getattr(args, name)
         for name in (
@@ -476,7 +476,7 @@ def _evaluate_selected_checkpoints(
     network = model.module if distributed else model
     final_options = dict(epoch_options, distributed=False)
     if args.test_root_dir:
-        test_store = ForcingGraphStore(args.test_root_dir, args.station)
+        test_store = ForcingGraphStore(args.test_root_dir, args.station, pressure_mode=args.pressure_mode)
         test_indices = list(range(len(test_store.graphs)))
         test_scope, test_is_val_mirror = "external_all_years", False
     elif splits["test"]:

@@ -57,6 +57,7 @@ set -u
 # Data, chronological splits, and TRAIN normalization
 : "${ROOT_DIR:=./dataset/NCEP/graphs}"
 : "${TEST_ROOT_DIR:=}"
+: "${PRESSURE_MODE:=anomaly}"       # anomaly | raw | anomaly_plus_mean
 : "${STATION:=}"
 : "${SEED:=42}"
 : "${TRAIN_RATIO:=0.6}"
@@ -125,6 +126,14 @@ if [[ -z "${LR_LIST+x}" ]]; then LR_LIST=("3e-3"); fi
 : "${PYTHON_RUN_TAG_BASE:=}"
 
 # Validate experiment settings before creating artifacts.
+PRESSURE_TAG=""
+case "${PRESSURE_MODE}" in
+  anomaly) ;;
+  raw) PRESSURE_TAG="_praw" ;;
+  anomaly_plus_mean) PRESSURE_TAG="_panomaly_mean" ;;
+  *) echo "[FATAL] PRESSURE_MODE must be anomaly, raw, or anomaly_plus_mean; got '${PRESSURE_MODE}'" >&2; exit 2 ;;
+esac
+
 case "${SHUFFLE_YEARS,,}" in
   1|true|yes|y|on) SHUFFLE_YEARS=1 ;;
   0|false|no|n|off) SHUFFLE_YEARS=0 ;;
@@ -250,7 +259,7 @@ RUNSTAMP="${PACT_RUNSTAMP:-$(date +"%Y%m%d_%H%M%S")}"
 CONFIG_RUN_NAME="$(basename "${CONFIG_PATH}")"
 CONFIG_RUN_NAME="${CONFIG_RUN_NAME%.sh}"
 CONFIG_RUN_NAME="${CONFIG_RUN_NAME#train_config_}"
-RUN_NAME="${PACT_RUN_NAME:-${SESSION_NAME:-${CONFIG_RUN_NAME}}}"
+RUN_NAME="${PACT_RUN_NAME:-${SESSION_NAME:-${CONFIG_RUN_NAME}${PRESSURE_TAG}}}"
 RUN_NAME_SAFE="${RUN_NAME//[^A-Za-z0-9._-]/_}"
 if [[ -z "${RUN_NAME_SAFE}" ]]; then
   RUN_NAME_SAFE="train"
@@ -274,7 +283,7 @@ write_resolved_config() {
   local output_path="$1"
   local name
   local config_vars=(
-    TRAIN_PY PYTHON_BIN num_gpus ROOT_DIR TEST_ROOT_DIR STATION MODEL ENCODER_TYPE
+    TRAIN_PY PYTHON_BIN num_gpus ROOT_DIR TEST_ROOT_DIR PRESSURE_MODE STATION MODEL ENCODER_TYPE
     CNN_INTERMEDIATE_CHANNEL
     TEMPORAL_BLOCK STATION_JSON_DIR USE_SITE_ELEVATION USE_BATHYMETRY
     BATCH_SIZE GRAD_ACCUM_STEPS
@@ -311,7 +320,7 @@ write_resolved_config() {
 
 # Create one artifact directory per launch, including launches through tmux.
 if [[ "${DRY_RUN}" != "1" ]] && { [[ "${USE_TMUX}" != "1" || "${TMUX_INNER}" == "1" ]] || ! command -v tmux >/dev/null 2>&1; }; then
-  if [[ "${RUN_DIR_NAME_STYLE}" == "runname_timestamp" ]]; then
+  if [[ "${RUN_DIR_NAME_STYLE}" == "runname_timestamp" || "${PRESSURE_MODE}" != "anomaly" ]]; then
     mkdir -p "${ALL_RESULTS_ROOT}"
     # A repeated name within the same second must never overwrite a prior run.
     if ! mkdir "${RUN_DIR}"; then
@@ -348,6 +357,7 @@ if (( GRAD_ACCUM_STEPS > 1 )); then
 fi
 echo "ROOT_DIR:      ${ROOT_DIR}"
 echo "TEST_ROOT_DIR: ${TEST_ROOT_DIR:-<none>}"
+echo "Pressure mode: ${PRESSURE_MODE}"
 echo "TRAIN_DATA_TAG:${TRAIN_DATA_TAG}"
 echo "TEST_DATA_TAG: ${TEST_DATA_TAG}"
 echo "LR_LIST:       ${LR_LIST[*]}"
@@ -375,7 +385,7 @@ if [[ "${DRY_RUN}" != "1" && "${USE_TMUX}" == "1" && "${TMUX_INNER}" == "0" ]] &
   if [[ -n "${QSUB_LOCAL_STATUS_FILE:-}" ]]; then
     printf -v STATUS_HANDOFF 'printf "%%s\n" "$status" > %q; ' "${QSUB_LOCAL_STATUS_FILE}"
   fi
-  printf -v TMUX_INNER_CMD 'PYTHON_BIN=%q S0_PYTHON_BIN=%q DRY_RUN=0 SESSION_NAME=%q PACT_RUNSTAMP=%q PACT_RUN_NAME=%q bash %q %q --_tmux_inner; status=$?; %s if [[ ${status} -ne 0 ]]; then echo; echo "[tmux] train.sh exited with status ${status}; closing failed session so the local queue can continue."; fi; exit "${status}"' "${PYTHON_BIN}" "${PYTHON_BIN}" "${SESSION_NAME}" "${RUNSTAMP}" "${RUN_NAME}" "${SCRIPT_PATH}" "${CONFIG_PATH}" "${STATUS_HANDOFF}"
+  printf -v TMUX_INNER_CMD 'PYTHON_BIN=%q S0_PYTHON_BIN=%q DRY_RUN=0 PRESSURE_MODE=%q SESSION_NAME=%q PACT_RUNSTAMP=%q PACT_RUN_NAME=%q bash %q %q --_tmux_inner; status=$?; %s if [[ ${status} -ne 0 ]]; then echo; echo "[tmux] train.sh exited with status ${status}; closing failed session so the local queue can continue."; fi; exit "${status}"' "${PYTHON_BIN}" "${PYTHON_BIN}" "${PRESSURE_MODE}" "${SESSION_NAME}" "${RUNSTAMP}" "${RUN_NAME}" "${SCRIPT_PATH}" "${CONFIG_PATH}" "${STATUS_HANDOFF}"
   printf -v TMUX_CMD 'bash -c %q' "${TMUX_INNER_CMD}"
   echo "[INFO] launching inside tmux session: ${SESSION_NAME}"
   # Carry the active environment and GPU allocation into the detached session.
@@ -450,7 +460,7 @@ for LR_CUR in "${LR_LIST[@]}"; do
       SCHED_ARGS+=(--rop_metric "${ROP_METRIC}")
     fi
 
-    AUTO_RUN_TAG="${STATION:-ALL}_${TRAIN_DATA_TAG}to${TEST_DATA_TAG}_${MODEL}${ENCODER_TAG}${TEMPORAL_TAG}${ACCUM_TAG}${EXTRA_TAG}${SPLIT_TAG}${LOSS_TAG}_hist${H}h_hid${HIDDEN_CHANNELS}_L${NUM_LAYERS}_bs${BATCH_SIZE}_lr${LR_CUR}_ep${EPOCHS}_sch${SCHEDULER}_xn${X_NORM}"
+    AUTO_RUN_TAG="${STATION:-ALL}_${TRAIN_DATA_TAG}to${TEST_DATA_TAG}_${MODEL}${ENCODER_TAG}${TEMPORAL_TAG}${ACCUM_TAG}${EXTRA_TAG}${SPLIT_TAG}${LOSS_TAG}_hist${H}h_hid${HIDDEN_CHANNELS}_L${NUM_LAYERS}_bs${BATCH_SIZE}_lr${LR_CUR}_ep${EPOCHS}_sch${SCHEDULER}_xn${X_NORM}${PRESSURE_TAG}"
     RUN_TAG="${PYTHON_RUN_TAG_BASE:-${AUTO_RUN_TAG}}"
     LOG_TAG="${RUN_TAG}"
     if (( ${#LOG_TAG} > 240 )); then
@@ -463,6 +473,7 @@ for LR_CUR in "${LR_LIST[@]}"; do
     BASE_CMD=(
       "${TRAIN_PY}"
       --root_dir "${ROOT_DIR}"
+      --pressure_mode "${PRESSURE_MODE}"
       --model "${MODEL}"
       --exceedance_percentile "${EXCEEDANCE_PERCENTILE}"
       --checkpoint_selection "${CHECKPOINT_SELECTION}"

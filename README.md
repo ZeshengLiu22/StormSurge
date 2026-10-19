@@ -64,6 +64,39 @@ no jobs.
 Existing final Single checkpoints load through a small metadata compatibility
 adapter, with strict model-state loading. Legacy Dual checkpoints are rejected.
 
+## Atmospheric pressure representations
+
+Training accepts `--pressure_mode` (or `PRESSURE_MODE` in shell configs):
+
+| Mode | Loaded node features |
+| --- | --- |
+| `anomaly` (default) | `[u, v, p_anomaly, lon, lat]`, unchanged |
+| `raw` | `[u, v, p_anomaly + p_mean, lon, lat]` |
+| `anomaly_plus_mean` | `[u, v, p_anomaly, lon, lat, p_mean]` |
+
+Non-default modes require existing graph metadata `p_mean_hist: [T]` containing
+the absolute spatial pressure mean for every stored forcing timestep. When
+present, `p_mean_curr` must agree with its final value. Transformations happen
+while loading the entire stored history, before TRAIN normalization and before
+selecting shorter history windows. Graph files remain unchanged; preprocessing
+does not need to be rerun. Missing or invalid pressure metadata raises an error
+for non-default modes; `anomaly` requires no pressure-mean metadata.
+
+Existing configs retain the default anomaly features and run names. Automatic
+training run names gain `_praw` or `_panomaly_mean` for the other modes;
+explicit run names and output roots are preserved. New checkpoints record the
+mode in `training_config`. Inference automatically uses that mode and the saved
+source normalization; old Single checkpoints without it use `anomaly` and keep
+strict state loading. An inference `--pressure_mode` or shell `PRESSURE_MODE`
+is optional and only asserts a match with the checkpoint; mismatches fail.
+
+```bash
+PRESSURE_MODE=raw DRY_RUN=1 USE_TMUX=0 bash train.sh path/to/train_config.sh
+python train.py --root_dir ./dataset/NCEP/graphs --pressure_mode anomaly_plus_mean
+python infer.py --ckpt /path/to/raw_run/best_overall.pt \
+  --root_dir ./dataset/NCEP/graphs --out_dir ./All_Inference_Results/raw_example
+```
+
 Check Python and shell syntax without loading data or starting a job:
 
 ```bash
