@@ -21,14 +21,30 @@ def build_loader(
     shuffle: bool = False,
     generator=None,
 ):
-    """Build a safe `torch_geometric.loader.DataLoader`.
+    """Construct a graph DataLoader with worker options applied only when valid.
 
-    Important guardrails:
-    - If `num_workers == 0`, worker-only kwargs are omitted.
-    - Evaluation keeps dataset order; training opts into shuffling explicitly.
-    - If a sampler is provided (DDP), shuffling is disabled.
-    - `prefetch_factor` is only passed when valid.
-    - An optional generator isolates shuffle/iterator seeds from the model RNG.
+    Args:
+        dataset: Dataset yielding PyG graphs or compatible batchable objects.
+        sampler: Optional sampler controlling traversal order; disables the shuffle
+            argument when supplied.
+        batch_size: Number of graph samples per batch, including a possibly smaller
+            final batch.
+        num_workers: Number of loader subprocesses; zero loads samples in the calling
+            process.
+        pin_memory: Whether to request pinned host memory for returned batches.
+        persistent_workers: Whether to keep loader subprocesses alive between
+            iterations; ignored with zero workers.
+        prefetch_factor: Batches prefetched per worker. None or a nonpositive value
+            leaves the DataLoader default unchanged.
+        mp_context: Multiprocessing context name such as fork or spawn; None or an empty
+            string leaves the default unchanged.
+        shuffle: Whether to randomize dataset order when no sampler is supplied.
+        generator: Optional torch.Generator controlling loader shuffling and worker base
+            seeds independently of the model RNG.
+
+    Returns:
+        torch_geometric.loader.DataLoader: Loader with drop_last=False. Worker-only
+        options are omitted when num_workers is zero.
     """
     num_workers = int(num_workers)
     shuffle = bool(shuffle) and sampler is None

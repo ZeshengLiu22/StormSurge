@@ -15,11 +15,33 @@ from .temporal import TemporalMLP, TemporalRNN, TemporalTransformer
 
 @dataclass
 class ModelConfig:
-    """Python construction defaults; train.py supplies the CLI/config values.
+    """Construction parameters for the PACT and spatial baseline models.
 
-    head_hidden overrides the PACT head MLP width (default: 2 * hidden_channels).
-    temporal_hidden overrides the positive-history baseline LSTM width
-    (default: hidden_channels); H=0 baselines keep the spatial output width.
+    Attributes:
+        in_channels: Number of input node features.
+        out_channels: Number of forecast target horizons.
+        hidden_channels: Spatial output width and PACT attention/temporal width.
+        model: Architecture key, pact or baseline.
+        encoder_type: Spatial operator, GraphSAGE or CNN.
+        temporal_block: PACT temporal block: Transformer, MLP, LSTM, or GRU.
+        num_layers: Number of spatial layers.
+        dropout: Spatial-layer and baseline readout dropout probability.
+        cnn_intermediate_channel: Hidden width of nonfinal CNN spatial layers.
+        history_steps: Number of forcing steps preceding the current step.
+        max_time_steps: PACT lag-embedding capacity, including the current step.
+        node_read_heads: Number of heads in PACT station-to-node attention.
+        time_read_heads: Number of heads in PACT temporal and forecast attention.
+        temporal_layers: Number of PACT temporal blocks or recurrent layers.
+        temporal_ff_mult: PACT feedforward width as a multiple of hidden_channels.
+        temporal_dropout: Dropout probability within PACT temporal blocks.
+        head_dropout: Dropout probability within the PACT forecast head.
+        station_feat_dim: PACT station-feature width; zero disables metadata.
+        head_hidden: PACT head MLP width, or None for 2 * hidden_channels.
+        temporal_hidden: Positive-history baseline LSTM width, or None for
+            hidden_channels; ignored when history_steps is zero.
+
+    These are Python construction defaults. The training entry point supplies
+    its parsed command-line settings explicitly.
     """
 
     in_channels: int
@@ -45,7 +67,23 @@ class ModelConfig:
 
 
 class PACT(nn.Module):
+    """Station-conditioned spatial attention with temporal memory and horizon queries.
+    """
     def __init__(self, config: ModelConfig):
+        """Build the spatial encoder, attention readouts, temporal blocks, and head.
+
+        Args:
+            config: ModelConfig specifying feature widths, history length, spatial and
+                temporal operators, optional station metadata, and forecast horizons.
+                Attention widths must be divisible by their head counts.
+
+        Returns:
+            None. Registers the model layers, station token, and lag/horizon embeddings.
+
+        Raises:
+            ValueError: History, temporal depth, lag capacity, or the selected operator is
+                invalid.
+        """
         super().__init__()
         hidden = config.hidden_channels
         if config.history_steps < 0 or config.temporal_layers < 1:
@@ -110,6 +148,30 @@ class PACT(nn.Module):
         self.head = SingleHead(hidden, config.head_dropout, head_hidden=config.head_hidden)
 
     def forward(self, batch, station_feat=None):
+        """Predict normalized targets from a batch of forcing histories.
+
+        History is ordered from oldest forcing to current forcing. Lag zero always
+        refers to the current step. Station attention produces one token per graph and
+        time step; horizon queries read from the resulting temporal memory.
+
+        Args:
+            batch: PyG Batch with normalized x_hist [total_nodes, history_steps + 1,
+                in_channels], edge_index [2, edges], node-to-graph batch indices, and
+                num_graphs. CNN encoding also requires uniform grid_H/grid_W metadata and
+                graph pointers.
+            station_feat: Optional station-feature tensor with station_feat_dim elements,
+                shared by all graphs. Required when station metadata is enabled; ignored
+                otherwise.
+
+        Returns:
+            ForecastOutput: prediction tensor [num_graphs, out_channels] in training-
+            standardized target units. The caller restores physical units with y_std and
+            y_mean.
+
+        Raises:
+            ValueError: The history length, required station features, or CNN grid metadata
+                is incompatible with the model.
+        """
         history = batch.x_hist
         steps = history.size(1)
         if steps != self.history_steps + 1:
@@ -145,9 +207,21 @@ class PACT(nn.Module):
 
 
 class Baseline(nn.Module):
-    """Spatial mean pooling; positive-history controls add a one-layer LSTM."""
+    """Spatial mean pooling with an optional one-layer temporal LSTM.
+    """
 
     def __init__(self, config: ModelConfig):
+        """Build a mean-pooling baseline with an LSTM for positive history lengths.
+
+        Args:
+            config: ModelConfig defining input/spatial widths, encoder settings, forecast
+                width, dropout, and history_steps. A nonzero history_steps enables the LSTM;
+                temporal_hidden overrides its output width.
+
+        Returns:
+            None. Registers spatial layers, the optional recurrent layer, dropout, and a
+            linear multi-horizon head.
+        """
         super().__init__()
         self.spatial = SpatialEncoder(
             config.in_channels,
@@ -172,6 +246,20 @@ class Baseline(nn.Module):
         )
 
     def forward(self, batch, station_feat=None):
+        """Predict normalized targets from current forcing or pooled forcing history.
+
+        Args:
+            batch: PyG Batch containing normalized x [total_nodes, in_channels], edge_index,
+                node-to-graph batch indices, and num_graphs. History-enabled models
+                additionally use x_hist [total_nodes, steps, in_channels]; CNNs require
+                uniform grid metadata.
+            station_feat: Accepted for the common model interface; unused by this baseline.
+
+        Returns:
+            ForecastOutput: prediction [num_graphs, out_channels] in training-standardized
+            target units. With an LSTM, the final recurrent state supplies the forecast
+            context.
+        """
         grid_shape = self.spatial.grid_shape(batch)
         if self.rnn is None:
             context = global_mean_pool(
@@ -189,14 +277,40 @@ class Baseline(nn.Module):
 
 
 def build_model(config: ModelConfig):
+    """Instantiate the architecture selected by a model configuration.
+
+    Args:
+        config: ModelConfig whose model field is pact or baseline.
+
+    Returns:
+        torch.nn.Module: A newly initialized PACT or Baseline instance.
+
+    Raises:
+        KeyError: The model field is not a supported architecture key.
+    """
     return {"pact": PACT, "baseline": Baseline}[config.model](config)
 
 
 def model_config_from_checkpoint(checkpoint):
-    """Read current or historical Single metadata without relaxing state loading.
+    """Restore a model configuration from current or historical single-head metadata.
 
-    Only explicitly retired construction keys are ignored. Unknown fields still
-    raise an error, and callers must load ``model_state`` with ``strict=True``.
+    This function validates construction metadata only. Callers must load the
+    model_state with strict=True to validate the parameter schema.
+
+    Args:
+        checkpoint: Checkpoint mapping containing model_config and optionally
+            model_state, whose parameter names are checked for unsupported retired head
+            branches.
+
+    Returns:
+        ModelConfig: Configuration with explicitly retired, inactive construction keys
+        removed. The input checkpoint is not modified.
+
+    Raises:
+        ValueError: The checkpoint declares an unsupported head type or contains retired
+            dual-head parameters.
+        TypeError: Unknown configuration fields remain after known retired keys are
+            removed.
     """
     saved_config = dict(checkpoint["model_config"])
     head_type = saved_config.pop("head_type", "single")

@@ -11,6 +11,19 @@ from emulator.data import ForcingGraphStore, ForcingGraphView, build_loader
 
 
 def main():
+    """Validate representative target batches for all station/period pairs.
+
+    Loads the first requested year per target on CPU and batches up to two graphs
+    with four historical steps plus the current frame. Checks five forcing
+    features, six hourly targets, and both edge-index bounds. Writes
+    ``RESULTS/audit/graph_audit.json`` and prints the validation results.
+
+    Returns:
+        None. Sets the process-wide PyTorch thread count to one.
+
+    Raises:
+        ValueError: A batch has unexpected dimensions or invalid edge indices.
+    """
     torch.set_num_threads(1)
     rows = []
     for station in STATIONS:

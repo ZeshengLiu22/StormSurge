@@ -23,6 +23,18 @@ MODES = ("anomaly", "raw", "anomaly_plus_mean")
 
 
 def write_graphs(root, mean_offset=0):
+    """Write deterministic source or shifted-target graph fixtures.
+
+    Args:
+        root (Path): New directory to create for the three yearly graph files.
+        mean_offset (float): Additive shift of synthetic pressure means, in the
+            same arbitrary fixture units as the pressure feature.
+
+    Returns:
+        Path: Created directory containing two graphs per year for 2000--2002.
+        Each graph has x_hist shape (9, 6, 5), aligned pressure means, and four
+        target values; this compact fixture exercises both spatial encoders.
+    """
     root.mkdir()
     generator = torch.Generator().manual_seed(715)
     for year in range(2000, 2003):
@@ -43,9 +55,19 @@ def write_graphs(root, mean_offset=0):
 class PressureInferenceTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
+        """Limit CPU threads before checkpoint round-trip tests.
+
+        Returns:
+            None: Sets the process-wide PyTorch CPU thread count to one.
+        """
         torch.set_num_threads(1)
 
     def test_checkpoint_mode_and_cli_assertion(self):
+        """Verify legacy defaults and reject conflicting pressure-mode assertions.
+
+        Returns:
+            None: Assertion failures are reported by unittest.
+        """
         self.assertEqual(infer.resolve_pressure_mode({"training_config": {}}), "anomaly")
         self.assertIsNone(infer.parse_args(["--ckpt", "legacy.pt", "--root_dir", "."]).pressure_mode)
         self.assertEqual(train.parse_args([]).pressure_mode, "anomaly")
@@ -60,6 +82,11 @@ class PressureInferenceTests(unittest.TestCase):
             infer.resolve_pressure_mode({"training_config": {"pressure_mode": "typo"}})
 
     def test_graph_and_normalization_dimension_checks(self):
+        """Reject incompatible normalization and graph-channel dimensions.
+
+        Returns:
+            None: Assertion failures are reported by unittest.
+        """
         graph = Data(x=torch.zeros(6, 6), x_hist=torch.zeros(9, 6, 6))
         store = SimpleNamespace(graphs=[graph], graph_tags=["fixture"])
         config = SimpleNamespace(in_channels=6)
@@ -77,6 +104,11 @@ class PressureInferenceTests(unittest.TestCase):
                                                  [0], config, stats, "anomaly_plus_mean")
 
     def test_train_and_infer_cpu_roundtrip_including_external_graphs(self):
+        """Verify saved predictions across pressure modes, encoders, and external roots.
+
+        Returns:
+            None: Assertion failures are reported by unittest.
+        """
         for mode in MODES:
             for encoder in ("GraphSAGE", "CNN"):
                 with self.subTest(mode=mode, encoder=encoder), tempfile.TemporaryDirectory() as temporary:

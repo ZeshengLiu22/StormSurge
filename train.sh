@@ -5,6 +5,8 @@
 # Paths inside the config are relative to this script's directory (repo root).
 set -euo pipefail
 
+# Stop direct child processes when the launcher receives SIGINT or SIGTERM.
+# Inputs: none. Prints a trap message; returns success even if no child exists.
 cleanup() {
   echo "[TRAP] Received SIGINT/SIGTERM; stopping child processes."
   pkill -P "$$" 2>/dev/null || true
@@ -180,7 +182,9 @@ if [[ "${PYTHON_BIN}" != /* ]]; then
   PYTHON_BIN="${WORKDIR}/${PYTHON_BIN}"
 fi
 
-# Derive dataset labels from graph directories.
+# Print the dataset label for a graph directory.
+# Args: $1 is a path; a leaf named graphs uses its parent directory name.
+# Output: one label on stdout; returns the basename command status.
 infer_dataset_tag () {
   local p="$1"
   p="${p%/}"
@@ -279,6 +283,11 @@ case "${RUN_DIR_NAME_STYLE}" in
   *) echo "[FATAL] Unknown RUN_DIR_NAME_STYLE: ${RUN_DIR_NAME_STYLE}" >&2; exit 2 ;;
 esac
 
+# Save effective configuration values using Bash declarations.
+# Args: $1 is the destination file; its parent directory must exist.
+# Reads: CONFIG_PATH and the configuration variables listed below.
+# Output: overwrites $1 with a sourceable snapshot, preserving array values.
+# Returns: nonzero if the output redirection or writing fails.
 write_resolved_config() {
   local output_path="$1"
   local name

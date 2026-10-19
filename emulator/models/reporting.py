@@ -4,7 +4,15 @@ from torch import nn
 
 
 def _counts(module):
-    # Module.parameters() deduplicates shared Parameter objects and excludes buffers.
+    """Count registered scalar parameters in a module.
+
+    Args:
+        module: PyTorch module whose recursive parameters are counted.
+
+    Returns:
+        dict: Integer total, trainable, and non_trainable counts. Shared Parameter
+        objects are counted once within the module; buffers are excluded.
+    """
     parameters = tuple(module.parameters())
     total = sum(parameter.numel() for parameter in parameters)
     trainable = sum(parameter.numel() for parameter in parameters if parameter.requires_grad)
@@ -12,11 +20,19 @@ def _counts(module):
 
 
 def count_model_parameters(model):
-    """Count one logical model replica without a forward pass or a reference model.
+    """Count a model and separate its forecast head from the remaining backbone.
 
-    All production models expose their forecast module as ``head``. Backbone
-    counts exclude parameters belonging to that head. Branch counts describe
-    each immediate head child; shared parameters are unique within each count.
+    Counts describe one logical model replica and require no forward pass.
+    Shared parameters are unique within each individual count; parameters shared
+    with the head are excluded from the backbone count.
+
+    Args:
+        model: PyTorch model exposing a head module, optionally wrapped in DataParallel
+            or DistributedDataParallel.
+
+    Returns:
+        dict: Model total/trainable/non_trainable counts, nested head and backbone
+        counts, and head_branches counts for each immediate head child.
     """
     if isinstance(model, (nn.DataParallel, nn.parallel.DistributedDataParallel)):
         model = model.module
@@ -28,5 +44,14 @@ def count_model_parameters(model):
 
 
 def format_parameter_counts(counts):
+    """Format a compact parameter-count summary for console logs.
+
+    Args:
+        counts: Mapping returned by count_model_parameters, including nested head
+            totals.
+
+    Returns:
+        str: Total, trainable, nontrainable, and head counts with thousands separators.
+    """
     return (f"[Parameters] total={counts['total']:,} trainable={counts['trainable']:,} "
             f"non_trainable={counts['non_trainable']:,} head={counts['head']['total']:,}")

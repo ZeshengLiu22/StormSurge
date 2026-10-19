@@ -18,12 +18,30 @@ PRESSURE_MODES = ("anomaly", "raw", "anomaly_plus_mean")
 
 
 def transform_pressure_features(graph, pressure_mode="anomaly", *, graph_tag=None):
-    """Represent unnormalized pressure over the complete stored forcing history.
+    """Select the unnormalized pressure representation for a stored graph.
 
-    The default returns the original graph untouched, including legacy graphs
-    without pressure metadata. Other modes return a shallow graph copy with new
-    float32 features, leaving shared input storage and all metadata unchanged.
-    History slicing and normalization happen later, through the existing path.
+    The complete stored history is transformed before history slicing or feature
+    normalization. The default anomaly mode accepts legacy graphs without pressure
+    metadata and performs no shape or metadata validation.
+
+    Args:
+        graph: PyG graph with current features x [N, 5] and chronological history x_hist
+            [T, N, 5]. Feature index 2 holds pressure anomalies. Nondefault modes
+            require finite absolute pressure means p_mean_hist [T] over the selected
+            preprocessing grid, in the same units as the pressure feature; optional
+            p_mean_curr must agree with the last mean.
+        pressure_mode: anomaly returns the original graph; raw adds the spatial mean to
+            pressure channel 2; anomaly_plus_mean appends that mean as a sixth feature.
+        graph_tag: Optional source identifier included in validation errors.
+
+    Returns:
+        Data: The input object for anomaly mode, or a shallow graph copy with new
+        float32 x_hist and x tensors for the selected representation. The current x is
+        reconstructed as x_hist[-1]; other graph fields remain shared.
+
+    Raises:
+        ValueError: The mode is unsupported or a nondefault mode receives incompatible
+            feature tensors or pressure metadata.
     """
     if pressure_mode not in PRESSURE_MODES:
         raise ValueError(f"Unknown pressure_mode {pressure_mode!r}; expected one of {PRESSURE_MODES}.")
@@ -33,6 +51,17 @@ def transform_pressure_features(graph, pressure_mode="anomaly", *, graph_tag=Non
     context = f"pressure_mode={pressure_mode!r}, graph {graph_tag or getattr(graph, 'tag', None) or '<unknown>'}"
 
     def invalid(message):
+        """Raise a pressure-validation error with the enclosing graph context.
+
+        Args:
+            message: Description of the invalid feature or metadata field.
+
+        Returns:
+            Never returns.
+
+        Raises:
+            ValueError: Always, including the pressure mode and graph identifier.
+        """
         raise ValueError(f"{context}: {message}")
 
     x, history = getattr(graph, "x", None), getattr(graph, "x_hist", None)
@@ -79,8 +108,40 @@ def transform_pressure_features(graph, pressure_mode="anomaly", *, graph_tag=Non
 
 
 class ForcingGraphStore:
+    """In-memory CPU graphs indexed by station-filtered source year groups.
+
+    Graph filenames begin with year0_year1_station. ``graphs`` and
+    ``graph_tags`` share indices; ``year_to_indices`` maps each year-pair string
+    to the corresponding graph indices.
+    """
     def __init__(self, root_dir, station_filter=None, *, pattern="*graphs.pt", targets_only=False, year_filter=None,
                  pressure_mode="anomaly"):
+        """Load selected graph files and build the year-group index.
+
+        Files are deserialized with ``torch.load(weights_only=False)`` and must come
+        from a trusted source. File-level station and year filters are applied before
+        deserialization; target-only mode still loads one complete source list at a time.
+
+        Args:
+            root_dir: Directory containing serialized PyG graph lists.
+            station_filter: Exact station field to retain from each filename, or None to
+                retain all stations.
+            pattern: Path.glob pattern relative to root_dir; files are processed in sorted
+                order.
+            targets_only: Whether to retain cloned labels and timing/history-length metadata
+                while discarding forcing tensors, for target-population audits.
+            year_filter: Optional iterable of exact year-pair strings, such as 1979_1980, to
+                retain before files are loaded.
+            pressure_mode: Pressure representation passed to transform_pressure_features
+                when targets_only is false.
+
+        Returns:
+            None. Populates graphs, graph_tags, and year_to_indices on the instance.
+
+        Raises:
+            ValueError: The pressure mode or filename is invalid, or no selected graphs are
+                found.
+        """
         if pressure_mode not in PRESSURE_MODES:
             raise ValueError(f"Unknown pressure_mode {pressure_mode!r}; expected one of {PRESSURE_MODES}.")
         self.graphs = []
@@ -119,12 +180,50 @@ class ForcingGraphStore:
             raise ValueError(f"No graphs for station {station_filter!r} in {root_dir}.")
 
     def target_timestamps(self, indices):
-        """Return [N,K] UTC Unix seconds and reject overlapping target blocks."""
+        """Collect unique supervised UTC timestamps for selected graph windows.
+
+        Args:
+            indices: Iterable of indices into graphs, in the desired output row order.
+
+        Returns:
+            numpy.ndarray: int64 Unix seconds with shape [windows, horizons], or [0, 0] for
+            an empty selection.
+
+        Raises:
+            ValueError: Timing metadata is invalid or selected target blocks overlap.
+        """
         rows = [target_timestamps_from_graph(self.graphs[index], self.graph_tags[index]) for index in indices]
         return validate_target_timestamps(np.stack(rows)) if rows else np.empty((0, 0), dtype=np.int64)
 
     def split(self, train_ratio=0.6, val_ratio=0.2, shuffle_years=False, seed=42,
               future_only=False, future_year_threshold=2030):
+        """Partition complete year groups into training, validation, and test sets.
+
+        Group counts are rounded and adjusted to preserve training and, when enough
+        groups exist, validation and test populations. A single group with a held-out
+        test allocation yields training only; individual graphs are never split across
+        partitions within their year group.
+
+        Args:
+            train_ratio: Positive fraction of selected year groups assigned to training
+                before rounding.
+            val_ratio: Positive validation fraction; the sum with train_ratio must be at
+                most one, allowing math.isclose tolerance at one.
+            shuffle_years: Whether to shuffle the sorted year-group keys before
+                partitioning.
+            seed: Seed for the local Python random generator used when shuffling.
+            future_only: Whether to keep only groups containing a year strictly above
+                future_year_threshold.
+            future_year_threshold: Exclusive lower year bound used by future_only.
+
+        Returns:
+            dict: train, val, and test mapped to sorted graph-index lists. Ratios summing to
+            one produce no test set and require at least two groups.
+
+        Raises:
+            ValueError: Ratios are invalid, filtering removes every group, or a
+                train/validation-only split has fewer than two groups.
+        """
         ratio_sum = train_ratio + val_ratio
         no_heldout_test = math.isclose(ratio_sum, 1.0)
         if not train_ratio > 0 or not val_ratio > 0 or (ratio_sum > 1 and not no_heldout_test):
@@ -154,7 +253,26 @@ class ForcingGraphStore:
 
 
 class ForcingGraphView(Dataset):
+    """Dataset view exposing a fixed forcing history and timestamped targets.
+    """
     def __init__(self, store, indices, history_steps):
+        """Validate a graph subset and its requested forcing-history window.
+
+        Args:
+            store: ForcingGraphStore with full forcing graphs and unique supervised
+                timestamps.
+            indices: Iterable of graph indices defining the dataset order.
+            history_steps: Nonnegative number of stored forcing steps before the current
+                step; each sample includes history_steps + 1 steps.
+
+        Returns:
+            None. Stores the selected indices and target timestamps, and initializes
+            optional episode_peak_targets to None.
+
+        Raises:
+            ValueError: History is negative or unavailable, or selected target windows have
+                invalid or overlapping timestamps.
+        """
         self.store = store
         self.indices = list(indices)
         self.window = history_steps + 1
@@ -170,9 +288,28 @@ class ForcingGraphView(Dataset):
         self.episode_peak_targets = None
 
     def __len__(self):
+        """Return the number of selected forecast windows.
+
+        Returns:
+            int: Length of the stored index list.
+        """
         return len(self.indices)
 
     def __getitem__(self, item):
+        """Assemble one graph window with history in node-major order.
+
+        Feature and edge tensors may share storage with the source graph.
+        Timestamp and episode arrays are copied before conversion to tensors.
+
+        Args:
+            item: Integer position within this view, indexing its selected graph list.
+
+        Returns:
+            Data: Features x [N, F], x_hist [N, history_steps + 1, F], graph edges, physical
+            targets y [1, K], target_timestamps [1, K] in Unix seconds, tag, and store-level
+            sample_id [1]. Grid dimensions and canonical episode labels are included when
+            available.
+        """
         index = self.indices[item]
         graph = self.store.graphs[index]
         history = getattr(graph, "x_hist", None)

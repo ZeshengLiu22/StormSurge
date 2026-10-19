@@ -1,4 +1,4 @@
-"""TRAIN statistics with the original sampling, device and arithmetic semantics."""
+"""Training-only feature statistics, target moments, and physical thresholds."""
 
 import numpy as np
 import torch
@@ -10,11 +10,39 @@ from .targets import supervised_targets, threshold_population
 def fit_statistics(
     store, indices, x_norm="zscore", p_lo=1.0, p_hi=99.0, nodes_per_graph=256, seed=42, device=None
 ):
-    """All ranks participate; return CPU statistics for checkpoint storage.
+    """Fit feature normalization and per-horizon target moments on training graphs.
 
-    X z-score uses FP32 squares, FP64 sums, then FP32 moments. Y uses FP64
-    squares/sums and FP32 moments. These orders match the original trainer.
-    Percentiles are fitted on rank zero and broadcast to the other ranks.
+    Every distributed rank must call this function. Z-score feature statistics
+    use current forcing only, with FP32 squares and FP64 reductions. Target moments
+    use FP64 squares and reductions. Both moment paths cast to FP32 before computing
+    variance and add 1e-6 before the square root. Percentiles are fitted on rank zero,
+    scales are floored at 1e-6, and the result is broadcast. Stored history features
+    do not contribute additional samples.
+
+    Args:
+        store: Graph store with unnormalized current features x [nodes, features] and
+            physical target vectors y [horizons].
+        indices: Nonempty sequence of source-training graph indices, identical across
+            distributed ranks.
+        x_norm: zscore uses all current node features; robust uses the midpoint and
+            half-width between p_lo and p_hi; mag uses zero center and the p_hi
+            percentile of absolute features.
+        p_lo: Lower percentile in [0, p_hi), used only for robust normalization.
+        p_hi: Upper percentile in (0, 100], used by robust and mag normalization.
+        nodes_per_graph: Maximum nodes sampled without replacement per graph for
+            percentile modes; nonpositive values select 256. Ignored by zscore.
+        seed: NumPy seed used on rank zero for percentile-mode node sampling.
+        device: Torch device for moment accumulation and distributed collectives;
+            defaults to CPU and must support the active distributed backend.
+
+    Returns:
+        dict: CPU float32 tensors x_center and x_scale with shape [features], plus
+        y_mean and y_std with shape [horizons]. Target statistics use finite labels
+        independently at each horizon.
+
+    Raises:
+        ValueError: The training split is empty, percentile settings are invalid, or a
+            target horizon has no finite training values.
     """
     if not indices:
         raise ValueError("Cannot fit statistics on an empty training split.")
@@ -45,7 +73,7 @@ def fit_statistics(
             or (x_norm == "robust" and not 0 <= p_lo < p_hi)
         ):
             raise ValueError("Invalid feature percentile configuration.")
-        # Zero and negative values select the original automatic sample size.
+        # Nonpositive sample limits use the default of 256 nodes per graph.
         nodes_per_graph = int(nodes_per_graph) if nodes_per_graph > 0 else 256
         fitted = torch.zeros((2, features), dtype=torch.float32, device=device)
         if rank == 0:
@@ -96,10 +124,28 @@ def fit_statistics(
 
 
 def fit_loss_thresholds(store, indices, exceedance_percentile=95.0):
-    """Fit the one canonical threshold from unique TRAIN physical target hours.
+    """Fit one physical threshold from complete, unique training target windows.
 
-    ``indices`` must contain only the source TRAIN split. All validation, test and
-    transfer datasets reuse the returned threshold without calling this fitter.
+    Any window containing a NaN target is excluded in full; infinite targets
+    are rejected before exclusion. Timestamp uniqueness is also validated before
+    exclusion, and every remaining target hour contributes once to the fitted quantile.
+
+    Args:
+        store: Source-training graph store containing physical target labels and
+            explicit target timestamps or center times.
+        indices: Nonempty selection from the source-training split only. Validation,
+            test, and transfer splits must reuse the fitted result.
+        exceedance_percentile: Percentile strictly between 0 and 100, using NumPy linear
+            quantile interpolation; 95 selects the standard training Q95 threshold.
+
+    Returns:
+        dict: Threshold schema, quantile settings, tau_physical in target units,
+        train_windows, and training target-hour, strict-exceedance, event-window, and
+        episode population counts/rates.
+
+    Raises:
+        ValueError: The percentile or target metadata is invalid, windows overlap, or no
+            fully finite training window remains.
     """
     if not 0 < exceedance_percentile < 100:
         raise ValueError("TRAIN exceedance_percentile must lie strictly between 0 and 100.")

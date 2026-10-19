@@ -17,7 +17,7 @@ FORMAL = Path("/home/exouser/media/share/PACT/FormalRuns_0925")
 DESTINATION = Path(__file__).resolve().parent
 SOURCES = ("NCEP", "AWI", "CNRM", "EC_EARTH", "MPI", "MRI")
 TARGETS = {"past_only": SOURCES, "future_year": SOURCES[1:]}
-# Pinned after inspecting the completed runs in the requested active areas.
+# Source runs are pinned to completed experiments in the active run directories.
 # Archived runs under FormalRuns_0925/Achieved are outside these source areas.
 RUNS = {
     "past_only": {
@@ -40,6 +40,16 @@ RUNS = {
 
 
 def years(first, last):
+    """Build consecutive year-group labels from inclusive start-year bounds.
+
+    Args:
+        first: First integer start year to include.
+        last: Last integer start year to include.
+
+    Returns:
+        list[str]: Labels such as ``1979_1980`` in ascending order; empty when
+        ``last`` precedes ``first``.
+    """
     return [f"{year}_{year + 1}" for year in range(first, last + 1)]
 
 
@@ -47,6 +57,17 @@ YEARS = {"past_only": years(2008, 2014), "future_year": years(2070, 2099)}
 
 
 def dataset_root(group, name):
+    """Select the graph directory for a dataset and evaluation period.
+
+    Args:
+        group: ``past_only`` selects historical-only CMIP6 data; ``future_year``
+            selects the full historical/future tree.
+        name: Dataset token from ``SOURCES``, such as ``NCEP`` or ``EC_EARTH``.
+
+    Returns:
+        str: Repository-relative graph-directory path. NCEP uses ``Grid4_New/NCEP/graphs`` for both
+        periods; CMIP6 names receive the ``CMIP6_`` prefix.
+    """
     if name == "NCEP":
         return "./Data/Grid4_New/NCEP/graphs"
     tree = "Grid4_New_PastOnly" if group == "past_only" else "Grid4_New"
@@ -54,12 +75,33 @@ def dataset_root(group, name):
 
 
 def require(condition, message):
+    """Raise a validation error when a required condition is false.
+
+    Args:
+        condition: Value whose truthiness determines whether validation passes.
+        message: Error message identifying the failed invariant.
+
+    Returns:
+        None.
+
+    Raises:
+        ValueError: ``condition`` is false.
+    """
     if not condition:
         raise ValueError(message)
 
 
 def shell_scalars(path):
-    """Read literal scalar assignments from resolved snapshots without executing them."""
+    """Read literal scalar assignments from a resolved shell snapshot.
+
+    Args:
+        path: pathlib.Path to a training snapshot such as ``config_used.sh``.
+
+    Returns:
+        dict[str, str]: Identifier names mapped to shell-tokenized assignment
+        values. Indexed-array declaration lines are skipped; later values replace
+        earlier ones. Expansions are not evaluated and shell code is not executed.
+    """
     values = {}
     for line in path.read_text().splitlines():
         if line.startswith("declare -a "):
@@ -72,6 +114,24 @@ def shell_scalars(path):
 
 
 def audit_checkpoint(group, source, path):
+    """Validate a pinned Boston source checkpoint and collect provenance.
+
+    Loads the checkpoint on CPU and checks its completed run, saved configuration,
+    chronological splits, TRAIN Q95 threshold, normalization, and strict model
+    state compatibility. A network is instantiated but inference is not run.
+
+    Args:
+        group: Source experiment period, ``past_only`` or ``future_year``.
+        source: Source dataset token from ``SOURCES``.
+        path: pathlib.Path to the pinned ``best_overall.pt`` checkpoint.
+
+    Returns:
+        dict: Serializable checkpoint audit with file hashes, model settings,
+        physical threshold, normalization values, and split/sample counts.
+
+    Raises:
+        ValueError: Run discovery, checkpoint metadata, or provenance checks fail.
+    """
     import torch
     from emulator.models import build_model, model_config_from_checkpoint
 
@@ -225,7 +285,18 @@ def audit_checkpoint(group, source, path):
 
 
 def audit_targets():
-    """Check requested station filenames without loading labels or fitting statistics."""
+    """Check that every Boston target has the requested year-group files.
+
+    Reads filenames under the configured graph roots without loading labels or
+    fitting normalization or thresholds.
+
+    Returns:
+        list[dict]: One inventory record per period and target, containing the
+        target root, requested years/count, and available year groups.
+
+    Raises:
+        ValueError: A target lacks one or more requested year groups.
+    """
     rows = []
     for group, targets in TARGETS.items():
         for target in targets:
@@ -249,6 +320,23 @@ def audit_targets():
 
 
 def generate(destination, checkpoints):
+    """Write the 66 pinned Boston transfer configurations and their manifest.
+
+    Args:
+        destination: Output directory path. Period/source subdirectories are
+            created as needed and expected configuration files are overwritten.
+        checkpoints: Mapping from ``(group, source)`` tuples to absolute paths
+            ending in ``best_overall.pt``.
+
+    Returns:
+        list[dict]: Manifest rows in group/source/target order. Recorded config
+        paths use the repository's canonical configuration directory even when
+        ``destination`` is a temporary comparison directory.
+
+    Raises:
+        ValueError: A source directory contains unexpected files, a checkpoint
+            path is not pinned, or the generated count is not 66.
+    """
     destination = Path(destination)
     rows = []
     for group, targets in TARGETS.items():
@@ -305,6 +393,16 @@ def generate(destination, checkpoints):
 
 
 def main():
+    """Audit pinned sources and generate or check the Boston transfer suite.
+
+    Parses ``--check`` from the command line, limits PyTorch to one thread, and
+    validates checkpoints and target inventories. Check mode renders temporary
+    files for byte comparison; normal mode overwrites configuration/manifest
+    files and ``checkpoint_audit.json`` under ``DESTINATION``.
+
+    Returns:
+        None. Prints checkpoint details and the validation summary.
+    """
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
         "--check",

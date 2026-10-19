@@ -16,6 +16,13 @@ RUNSTAMP = "PRESSURE_SHELL_TEST"
 
 class PressureShellTests(unittest.TestCase):
     def setUp(self):
+        """Create an isolated launcher environment and argument-capture interpreter.
+
+        Returns:
+            None: Initializes temporary paths and environment attributes. Registers
+            directory cleanup with unittest; the capture executable records argv
+            without loading the training or inference programs.
+        """
         temporary = tempfile.TemporaryDirectory(prefix="stormsurge-pressure-shell-")
         self.addCleanup(temporary.cleanup)
         self.root = Path(temporary.name)
@@ -41,6 +48,16 @@ class PressureShellTests(unittest.TestCase):
         self.interpreter.chmod(0o755)
 
     def config(self, name="auto", **settings):
+        """Write a shell configuration with isolated artifact destinations.
+
+        Args:
+            name (str): Basename of the generated configuration and inference root.
+            **settings: Shell configuration values overriding the fixture defaults;
+                values are converted to strings and shell-quoted.
+
+        Returns:
+            Path: Written configuration file inside the test's temporary directory.
+        """
         path = self.root / f"{name}.sh"
         values = dict(
             ALL_RESULTS_ROOT=self.root / "training-results",
@@ -52,6 +69,18 @@ class PressureShellTests(unittest.TestCase):
         return path
 
     def launch(self, script, config, *, success=True, **environment):
+        """Invoke a repository launcher and verify its expected exit status.
+
+        Args:
+            script (str): Repository-relative launcher path, such as train.sh.
+            config (Path): Configuration file passed as the launcher's first argument.
+            success (bool): Require status zero when true, or nonzero when false.
+            **environment: Environment-variable overrides merged with the isolated
+                test environment. Values must be strings for subprocess.run.
+
+        Returns:
+            subprocess.CompletedProcess: Exit status and captured text stdout/stderr.
+        """
         result = subprocess.run(
             ["bash", str(REPO / script), str(config)], cwd=REPO,
             env=self.environment | environment, capture_output=True, text=True,
@@ -63,14 +92,33 @@ class PressureShellTests(unittest.TestCase):
         return result
 
     def command(self, result):
+        """Extract the single training command from dry-run output.
+
+        Args:
+            result (subprocess.CompletedProcess): Launcher result with text stdout.
+
+        Returns:
+            list[str]: Shell-parsed arguments from the CMD line. Asserts that
+            exactly one such line was printed.
+        """
         commands = [shlex.split(line[5:]) for line in result.stdout.splitlines() if line.startswith("CMD: ")]
         self.assertEqual(len(commands), 1)
         return commands[0]
 
     def captured(self):
+        """Read arguments recorded by the fixture's capture interpreter.
+
+        Returns:
+            list[str]: Arguments from argv.json, excluding the interpreter itself.
+        """
         return json.loads((self.root / "argv.json").read_text())
 
     def test_legacy_training_config_keeps_default_arguments_and_names(self):
+        """Verify default pressure settings preserve the retained experiment invocation.
+
+        Returns:
+            None: Assertion failures are reported by unittest.
+        """
         config = REPO / "configs_old/single_tail_episodepeak_4x4/train_config_NCEP_Boston_G0_T0250_EP0050.sh"
         default = self.command(self.launch("train.sh", config))
         explicit = self.command(self.launch("train.sh", config, PRESSURE_MODE="anomaly"))
@@ -89,6 +137,11 @@ class PressureShellTests(unittest.TestCase):
         self.assertFalse(output.exists())
 
     def test_training_suffixes_only_automatic_names(self):
+        """Verify pressure suffixes affect automatic names while explicit names persist.
+
+        Returns:
+            None: Assertion failures are reported by unittest.
+        """
         automatic = self.config()
         explicit = self.config("explicit", PACT_RUN_NAME="chosen", PYTHON_RUN_TAG_BASE="chosen-tag")
         for mode, suffix in (("anomaly", ""), ("raw", "_praw"), ("anomaly_plus_mean", "_panomaly_mean")):
@@ -106,6 +159,11 @@ class PressureShellTests(unittest.TestCase):
         self.assertFalse((self.root / "training-results").exists())
 
     def test_training_snapshot_replays_mode_and_rejects_nondefault_collision(self):
+        """Verify saved-mode replay and protection against overwriting a repeated run.
+
+        Returns:
+            None: Assertion failures are reported by unittest.
+        """
         config = self.config(PYTHON_BIN=self.interpreter)
         self.launch("train.sh", config, DRY_RUN="0", PRESSURE_MODE="raw")
         original = self.captured()
@@ -121,6 +179,11 @@ class PressureShellTests(unittest.TestCase):
         self.assertEqual(self.captured(), original)
 
     def test_inference_optional_assertions_survive_snapshot_and_command_replay(self):
+        """Verify replay preserves both explicit pressure assertions and their absence.
+
+        Returns:
+            None: Assertion failures are reported by unittest.
+        """
         checkpoint = self.root / "placeholder.pt"
         checkpoint.touch()
         for mode in (None, "anomaly", "raw", "anomaly_plus_mean"):

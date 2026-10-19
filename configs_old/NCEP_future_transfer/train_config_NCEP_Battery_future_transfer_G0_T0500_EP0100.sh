@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Single Global-MSE + Tail-MSE x EpisodeGTAlignedPeak-MSE: Battery, T=0.05, EP=0.01.
+# Single-head loss = Global-MSE + T * Tail-MSE + EP * EpisodeGTAlignedPeak-MSE: Battery, T=0.05, EP=0.01.
 # Final NCEP source candidate: TRAIN 1979-2008, VAL 2009-2014, no held-out TEST.
 # Final TEST reporting mirrors VAL only; evaluate transfer externally on CMIP6 2070-2099.
 # Primary selector: overall; secondary: exceedance (both retained by active code).

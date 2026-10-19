@@ -8,13 +8,42 @@ from torch import nn
 
 
 def validate_episode_peak_config(config):
+    """Validate the weight of canonical ground-truth episode-peak supervision.
+
+    Args:
+        config: Object exposing episode_gt_aligned_peak_weight as a finite, nonnegative
+            scalar.
+
+    Returns:
+        None.
+
+    Raises:
+        ValueError: The episode-peak loss weight is negative or nonfinite.
+    """
     weight = config.episode_gt_aligned_peak_weight
     if not math.isfinite(weight) or weight < 0:
         raise ValueError("episode_gt_aligned_peak_weight must be finite and nonnegative.")
 
 
 def episode_gt_aligned_peak_mse(squared_error, mask, p_episode_peak):
-    """Average masked errors over all targets, normalized by fixed TRAIN J/N."""
+    """Normalize masked peak squared errors by fixed training peak prevalence.
+
+    Args:
+        squared_error: Tensor of physical squared errors, normally [batch, horizons].
+        mask: Boolean tensor of the identical shape, selecting canonical ground-truth
+            episode-peak occurrences.
+        p_episode_peak: Fixed source-training peak count divided by eligible target-hour
+            count, strictly greater than zero and at most one.
+
+    Returns:
+        torch.Tensor: Scalar mean of zero-masked errors over every supplied target,
+        divided by p_episode_peak. The caller handles incomplete-window denominator
+        corrections.
+
+    Raises:
+        ValueError: The prevalence is invalid or the mask is absent, nonboolean, or
+            shape-incompatible.
+    """
     if p_episode_peak is None or not math.isfinite(p_episode_peak) or not 0 < p_episode_peak <= 1:
         raise ValueError("Episode peak supervision requires positive fixed TRAIN p_episode_peak.")
     if mask is None or mask.dtype != torch.bool or mask.shape != squared_error.shape:
@@ -26,10 +55,15 @@ def episode_gt_aligned_peak_mse(squared_error, mask, p_episode_peak):
 
 @dataclass
 class LossConfig:
-    """Weights for the two optional terms; global physical MSE always has weight 1.
+    """Nonnegative weights for optional physical-unit loss components.
 
-    ``exceedance_loss_weight`` retains its established name for the strict
-    TRAIN-Q95 Tail MSE coefficient.
+    Attributes:
+        exceedance_loss_weight: Coefficient for strict training-threshold tail MSE
+            normalized by fixed training extreme-hour prevalence.
+        episode_gt_aligned_peak_weight: Coefficient for canonical ground-truth
+            episode-peak MSE normalized by fixed training peak prevalence.
+
+    Global physical MSE always has coefficient one.
     """
 
     exceedance_loss_weight: float = 0.0
@@ -37,6 +71,8 @@ class LossConfig:
 
 
 class ForecastLoss(nn.Module):
+    """Physical MSE with optional training-threshold tail and episode-peak terms.
+    """
     def __init__(
         self,
         config: LossConfig,
@@ -45,6 +81,29 @@ class ForecastLoss(nn.Module):
         extreme_hour_prior=None,
         p_episode_peak=None,
     ):
+        """Initialize fixed training statistics and optional tail/peak loss weights.
+
+        Args:
+            config: LossConfig containing finite, nonnegative optional term weights.
+            stats: Training normalization mapping with y_mean and y_std tensors. Both are
+                registered as buffers for checkpoint/device consistency; forward receives
+                already physical predictions.
+            tau_physical: Finite threshold fitted on training targets, in the same units as
+                predictions and targets.
+            extreme_hour_prior: Fixed training fraction of eligible target hours strictly
+                above tau_physical. Must lie in (0, 1] when the tail loss weight is
+                positive.
+            p_episode_peak: Fixed training fraction of eligible target hours marked as
+                canonical episode peaks. Must lie in (0, 1] when the peak loss weight is
+                positive.
+
+        Returns:
+            None. Registers normalization buffers and initializes last_components.
+
+        Raises:
+            ValueError: The threshold, weights, or required population prevalences are
+                invalid.
+        """
         super().__init__()
         self.config = config
         self.register_buffer("y_mean", stats["y_mean"])
@@ -76,12 +135,34 @@ class ForecastLoss(nn.Module):
         self.last_components = {}
 
     def forward(self, output, prediction, target, *, episode_gt_peak_mask=None):
-        """Consume physical predictions/targets and canonical GT peak locations.
+        """Compute physical regression loss and record detached component diagnostics.
 
-        Global MSE masks individual missing targets. Tail and peak terms exclude
-        every target in an incomplete forecast window, including its denominator.
-        ``output`` keeps the common epoch-call interface; only physical values
-        enter this objective.
+        Global MSE divides by the number of finite individual targets. Tail and
+        peak terms exclude every target in an incomplete window and divide by the
+        remaining target-hour count and their fixed training prevalences. Tail
+        membership uses the strict condition target > tau_physical in float64. Empty
+        eligible populations use a denominator floor of one. Peak diagnostics can be
+        computed at zero optimization weight when a valid mask and prevalence exist.
+
+        Args:
+            output: ForecastOutput accepted for the common epoch interface; its normalized
+                predictions are not used by this objective.
+            prediction: Physical prediction tensor [batch, horizons], in the same units as
+                target and finite wherever targets are finite.
+            target: Physical target tensor with the same shape. Nonfinite entries are
+                excluded from the global MSE.
+            episode_gt_peak_mask: Optional boolean tensor with the target shape, selecting
+                canonical peaks built over the full training split. Required when the peak
+                weight is positive.
+
+        Returns:
+            torch.Tensor: Differentiable scalar global MSE plus weighted tail and peak
+            terms, in squared physical units. Updates last_components with detached
+            raw/weighted losses, eligible peak count, and total loss.
+
+        Raises:
+            ValueError: Requested peak supervision lacks a valid mask or fixed training
+                prevalence.
         """
         point_valid = torch.isfinite(target)
         window_valid = point_valid.all(dim=1)
@@ -116,7 +197,7 @@ class ForecastLoss(nn.Module):
             episode_gt_peak_mask is not None and self.p_episode_peak
         ):
             peak = episode_gt_aligned_peak_mse(error, episode_gt_peak_mask, self.p_episode_peak)
-            # Preserve the original arithmetic while excluding invalid windows.
+            # Convert the all-target mean to a complete-window target mean.
             peak = peak * (error.numel() / eligible_target_count.to(error.dtype))
         if config.episode_gt_aligned_peak_weight:
             loss = loss + config.episode_gt_aligned_peak_weight * peak

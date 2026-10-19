@@ -50,6 +50,20 @@ from emulator.training.reporting import (
 
 
 def main(argv=None):
+    """Configure the execution device and run one training experiment.
+
+    Args:
+        argv (list[str] | None): Training command-line arguments without the
+            program name. None reads the process command line.
+
+    Returns:
+        None: Writes checkpoints, metrics, and configuration snapshots to the
+        resolved output directory and prints progress to standard output.
+
+    Notes:
+        WORLD_SIZE, RANK, and LOCAL_RANK control distributed execution. The
+        process group is destroyed on completion or training failure.
+    """
     wall_start = time.perf_counter()
     args = parse_args(argv)
     distributed = int(os.environ.get("WORLD_SIZE", "1")) > 1
@@ -73,6 +87,15 @@ def main(argv=None):
 
 @dataclass
 class RunPaths:
+    """Resolved artifact locations for one training run.
+
+    Attributes:
+        directory (Path): Absolute run directory shared by all ranks.
+        stem (str): Model, configuration hash, and run-tag filename component.
+        checkpoint (Path): Primary selected checkpoint, also saved as best.pt.
+        metrics (Path): JSON Lines file containing per-epoch metrics.
+        summary (Path): JSON file containing final evaluation and timing.
+    """
     directory: Path
     stem: str
     checkpoint: Path
@@ -82,6 +105,19 @@ class RunPaths:
 
 @dataclass
 class TrainingData:
+    """Datasets and TRAIN-fitted quantities shared by training stages.
+
+    Attributes:
+        store (ForcingGraphStore): Loaded graphs in the selected pressure mode.
+        splits (dict): TRAIN/VAL/TEST names mapped to store graph indices.
+        split_config (dict): Year-split settings saved for reproducibility.
+        history_steps (int): Number of six-hour lags, excluding the current step.
+        train (ForcingGraphView): TRAIN view with episode-peak supervision.
+        val (ForcingGraphView): Validation view with the same history length.
+        statistics (dict): CPU tensors for input and target normalization.
+        thresholds (dict): TRAIN hourly exceedance threshold and prevalence.
+        episode_peaks (dict): TRAIN episode counts and peak prevalence metadata.
+    """
     store: ForcingGraphStore
     splits: dict
     split_config: dict
@@ -95,6 +131,17 @@ class TrainingData:
 
 @dataclass
 class ModelComponents:
+    """Model, objective, and device-resident inputs for one run.
+
+    Attributes:
+        model (torch.nn.Module): Forecast network, optionally wrapped in DDP.
+        config (ModelConfig): Architecture specification saved in checkpoints.
+        parameters (dict): Model parameter counts for reporting.
+        criterion (ForecastLoss): Physical-space training objective.
+        station_features (torch.Tensor | None): Station descriptor vector on
+            the execution device, or None when metadata is disabled.
+        statistics (dict): Normalization tensors on the execution device.
+    """
     model: torch.nn.Module
     config: ModelConfig
     parameters: dict
@@ -105,6 +152,19 @@ class ModelComponents:
 
 @dataclass
 class TrainingLoaders:
+    """Batch iterators and execution options reused across epochs.
+
+    Attributes:
+        train (DataLoader): Shuffled TRAIN batches.
+        val (DataLoader): Deterministically ordered validation batches.
+        sampler (DistributedSampler | None): TRAIN sampler whose epoch must
+            advance in distributed runs; None for single-process training.
+        options (dict): Loader construction settings for final evaluation.
+        epoch_options (dict): Shared run_epoch device, normalization, threshold,
+            precision, and distributed settings.
+        scaler (torch.amp.GradScaler | None): CUDA float16 gradient scaler;
+            None for other precision modes.
+    """
     train: DataLoader
     val: DataLoader
     sampler: DistributedSampler | None
@@ -114,7 +174,21 @@ class TrainingLoaders:
 
 
 def _prepare_output_paths(args, distributed, rank):
-    """Resolve a shared run identity before any rank starts loading data."""
+    """Resolve a shared run identity and save the effective configuration.
+
+    Args:
+        args (argparse.Namespace): Validated training settings. The run_tag and
+            output_dir attributes are resolved and updated in place.
+        distributed (bool): Whether an initialized process group is active.
+        rank (int): Global process rank; rank zero creates the run artifacts.
+
+    Returns:
+        RunPaths: Absolute artifact paths and the configuration-derived stem.
+
+    Notes:
+        All ranks must participate in the broadcast and barrier when distributed
+        is true. Rank zero creates the directory and configuration snapshots.
+    """
     launch = [datetime.now().strftime("%Y%m%d_%H%M%S_%f") if rank == 0 else None]
     if distributed:
         dist.broadcast_object_list(launch, src=0)
@@ -161,7 +235,29 @@ def _prepare_output_paths(args, distributed, rank):
 
 
 def _prepare_datasets(args, device, distributed, rank, output_dir):
-    """Split by year and fit normalization, Q95 and episode targets on TRAIN only."""
+    """Split by year and fit normalization and hourly thresholds on TRAIN.
+
+    Args:
+        args (argparse.Namespace): Validated graph, split, normalization, history,
+            pressure-mode, and exceedance-percentile settings.
+        device (torch.device): Device used for distributed moment reductions.
+        distributed (bool): Whether ranks share a process group.
+        rank (int): Global rank; rank zero fits and broadcasts the threshold.
+        output_dir (Path): Existing directory for threshold and episode metadata.
+
+    Returns:
+        TrainingData: Store, split indices, TRAIN/VAL views, CPU normalization
+        tensors, hourly threshold, and TRAIN episode metadata. Episode targets
+        are attached to the TRAIN view; histories include the current step.
+
+    Raises:
+        ValueError: The TRAIN or validation year group is empty.
+
+    Notes:
+        Rank zero writes threshold_metadata.json and episode_peak_metadata.json.
+        The configured percentile defaults to Q95; validation targets never
+        contribute to normalization, threshold, or episode-supervision fitting.
+    """
     store = ForcingGraphStore(args.root_dir, args.station, pressure_mode=args.pressure_mode)
     split_config = {
         name: getattr(args, name)
@@ -180,7 +276,7 @@ def _prepare_datasets(args, device, distributed, rank, output_dir):
     history_steps = args.history_hours // 6
     train_data = ForcingGraphView(store, splits["train"], history_steps)
     val_data = ForcingGraphView(store, splits["val"], history_steps)
-    # Z-score moments are reduced across ranks on the training device, as before.
+    # Reduce TRAIN z-score moments across ranks on the training device.
     stats_cpu = fit_statistics(
         store,
         splits["train"],
@@ -231,6 +327,20 @@ def _prepare_datasets(args, device, distributed, rank, output_dir):
 
 
 def _build_model_and_objective(args, data, device, distributed, rank):
+    """Construct the forecast network and its physical-space loss.
+
+    Args:
+        args (argparse.Namespace): Validated architecture, station-metadata, and
+            loss settings from the training parser.
+        data (TrainingData): Graphs, history length, and TRAIN-fitted quantities.
+        device (torch.device): Destination for model and normalization tensors.
+        distributed (bool): Whether to wrap the model in DistributedDataParallel.
+        rank (int): Global process rank; only rank zero logs parameter counts.
+
+    Returns:
+        ModelComponents: Model, serializable configuration, parameter counts,
+        objective, optional station vector, and device-resident statistics.
+    """
     store = data.store
     splits = data.splits
     history_steps = data.history_steps
@@ -284,10 +394,29 @@ def _build_model_and_objective(args, data, device, distributed, rank):
 
 
 def _build_optimizer_and_scheduler(args, model):
-    """Preserve the existing Adam and warmup/cosine or plateau schedule."""
+    """Build Adam and the selected learning-rate schedule.
+
+    Args:
+        args (argparse.Namespace): Learning rate, schedule choice, total epochs,
+            linear-warmup settings, and ReduceLROnPlateau settings.
+        model (torch.nn.Module): Network whose parameters will be optimized.
+
+    Returns:
+        tuple: Adam optimizer and either a LambdaLR warmup/cosine scheduler or
+        a ReduceLROnPlateau scheduler. Adam uses weight decay of 1e-5.
+    """
     optimizer = torch.optim.Adam(model.parameters(), lr=args.lr, weight_decay=1e-5)
 
     def lr_multiplier(epoch):
+        """Compute the warmup/cosine factor relative to the initial rate.
+
+        Args:
+            epoch (int): Zero-based scheduler epoch, including the initial step.
+
+        Returns:
+            float: Multiplier applied to args.lr; the cosine segment approaches
+            args.min_lr at the configured final epoch.
+        """
         if epoch < args.warmup_epochs:
             return (
                 args.warmup_start_factor
@@ -312,6 +441,22 @@ def _build_optimizer_and_scheduler(args, model):
 
 
 def _prepare_loaders(args, data, components, device, distributed, rank):
+    """Build TRAIN/VAL loaders and configure mixed precision.
+
+    Args:
+        args (argparse.Namespace): Batch, worker, random-seed, precision, and
+            input-clipping settings.
+        data (TrainingData): TRAIN/VAL views and fixed TRAIN threshold metadata.
+        components (ModelComponents): Device-resident normalization and station
+            features passed to run_epoch.
+        device (torch.device): Execution device; AMP is enabled only on CUDA.
+        distributed (bool): Whether to shard both views across a process group.
+        rank (int): Global rank used to select each distributed shard.
+
+    Returns:
+        TrainingLoaders: Loaders, TRAIN sampler, reusable execution settings,
+        and a CUDA float16 gradient scaler when required.
+    """
     world = dist.get_world_size() if distributed else 1
     train_data, val_data = data.train, data.val
     fitted = data.thresholds
@@ -365,7 +510,29 @@ def _prepare_loaders(args, data, components, device, distributed, rank):
 def _train_epochs(
     args, data, components, loaders, paths, optimizer, scheduler, tracker, distributed, rank
 ):
-    """Train once and select both checkpoint roles using validation metrics only."""
+    """Train once and select both checkpoint roles using validation metrics.
+
+    Args:
+        args (argparse.Namespace): Epoch, augmentation, accumulation, clipping,
+            scheduling, and primary-checkpoint settings.
+        data (TrainingData): Split definitions and TRAIN-fitted metadata saved
+            with each selected checkpoint.
+        components (ModelComponents): Model and loss to optimize in place.
+        loaders (TrainingLoaders): Batch iterators and precision settings.
+        paths (RunPaths): Destination paths for checkpoints and epoch metrics.
+        optimizer (torch.optim.Optimizer): Optimizer updated at gradient-accumulation
+            boundaries, including the final partial group.
+        scheduler: Learning-rate scheduler stepped once per completed epoch.
+        tracker (CheckpointTracker | None): Rank-zero checkpoint selector;
+            None on other ranks.
+        distributed (bool): Whether the model is wrapped in DDP.
+        rank (int): Global rank; only rank zero writes artifacts and logs.
+
+    Returns:
+        float: Elapsed training-loop time in seconds, including validation and
+        checkpoint I/O. Rank zero appends JSON Lines metrics and saves selected
+        states, including aliases for the primary checkpoint role.
+    """
     store = data.store
     splits = data.splits
     split_config = data.split_config
@@ -416,6 +583,14 @@ def _train_epochs(
                 log_message(format_loss_components(training.losses))
 
             def checkpoint_snapshot():
+                """Capture the current model state and its training provenance.
+
+                Returns:
+                    dict: Model state, normalization, station vector, split tags, threshold
+                    and episode metadata, epoch, validation metrics, and parameter counts.
+                    Values are assembled from the enclosing epoch and are not deep-copied;
+                    the checkpoint tracker serializes the snapshot when a role improves.
+                """
                 network = model.module if distributed else model
                 return {
                     "model_config": asdict(model_config),
@@ -463,7 +638,30 @@ def _train_epochs(
 def _evaluate_selected_checkpoints(
     args, data, components, loaders, paths, tracker, device, distributed
 ):
-    """Reload each selected state strictly and export fresh physical predictions."""
+    """Reload selected checkpoints and export VAL and TEST predictions.
+
+    Args:
+        args (argparse.Namespace): External-test root, station, pressure mode,
+            exceedance percentile, and primary-checkpoint role.
+        data (TrainingData): Source splits, validation view, and TRAIN threshold.
+        components (ModelComponents): Model whose state is replaced in place.
+        loaders (TrainingLoaders): Loader and normalization options for evaluation.
+        paths (RunPaths): Existing output directory and primary artifact stem.
+        tracker (CheckpointTracker): Saved paths for both checkpoint roles.
+        device (torch.device): Device on which checkpoints are loaded.
+        distributed (bool): Whether components.model must be unwrapped from DDP.
+
+    Returns:
+        tuple[dict, str, bool]: Per-role checkpoint provenance and VAL/TEST
+        metrics, test-scope label, and whether TEST mirrors validation because
+        no held-out or external test set exists. Predictions are exported as
+        NPZ files with physical water levels in meters.
+
+    Notes:
+        Called on rank zero only. Each final evaluation uses the complete view
+        without distributed sampling. A validation-mirror run writes an explicit
+        warning file and retains an empty TEST split in checkpoint provenance.
+    """
     store = data.store
     splits = data.splits
     history_steps = data.history_steps
@@ -551,6 +749,25 @@ def _write_run_artifacts(
     device,
     wall_start,
 ):
+    """Write final checkpoint comparisons and the primary-run summary.
+
+    Args:
+        args (argparse.Namespace): Primary checkpoint role and resolved run tag.
+        data (TrainingData): Fixed TRAIN threshold and episode metadata.
+        components (ModelComponents): Parameter counts included in the summary.
+        paths (RunPaths): Existing run directory and summary destination.
+        tracker (CheckpointTracker): Checkpoint selection history and provenance.
+        evaluations (dict): Per-role VAL/TEST results from final re-evaluation.
+        test_scope (str): External, held-out, or validation-mirror scope label.
+        test_is_val_mirror (bool): Whether the reported TEST uses validation data.
+        elapsed (float): Training-loop duration in seconds.
+        device (torch.device): Device synchronized before recording wall time.
+        wall_start (float): Initial time.perf_counter reading for the whole run.
+
+    Returns:
+        None: Writes Markdown/JSON comparisons and a JSON summary, and logs
+        selection metrics and elapsed wall time. Called on rank zero only.
+    """
     fitted = data.thresholds
     episode_peak_metadata = data.episode_peaks
     model_parameters = components.parameters
@@ -595,6 +812,24 @@ def _write_run_artifacts(
 
 
 def train(args, device, distributed, rank, wall_start):
+    """Execute data preparation, training, checkpoint selection, and reporting.
+
+    Args:
+        args (argparse.Namespace): Validated training options; run_tag and
+            output_dir are resolved in place during setup.
+        device (torch.device): Execution device configured by main.
+        distributed (bool): Whether an initialized process group is active.
+        rank (int): Global rank; rank zero writes artifacts and final reports.
+        wall_start (float): Initial time.perf_counter reading for wall-time logs.
+
+    Returns:
+        None: Trains the model and writes configuration, selected checkpoints,
+        epoch metrics, final predictions, and summary artifacts.
+
+    Notes:
+        All distributed ranks must call this function. Final re-evaluation runs
+        only on rank zero, and all ranks synchronize before returning.
+    """
     paths = _prepare_output_paths(args, distributed, rank)
     tracker = CheckpointTracker(paths.directory) if rank == 0 else None
     data = _prepare_datasets(args, device, distributed, rank, paths.directory)

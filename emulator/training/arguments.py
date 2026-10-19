@@ -10,6 +10,20 @@ from .losses import validate_episode_peak_config
 
 
 def parse_args(argv=None):
+    """Parse and validate the training command-line configuration.
+
+    Validation checks architecture depth, six-hour history increments,
+    optimization settings, and threshold/episode-supervision constraints. Invalid
+    arguments are reported through argparse and terminate with SystemExit.
+
+    Args:
+        argv: Optional sequence of argument strings excluding the program name; None
+            reads sys.argv[1:].
+
+    Returns:
+        argparse.Namespace: Parsed settings with station/filter aliases reconciled and
+        station_json_dir converted to pathlib.Path.
+    """
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--root_dir", type=str, default="./Data/NCEP/graphs")
     parser.add_argument(

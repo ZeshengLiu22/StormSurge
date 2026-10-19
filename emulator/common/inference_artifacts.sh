@@ -1,6 +1,11 @@
 #!/usr/bin/env bash
 # Checkpoint resolution and replay artifacts for the inference launcher.
 
+# Resolve a checkpoint file or choose the most recently modified glob match.
+# Args: $1 is a literal file path or shell glob pattern.
+# Output: Prints the selected file's absolute path to standard output.
+# Status: Zero on successful resolution; nonzero for an empty pattern, no file
+# match, or a failed realpath invocation. Does not modify checkpoint files.
 resolve_ckpt() {
   local pattern="$1" candidate newest=""
   [[ -n "${pattern}" ]] || return 1
@@ -18,6 +23,13 @@ resolve_ckpt() {
   realpath -- "${newest}"
 }
 
+# Write a shell-readable snapshot of the launcher's resolved configuration.
+# Args: $1 is the destination path; its parent directory must already exist.
+# Inputs: Reads the listed launcher variables and CONFIG_PATH, WORKDIR,
+# CKPT_PATH, and CKPT_RESOLVED. Relative data/script paths are rooted at WORKDIR.
+# Output: Overwrites $1 with shell-quoted assignments, an absolute resolved
+# checkpoint path, and a UTC generation timestamp. No standard output.
+# Status: The redirected write command's exit status.
 write_infer_config_snapshot() {
   local output_path="$1" name value
   local config_vars=(
@@ -53,6 +65,12 @@ write_infer_config_snapshot() {
   } > "${output_path}"
 }
 
+# Write a replay script containing the exact inference executable and arguments.
+# Args: $1 is the destination path; remaining arguments form the command vector.
+# Inputs: Reads WORKDIR and optional CUDA_VISIBLE_DEVICES/CUDA_LAUNCH_BLOCKING.
+# Output: Overwrites $1 with a shell-quoted command, working directory, and
+# relevant environment settings. Does not execute the command or set file mode.
+# Status: The redirected write command's exit status.
 write_infer_command() {
   local output_path="$1" name
   shift

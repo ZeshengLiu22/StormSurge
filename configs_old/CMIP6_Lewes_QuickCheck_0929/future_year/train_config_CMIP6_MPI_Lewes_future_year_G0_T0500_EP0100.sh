@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Single Global-MSE + Tail-MSE x EpisodeGTAlignedPeak-MSE: Lewes, T=0.05, EP=0.01.
+# Single-head loss = Global-MSE + T * Tail-MSE + EP * EpisodeGTAlignedPeak-MSE: Lewes, T=0.05, EP=0.01.
 # Lewes CMIP6 quick check: CMIP6_MPI, future_year; matching NCEP formal template.
 # Primary selector: overall; secondary: exceedance (both retained by active code).
 # Assignment-only configuration; contains no launch or submission command.

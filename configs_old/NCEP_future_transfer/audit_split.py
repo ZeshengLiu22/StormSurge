@@ -15,6 +15,21 @@ STATIONS = ("Boston", "Battery", "CBBT", "Lewes")
 
 def audit_station(station):
     # Retain labels and tags only; load each real graph archive without keeping forcing tensors.
+    """Validate the 30-year TRAIN and 6-year VAL split for one NCEP station.
+
+    Loads station archives in targets-only mode, checks year and sample coverage,
+    and prints split membership. The canonical TEST split must be empty.
+
+    Args:
+        station: Station token used in graph filenames, one of ``STATIONS``.
+
+    Returns:
+        None.
+
+    Raises:
+        AssertionError: Year groups or sample indices are missing, overlap, or
+            differ from TRAIN 1979–2008 and VAL 2009–2014 start years.
+    """
     store = ForcingGraphStore(REPO / "Data/Grid4_New/NCEP/graphs", station, targets_only=True)
     splits = store.split(train_ratio=0.8333333333333334, val_ratio=0.16666666666666666,
                          shuffle_years=False, seed=42, future_only=False, future_year_threshold=2030)
@@ -40,6 +55,11 @@ def audit_station(station):
 
 
 def main():
+    """Parse ``--stations`` and audit each selected NCEP transfer split.
+
+    Returns:
+        None. Reads graph archives and prints each station's validation summary.
+    """
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--stations", nargs="+", choices=STATIONS, default=STATIONS,
                         help="Stations to audit (default: all four).")

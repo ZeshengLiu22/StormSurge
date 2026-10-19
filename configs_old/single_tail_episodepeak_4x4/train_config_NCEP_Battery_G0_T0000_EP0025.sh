@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-# Single Global-MSE + Tail-MSE x EpisodeGTAlignedPeak-MSE: Battery, T=0.0, EP=0.0025.
-# Four-station gradient recommendation: KEEP GRID AS PROPOSED.
+# Single-head loss = Global-MSE + T * Tail-MSE + EP * EpisodeGTAlignedPeak-MSE: Battery, T=0.0, EP=0.0025.
+# Four-station loss-weight grid with fixed architecture and training settings.
 # Primary selector: exceedance; secondary: overall (both retained by active code).
 # Assignment-only configuration; contains no launch or submission command.
 

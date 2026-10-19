@@ -35,6 +35,19 @@ from emulator.training.reporting import metric_report, threshold_label
 
 
 def parse_args(argv=None):
+    """Parse inference options and validate incompatible scope settings.
+
+    Args:
+        argv (list[str] | None): Command-line arguments without the program name;
+            None reads the process command line.
+
+    Returns:
+        argparse.Namespace: Parsed paths, evaluation scope, optional checkpoint
+        assertions, runtime settings, and output options.
+
+    Raises:
+        SystemExit: Help is requested or arguments fail parser validation.
+    """
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--ckpt", required=True, help="Path to .pth checkpoint from train.py")
     parser.add_argument(
@@ -184,7 +197,20 @@ def parse_args(argv=None):
 
 
 def resolve_pressure_mode(checkpoint, supplied=None):
-    """Recover forcing preprocessing, treating an explicit CLI mode as an assertion."""
+    """Recover the checkpoint pressure representation and verify an override.
+
+    Args:
+        checkpoint (dict): Loaded checkpoint containing training_config. Missing
+            pressure_mode in that configuration defaults to anomaly.
+        supplied (str | None): Optional requested mode, used only as an assertion
+            about the saved representation.
+
+    Returns:
+        str: Saved mode: anomaly, raw, or anomaly_plus_mean.
+
+    Raises:
+        ValueError: The saved mode is unsupported or supplied disagrees with it.
+    """
     saved = checkpoint["training_config"].get("pressure_mode", "anomaly")
     if saved not in ("anomaly", "raw", "anomaly_plus_mean"):
         raise ValueError(f"Unsupported checkpoint pressure_mode: {saved!r}.")
@@ -196,7 +222,27 @@ def resolve_pressure_mode(checkpoint, supplied=None):
 
 
 def _validate_input_dimensions(store, indices, config, normalization, pressure_mode):
-    """Fail before inference if saved TRAIN statistics or forcing channels disagree."""
+    """Validate graph features against the saved model and normalization.
+
+    Args:
+        store (ForcingGraphStore): Graphs after pressure-feature transformation.
+        indices (list[int]): Store indices selected for evaluation.
+        config (ModelConfig): Saved architecture defining the channel count C.
+        normalization (dict): Saved TRAIN statistics; x_center and x_scale must
+            each be tensors of shape (C,).
+        pressure_mode (str): Selected representation, included in error messages.
+
+    Returns:
+        None: Successful return indicates compatible checked dimensions.
+
+    Raises:
+        ValueError: Statistics or features have incompatible types or shapes.
+
+    Notes:
+        Graph x must have shape (N, C); present x_hist must have rank three
+        and C channels. An absent x_hist is permitted for legacy zero-history
+        graphs; history availability is validated when constructing a view.
+    """
     channels = config.in_channels
     for name in ("x_center", "x_scale"):
         value = normalization.get(name)
@@ -223,7 +269,20 @@ def _validate_input_dimensions(store, indices, config, normalization, pressure_m
 
 
 def _validate_checkpoint_options(args, config, training):
-    """Treat architecture flags as assertions about the saved checkpoint."""
+    """Check optional architecture assertions against saved model settings.
+
+    Args:
+        args (argparse.Namespace): Inference options; empty strings, None, and
+            history_hours=-1 leave the corresponding setting unspecified.
+        config (ModelConfig): Architecture reconstructed from checkpoint metadata.
+        training (dict): Saved settings including PACT station-feature switches.
+
+    Returns:
+        str: Public model name, perceiver3 for PACT or baseline otherwise.
+
+    Raises:
+        ValueError: A supplied assertion differs from a relevant saved setting.
+    """
     expected = {
         "model": "perceiver3" if config.model == "pact" else "baseline",
         "encoder_type": config.encoder_type,
@@ -246,7 +305,31 @@ def _validate_checkpoint_options(args, config, training):
 
 
 def _select_evaluation_samples(args, checkpoint, station, root, all_years):
-    """Select exact target years without fitting statistics or crossing saved TEST boundaries."""
+    """Select requested graph years within the declared evaluation scope.
+
+    Args:
+        args (argparse.Namespace): Year list, strict_years flag, and optional
+            pressure-mode assertion.
+        checkpoint (dict): Source checkpoint with saved TEST tags and training
+            pressure representation.
+        station (str | None): Exact station filter; None selects all stations.
+        root (str | Path): Directory containing the evaluation graph files.
+        all_years (bool): Select all available/requested years when true;
+            otherwise restrict selection to the checkpoint's saved TEST tags.
+
+    Returns:
+        tuple: Loaded ForcingGraphStore, selected graph indices, sorted unique
+        requested year tags, and sorted evaluated year tags. Year tags use
+        YYYY_YYYY with consecutive winter-season years.
+
+    Raises:
+        ValueError: The selection is empty, saved TEST samples are missing, or
+            strict-year requirements are violated.
+
+    Notes:
+        No normalization or threshold fitting occurs. Held-out evaluation loads
+        the full store to validate saved TEST tags before applying a year filter.
+    """
     if not all_years and not checkpoint["split_tags"]["test"]:
         raise ValueError(
             "Checkpoint has no held-out source TEST split. "
@@ -332,7 +415,20 @@ def _select_evaluation_samples(args, checkpoint, station, root, all_years):
 
 
 def _prepare_output(args, source, target, station_tag, model_name):
-    """Resolve the established artifact names and record the effective invocation."""
+    """Create the inference output directory and save resolved arguments.
+
+    Args:
+        args (argparse.Namespace): Checkpoint and output settings. model_label
+            and out_dir are updated in place with the resolved values.
+        source (str): Source dataset label used in automatic directory names.
+        target (str): Evaluated dataset label used in automatic directory names.
+        station_tag (str): Station identifier, or ALL for a multi-station view.
+        model_name (str): Public model name used when no label can be inferred.
+
+    Returns:
+        None: Creates args.out_dir and writes config.json inside it. An explicit
+        output path takes precedence over automatic timestamped naming.
+    """
     label = args.model_label.strip()
     if not label:
         stem = Path(args.ckpt).stem
@@ -364,7 +460,28 @@ def _prepare_output(args, source, target, station_tag, model_name):
 def _evaluate_years(
     args, config, model, device, stats, station_feat, store, indices, *, x_clip, tau_physical
 ):
-    """Evaluate once per year; retain predictions for metrics independently of NPZ export."""
+    """Evaluate each winter year and concatenate physical predictions.
+
+    Args:
+        args (argparse.Namespace): Batch, worker, precision, and timing settings.
+        config (ModelConfig): Saved model configuration and history length.
+        model (torch.nn.Module): Restored forecast network on device.
+        device (torch.device): Execution device for inference.
+        stats (dict): Source TRAIN normalization tensors on device.
+        station_feat (torch.Tensor | None): Optional device-resident station vector.
+        store (ForcingGraphStore): Evaluation graphs in checkpoint pressure mode.
+        indices (list[int]): Nonempty graph-index selection to group by year.
+        x_clip (float): Source-training normalized-input clipping limit; zero
+            disables clipping.
+        tau_physical (float): Fixed source TRAIN hourly threshold in meters.
+
+    Returns:
+        tuple: Per-year metrics/timings, concatenated prediction arrays, per-year
+        runtimes excluding 2014_2015, and summed evaluation seconds. Arrays
+        include y_pred and y_true in meters with shape (samples, horizons),
+        sample tags, and target_timestamps in Unix seconds. Predictions are
+        retained regardless of whether later NPZ export is enabled.
+    """
     cuda = device.type == "cuda"
     year_to_indices = defaultdict(list)
     for index in indices:
@@ -430,7 +547,24 @@ def _evaluate_years(
 def _summarize_predictions(
     arrays, results, checkpoint, station, external, tau_physical, timing_year_seconds
 ):
-    """Keep source split boundaries for episode metrics and the established past/future groups."""
+    """Compute aggregate metrics while preserving source split boundaries.
+
+    Args:
+        arrays (dict[str, numpy.ndarray]): Concatenated physical predictions,
+            targets, tags, and timestamps. Receives a split_ids array in place.
+        results (dict): Per-year results; aggregate groups and mean-year timing
+            are added in place.
+        checkpoint (dict): Source station and saved TRAIN/VAL/TEST sample tags.
+        station (str | None): Station selection used for this evaluation.
+        external (bool): Whether graphs came from an external evaluation root.
+        tau_physical (float): Source TRAIN hourly threshold in meters.
+        timing_year_seconds (list[float]): Per-year runtimes excluding 2014_2015.
+
+    Returns:
+        dict: Aggregate physical-space metrics using fixed hourly episodes.
+        RMSE, MAE, and bias use meters; peak timing uses hours. Source split identities prevent episodes crossing
+        saved split boundaries when evaluating the original station/root.
+    """
     saved_split_by_tag = {
         tag: split for split, split_tags in checkpoint["split_tags"].items() for tag in split_tags
     }
@@ -499,7 +633,30 @@ def _write_reports(
     elapsed,
     wall_start,
 ):
-    """Write physical-unit predictions and source-checkpoint provenance."""
+    """Export evaluation results with source-checkpoint provenance.
+
+    Args:
+        args (argparse.Namespace): Resolved output path, export switch, and
+            effective inference settings.
+        checkpoint (dict): Source training settings and threshold metadata.
+        config (ModelConfig): Restored architecture used in report labels.
+        pair_metadata (dict): Source/target labels and paths, station, evaluated
+            years, pressure mode, and normalization/threshold provenance.
+        results (dict): Per-year and grouped metrics with timing summaries.
+        metrics (dict): Aggregate metrics across all selected samples.
+        arrays (dict[str, numpy.ndarray]): Physical predictions, targets, tags,
+            Unix-second timestamps, and split identities.
+        model_parameters (dict): Total/trainable/frozen parameter counts.
+        evaluation_scope (str): Held-out, source-all, or external scope label.
+        external (bool): Whether an external graph root was evaluated.
+        all_years (bool): Whether selection bypassed saved source TEST tags.
+        elapsed (float): Summed per-year evaluation time in seconds.
+        wall_start (float): Initial time.perf_counter reading for the invocation.
+
+    Returns:
+        None: Writes metrics.json, a detailed per-year JSON report, metrics.md,
+        and optionally predictions.npz in the existing output directory.
+    """
     training = checkpoint["training_config"]
     threshold_metadata = checkpoint["threshold_metadata"]
     tau_physical = threshold_metadata["tau_physical"]
@@ -618,6 +775,21 @@ def _write_reports(
 
 
 def main(argv=None):
+    """Evaluate a saved checkpoint with source TRAIN statistics and thresholds.
+
+    Args:
+        argv (list[str] | None): Inference command-line arguments without the
+            program name. None reads the process command line.
+
+    Returns:
+        None: Writes metrics and provenance reports, optionally saves physical
+        predictions as NPZ, and prints evaluation progress.
+
+    Notes:
+        Checkpoint weights load strictly. Architecture and pressure options are
+        assertions about the saved model; target data never refit normalization
+        or exceedance thresholds.
+    """
     wall_start = time.perf_counter()
     args = parse_args(argv)
     checkpoint = torch.load(args.ckpt, map_location="cpu", weights_only=False)

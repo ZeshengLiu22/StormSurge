@@ -14,6 +14,20 @@ from emulator.data import ForcingGraphStore, ForcingGraphView, build_loader
 
 
 def main():
+    """Validate representative Boston target batches and write a JSON audit.
+
+    For each period and target, loads the first requested year on CPU and batches
+    up to two graphs with four historical steps plus the current frame. Checks
+    five forcing features, six hourly targets, and the upper edge-index bound.
+    Writes ``DESTINATION/graph_audit.json`` and prints batch dimensions.
+
+    Returns:
+        None. Sets the process-wide PyTorch thread count to one.
+
+    Raises:
+        ValueError: A representative batch violates the expected dimensions or
+            upper edge-index bound.
+    """
     torch.set_num_threads(1)
     rows = []
     for group, targets in TARGETS.items():

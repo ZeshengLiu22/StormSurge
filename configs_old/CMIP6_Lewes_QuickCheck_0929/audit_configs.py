@@ -31,7 +31,16 @@ from emulator.training.checkpoint_selection import ROLES
 
 
 def local_config_path(value):
-    """Relocate only repository config paths; preserve data and result provenance."""
+    """Resolve a manifest configuration path within the current checkout.
+
+    Args:
+        value: String or path-like configuration location. A ``configs`` or
+            ``configs_old`` path component identifies an archived repository path.
+
+    Returns:
+        pathlib.Path: Path under ``REPO/configs_old`` when a configuration marker
+        is present; otherwise ``REPO / value``. Unmarked absolute paths are retained.
+    """
     parts = Path(value).parts
     for marker in ("configs_old", "configs"):
         if marker in parts:
@@ -40,6 +49,16 @@ def local_config_path(value):
 
 
 def rows_at(path):
+    """Read manifest rows and relocate their configuration paths.
+
+    Args:
+        path: pathlib.Path to a CSV manifest containing ``config_path`` and
+            ``template_path`` columns.
+
+    Returns:
+        list[dict[str, str]]: Rows in file order, with those two columns resolved
+        against the current checkout. Data and result path columns are unchanged.
+    """
     with path.open() as handle:
         rows = list(csv.DictReader(handle))
     for row in rows:
@@ -49,14 +68,46 @@ def rows_at(path):
 
 
 def assignments(path):
+    """Extract unindented shell assignments without evaluating shell code.
+
+    Args:
+        path: pathlib.Path to a shell configuration file.
+
+    Returns:
+        dict[str, str]: Variable names mapped to literal right-hand-side text,
+        including quotes and shell expansions. Later assignments replace earlier ones.
+    """
     return dict(re.findall(r"^([A-Za-z_][A-Za-z_0-9]*)=(.*)$", path.read_text(), re.M))
 
 
 def digest(path):
+    """Compute the SHA-256 digest of a file's bytes.
+
+    Args:
+        path: pathlib.Path to the file to read in full.
+
+    Returns:
+        str: Lowercase hexadecimal SHA-256 digest.
+    """
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
 def dry_command(path, stamp):
+    """Resolve a training configuration through the launcher's dry-run path.
+
+    Args:
+        path: Path to the shell training configuration passed to ``train.sh``.
+        stamp: Run timestamp string assigned to ``PACT_RUNSTAMP`` for reproducible
+            output paths and run tags.
+
+    Returns:
+        tuple[dict, str]: Parsed training arguments and the launcher's complete
+        standard output. Training and tmux are disabled for this subprocess.
+
+    Raises:
+        AssertionError: The launcher does not emit exactly one training command.
+        subprocess.CalledProcessError: The launcher dry run fails.
+    """
     env = dict(os.environ, DRY_RUN="1", USE_TMUX="0", PACT_RUNSTAMP=stamp)
     run = subprocess.run(
         ["bash", "train.sh", str(path)],
@@ -74,6 +125,25 @@ def dry_command(path, stamp):
 
 
 def audit(group):
+    """Validate one station's experiment group and write audit evidence.
+
+    Reads manifests, station metadata, graph-file inventories, and training
+    configurations. Checks chronological splits through the production splitter,
+    then writes ``dataset_inventory.json``, ``config_audit.json``, and
+    ``dry_run.log`` in the group directory and prints a validation summary.
+    Graph tensors are not loaded and training jobs are not submitted.
+
+    Args:
+        group: Experiment group, either ``past_only`` or ``future_year``. The
+            station is inferred from this script's parent directory.
+
+    Returns:
+        None.
+
+    Raises:
+        AssertionError: An inventory, split, configuration, or provenance check fails.
+        subprocess.CalledProcessError: Shell syntax validation or a dry run fails.
+    """
     folder = ROOT / group
     rows = rows_at(folder / "manifest.csv")
     combined = rows_at(ROOT / "manifest.csv")

@@ -16,6 +16,16 @@ from .metrics import evaluate_metrics
 
 @dataclass
 class EpochResult:
+    """Metrics and optional records produced by one training or evaluation pass.
+
+    Attributes:
+        metrics: Physical hourly metrics, plus episode metrics when predictions
+            are retained with timestamps.
+        predictions: Optional NumPy record mapping with sample_id, y_true,
+            y_pred, target_timestamps, and tags, in loader traversal order.
+        losses: Optional training component summary. Component means are weighted
+            by batch target count; episode_peak_target_count is summed.
+    """
     metrics: dict
     predictions: dict | None = None
     losses: dict | None = None
@@ -41,7 +51,57 @@ def run_epoch(
     distributed=False,
     tau_physical=None,
 ):
-    """Train or evaluate once, reconstructing physical predictions with TRAIN stats."""
+    """Train or evaluate one loader pass using fixed training normalization.
+
+    The function sets model train/eval mode and performs optimizer updates when
+    training. Targets remain physical; predictions are converted with training
+    y_std and y_mean before loss or metric evaluation. DDP synchronization occurs
+    at accumulation boundaries. Distributed prediction records are deduplicated
+    by sample_id to remove sampler padding; dataset timestamp uniqueness must be
+    validated separately. Episode-peak training rejects samplers that pad or omit
+    canonical targets. Evaluation bypasses the DDP wrapper.
+
+    Args:
+        model: Forecast model, optionally wrapped in DistributedDataParallel, returning
+            ForecastOutput with normalized predictions [batch, horizons].
+        loader: Graph DataLoader yielding x, x_hist, physical y, sample_id, and
+            target_timestamps; tag is required when saving predictions.
+        device: torch.device to which graph batches are transferred.
+        stats: Training-fitted x_center/x_scale and y_mean/y_std tensors on a device
+            compatible with the model. Target tensors have shape [horizons].
+        station_feat: Optional fixed station-feature tensor passed unchanged to every
+            model call, already on the appropriate device.
+        optimizer: Optimizer enabling training when supplied; None selects evaluation
+            with gradients disabled.
+        criterion: ForecastLoss-compatible objective required during training, exposing
+            config, last_components, and p_episode_peak.
+        scaler: Optional gradient scaler used for training backward/optimizer steps,
+            typically for float16 AMP.
+        grad_accum_steps: Positive number of batches per optimizer update. A final
+            partial group is normalized by its actual batch count.
+        max_grad_norm: Positive gradient norm bound applied before each optimizer step;
+            nonpositive values disable clipping.
+        use_amp: Whether model forward calls use autocast on device.type.
+        amp_dtype: Autocast dtype, normally torch.bfloat16 or torch.float16.
+        x_clip: Positive symmetric feature-clipping bound in normalized units;
+            nonpositive values disable clipping.
+        augmentation: Optional (probability, scale_range, bias_std) feature jitter
+            passed to normalize_inputs during training only.
+        save_predictions: Whether to retain NumPy predictions/tags/timestamps and
+            evaluate episode metrics. Supported only for a single-process pass.
+        distributed: Whether all initialized ranks gather prediction records and reduce
+            training loss summaries. Every rank must participate.
+        tau_physical: Required finite training-fitted threshold in physical target
+            units, reused for all splits.
+
+    Returns:
+        EpochResult: Physical metrics, optional retained arrays, and training loss
+        summaries when training processed batches.
+
+    Raises:
+        ValueError: The threshold is invalid, prediction retention is requested with
+            distributed gathering, or the episode traversal is invalid.
+    """
     if tau_physical is None or not np.isfinite(tau_physical):
         raise ValueError("Evaluation requires the saved finite TRAIN tau_physical.")
     if save_predictions and distributed:

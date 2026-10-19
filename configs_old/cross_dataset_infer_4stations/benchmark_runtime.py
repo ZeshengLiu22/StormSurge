@@ -22,6 +22,24 @@ sys.path.insert(0, str(REPO))
 
 
 def measure(row, years, directory, batch_size):
+    """Run a CUDA inference case and record component timings and artifacts.
+
+    Temporarily wraps PyTorch deserialization and graph-store initialization;
+    the original callables are restored even if inference fails. Writes the
+    inference log/outputs, ``profile.json``, and ``invocation.json`` in ``directory``.
+
+    Args:
+        row: Manifest mapping containing station, period, source/target names,
+            checkpoint path, and source/target graph roots.
+        years: Sequence of explicit year-group labels to evaluate.
+        directory: pathlib.Path to the benchmark case output directory, created
+            recursively if necessary. The caller selects an audit-only location.
+        batch_size: Number of graph samples per inference batch.
+
+    Returns:
+        dict: Pair identity, evaluated years, sample/input-size counts, AllRMSE,
+        wall/component timings in seconds, and peak GPU allocation in MiB.
+    """
     import torch
     import infer
 
@@ -31,6 +49,18 @@ def measure(row, years, directory, batch_size):
     original_init = infer.ForcingGraphStore.__init__
 
     def timed_load(path, *args, **kwargs):
+        """Time one deserialization call and add it to the enclosing counters.
+
+        Args:
+            path: File path or file-like object accepted by the original ``torch.load``.
+                Names ending in ``graphs.pt`` count as graph deserialization; all
+                other inputs count as checkpoint loading.
+            *args: Remaining positional arguments forwarded to ``torch.load``.
+            **kwargs: Keyword arguments forwarded to ``torch.load``.
+
+        Returns:
+            object: Deserialized object returned unchanged by the original loader.
+        """
         start = time.perf_counter()
         value = original_load(path, *args, **kwargs)
         key = "graph_deserialize_s" if str(path).endswith("graphs.pt") else "checkpoint_load_s"
@@ -38,6 +68,17 @@ def measure(row, years, directory, batch_size):
         return value
 
     def timed_init(store, *args, **kwargs):
+        """Initialize a graph store while recording loading cost and dimensions.
+
+        Args:
+            store: ForcingGraphStore instance being initialized.
+            *args: Positional arguments forwarded to the original initializer.
+            **kwargs: Keyword arguments forwarded to the original initializer.
+
+        Returns:
+            None. Updates the enclosing timing mapping with loading seconds, graph
+            count, and the first graph's node count; at least one graph is required.
+        """
         start = time.perf_counter()
         original_init(store, *args, **kwargs)
         timings["data_load_s"] = time.perf_counter() - start
@@ -133,6 +174,18 @@ def measure(row, years, directory, batch_size):
 
 
 def base_estimate(profile, row):
+    """Scale a one-year timing profile to the manifest's full target period.
+
+    Args:
+        profile: Measured profile with positive ``input_gib`` and component times
+            ``data_load_s``, ``year_loop_s``, and ``other_main_s`` in seconds.
+        row: Manifest row containing station, target graph root, and comma-separated
+            year-group labels.
+
+    Returns:
+        float: Estimated main-process runtime in seconds. Loading/evaluation
+        scale with graph-file bytes; remaining overhead scales with year count.
+    """
     years = row["years"].split(",")
     files = [
         p
@@ -150,6 +203,24 @@ def base_estimate(profile, row):
 
 
 def summarize_estimates(rows, profiles, calibrations, output, info):
+    """Calibrate full-suite runtime estimates and write planning reports.
+
+    Uses full-pair controls for past AWI and future CNRM/EC_EARTH loading costs,
+    median startup overhead, and target/group evaluation-loop corrections. Reads
+    graph-file sizes and writes pair/group CSVs and ``timing_summary.json``.
+
+    Args:
+        rows: Manifest rows for the transfer pairs to estimate.
+        profiles: One-year timing mappings for every station/period/target tuple.
+        calibrations: Full-pair timing mappings, including process overhead and
+            the three required group/target controls.
+        output: Existing pathlib.Path directory for timing summary artifacts.
+        info: Runtime/environment metadata copied into the JSON summary.
+
+    Returns:
+        None. Prints the summary. Warm-input and 1.5-times planning estimates
+        describe scenarios rather than statistical confidence intervals.
+    """
     by_target = {(r["station"], r["group"], r["target"]): r for r in profiles}
     controls = {(c["group"], c["target"]): c for c in calibrations}
     startup = statistics.median(c["process_overhead_s"] for c in calibrations)
@@ -276,6 +347,20 @@ def summarize_estimates(rows, profiles, calibrations, output, info):
 
 
 def main():
+    """Run benchmark cases or rebuild estimates from existing timing profiles.
+
+    Parses benchmark options and enforces output placement beneath
+    ``RESULTS/audit``. Default mode profiles 44 one-year targets and launches
+    three full-pair calibration subprocesses. ``--case-index`` measures one
+    manifest row; ``--summarize-only`` reads saved profiles without GPU inference.
+
+    Returns:
+        None. Writes timing artifacts and prints progress or summary information.
+
+    Raises:
+        SystemExit: The output directory is outside the audit tree, command-line
+            arguments are invalid, or default profiling has no CUDA device.
+    """
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--output-dir", type=Path)
     parser.add_argument("--batch-size", type=int, default=64)

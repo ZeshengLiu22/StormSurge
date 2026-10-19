@@ -14,6 +14,20 @@ HOUR_SECONDS = 3600
 
 
 def _utc_seconds(value):
+    """Convert a scalar time representation to whole UTC Unix seconds.
+
+    Args:
+        value: Integer Unix seconds, numpy.datetime64, datetime, or ISO datetime string.
+            Naive datetimes are interpreted as UTC; aware datetimes are converted by
+            their timezone offset.
+
+    Returns:
+        int: Seconds since 1970-01-01 00:00:00 UTC.
+
+    Raises:
+        ValueError: The value is invalid, missing, nonfinite, or has subsecond
+            precision.
+    """
     if isinstance(value, np.datetime64):
         if np.isnat(value):
             raise ValueError("Target timestamp must not be NaT.")
@@ -36,7 +50,21 @@ def _utc_seconds(value):
 
 
 def validate_target_timestamps(timestamps):
-    """Return UTC seconds, rejecting duplicates instead of deduplicating them."""
+    """Convert timestamp arrays to UTC seconds and reject repeated target hours.
+
+    Uniqueness is required over the entire array, including across forecast
+    windows. The function does not enforce chronological order or hourly spacing.
+
+    Args:
+        timestamps: Array-like timestamps or a torch tensor of any shape, containing
+            integer Unix seconds, datetimes, or ISO datetime strings.
+
+    Returns:
+        numpy.ndarray: int64 Unix seconds with the input shape preserved.
+
+    Raises:
+        ValueError: Values are invalid, missing, subsecond, or duplicated.
+    """
     if isinstance(timestamps, torch.Tensor):
         timestamps = timestamps.detach().cpu().numpy()
     values = np.asarray(timestamps)
@@ -60,7 +88,21 @@ def validate_target_timestamps(timestamps):
 
 
 def target_timestamps_from_graph(graph, tag=None):
-    """Read explicit timestamps, or expand preprocessing's recorded center time."""
+    """Read or reconstruct a graph window’s consecutive hourly target times.
+
+    Args:
+        graph: Graph exposing y and either target_timestamps or center_time. When both
+            exist, the first timestamp must match center_time.
+        tag: Optional graph identifier for validation errors.
+
+    Returns:
+        numpy.ndarray: int64 Unix seconds with shape [y.numel()], beginning at lead zero
+        and increasing by 3600 seconds.
+
+    Raises:
+        ValueError: Timing metadata is absent, target lengths disagree, or timestamps
+            are nonunique, nonhourly, or inconsistent with center_time.
+    """
     horizons = graph.y.numel()
     explicit = getattr(graph, "target_timestamps", None)
     center = getattr(graph, "center_time", None)
@@ -83,7 +125,21 @@ def target_timestamps_from_graph(graph, tag=None):
 
 
 def supervised_targets(store, indices):
-    """Read raw physical graph.y only; inputs/history never enter this series."""
+    """Collect physical target labels and unique timestamps from a graph subset.
+
+    Args:
+        store: Object exposing graphs and optionally graph_tags for diagnostic labels.
+        indices: Nonempty iterable of graph indices defining the output window order.
+
+    Returns:
+        tuple: (labels, timestamps), each shaped [windows, horizons]. Labels are float64
+        in their stored physical units and may contain NaN; timestamps are int64 UTC
+        Unix seconds.
+
+    Raises:
+        ValueError: The selection is empty, labels contain infinity, or timing metadata
+            is invalid or overlapping.
+    """
     indices = list(indices)
     if not indices:
         raise ValueError("Cannot build a supervised target series from an empty split.")
@@ -97,7 +153,25 @@ def supervised_targets(store, indices):
 
 
 def threshold_population(labels, timestamps, tau_physical):
-    """Count strict extreme hours, event windows and contiguous hourly episodes."""
+    """Count strict exceedances, affected forecast windows, and hourly episodes.
+
+    An event window contains at least one extreme target. Episodes join
+    strictly extreme targets exactly one hour apart, including across windows.
+
+    Args:
+        labels: Finite physical target values with shape [windows, horizons].
+        timestamps: Unique whole-second UTC target times with the same shape as labels.
+        tau_physical: Finite training-fitted threshold in the same physical units as
+            labels; membership requires labels > tau_physical.
+
+    Returns:
+        dict: target_hour_count, extreme_hour_count/rate, event_window_count/rate, and
+        episode_count. Rates are fractions, or None for an empty denominator.
+
+    Raises:
+        ValueError: Labels, timestamps, or the threshold violate the required shapes,
+            finiteness, or uniqueness.
+    """
     # Import lazily to keep data-module imports independent of training setup.
     from emulator.training.metrics import gt_event_episodes
 

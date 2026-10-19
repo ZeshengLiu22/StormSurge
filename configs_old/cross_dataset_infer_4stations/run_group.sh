@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # One station, period, and source; every pair runs in the foreground.
 set -euo pipefail
+# Print all arguments as one fatal-error message on stderr and exit with status 2.
 fail() { echo "[FATAL] $*" >&2; exit 2; }
 [[ $# == 1 ]] || fail "Usage: bash $0 <station>/<past_only|future_year>/<source> directory"
 SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)"

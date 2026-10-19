@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # One source, one GPU, one pair at a time. This runner never reads manifest.csv.
 set -euo pipefail
+# Print all arguments as one fatal-error message on stderr and exit with status 2.
 fail() { echo "[FATAL] $*" >&2; exit 2; }
 [[ $# == 1 ]] || fail "Usage: bash $0 configs_old/cross_dataset_infer/<past_only|future_year>/<source>"
 SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"

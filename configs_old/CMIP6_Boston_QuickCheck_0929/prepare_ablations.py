@@ -13,6 +13,16 @@ DATASETS = ["CMIP6_AWI", "CMIP6_CNRM", "CMIP6_EC_EARTH", "CMIP6_MPI", "CMIP6_MRI
 
 
 def read_manifest(path):
+    """Read manifest rows and relocate their configuration paths.
+
+    Args:
+        path: pathlib.Path to a CSV manifest containing ``config_path`` and
+            ``template_path`` columns.
+
+    Returns:
+        list[dict[str, str]]: Rows in file order, with those two columns resolved
+        against the current checkout. Data and result path columns are unchanged.
+    """
     with path.open() as handle:
         rows = list(csv.DictReader(handle))
     for row in rows:
@@ -22,10 +32,32 @@ def read_manifest(path):
 
 
 def assignments(text):
+    """Extract literal shell assignments from configuration text.
+
+    Args:
+        text: Shell source string containing unindented ``NAME=value`` assignments.
+
+    Returns:
+        dict[str, str]: Variable names mapped to unevaluated right-hand-side text.
+        Later assignments replace earlier ones; shell code is not executed.
+    """
     return dict(re.findall(r"^([A-Za-z_][A-Za-z_0-9]*)=(.*)$", text, re.M))
 
 
 def main():
+    """Append 20 single-term loss ablations to the original Boston batch.
+
+    Checks all configuration/result collisions and template differences before
+    writing new configuration files. Updates root/group manifests and writes
+    ``qsub_ablations.txt`` and ``RUN_TABLE.md``. Jobs are not submitted.
+
+    Returns:
+        None. Prints the number of new configurations and submission-command path.
+
+    Raises:
+        AssertionError: The original 20-run inventory has changed, ablations were
+            already added, or a derived configuration violates the template checks.
+    """
     stamp = datetime.now(timezone.utc).strftime("%Y%m%d_%H%M%S")
     original = read_manifest(ROOT / "manifest.csv")
     expected = {

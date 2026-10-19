@@ -19,15 +19,44 @@ _COMPACT_METRIC_ROWS = (
 
 
 def threshold_label(metadata):
+    """Describe the fixed training threshold and strict exceedance rule.
+
+    Args:
+        metadata: Threshold mapping with exceedance_percentile and tau_physical, with
+            the threshold expressed in metres.
+
+    Returns:
+        str: Human-readable quantile, physical threshold, and strict comparison rule.
+    """
     return (f'Extreme threshold: TRAIN hourly target Q{metadata["exceedance_percentile"]:g}; '
             f'tau = {metadata["tau_physical"]:.9f} meters; strict exceedance y > tau')
 
 
 def display(value):
+    """Format a numeric report value with an explicit undefined marker.
+
+    Args:
+        value: Scalar metric or None.
+
+    Returns:
+        str: Value with nine significant digits, or NA for None.
+    """
     return "NA" if value is None else f"{value:.9g}"
 
 
 def metric_report(metrics, metadata):
+    """Render grouped canonical metrics as Markdown tables.
+
+    Args:
+        metrics: Canonical metric mapping with amplitude values in metres and timing
+            values in hours, consistent with the threshold report convention. Missing or
+            None values appear as NA.
+        metadata: Training threshold metadata accepted by threshold_label.
+
+    Returns:
+        str: Markdown report including the threshold and all metric groups, ending in a
+        newline. Amplitude metrics remain in metres; timing remains in hours.
+    """
     lines = [threshold_label(metadata), ""]
     for group, entries in METRIC_GROUPS.items():
         lines.extend([group, "", "| Metric | Value |", "| --- | ---: |"])
@@ -39,6 +68,18 @@ def metric_report(metrics, metadata):
 
 
 def comparison_report(evaluations, metadata):
+    """Compare both selected checkpoint roles on validation and test metrics.
+
+    Args:
+        evaluations: Mapping with overall and exceedance entries, each containing epoch
+            and val/test metric dictionaries. Amplitude inputs are in metres and timing
+            inputs in hours, consistent with the threshold report.
+        metadata: Fixed training threshold metadata accepted by threshold_label.
+
+    Returns:
+        str: Markdown tables with checkpoint roles as columns, grouped by split and
+        metric category. Values retain stored physical units.
+    """
     lines = [threshold_label(metadata), ""]
     lines.extend(f'{_ROLE_LABELS[role]} epoch: {evaluations[role]["epoch"]}' for role in ROLES)
     lines.append("")
@@ -57,7 +98,18 @@ def comparison_report(evaluations, metadata):
 
 
 def compact_comparison_report(evaluations):
-    """Summarize retained roles in mm/h for the console without changing stored metrics."""
+    """Format selected checkpoint metrics for the console in millimetres and hours.
+
+    Args:
+        evaluations: Mapping of role names to epoch and val/test metric dictionaries,
+            with amplitude inputs in metres and timing inputs in hours. Roles are
+            rendered in mapping order.
+
+    Returns:
+        str: Multiline comparison with amplitude metrics multiplied by 1000, timing
+        metrics in hours, two decimal places, and NA for undefined values. The input
+        metrics are not modified.
+    """
     lines = ["Selected epochs | " + " | ".join(
         f'{_ROLE_LABELS.get(role, role)}={evaluation["epoch"]}'
         for role, evaluation in evaluations.items())]
@@ -76,6 +128,17 @@ def compact_comparison_report(evaluations):
 
 
 def format_loss_components(losses):
+    """Format raw and weighted training-loss components as one log line.
+
+    Args:
+        losses: Mapping containing raw global/tail/peak MSEs, weighted optional terms,
+            peak count, fixed peak prevalence, and total loss. Absent values are
+            displayed as NA.
+
+    Returns:
+        str: Labeled component values with nine significant digits. MSE terms retain
+        squared physical units; counts and prevalence are unscaled.
+    """
     labels = dict(global_mse_raw="GlobalMSE", tail_mse_raw="TailMSE",
                   tail_weighted="TailWeighted", episode_gt_aligned_peak_mse_raw="EpisodeGTAlignedPeakMSE",
                   episode_gt_aligned_peak_weighted="EpisodePeakWeighted",

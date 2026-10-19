@@ -100,6 +100,22 @@ python infer.py --ckpt /path/to/raw_run/best_overall.pt \
 Check Python and shell syntax without loading data or starting a job:
 
 ```bash
-python -m compileall -q train.py infer.py emulator
+python -m compileall -q train.py infer.py emulator preprocessing
 bash -n train.sh infer.sh
 ```
+
+## Code documentation
+
+Python functions and methods document their purpose, inputs, and returned
+values in English docstrings. Parameter descriptions should identify units,
+array dimensions and axis order, accepted sentinel values, and required
+metadata where applicable. File-writing routines describe their artifacts;
+functions that modify arguments state those side effects. Constructors document
+configuration inputs, and model forward methods specify tensor shapes.
+
+Inline comments explain scientific assumptions or implementation constraints,
+such as hourly target alignment, TRAIN-only fitting, and missing-value masks.
+Keep these comments consistent with executable behavior; omit conversational
+notes, edit history, and statements that merely repeat the next line of code.
+Bash function comments describe positional arguments, required shell state,
+output, and exit behavior. Preserve scheduler and static-analysis directives.

@@ -19,7 +19,16 @@ VARIANTS = [("T0000_EP0000", "0.0", "0.0"), ("T0500_EP0100", "0.05", "0.01")]
 
 
 def local_config_path(value):
-    """Relocate only repository config paths; preserve data and result provenance."""
+    """Resolve a manifest configuration path within the current checkout.
+
+    Args:
+        value: String or path-like configuration location. A ``configs`` or
+            ``configs_old`` path component identifies an archived repository path.
+
+    Returns:
+        pathlib.Path: Path under ``REPO/configs_old`` when a configuration marker
+        is present; otherwise ``REPO / value``. Unmarked absolute paths are retained.
+    """
     parts = Path(value).parts
     for marker in ("configs_old", "configs"):
         if marker in parts:
@@ -28,6 +37,15 @@ def local_config_path(value):
 
 
 def write_manifest(path, rows):
+    """Overwrite a CSV manifest using the first row's column order.
+
+    Args:
+        path: pathlib.Path of the output file; its parent directory must exist.
+        rows: Nonempty sequence of row mappings with a common set of field names.
+
+    Returns:
+        None. Writes a header and all rows with Unix line endings.
+    """
     with path.open("w", newline="") as handle:
         writer = csv.DictWriter(handle, fieldnames=list(rows[0]), lineterminator="\n")
         writer.writeheader()
@@ -35,6 +53,20 @@ def write_manifest(path, rows):
 
 
 def main():
+    """Create the original 20 Boston configurations from audited NCEP templates.
+
+    Reads template provenance and existing dataset audits, verifies completed
+    source runs, and writes ten configurations per group, group/root manifests,
+    launch scripts, and README files. Results directories and training jobs are
+    not created. Shell snapshots are sourced in subprocesses to compare values.
+
+    Returns:
+        None. Prints the configuration count and UTC batch timestamp.
+
+    Raises:
+        AssertionError: Prepared configurations or the results root already exist,
+            or source provenance and dataset inventories do not match expectations.
+    """
     assert not list(ROOT.rglob("train_config_*.sh")), "Refuse to overwrite prepared configs"
     assert not RESULTS.exists(), "Refuse to reuse a results directory"
     provenance = json.loads((ROOT / "template_provenance.json").read_text())
@@ -44,6 +76,19 @@ def main():
         keys = re.findall(r"^([A-Za-z_][A-Za-z_0-9]*)=", template.read_text(), re.M)
 
         def values(path):
+            """Read resolved shell values for the enclosing template's variable names.
+
+            Args:
+                path: pathlib.Path to a trusted configuration or saved training snapshot.
+                    The file is sourced by Bash and can execute shell statements.
+
+            Returns:
+                dict[str, str]: The enclosing ``keys`` mapped to the right-hand sides
+                emitted by ``declare -p``, preserving Bash's serialization of each value.
+
+            Raises:
+                subprocess.CalledProcessError: Sourcing the file or declaring a key fails.
+            """
             result = subprocess.run(
                 [
                     "bash",
@@ -99,7 +144,7 @@ def main():
                     text, n = re.subn(rf"^{key}=.*$", f"{key}={value}", text, flags=re.M)
                     assert n == 1
                 text = text.replace(
-                    "# Four-station gradient recommendation: KEEP GRID AS PROPOSED.",
+                    "# Four-station loss-weight grid with fixed architecture and training settings.",
                     f"# Boston CMIP6 quick check: {dataset}, {group}; matching NCEP formal template.",
                 )
                 text = text.replace(
@@ -139,6 +184,9 @@ export USE_TMUX=1
 export QSUB_LOCAL_SLOTS=1
 "$PYTHON_BIN" "$CONFIG_ROOT/audit_configs.py" GROUP_VALUE
 if [[ "${DRY_RUN:-0}" == "1" ]]; then
+  # Preview a queued training command without submitting a job.
+  # Args: $1 launcher script, $2 queue label (unused), $3 configuration path.
+  # Output/status: launcher's dry-run output and exit status; tmux is disabled.
   qsub_local() { DRY_RUN=1 USE_TMUX=0 bash "$1" "$3"; }
 else
   "$PYTHON_BIN" - <<'CHECK_RUNTIME'
@@ -157,6 +205,11 @@ CHECK_RUNTIME
   printf 'task_id\\tlabel\\tconfig_path\\tresult_path\\n' > "$RESULTS_ROOT/_orchestration/submissions.tsv"
   exec > >(tee -a "$RESULTS_ROOT/_orchestration/launch.log") 2>&1
 fi
+# Submit or preview one training run and record its queue receipt.
+# Args: $1 queue label, $2 configuration path, $3 expected result directory.
+# Reads DRY_RUN and RESULTS_ROOT. Live submissions append submissions.tsv and
+# print the queue ID; previews emit the resolved training command only.
+# Status: 0 on success; 2 for an existing result path or invalid queue reply.
 submit() {
   local label="$1" config="$2" result="$3" task_id
   if [[ "${DRY_RUN:-0}" == "1" ]]; then

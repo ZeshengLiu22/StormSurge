@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Single Global-MSE + Tail-MSE x EpisodeGTAlignedPeak-MSE: Boston, T=0.0, EP=0.0.
+# Single-head loss = Global-MSE + T * Tail-MSE + EP * EpisodeGTAlignedPeak-MSE: Boston, T=0.0, EP=0.0.
 # Boston CMIP6 quick check: CMIP6_AWI, future_year; matching NCEP formal template.
 # Primary selector: overall; secondary: exceedance (both retained by active code).
 # Assignment-only configuration; contains no launch or submission command.

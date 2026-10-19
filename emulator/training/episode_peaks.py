@@ -11,19 +11,46 @@ from .metrics import (_timestamp_seconds, _validate_unique_timestamps, _values,
 
 @dataclass
 class EpisodePeakTargets:
+    """Canonical training episode membership and ground-truth peak locations.
+
+    Attributes:
+        episode_id: int64 array [windows, horizons], with contiguous episode IDs
+            at extreme targets and -1 elsewhere, including incomplete windows.
+        is_episode_gt_peak: Boolean array of the same shape, true at exactly the
+            earliest maximum of each eligible episode.
+        metadata: Training threshold, population counts, tie/continuity rules,
+            and p_episode_peak, the peak count divided by eligible target count.
+    """
     episode_id: np.ndarray
     is_episode_gt_peak: np.ndarray
     metadata: dict
 
 
 def build_episode_peak_targets(y_true, target_timestamps, tau_physical):
-    """Use the evaluator's episode and tie rules over the entire TRAIN split.
+    """Build fixed training episode labels using the evaluation continuity rules.
 
-    The current representation has unique target timestamps (six-hour blocks
-    with six hourly targets). Repeated timestamps fail in the shared builder,
-    before any supervision can be duplicated. NaN-containing windows are omitted
-    entirely, leaving timestamp gaps between neighboring valid windows.
-    No model output enters this code.
+    Episodes consist of strict ground-truth exceedances separated by exactly
+    3600 seconds, including across forecast windows. Incomplete windows leave gaps;
+    model predictions do not affect membership or peak placement.
+
+    Args:
+        y_true: Physical source-training targets [windows, horizons]. NaN is allowed,
+            but every window containing it is excluded from episode supervision;
+            infinity is rejected.
+        target_timestamps: Target times with the same shape, represented as integer Unix
+            seconds, datetime64, or ISO strings. Timestamps must be unique across the
+            complete split.
+        tau_physical: Finite threshold fitted on source-training target hours, in the
+            same units as y_true.
+
+    Returns:
+        EpisodePeakTargets: Episode IDs and one earliest-maximum mask per episode,
+        aligned to the original target shape, plus population metadata and fixed
+        training peak prevalence.
+
+    Raises:
+        ValueError: Target shapes, values, timestamps, or threshold are invalid,
+            including duplicate timestamps in excluded windows.
     """
     truth = _values(y_true, "TRAIN y_true", allow_nonfinite=True)
     if np.isinf(truth).any():
@@ -55,10 +82,22 @@ def build_episode_peak_targets(y_true, target_timestamps, tau_physical):
 
 
 def validate_episode_peak_traversal(loader):
-    """Reject traversal modes that repeat or omit canonical peak occurrences.
+    """Require a loader traversal that visits each canonical training target once.
 
-    Keep the existing sampler unchanged. In particular DistributedSampler's
-    padding must not silently repeat peak supervision or change its prevalence.
+    For distributed training, the dataset size must be divisible by the world
+    size so padding cannot duplicate episode peaks or alter their prevalence.
+
+    Args:
+        loader: DataLoader exposing dataset, sampler, and drop_last. Supported samplers
+            are SequentialSampler, full-length RandomSampler without replacement, and
+            unpadded/untruncated DistributedSampler.
+
+    Returns:
+        None. Performs validation without changing the loader or sampler.
+
+    Raises:
+        ValueError: The loader drops targets, its sampler repeats or omits samples, or
+            the traversal cannot be verified.
     """
     sampler = loader.sampler
     if loader.drop_last:

@@ -29,6 +29,16 @@ sys.path.insert(0, str(REPO))
 
 
 def years(first, last):
+    """Build consecutive year-group labels from inclusive start-year bounds.
+
+    Args:
+        first: First integer start year to include.
+        last: Last integer start year to include.
+
+    Returns:
+        list[str]: Labels such as ``1979_1980`` in ascending order; empty when
+        ``last`` precedes ``first``.
+    """
     return [f"{year}_{year + 1}" for year in range(first, last + 1)]
 
 
@@ -36,11 +46,34 @@ YEARS = {"past_only": years(2008, 2014), "future_year": years(2070, 2099)}
 
 
 def require(condition, message):
+    """Raise a validation error when a required condition is false.
+
+    Args:
+        condition: Value whose truthiness determines whether validation passes.
+        message: Error message identifying the failed invariant.
+
+    Returns:
+        None.
+
+    Raises:
+        ValueError: ``condition`` is false.
+    """
     if not condition:
         raise ValueError(message)
 
 
 def dataset_root(group, name):
+    """Select the graph directory for a dataset and evaluation period.
+
+    Args:
+        group: ``past_only`` selects historical-only CMIP6 data; ``future_year``
+            selects the full historical/future tree.
+        name: Dataset token from ``SOURCES``, such as ``NCEP`` or ``EC_EARTH``.
+
+    Returns:
+        str: Absolute graph-directory path under ``DATA``. NCEP uses ``Grid4_New/NCEP/graphs`` for both
+        periods; CMIP6 names receive the ``CMIP6_`` prefix.
+    """
     if name == "NCEP":
         return str(DATA / "Grid4_New/NCEP/graphs")
     tree = "Grid4_New_PastOnly" if group == "past_only" else "Grid4_New"
@@ -48,7 +81,16 @@ def dataset_root(group, name):
 
 
 def shell_scalars(path):
-    """Read the resolved training snapshot without executing shell code."""
+    """Read literal scalar assignments from a resolved shell snapshot.
+
+    Args:
+        path: pathlib.Path to a training snapshot such as ``config_used.sh``.
+
+    Returns:
+        dict[str, str]: Identifier names mapped to shell-tokenized assignment
+        values. Indexed-array declaration lines are skipped; later values replace
+        earlier ones. Expansions are not evaluated and shell code is not executed.
+    """
     values = {}
     for line in path.read_text().splitlines():
         if line.startswith("declare -a "):
@@ -61,10 +103,32 @@ def shell_scalars(path):
 
 
 def sha256(path):
+    """Compute the SHA-256 digest of a file's bytes.
+
+    Args:
+        path: pathlib.Path to the file to read in full.
+
+    Returns:
+        str: Lowercase hexadecimal SHA-256 digest.
+    """
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
 def discover(station, group, source):
+    """Locate the unique active run for one station, period, and source.
+
+    Args:
+        station: Station token from ``STATIONS``.
+        group: Experiment period, ``past_only`` or ``future_year``.
+        source: Dataset token from ``SOURCES``.
+
+    Returns:
+        pathlib.Path: ``best_overall.pt`` within the sole run directory matching
+        the fixed ``CANDIDATE``. Checkpoint existence is checked separately.
+
+    Raises:
+        ValueError: No active run matches or more than one matching run exists.
+    """
     if source == "NCEP":
         area = FORMAL / (
             "single_tail_episodepeak_4x4" if group == "past_only" else "NCEP_future_transfer"
@@ -82,11 +146,25 @@ def discover(station, group, source):
 
 
 def training_provenance(run, checkpoint):
-    """Prove training finished and the checkpoint is the full-run VAL optimum.
+    """Verify full training completion and selection of the minimum VAL RMSE.
 
-    Two inspected Lewes runs completed all epochs but their old final TEST exporter
-    rejected missing labels. Preserve exit=1 and accept only this exact failure after
-    the final re-evaluation marker; this is not a blanket acceptance of failed runs.
+    Two explicitly named Lewes runs are permitted to have exit status 1 only
+    when their logs show all epochs completed and the known missing-label error
+    occurred during final reporting. Other nonzero exits fail validation.
+
+    Args:
+        run: pathlib.Path to a run directory containing metrics, exit status,
+            and, when needed, the training log.
+        checkpoint: Loaded checkpoint mapping with training settings, selected
+            epoch, validation score, and checkpoint-selection metadata.
+
+    Returns:
+        dict: Recorded exit status, completed epoch count, completion explanation,
+        and paths/hashes of the metrics and any required log evidence.
+
+    Raises:
+        ValueError: Epoch coverage, selection metadata, or completion evidence
+            does not satisfy the accepted provenance conditions.
     """
     records = list(run.glob("metrics_*.jsonl"))
     require(len(records) == 1, f"{run}: ambiguous training metrics")
@@ -146,6 +224,27 @@ def training_provenance(run, checkpoint):
 
 
 def audit_checkpoint(station, group, source, path):
+    """Validate one source checkpoint for the four-station transfer suite.
+
+    Loads a checkpoint on CPU and verifies architecture, source identity,
+    TRAIN-derived thresholds/normalization, chronological split provenance,
+    finite model/station tensors, and training completion. Historical data paths
+    are compared after relocation by their ``Data``-relative dataset identity.
+
+    Args:
+        station: Expected station token from ``STATIONS``.
+        group: Source experiment period, ``past_only`` or ``future_year``.
+        source: Source dataset token from ``SOURCES``.
+        path: pathlib.Path to the pinned ``best_overall.pt`` checkpoint.
+
+    Returns:
+        dict: Serializable audit record with hashes, model and normalization
+        settings, physical TRAIN Q95, split counts, and completion provenance.
+
+    Raises:
+        ValueError: Checkpoint identity, metadata, tensors, or provenance fail
+            validation. Strict model-state loading may also raise RuntimeError.
+    """
     import torch
     from emulator.models import build_model, model_config_from_checkpoint
 
@@ -309,6 +408,18 @@ def audit_checkpoint(station, group, source, path):
 
 
 def audit_targets():
+    """Validate station metadata and requested target-year inventories.
+
+    Reads station JSON and graph filenames under the configured roots. Graph
+    tensors are not loaded and no statistics are fitted.
+
+    Returns:
+        list[dict]: Inventory records for each station, period, and target, with
+        its root plus requested and available year-group labels.
+
+    Raises:
+        ValueError: A station token is inconsistent or requested years are absent.
+    """
     rows = []
     for station in STATIONS:
         metadata = json.loads((REPO / "station_json" / f"{station}.json").read_text())
@@ -336,6 +447,15 @@ def audit_targets():
 
 
 def csv_text(rows):
+    """Serialize heterogeneous row mappings as CSV with stable column order.
+
+    Args:
+        rows: Reiterable collection of mappings. Columns are the ordered union
+            of keys; nested dictionary/list values are encoded as sorted-key JSON.
+
+    Returns:
+        str: CSV header and rows using Unix line endings. Missing fields are empty.
+    """
     output = io.StringIO()
     writer = csv.DictWriter(
         output, fieldnames=list(dict.fromkeys(k for row in rows for k in row)), lineterminator="\n"
@@ -352,6 +472,20 @@ def csv_text(rows):
 
 
 def render(checkpoints):
+    """Render the four-station transfer suite without writing files.
+
+    Args:
+        checkpoints: Mapping from ``(station, group, source)`` to an absolute
+            ``best_overall.pt`` path without wildcard characters.
+
+    Returns:
+        tuple[dict[str, str], list[dict]]: Relative output paths mapped to their
+        complete text, and the 264 pair-manifest rows. Includes shared shell
+        configuration files and ``manifest.csv``.
+
+    Raises:
+        ValueError: A checkpoint path is not pinned or the pair count is not 264.
+    """
     files, rows = {}, []
     source_common = '#!/usr/bin/env bash\nsource "$(dirname "${BASH_SOURCE[0]}")/../common.sh"\n\n'
     for station in STATIONS:
@@ -404,6 +538,20 @@ def render(checkpoints):
 
 
 def main():
+    """Audit 48 source roles and write or verify the four-station transfer suite.
+
+    Parses ``--check``, limits PyTorch to one thread, and validates source
+    checkpoints and target files. Normal mode writes rendered configurations,
+    manifest, and checkpoint audit files under ``DESTINATION``. Check mode
+    compares their current text without writing those artifacts.
+
+    Returns:
+        None. Prints per-source validation details and the suite totals.
+
+    Raises:
+        ValueError: An audit fails, an unexpected shell configuration exists,
+            or check mode finds generated-file drift.
+    """
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--check", action="store_true")
     args = parser.parse_args()

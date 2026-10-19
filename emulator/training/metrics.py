@@ -31,12 +31,32 @@ METRIC_LABELS = dict(zip(METRIC_KEYS, (
 
 
 def _numpy(value):
+    """Convert an array-like value to a NumPy array for metric evaluation.
+
+    Args:
+        value: NumPy-compatible object or torch tensor. Tensors are detached and moved
+            to CPU before conversion.
+
+    Returns:
+        numpy.ndarray: Array representation, possibly sharing storage with the input.
+    """
     if isinstance(value, torch.Tensor):
         return value.detach().cpu().numpy()
     return np.asarray(value)
 
 
 def _threshold(value):
+    """Validate and convert the fixed training threshold.
+
+    Args:
+        value: Scalar convertible to float, in the same physical units as the targets.
+
+    Returns:
+        float: Finite physical threshold.
+
+    Raises:
+        ValueError: The threshold is nonfinite or cannot be converted to float.
+    """
     value = float(value)
     if not math.isfinite(value):
         raise ValueError("Metrics require a finite tau_physical fitted on TRAIN target hours.")
@@ -44,6 +64,21 @@ def _threshold(value):
 
 
 def _values(value, name, *, allow_nonfinite=False):
+    """Validate the two-dimensional forecast-array shape and numeric values.
+
+    Args:
+        value: Array-like data or torch tensor with shape [windows, horizons]; zero
+            windows are allowed, but at least one horizon is required.
+        name: Array name to include in validation errors.
+        allow_nonfinite: Whether to allow NaN and infinity for later masking/validation.
+
+    Returns:
+        numpy.ndarray: Float64 array with the input window/horizon shape.
+
+    Raises:
+        ValueError: The shape is invalid or nonfinite values are present when
+            disallowed.
+    """
     array = _numpy(value).astype(np.float64)
     if array.ndim != 2 or array.shape[1] == 0:
         raise ValueError(f"{name} must have shape [windows, horizons] with at least one horizon.")
@@ -53,10 +88,29 @@ def _values(value, name, *, allow_nonfinite=False):
 
 
 def _mean(value):
+    """Compute a scalar mean while representing empty populations explicitly.
+
+    Args:
+        value: Numeric array-like values; nonfinite values are not filtered.
+
+    Returns:
+        float or None: Arithmetic mean, or None when the input has zero elements.
+    """
     return float(np.mean(value)) if np.size(value) else None
 
 
 def _errors(error, prefix, *, bias=True):
+    """Summarize prediction-minus-truth errors with RMSE, MAE, and optional bias.
+
+    Args:
+        error: NumPy array of signed errors in physical target units.
+        prefix: Prefix for returned metric keys.
+        bias: Whether to include the signed mean-error metric.
+
+    Returns:
+        dict: <prefix>_rmse, <prefix>_mae, and optionally <prefix>_bias, in the input
+        units. Each value is None for an empty population.
+    """
     result = {f"{prefix}_rmse": float(np.sqrt(np.mean(error ** 2))) if error.size else None,
               f"{prefix}_mae": _mean(np.abs(error))}
     if bias:
@@ -65,12 +119,39 @@ def _errors(error, prefix, *, bias=True):
 
 
 def _under(prediction, truth, prefix, *, tolerances=True):
+    """Measure strict underprediction percentages at selected amplitude tolerances.
+
+    Args:
+        prediction: NumPy prediction values in metres, aligned with truth.
+        truth: NumPy ground-truth values in metres.
+        prefix: Prefix for returned underprediction metric keys.
+        tolerances: Whether to include 5, 10, and 20 mm tolerances in addition to zero.
+
+    Returns:
+        dict: Percentages in [0, 100] satisfying prediction < truth - tolerance, or None
+        for an empty truth population.
+    """
     limits = (("", 0.), ("_5mm", .005), ("_10mm", .010), ("_20mm", .020)) if tolerances else (("", 0.),)
     return {f"{prefix}_under{label}_pct": float(100 * np.mean(prediction < truth - tolerance)) if truth.size else None
             for label, tolerance in limits}
 
 
 def _timestamp_seconds(timestamps, shape):
+    """Validate target-time shape and convert to whole Unix seconds.
+
+    Args:
+        timestamps: Array-like times or torch tensor containing numeric integer Unix
+            seconds, datetime64 values, or ISO datetime strings.
+        shape: Required [windows, horizons] shape matching the forecast targets.
+
+    Returns:
+        numpy.ndarray: int64 Unix seconds with the requested shape. Uniqueness and
+        hourly continuity are checked by downstream episode routines.
+
+    Raises:
+        ValueError: Shape differs, times are missing/nonfinite, numeric values are
+            fractional, or datetime values have subsecond precision.
+    """
     values = _numpy(timestamps)
     if values.shape != shape:
         raise ValueError(f"target_timestamps shape {values.shape} must equal target shape {shape}.")
@@ -91,6 +172,21 @@ def _timestamp_seconds(timestamps, shape):
 
 
 def _split_labels(split_ids, shape):
+    """Broadcast split identifiers to one string label per target hour.
+
+    Args:
+        split_ids: None, an array with one identifier per window, or an array with one
+            identifier per target hour. Values are converted to strings.
+        shape: Target-array shape [windows, horizons].
+
+    Returns:
+        numpy.ndarray: String labels with the target shape; None supplies the common
+        label evaluation.
+
+    Raises:
+        ValueError: Identifiers cannot be interpreted as the required window or target
+            shape.
+    """
     if split_ids is None:
         return np.full(shape, "evaluation", dtype=str)
     labels = _numpy(split_ids)
@@ -102,7 +198,20 @@ def _split_labels(split_ids, shape):
 
 
 def _validate_unique_timestamps(times, labels):
-    """Validate all target hours and return chronological indices per split."""
+    """Order target indices chronologically within each split and reject duplicates.
+
+    Args:
+        times: Flat int64 array of UTC Unix seconds for all target hours.
+        labels: Flat array of split labels aligned with times.
+
+    Returns:
+        list[numpy.ndarray]: Flat target indices in stable chronological order, one
+        array per lexically sorted unique split label.
+
+    Raises:
+        ValueError: Two target hours have the same timestamp within a split. Repeated
+            timestamps across distinct splits are allowed.
+    """
     groups = []
     for label in np.unique(labels):
         indices = np.flatnonzero(labels == label)
@@ -117,12 +226,28 @@ def _validate_unique_timestamps(times, labels):
 
 
 def gt_event_episodes(y_true, target_timestamps, tau_physical, *, split_ids=None):
-    """Return chronologically ordered flat target indices for each GT episode.
+    """Identify contiguous hourly episodes from strict ground-truth exceedances.
 
-    Within each split, timestamps must be unique. Episodes join strict GT
-    exceedances separated by exactly 3600 seconds, including across forecast
-    blocks. A non-extreme hour, missing hour, or split boundary ends an episode.
-    Predictions never participate in defining this population.
+    Episode members satisfy y_true > tau_physical and are separated by exactly
+    3600 seconds. A nonextreme hour, missing hour, or split boundary ends an episode.
+    Forecast-window boundaries do not. Predictions never define this population.
+
+    Args:
+        y_true: Finite physical targets with shape [windows, horizons].
+        target_timestamps: Whole-second target times matching y_true, as numeric Unix
+            seconds, datetime64 values, or ISO strings.
+        tau_physical: Finite source-training threshold in the same physical units as
+            y_true.
+        split_ids: Optional identifiers per window or per target hour; episodes and
+            timestamp uniqueness are evaluated independently within each split.
+
+    Returns:
+        list[numpy.ndarray]: Arrays of flat row-major target indices, one per episode,
+        each ordered chronologically. Splits are processed in sorted label order.
+
+    Raises:
+        ValueError: Targets, times, labels, or threshold are invalid, including
+            duplicate timestamps within a split.
     """
     truth = _values(y_true, "y_true")
     tau = _threshold(tau_physical)
@@ -139,12 +264,43 @@ def gt_event_episodes(y_true, target_timestamps, tau_physical, *, split_ids=None
 
 
 def gt_episode_peak_indices(y_true, episodes):
-    """One earliest GT argmax per chronological episode, shared with training."""
+    """Select the earliest ground-truth maximum within each chronological episode.
+
+    Args:
+        y_true: Finite physical targets [windows, horizons], flattened in row-major
+            order for indexing.
+        episodes: Iterable of nonempty chronological flat-index arrays, as returned by
+            gt_event_episodes.
+
+    Returns:
+        numpy.ndarray: int64 flat index of one ground-truth maximum per episode. Tied
+        maxima select the first supplied index, which is the earliest time for canonical
+        episodes.
+    """
     truth = _values(y_true, "y_true").ravel()
     return np.asarray([indices[int(np.argmax(truth[indices]))] for indices in episodes], dtype=np.int64)
 
 
 def _episode_metrics(prediction, truth, timestamps, tau, split_ids):
+    """Evaluate amplitude and timing errors on ground-truth-defined episodes.
+
+    The predicted peak is the earliest maximum within the ground-truth episode,
+    not an independently detected forecast event. Aligned errors sample predictions
+    at the canonical ground-truth peak time.
+
+    Args:
+        prediction: Finite physical predictions [windows, horizons].
+        truth: Finite ground-truth targets with the same shape and units.
+        timestamps: Whole-second target timestamps matching truth.
+        tau: Finite training threshold in physical target units.
+        split_ids: Optional split labels per window or target hour, preventing episodes
+            from crossing split boundaries.
+
+    Returns:
+        dict: Episode-peak and ground-truth-aligned peak RMSE/MAE/bias in target units,
+        plus mean absolute peak-timing error in hours. Empty episode populations yield
+        None.
+    """
     episodes = gt_event_episodes(truth, timestamps, tau, split_ids=split_ids)
     peaks = gt_episode_peak_indices(truth, episodes)
     times = _timestamp_seconds(timestamps, truth.shape).ravel()
@@ -160,12 +316,33 @@ def _episode_metrics(prediction, truth, timestamps, tau, split_ids):
 
 
 def evaluate_metrics(y_pred, y_true, tau_physical, *, target_timestamps=None, split_ids=None):
-    """Return four hourly metrics, or exactly eleven with target timestamps.
+    """Compute physical hourly metrics and optional ground-truth episode metrics.
 
-    Final episode populations use strict GT exceedance, exact hourly continuity
-    and earliest maxima. Duplicate timestamps within a split are rejected.
-    Hourly metrics omit individual nonfinite targets; episode metrics omit their
-    entire windows. Predictions must be finite wherever targets are finite.
+    Hourly metrics omit individual missing targets. Episode metrics omit each
+    entire window containing a missing target, while validating timestamps across
+    all windows before exclusion. Ground-truth episodes use exact hourly continuity
+    and earliest maxima. Predictions at missing target positions are ignored.
+
+    Args:
+        y_pred: Predictions [windows, horizons], in the same physical units as y_true;
+            must be finite wherever y_true is finite.
+        y_true: Physical targets of the identical shape. Nonfinite targets are treated
+            as missing.
+        tau_physical: Finite threshold fitted once on source-training target hours.
+            Strict exceedance uses y_true > tau_physical.
+        target_timestamps: Optional target-time array of the same shape. Supplying it
+            enables episode metrics and requires unique timestamps within each split.
+        split_ids: Optional split labels per window or target hour. Requires
+            target_timestamps and isolates episodes across splits.
+
+    Returns:
+        dict: Four hourly metrics (all/exceedance RMSE and MAE), or eleven metrics when
+        timestamps also enable seven episode amplitude/timing metrics. Amplitude metrics
+        retain target units; timing MAE is in hours. Undefined values are None.
+
+    Raises:
+        ValueError: Shapes, required predictions, threshold, timestamps, or split labels
+            are invalid.
     """
     prediction = _values(y_pred, "y_pred", allow_nonfinite=True)
     truth = _values(y_true, "y_true", allow_nonfinite=True)
@@ -192,7 +369,18 @@ def evaluate_metrics(y_pred, y_true, tau_physical, *, target_timestamps=None, sp
 
 
 def format_metrics(label, metrics, *, extended=False):
-    """Format a concise training line or the complete canonical metric dictionary."""
+    """Format canonical metrics as a concise log line.
+
+    Args:
+        label: Leading label, such as the split or epoch description.
+        metrics: Mapping of canonical metric keys to numeric values or None.
+        extended: Whether to include all canonical metrics rather than only the four
+            hourly epoch metrics.
+
+    Returns:
+        str: Label followed by recognized present metrics, with six decimal places and
+        NA for undefined values.
+    """
     names = METRIC_KEYS if extended else EPOCH_METRIC_KEYS
     pairs = []
     for key in names:

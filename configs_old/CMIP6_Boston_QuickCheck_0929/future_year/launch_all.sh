@@ -13,6 +13,9 @@ export USE_TMUX=1
 export QSUB_LOCAL_SLOTS=1
 "$PYTHON_BIN" "$CONFIG_ROOT/audit_configs.py" future_year
 if [[ "${DRY_RUN:-0}" == "1" ]]; then
+  # Preview a queued training command without submitting a job.
+  # Args: $1 launcher script, $2 queue label (unused), $3 configuration path.
+  # Output/status: launcher's dry-run output and exit status; tmux is disabled.
   qsub_local() { DRY_RUN=1 USE_TMUX=0 bash "$1" "$3"; }
 else
   "$PYTHON_BIN" - <<'CHECK_RUNTIME'
@@ -31,6 +34,11 @@ CHECK_RUNTIME
   printf 'task_id\tlabel\tconfig_path\tresult_path\n' > "$RESULTS_ROOT/_orchestration/submissions.tsv"
   exec > >(tee -a "$RESULTS_ROOT/_orchestration/launch.log") 2>&1
 fi
+# Submit or preview one training run and record its queue receipt.
+# Args: $1 queue label, $2 configuration path, $3 expected result directory.
+# Reads DRY_RUN and RESULTS_ROOT. Live submissions append submissions.tsv and
+# print the queue ID; previews emit the resolved training command only.
+# Status: 0 on success; 2 for an existing result path or invalid queue reply.
 submit() {
   local label="$1" config="$2" result="$3" task_id
   if [[ "${DRY_RUN:-0}" == "1" ]]; then

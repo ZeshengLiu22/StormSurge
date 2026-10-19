@@ -24,7 +24,18 @@ MODES = ("anomaly", "raw", "anomaly_plus_mean")
 
 
 def make_pressure_graph(index=0, *, metadata=True, dtype=torch.float32):
-    """Nine six-hour forcing steps; x deliberately aliases the final history."""
+    """Construct a deterministic graph with time-varying pressure means.
+
+    Args:
+        index (int): Fixture index controlling features, targets, and year tags.
+        metadata (bool): Include p_mean_hist and p_mean_curr when true.
+        dtype (torch.dtype): Floating dtype for forcing features and means.
+
+    Returns:
+        torch_geometric.data.Data: Graph with x_hist shape (9, 4, 5), four
+        targets and hourly timestamps. x aliases the final six-hourly history
+        slice so tests can detect accidental mutation of shared tensor storage.
+    """
     steps = torch.arange(9, dtype=dtype).view(9, 1)
     nodes = torch.arange(4, dtype=dtype).view(1, 4)
     history = torch.empty(9, 4, 5, dtype=dtype)
@@ -59,6 +70,16 @@ def make_pressure_graph(index=0, *, metadata=True, dtype=torch.float32):
 
 
 def save_pressure_graphs(root, count=5, *, metadata=True):
+    """Serialize one deterministic graph per winter-year fixture file.
+
+    Args:
+        root (str | Path): Existing directory receiving graph files.
+        count (int): Number of consecutive fixtures beginning in 2000.
+        metadata (bool): Whether each graph includes pressure-mean metadata.
+
+    Returns:
+        list[Path]: Written graph-file paths in increasing fixture-index order.
+    """
     root = Path(root)
     paths = []
     for index in range(count):
@@ -71,12 +92,31 @@ def save_pressure_graphs(root, count=5, *, metadata=True):
 class PressureModeTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
+        """Limit CPU threads before pressure-feature tests.
+
+        Returns:
+            None: Sets the process-wide PyTorch CPU thread count to one.
+        """
         torch.set_num_threads(1)
 
     def assertExact(self, actual, expected):
+        """Assert exact tensor agreement, without relative or absolute tolerance.
+
+        Args:
+            actual (torch.Tensor): Computed tensor under test.
+            expected (torch.Tensor): Reference tensor, including dtype and device.
+
+        Returns:
+            None: Raises an assertion failure when torch.testing finds a mismatch.
+        """
         torch.testing.assert_close(actual, expected, rtol=0, atol=0)
 
     def test_default_and_explicit_anomaly_preserve_original_object_and_tensors(self):
+        """Verify anomaly mode retains graph and tensor identity without mean metadata.
+
+        Returns:
+            None: Assertion failures are reported by unittest.
+        """
         for dtype in (torch.float32, torch.float64):
             graph = make_pressure_graph(metadata=False, dtype=dtype)
             original_x, original_history = graph.x, graph.x_hist
@@ -99,6 +139,11 @@ class PressureModeTests(unittest.TestCase):
             self.assertEqual(default.graph_tags, explicit.graph_tags)
 
     def test_raw_reconstructs_all_timesteps_without_changing_other_features(self):
+        """Verify pressure reconstruction and current/history storage consistency.
+
+        Returns:
+            None: Assertion failures are reported by unittest.
+        """
         graph = make_pressure_graph()
         transformed = transform_pressure_features(graph, "raw")
         self.assertIsNot(transformed, graph)
@@ -111,6 +156,11 @@ class PressureModeTests(unittest.TestCase):
         self.assertEqual(transformed.x.data_ptr(), transformed.x_hist[-1].data_ptr())
 
     def test_anomaly_plus_mean_appends_spatially_constant_temporally_aligned_feature(self):
+        """Verify the sixth feature repeats the aligned mean over every node.
+
+        Returns:
+            None: Assertion failures are reported by unittest.
+        """
         graph = make_pressure_graph()
         transformed = transform_pressure_features(graph, "anomaly_plus_mean")
         self.assertEqual(transformed.x.shape, (4, 6))
@@ -122,6 +172,11 @@ class PressureModeTests(unittest.TestCase):
         self.assertEqual(transformed.x.data_ptr(), transformed.x_hist[-1].data_ptr())
 
     def test_every_supported_history_window_selects_the_correct_pressure_sequence(self):
+        """Verify all zero-to-48-hour histories select the corresponding pressure values.
+
+        Returns:
+            None: Assertion failures are reported by unittest.
+        """
         with tempfile.TemporaryDirectory() as temporary:
             save_pressure_graphs(temporary, count=1)
             original = make_pressure_graph()
@@ -144,6 +199,11 @@ class PressureModeTests(unittest.TestCase):
                         self.assertExact(batch.x, batch.x_hist[:, -1, :])
 
     def test_missing_metadata_names_mode_graph_and_field(self):
+        """Check that missing-mean errors identify the mode, graph, and field.
+
+        Returns:
+            None: Assertion failures are reported by unittest.
+        """
         with tempfile.TemporaryDirectory() as temporary:
             path = save_pressure_graphs(temporary, count=1, metadata=False)[0]
             ForcingGraphStore(temporary, "Battery")
@@ -156,6 +216,11 @@ class PressureModeTests(unittest.TestCase):
                 self.assertIn(path.stem.removesuffix("_graphs"), message)
 
     def test_bad_mean_metadata_is_rejected(self):
+        """Reject wrong-sized, nonfinite, overflowing, or inconsistent pressure means.
+
+        Returns:
+            None: Assertion failures are reported by unittest.
+        """
         variants = [
             ("length", "p_mean_hist", torch.ones(8)),
             ("rank", "p_mean_hist", torch.ones(9, 1)),
@@ -175,6 +240,11 @@ class PressureModeTests(unittest.TestCase):
                     transform_pressure_features(graph, mode, graph_tag="bad-pressure-fixture")
 
     def test_current_mean_is_optional_but_history_is_required(self):
+        """Verify reconstruction works when only the pressure-mean history is supplied.
+
+        Returns:
+            None: Assertion failures are reported by unittest.
+        """
         graph = make_pressure_graph()
         del graph.p_mean_curr
         for mode in MODES[1:]:
@@ -185,6 +255,11 @@ class PressureModeTests(unittest.TestCase):
                 self.assertExact(transformed.x[:, 5], graph.p_mean_hist[-1].expand(4))
 
     def test_invalid_original_feature_shapes_and_dtype_fail_clearly(self):
+        """Reject invalid forcing ranks, channels, dtypes, devices, and missing history.
+
+        Returns:
+            None: Assertion failures are reported by unittest.
+        """
         variants = [
             ("x channels", "x", torch.zeros(4, 6)),
             ("history channels", "x_hist", torch.zeros(9, 4, 6)),
@@ -210,6 +285,11 @@ class PressureModeTests(unittest.TestCase):
                 transform_pressure_features(graph, mode)
 
     def test_nondefault_outputs_are_float32_on_input_device_without_mutating_metadata(self):
+        """Verify converted feature dtype/device and preservation of source mean metadata.
+
+        Returns:
+            None: Assertion failures are reported by unittest.
+        """
         for mode in MODES[1:]:
             for mean_dtype in (torch.float64, torch.int64):
                 graph = make_pressure_graph(dtype=torch.float64)
@@ -227,6 +307,11 @@ class PressureModeTests(unittest.TestCase):
                 self.assertIs(transformed.p_mean_hist, graph.p_mean_hist)
 
     def test_transform_does_not_mutate_shared_input_storage_or_saved_files(self):
+        """Verify pressure conversion preserves source tensors and serialized files.
+
+        Returns:
+            None: Assertion failures are reported by unittest.
+        """
         for mode in MODES[1:]:
             graph = make_pressure_graph()
             history = graph.x_hist.clone()
@@ -254,6 +339,11 @@ class PressureModeTests(unittest.TestCase):
             self.assertExact(reloaded.x, make_pressure_graph().x)
 
     def test_statistics_use_transformed_train_features_for_all_normalizations(self):
+        """Verify each normalization fits transformed TRAIN features exclusively.
+
+        Returns:
+            None: Assertion failures are reported by unittest.
+        """
         with tempfile.TemporaryDirectory() as temporary:
             save_pressure_graphs(temporary)
             for mode in MODES:
@@ -287,6 +377,11 @@ class PressureModeTests(unittest.TestCase):
                             self.assertExact(refitted[key], stats[key])
 
     def test_raw_reconstruction_precedes_existing_normalization(self):
+        """Verify raw pressure is reconstructed before applying saved input normalization.
+
+        Returns:
+            None: Assertion failures are reported by unittest.
+        """
         with tempfile.TemporaryDirectory() as temporary:
             save_pressure_graphs(temporary)
             store = ForcingGraphStore(temporary, "Battery", pressure_mode="raw")
@@ -302,6 +397,11 @@ class PressureModeTests(unittest.TestCase):
             self.assertExact(store.graphs[0].x_hist, raw_history)
 
     def test_targets_metadata_splits_thresholds_and_episode_supervision_are_unchanged(self):
+        """Verify pressure modes preserve targets, split membership, and episode supervision.
+
+        Returns:
+            None: Assertion failures are reported by unittest.
+        """
         with tempfile.TemporaryDirectory() as temporary:
             save_pressure_graphs(temporary)
             original = ForcingGraphStore(temporary, "Battery")
@@ -346,6 +446,11 @@ class PressureModeTests(unittest.TestCase):
                         self.assertEqual(actual[key], expected[key])
 
     def test_targets_only_accepts_missing_pressure_metadata_and_preserves_labels(self):
+        """Verify target-only loading bypasses forcing validation in every pressure mode.
+
+        Returns:
+            None: Assertion failures are reported by unittest.
+        """
         with tempfile.TemporaryDirectory() as temporary:
             save_pressure_graphs(temporary, metadata=False)
             baseline = ForcingGraphStore(temporary, "Battery", targets_only=True)
@@ -368,6 +473,11 @@ class PressureModeTests(unittest.TestCase):
                 )
 
     def test_pattern_station_and_year_filters_apply_before_pressure_validation(self):
+        """Verify excluded files never enter pressure-feature validation.
+
+        Returns:
+            None: Assertion failures are reported by unittest.
+        """
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary)
             save_pressure_graphs(root, count=1)
@@ -388,6 +498,11 @@ class PressureModeTests(unittest.TestCase):
                 self.assertEqual(dict(store.year_to_indices), {"2000_2001": [0]})
 
     def test_unknown_pressure_mode_is_rejected(self):
+        """Reject unsupported pressure modes at transformation and store entry points.
+
+        Returns:
+            None: Assertion failures are reported by unittest.
+        """
         with self.assertRaisesRegex(ValueError, "pressure_mode"):
             transform_pressure_features(make_pressure_graph(), "absolute")
         with tempfile.TemporaryDirectory() as temporary:

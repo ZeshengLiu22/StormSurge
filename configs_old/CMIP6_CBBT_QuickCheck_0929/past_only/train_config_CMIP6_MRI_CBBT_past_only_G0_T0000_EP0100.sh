@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Single Global-MSE + Tail-MSE x EpisodeGTAlignedPeak-MSE: CBBT, T=0.0, EP=0.01.
+# Single-head loss = Global-MSE + T * Tail-MSE + EP * EpisodeGTAlignedPeak-MSE: CBBT, T=0.0, EP=0.01.
 # CBBT CMIP6 quick check: CMIP6_MRI, past_only; matching NCEP formal template.
 # Primary selector: overall; secondary: exceedance (both retained by active code).
 # Assignment-only configuration; contains no launch or submission command.

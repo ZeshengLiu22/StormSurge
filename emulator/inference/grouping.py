@@ -6,7 +6,19 @@ import os
 
 
 def infer_dataset_tag(root_dir: str) -> str:
-    """Preserve the original Data/<dataset>/graphs and path-name fallbacks."""
+    """Derive a dataset label from its graph-directory path.
+
+    Only path text is inspected; the directory need not exist.
+
+    Args:
+        root_dir: Path-like value for the graph directory; None selects the fallback
+            label data.
+
+    Returns:
+        str: Dataset component in Data/<dataset>/graphs, otherwise the parent of a
+        trailing graphs directory, otherwise the final path component. Empty labels
+        become data.
+    """
     if root_dir is None:
         return "data"
     path = os.path.normpath(str(root_dir))
@@ -20,7 +32,15 @@ def infer_dataset_tag(root_dir: str) -> str:
 
 
 def parse_year_tag(tag: str) -> tuple[int | None, int | None]:
-    """Extract `(year0, year1)` from tags like `1979_1980_Battery_...`."""
+    """Extract the leading year pair from an underscore-delimited graph tag.
+
+    Args:
+        tag: Tag beginning with two integer fields, for example 1979_1980_Battery_0.
+
+    Returns:
+        tuple: (year0, year1) as integers, or (None, None) when either field cannot be
+        parsed. The years are not range-checked.
+    """
     try:
         parts = str(tag).split("_")
         if len(parts) < 2:
@@ -33,7 +53,15 @@ def parse_year_tag(tag: str) -> tuple[int | None, int | None]:
 
 
 def classify_past_future(year0: int | None) -> str:
-    """Classify by project-specific year ranges."""
+    """Assign the project period label from the first year of a graph group.
+
+    Args:
+        year0: First year as an integer, or None for an unparsed tag.
+
+    Returns:
+        str: past for 1979–2014 inclusive, future for 2070–2099 inclusive, and other for
+        any remaining value.
+    """
     if year0 is None:
         return "other"
     if 1979 <= year0 <= 2014:

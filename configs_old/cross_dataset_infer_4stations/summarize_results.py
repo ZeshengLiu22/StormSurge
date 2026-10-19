@@ -12,10 +12,35 @@ from generate_configs import DESTINATION, REPO, RESULTS, STATIONS, SOURCES, TARG
 
 
 def identity(row):
+    """Extract the four fields that uniquely identify a transfer pair.
+
+    Args:
+        row: Manifest or result mapping with station, group, source, and target.
+
+    Returns:
+        tuple: ``(station, group, source, target)`` in that fixed order.
+    """
     return tuple(row[key] for key in ('station', 'group', 'source', 'target'))
 
 
 def validate_metadata(data, row, audit):
+    """Check inference metadata against its manifest and source checkpoint audit.
+
+    Args:
+        data: Parsed pair ``metrics.json`` containing model, year, threshold,
+            normalization, and final metric metadata.
+        row: Manifest row specifying pair identity, checkpoint/data paths, and years.
+        audit: Matching source audit with normalization type, physical TRAIN Q95,
+            and threshold metadata.
+
+    Returns:
+        None.
+
+    Raises:
+        ValueError: Metadata disagree, evaluation is not explicitly external,
+            AllRMSE is invalid/inconsistent, or target-derived thresholds appear.
+        KeyError: Required metadata fields are absent.
+    """
     expected = dict(station=row['station'], source_name=row['source'], target_name=row['target'],
         model='perceiver3', encoder_type='GraphSAGE', temporal_block='Transformer', head_type='single',
         history_hours=24, history_steps=4, strict_years=True, normalization_origin=ORIGIN,
@@ -41,6 +66,22 @@ def validate_metadata(data, row, audit):
 
 
 def validate_predictions(path, data):
+    """Validate prediction arrays and count usable target observations.
+
+    Args:
+        path: pathlib.Path to the pair's ``predictions.npz`` archive.
+        data: Validated metrics metadata, including sample count, pair identity,
+            evaluation years, and source-derived threshold/normalization provenance.
+
+    Returns:
+        dict[str, int]: Counts of finite target hours, missing target hours, and
+        windows with all six hourly targets finite. Prediction and truth arrays
+        must both have shape ``(samples, 6)``.
+
+    Raises:
+        ValueError: The archive is missing or its metadata, shapes, timestamps,
+            sample tags, split IDs, or predictions violate the expected invariants.
+    """
     require(path.is_file(), f'missing {path.name}')
     with np.load(path, allow_pickle=False) as arrays:
         for key in ('station', 'source_name', 'target_name', 'checkpoint', 'source_root', 'target_root',
@@ -65,11 +106,36 @@ def validate_predictions(path, data):
 
 
 def matrix_rows(station, group, values):
+    """Arrange available pair scores into source-by-target matrix rows.
+
+    Args:
+        station: Station token selecting the matrix.
+        group: Evaluation period used to select ``TARGETS[group]`` columns.
+        values: Mapping from ``(station, group, source, target)`` to AllRMSE in meters.
+
+    Returns:
+        list[dict]: One row per ``SOURCES`` entry, with a ``source`` field and
+        target columns. Unavailable pair scores are represented by empty strings.
+    """
     return [dict(source=source, **{target: values.get((station, group, source, target), '')
                                   for target in TARGETS[group]}) for source in SOURCES]
 
 
 def summarize():
+    """Validate pair artifacts and write completion reports and AllRMSE matrices.
+
+    Reads the fixed 264-pair manifest, checkpoint audits, and production output
+    folders. Uses each validated final AllRMSE without recomputing metrics.
+    Writes pair/matrix CSV files, a Markdown report, and ``completeness.json``
+    under ``RESULTS/summary``; prints completion counts.
+
+    Returns:
+        int: Zero when all 264 pairs pass with no issues or missing entries;
+        one otherwise. Invalid pair artifacts are recorded in the issue report.
+
+    Raises:
+        ValueError: The input manifest is not exactly 264 unique pairs.
+    """
     manifest = list(csv.DictReader((DESTINATION / 'manifest.csv').open()))
     require(len(manifest) == 264 and len({identity(r) for r in manifest}) == 264, 'manifest is not exactly 264 unique pairs')
     expected = {identity(row): row for row in manifest}

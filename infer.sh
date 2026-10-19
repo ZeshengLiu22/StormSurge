@@ -5,6 +5,8 @@
 # Paths inside the config are relative to this script's directory (repo root).
 set -euo pipefail
 
+# Stop direct child processes when the launcher receives SIGINT or SIGTERM.
+# Inputs: none. Prints a trap message; returns success even if no child exists.
 cleanup() {
   echo "[TRAP] Received SIGINT/SIGTERM; stopping child processes."
   pkill -P "$$" 2>/dev/null || true
@@ -110,7 +112,9 @@ case "${TEMPORAL_BLOCK,,}" in
   *) echo "[FATAL] TEMPORAL_BLOCK must be MLP, LSTM, GRU, or Transformer; got '${TEMPORAL_BLOCK}'"; exit 1 ;;
 esac
 
-# Derive dataset labels and safe artifact directory names.
+# Print the dataset label for a graph directory.
+# Args: $1 is a path; a leaf named graphs (case-insensitive) uses its parent.
+# Output: one label on stdout; returns the basename or printf command status.
 infer_dataset_tag () {
   local root="${1%/}"
   local leaf
@@ -122,6 +126,9 @@ infer_dataset_tag () {
   fi
 }
 
+# Replace characters outside letters, digits, dots, underscores, and hyphens.
+# Args: $1 is an arbitrary run-name component.
+# Output: the sanitized component on stdout; returns the printf status.
 safe_run_component () {
   local value="$1"
   value="${value//[!A-Za-z0-9._-]/_}"

@@ -27,6 +27,10 @@ mkdir "$RECEIPT_DIR" || { echo "[FATAL] Batch already submitted: $RECEIPT_DIR" >
 cp "$CONFIG_FOLDER/manifest.csv" "$CONFIG_FOLDER/config_audit.json" "$CONFIG_FOLDER/dataset_inventory.json" "$RECEIPT_DIR/"
 printf 'task_id\tlabel\tconfig_path\tresult_path\n' > "$RECEIPT_DIR/submissions.tsv"
 exec > >(tee -a "$RECEIPT_DIR/launch.log") 2>&1
+# Submit one training run and record the queue receipt.
+# Args: $1 queue label, $2 configuration path, $3 expected result directory.
+# Appends to RECEIPT_DIR/submissions.tsv and prints the queue ID after submission.
+# Status: 0 on success; 2 for an existing result path or invalid queue reply.
 submit() {
   local label="$1" config="$2" result="$3" task_id
   [[ ! -e "$result" ]] || { echo "[FATAL] Result path exists: $result" >&2; return 2; }
