@@ -24,6 +24,8 @@ from emulator.data import (
 )
 from emulator.inference import classify_past_future, infer_dataset_tag, parse_year_tag
 from emulator.models import (
+    BASELINE_ARCHITECTURES,
+    NEW_BASELINE_MODELS,
     build_model,
     count_model_parameters,
     format_parameter_counts,
@@ -93,7 +95,10 @@ def parse_args(argv=None):
         default=None,
         help="Expected PACT bathymetry setting. Omit to read the checkpoint.",
     )
-    parser.add_argument("--model", type=str, default="", choices=["", "baseline", "perceiver3"])
+    parser.add_argument(
+        "--model", type=str, default="",
+        choices=["", "baseline", "perceiver3", *NEW_BASELINE_MODELS],
+    )
     parser.add_argument(
         "--encoder_type",
         type=str,
@@ -268,6 +273,36 @@ def _validate_input_dimensions(store, indices, config, normalization, pressure_m
                 )
 
 
+def _model_architecture_metadata(config):
+    """Describe effective encoders and pooling without legacy argument defaults.
+
+    Args:
+        config (ModelConfig): Reconstructed checkpoint construction settings.
+
+    Returns:
+        dict: Public model identity and effective spatial/temporal labels. New
+        baselines also report their saved pooling and stem configuration.
+    """
+    metadata = dict(
+        model="perceiver3" if config.model == "pact" else config.model,
+        encoder_type=config.encoder_type,
+        temporal_block=config.temporal_block,
+    )
+    if config.model in NEW_BASELINE_MODELS:
+        spatial, temporal = BASELINE_ARCHITECTURES[config.model]
+        metadata.update(
+            encoder_type=spatial,
+            temporal_block=temporal,
+            spatial_encoder=spatial,
+            temporal_module=temporal,
+            baseline_pooling=config.baseline_pooling,
+            baseline_stem_channels=config.baseline_stem_channels,
+        )
+        if config.baseline_pooling == "adaptive":
+            metadata["baseline_pool_grid"] = config.baseline_pool_grid
+    return metadata
+
+
 def _validate_checkpoint_options(args, config, training):
     """Check optional architecture assertions against saved model settings.
 
@@ -278,17 +313,18 @@ def _validate_checkpoint_options(args, config, training):
         training (dict): Saved settings including PACT station-feature switches.
 
     Returns:
-        str: Public model name, perceiver3 for PACT or baseline otherwise.
+        str: Public model name, retaining each independent baseline's exact key.
 
     Raises:
         ValueError: A supplied assertion differs from a relevant saved setting.
     """
-    expected = {
-        "model": "perceiver3" if config.model == "pact" else "baseline",
-        "encoder_type": config.encoder_type,
-    }
-    if config.encoder_type == "CNN":
-        expected["cnn_intermediate_channel"] = config.cnn_intermediate_channel
+    expected = {"model": "perceiver3" if config.model == "pact" else config.model}
+    # Independent baselines are selected only by model identity. Encoder and
+    # temporal arguments belong to the legacy models and cannot override them.
+    if config.model not in NEW_BASELINE_MODELS:
+        expected["encoder_type"] = config.encoder_type
+        if config.encoder_type == "CNN":
+            expected["cnn_intermediate_channel"] = config.cnn_intermediate_channel
     if config.model == "pact":
         expected.update(
             temporal_block=config.temporal_block,
@@ -668,7 +704,11 @@ def _write_reports(
     out_dir = Path(args.out_dir)
     label = args.model_label
     test_tag = target
-    model_file_tag = "" if config.encoder_type == "GraphSAGE" else f"_{config.encoder_type}"
+    architecture = _model_architecture_metadata(config)
+    model_file_tag = (
+        "" if config.model in NEW_BASELINE_MODELS or config.encoder_type == "GraphSAGE"
+        else f"_{config.encoder_type}"
+    )
     if config.model == "pact":
         if config.temporal_block != "Transformer":
             model_file_tag += f"_{config.temporal_block}"
@@ -719,12 +759,14 @@ def _write_reports(
         station=station_tag,
         model=model_name,
         model_label=label,
-        encoder_type=config.encoder_type,
+        encoder_type=architecture["encoder_type"],
         model_parameters=model_parameters,
-        temporal_block=config.temporal_block,
+        temporal_block=architecture["temporal_block"],
         head_type="single",
         cnn_intermediate_channel=(
-            config.cnn_intermediate_channel if config.encoder_type == "CNN" else None
+            config.cnn_intermediate_channel
+            if config.model not in NEW_BASELINE_MODELS and config.encoder_type == "CNN"
+            else None
         ),
         time_encoding="relative_lag" if config.model == "pact" else None,
         zero_history_query_residual=config.model == "pact" and config.history_steps == 0,
@@ -805,6 +847,17 @@ def main(argv=None):
     training = checkpoint["training_config"]
     args.pressure_mode = resolve_pressure_mode(checkpoint, args.pressure_mode)
     model_name = _validate_checkpoint_options(args, config, training)
+    if config.model in NEW_BASELINE_MODELS:
+        args.supplied_architecture_assertions = {
+            name: getattr(args, name)
+            for name in ("model", "encoder_type", "temporal_block", "cnn_intermediate_channel", "history_hours")
+        }
+        args.model = model_name
+        args.encoder_type, args.temporal_block = BASELINE_ARCHITECTURES[config.model]
+        args.effective_spatial_encoder = args.encoder_type
+        args.effective_temporal_module = args.temporal_block
+        args.cnn_intermediate_channel = None
+        args.history_hours = config.history_steps * 6
     log_message(f"Pressure representation: {args.pressure_mode} (source checkpoint)")
 
     configure_runtime(
@@ -857,12 +910,12 @@ def main(argv=None):
         evaluated_year_count=len(evaluated_years),
         strict_years=args.strict_years,
         station=station_tag,
-        model=model_name,
-        encoder_type=config.encoder_type,
-        temporal_block=config.temporal_block,
+        **_model_architecture_metadata(config),
         head_type="single",
         history_steps=config.history_steps,
         history_hours=config.history_steps * 6,
+        in_channels=config.in_channels,
+        parameter_count=model_parameters["total"],
         normalization_origin="source_checkpoint_train",
         normalization_type=training.get("x_norm", ""),
         pressure_mode=args.pressure_mode,

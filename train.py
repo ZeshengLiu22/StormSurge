@@ -31,6 +31,8 @@ from emulator.data import (
     station_features_from_json,
 )
 from emulator.models import (
+    BASELINE_ARCHITECTURES,
+    NEW_BASELINE_MODELS,
     ModelConfig,
     build_model,
     count_model_parameters,
@@ -192,11 +194,42 @@ def _prepare_output_paths(args, distributed, rank):
     launch = [datetime.now().strftime("%Y%m%d_%H%M%S_%f") if rank == 0 else None]
     if distributed:
         dist.broadcast_object_list(launch, src=0)
-    args.run_tag = args.run_tag or launch[0]
+    if args.model in NEW_BASELINE_MODELS:
+        source = Path(args.root_dir)
+        source_tag = source.parent.name if source.name == "graphs" else source.name
+        pool_tag = (
+            f"adaptive{args.baseline_pool_grid}x{args.baseline_pool_grid}"
+            if args.baseline_pooling == "adaptive" else "global_mean"
+        )
+        default_name = (
+            f"{args.model}_{args.station or 'ALL'}_{source_tag}_hist{args.history_hours}h_"
+            f"{pool_tag}_p{args.pressure_mode}_seed{args.seed}"
+        )
+        args.run_tag = args.run_tag or default_name
+        directory_name = re.sub(r"[^A-Za-z0-9_.-]+", "-", args.run_tag).strip("-") or "run"
+    else:
+        args.run_tag = args.run_tag or launch[0]
+        directory_name = f"{args.station or 'ALL'}_{args.model}"
     output_dir = Path(
-        args.output_dir
-        or Path("All_Results") / f"{launch[0]}_{args.station or 'ALL'}_{args.model}"
+        args.output_dir or Path("All_Results") / f"{launch[0]}_{directory_name}"
     ).resolve()
+    if args.model in NEW_BASELINE_MODELS:
+        existing_result = [None]
+        if rank == 0:
+            markers = (
+                "config_*.json", "best*.pt", "best*.pth", "threshold_metadata.json",
+                "episode_peak_metadata.json", "metrics*", "summary*",
+            )
+            existing_result[0] = next(
+                (str(path) for pattern in markers for path in output_dir.glob(pattern)), None
+            )
+        if distributed:
+            dist.broadcast_object_list(existing_result, src=0)
+        if existing_result[0] is not None:
+            raise FileExistsError(
+                f"Refusing to overwrite existing baseline results: {existing_result[0]}. "
+                "Choose a fresh --output_dir."
+            )
     args.output_dir = str(output_dir)
     slug = re.sub(r"[^A-Za-z0-9_.-]+", "-", args.run_tag).strip("-")[:40] or "run"
     config_id = hashlib.sha256(
@@ -359,12 +392,13 @@ def _build_model_and_objective(args, data, device, distributed, rank):
         field.name: getattr(args, field.name)
         for field in fields(ModelConfig)
         if hasattr(args, field.name)
+        and (args.model in NEW_BASELINE_MODELS or not field.name.startswith("baseline_"))
     }
     train_graph = store.graphs[splits["train"][0]]
     model_values.update(
         in_channels=train_graph.x.size(-1),
         out_channels=train_graph.y.numel(),
-        model="pact" if args.model == "perceiver3" else "baseline",
+        model="pact" if args.model == "perceiver3" else args.model,
         temporal_layers=args.transformer_layers,
         temporal_ff_mult=args.transformer_ff_mult,
         temporal_dropout=args.transformer_dropout,
@@ -391,6 +425,39 @@ def _build_model_and_objective(args, data, device, distributed, rank):
         p_episode_peak=episode_peak_metadata["p_episode_peak"],
     ).to(device)
     return ModelComponents(model, model_config, model_parameters, criterion, station_feat, stats)
+
+
+def _baseline_architecture_metadata(args, config, parameters):
+    """Describe effective shallow architecture settings for saved provenance.
+
+    Args:
+        args: Training arguments including pressure mode and source graph path.
+        config: Constructed ModelConfig with inferred input and output widths.
+        parameters: Parameter counts returned by count_model_parameters.
+
+    Returns:
+        dict: Effective architecture metadata for new baselines; empty for legacy
+        models, whose existing configuration reporting remains unchanged.
+    """
+    if config.model not in NEW_BASELINE_MODELS:
+        return {}
+    spatial, temporal = BASELINE_ARCHITECTURES[config.model]
+    return {
+        "model": config.model,
+        "spatial_encoder": spatial,
+        "temporal_module": temporal,
+        "baseline_pooling": config.baseline_pooling,
+        "baseline_pool_grid": config.baseline_pool_grid if config.baseline_pooling == "adaptive" else None,
+        "baseline_stem_channels": config.baseline_stem_channels,
+        "hidden_channels": config.hidden_channels,
+        "dropout": config.dropout,
+        "history_hours": config.history_steps * 6,
+        "in_channels": config.in_channels,
+        "out_channels": config.out_channels,
+        "pressure_mode": args.pressure_mode,
+        "parameter_count": parameters["total"],
+        "source_root_dir": args.root_dir,
+    }
 
 
 def _build_optimizer_and_scheduler(args, model):
@@ -592,7 +659,7 @@ def _train_epochs(
                     the checkpoint tracker serializes the snapshot when a role improves.
                 """
                 network = model.module if distributed else model
-                return {
+                snapshot = {
                     "model_config": asdict(model_config),
                     "model_state": network.state_dict(),
                     "normalization": stats_cpu,
@@ -611,6 +678,11 @@ def _train_epochs(
                     "val": validation.metrics,
                     "model_parameters": model_parameters,
                 }
+                if model_config.model in NEW_BASELINE_MODELS:
+                    snapshot["architecture_metadata"] = _baseline_architecture_metadata(
+                        args, model_config, model_parameters
+                    )
+                return snapshot
 
             scores, improved = tracker.observe(epoch, validation.metrics, checkpoint_snapshot)
             epoch_record["checkpoint_scores"] = scores
@@ -795,6 +867,11 @@ def _write_run_artifacts(
         "test_scope": test_scope,
         "test_is_val_mirror": test_is_val_mirror,
     }
+    if components.config.model in NEW_BASELINE_MODELS:
+        summary.update(
+            model_config=asdict(components.config),
+            architecture_metadata=_baseline_architecture_metadata(args, components.config, model_parameters),
+        )
     if device.type == "cuda":
         torch.cuda.synchronize(device)
     wall_seconds = time.perf_counter() - wall_start

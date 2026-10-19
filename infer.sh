@@ -61,7 +61,24 @@ fi
 : "${ENCODER_TYPE:=GraphSAGE}"
 : "${CNN_INTERMEDIATE_CHANNEL:=}"
 : "${TEMPORAL_BLOCK:=Transformer}"
-: "${HISTORY_HOURS:=12}"
+# Independent baseline identities determine their encoders; their history is
+# reconstructed from the checkpoint unless the config requests an assertion.
+case "${MODEL}" in
+  baseline_mlp) EFFECTIVE_ENCODER="MLP"; EFFECTIVE_TEMPORAL="None" ;;
+  baseline_cnn) EFFECTIVE_ENCODER="CNN"; EFFECTIVE_TEMPORAL="None" ;;
+  baseline_mlp_lstm) EFFECTIVE_ENCODER="MLP"; EFFECTIVE_TEMPORAL="LSTM" ;;
+  baseline_mlp_gru) EFFECTIVE_ENCODER="MLP"; EFFECTIVE_TEMPORAL="GRU" ;;
+  baseline_cnn_lstm) EFFECTIVE_ENCODER="CNN"; EFFECTIVE_TEMPORAL="LSTM" ;;
+  baseline_cnn_gru) EFFECTIVE_ENCODER="CNN"; EFFECTIVE_TEMPORAL="GRU" ;;
+  baseline_convlstm) EFFECTIVE_ENCODER="CNN"; EFFECTIVE_TEMPORAL="ConvLSTM" ;;
+  baseline|perceiver3) EFFECTIVE_ENCODER="${ENCODER_TYPE}"; EFFECTIVE_TEMPORAL="${TEMPORAL_BLOCK}" ;;
+  *) echo "[FATAL] Unsupported MODEL: ${MODEL}" >&2; exit 2 ;;
+esac
+if [[ "${MODEL}" == baseline_* ]]; then
+  : "${HISTORY_HOURS:=-1}"
+else
+  : "${HISTORY_HOURS:=12}"
+fi
 : "${BATCH_SIZE:=1}"
 : "${STATION_JSON_DIR:=./station_json}"
 : "${USE_SITE_ELEVATION:=1}"
@@ -99,18 +116,21 @@ if [[ -v PRESSURE_MODE ]]; then
   esac
 fi
 
-case "${ENCODER_TYPE}" in
-  GraphSAGE|CNN) ;;
-  *) echo "[FATAL] ENCODER_TYPE must be GraphSAGE or CNN; got '${ENCODER_TYPE}'"; exit 1 ;;
-esac
+if [[ "${MODEL}" != baseline_* ]]; then
+  case "${ENCODER_TYPE}" in
+    GraphSAGE|CNN) ;;
+    *) echo "[FATAL] ENCODER_TYPE must be GraphSAGE or CNN; got '${ENCODER_TYPE}'"; exit 1 ;;
+  esac
 
-case "${TEMPORAL_BLOCK,,}" in
-  transformer|attn) TEMPORAL_BLOCK="Transformer" ;;
-  mlp) TEMPORAL_BLOCK="MLP" ;;
-  lstm) TEMPORAL_BLOCK="LSTM" ;;
-  gru) TEMPORAL_BLOCK="GRU" ;;
-  *) echo "[FATAL] TEMPORAL_BLOCK must be MLP, LSTM, GRU, or Transformer; got '${TEMPORAL_BLOCK}'"; exit 1 ;;
-esac
+  case "${TEMPORAL_BLOCK,,}" in
+    transformer|attn) TEMPORAL_BLOCK="Transformer" ;;
+    mlp) TEMPORAL_BLOCK="MLP" ;;
+    lstm) TEMPORAL_BLOCK="LSTM" ;;
+    gru) TEMPORAL_BLOCK="GRU" ;;
+    *) echo "[FATAL] TEMPORAL_BLOCK must be MLP, LSTM, GRU, or Transformer; got '${TEMPORAL_BLOCK}'"; exit 1 ;;
+  esac
+  EFFECTIVE_TEMPORAL="${TEMPORAL_BLOCK}"
+fi
 
 # Print the dataset label for a graph directory.
 # Args: $1 is a path; a leaf named graphs (case-insensitive) uses its parent.
@@ -192,11 +212,20 @@ echo "Pressure mode: ${PRESSURE_MODE:-<checkpoint>}"
 echo "ROOT_DIR:      ${ROOT_DIR}"
 echo "TEST_ROOT_DIR: ${TEST_ROOT_DIR:-<empty => ROOT_DIR year-split test>}"
 echo "Model:         ${MODEL}"
-echo "Encoder:       ${ENCODER_TYPE}"
-echo "CNN width:     ${CNN_INTERMEDIATE_CHANNEL:-<checkpoint>}"
-echo "Temporal:      ${TEMPORAL_BLOCK}"
+echo "Encoder:       ${EFFECTIVE_ENCODER}"
+echo "Temporal:      ${EFFECTIVE_TEMPORAL}"
+if [[ "${MODEL}" == baseline_* ]]; then
+  echo "Pooling:       <checkpoint>"
+  echo "Stem width:    <checkpoint>"
+else
+  echo "CNN width:     ${CNN_INTERMEDIATE_CHANNEL:-<checkpoint>}"
+fi
 echo "Station feats: site_elevation=${USE_SITE_ELEVATION} bathymetry=${USE_BATHYMETRY} (PACT)"
-echo "History hours: ${HISTORY_HOURS}"
+if [[ "${HISTORY_HOURS}" == "-1" ]]; then
+  echo "History hours: <checkpoint>"
+else
+  echo "History hours: ${HISTORY_HOURS}"
+fi
 echo "Batch size:    ${BATCH_SIZE}"
 echo "Years:         ${YEARS:-<all>}"
 echo "Strict years:  ${STRICT_YEARS}"
@@ -318,7 +347,10 @@ if [[ "${PERSISTENT_WORKERS}" -eq 1 ]]; then DL_ARGS+=(--persistent_workers); fi
 
 THREAD_ARGS=(--torch_threads "${TORCH_THREADS}")
 ARCH_ARGS=()
-if [[ -n "${CNN_INTERMEDIATE_CHANNEL}" ]]; then ARCH_ARGS+=(--cnn_intermediate_channel "${CNN_INTERMEDIATE_CHANNEL}"); fi
+if [[ "${MODEL}" != baseline_* ]]; then
+  ARCH_ARGS+=(--encoder_type "${ENCODER_TYPE}" --temporal_block "${TEMPORAL_BLOCK}")
+  if [[ -n "${CNN_INTERMEDIATE_CHANNEL}" ]]; then ARCH_ARGS+=(--cnn_intermediate_channel "${CNN_INTERMEDIATE_CHANNEL}"); fi
+fi
 PRESSURE_ARGS=()
 if [[ -v PRESSURE_MODE ]]; then PRESSURE_ARGS=(--pressure_mode "${PRESSURE_MODE}"); fi
 
@@ -335,9 +367,7 @@ CMD=(
   --use_bathymetry "${USE_BATHYMETRY}"
   --model "${MODEL}"
   --model_label "${MODEL_LABEL}"
-  --encoder_type "${ENCODER_TYPE}"
   "${ARCH_ARGS[@]}"
-  --temporal_block "${TEMPORAL_BLOCK}"
   --history_hours "${HISTORY_HOURS}"
   --batch_size "${BATCH_SIZE}"
   --ckpt "${CKPT_RESOLVED}"

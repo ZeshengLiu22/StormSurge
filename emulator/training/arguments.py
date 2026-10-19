@@ -5,6 +5,7 @@ import math
 from pathlib import Path
 
 from emulator.common.cli import parse_bool_int, temporal_block_name
+from emulator.models import BASELINE_ARCHITECTURES, NEW_BASELINE_MODELS, STATIC_BASELINE_MODELS
 from .checkpoint_selection import ROLES
 from .losses import validate_episode_peak_config
 
@@ -207,7 +208,20 @@ def parse_args(argv=None):
     parser.add_argument("--amp", action="store_true")
     parser.add_argument("--amp_dtype", type=str, default="bf16", choices=["bf16", "fp16"])
     parser.add_argument(
-        "--model", type=str, default="baseline", choices=["baseline", "perceiver3"]
+        "--model", type=str, default="baseline",
+        choices=["baseline", "perceiver3", *NEW_BASELINE_MODELS],
+    )
+    parser.add_argument(
+        "--baseline_pooling", choices=("adaptive", "global_mean"), default="adaptive",
+        help="Spatial pooling for the seven shallow baselines only.",
+    )
+    parser.add_argument(
+        "--baseline_pool_grid", type=int, default=4,
+        help="Positive adaptive pooling grid side length for shallow baselines.",
+    )
+    parser.add_argument(
+        "--baseline_stem_channels", type=int, default=32,
+        help="Shallow baseline spatial stem width (and ConvLSTM recurrent width).",
     )
     parser.add_argument(
         "--encoder_type",
@@ -279,10 +293,19 @@ def parse_args(argv=None):
         parser.error("--station and --filter must select the same station.")
     args.station = args.station or args.filter
     args.station_json_dir = Path(args.station_json_dir)
-    if args.encoder_type == "GraphSAGE" and args.num_layers < 2:
-        parser.error("GraphSAGE requires --num_layers >= 2.")
-    if args.encoder_type == "CNN" and (args.num_layers < 1 or args.cnn_intermediate_channel < 1):
-        parser.error("CNN requires positive layer count and intermediate width.")
+    if args.model in NEW_BASELINE_MODELS:
+        if min(args.baseline_pool_grid, args.baseline_stem_channels, args.hidden_channels) < 1:
+            parser.error("Shallow baseline pooling grid and channel dimensions must be positive.")
+        if not math.isfinite(args.dropout) or not 0 <= args.dropout <= 1:
+            parser.error("--dropout must be finite and between 0 and 1.")
+        if args.model in STATIC_BASELINE_MODELS and args.history_hours != 0:
+            parser.error(f"{args.model} requires --history_hours 0 (current forcing only).")
+        args.effective_spatial_encoder, args.effective_temporal_module = BASELINE_ARCHITECTURES[args.model]
+    else:
+        if args.encoder_type == "GraphSAGE" and args.num_layers < 2:
+            parser.error("GraphSAGE requires --num_layers >= 2.")
+        if args.encoder_type == "CNN" and (args.num_layers < 1 or args.cnn_intermediate_channel < 1):
+            parser.error("CNN requires positive layer count and intermediate width.")
     if args.history_hours < 0 or args.history_hours % 6:
         parser.error("--history_hours must be a nonnegative multiple of 6.")
     if args.model == "perceiver3" and args.max_time_steps < args.history_hours // 6 + 1:
@@ -293,7 +316,7 @@ def parse_args(argv=None):
             args.epochs,
             args.grad_accum_steps,
             args.torch_threads,
-            args.transformer_layers,
+            args.transformer_layers if args.model not in NEW_BASELINE_MODELS else 1,
         )
         < 1
     ):

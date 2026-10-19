@@ -1,6 +1,7 @@
 """Compose spatial encoding, station readout, temporal memory and forecast head."""
 
 from dataclasses import dataclass
+from numbers import Integral
 
 import torch
 from torch import nn
@@ -8,6 +9,17 @@ import torch.nn.functional as F
 from torch_geometric.nn import global_mean_pool
 from torch_geometric.utils import to_dense_batch
 
+from .baselines import (
+    NEW_BASELINE_MODELS,
+    STATIC_BASELINE_MODELS,
+    CNNBaseline,
+    CNNGRUBaseline,
+    CNNLSTMBaseline,
+    ConvLSTMBaseline,
+    MLPBaseline,
+    MLPGRUBaseline,
+    MLPLSTMBaseline,
+)
 from .heads import ForecastOutput, SingleHead
 from .spatial import SpatialEncoder
 from .temporal import TemporalMLP, TemporalRNN, TemporalTransformer
@@ -15,13 +27,13 @@ from .temporal import TemporalMLP, TemporalRNN, TemporalTransformer
 
 @dataclass
 class ModelConfig:
-    """Construction parameters for the PACT and spatial baseline models.
+    """Construction parameters for PACT, the legacy baseline, and shallow baselines.
 
     Attributes:
         in_channels: Number of input node features.
         out_channels: Number of forecast target horizons.
         hidden_channels: Spatial output width and PACT attention/temporal width.
-        model: Architecture key, pact or baseline.
+        model: Architecture key, pact, baseline, or one of the seven baseline_* keys.
         encoder_type: Spatial operator, GraphSAGE or CNN.
         temporal_block: PACT temporal block: Transformer, MLP, LSTM, or GRU.
         num_layers: Number of spatial layers.
@@ -39,6 +51,10 @@ class ModelConfig:
         head_hidden: PACT head MLP width, or None for 2 * hidden_channels.
         temporal_hidden: Positive-history baseline LSTM width, or None for
             hidden_channels; ignored when history_steps is zero.
+        baseline_pooling: New baselines only: adaptive (default) or global_mean.
+        baseline_pool_grid: Positive adaptive spatial-pooling width and height.
+        baseline_stem_channels: New baselines' first spatial-layer width, and the
+            ConvLSTM hidden/cell-state width.
 
     These are Python construction defaults. The training entry point supplies
     its parsed command-line settings explicitly.
@@ -64,6 +80,36 @@ class ModelConfig:
     station_feat_dim: int = 0
     head_hidden: int | None = None
     temporal_hidden: int | None = None
+    baseline_pooling: str = "adaptive"
+    baseline_pool_grid: int = 4
+    baseline_stem_channels: int = 32
+
+    def __post_init__(self):
+        """Check construction contracts without changing legacy architecture defaults."""
+        if self.model not in ("pact", "baseline", *NEW_BASELINE_MODELS):
+            raise ValueError(f"Unsupported model name: {self.model!r}.")
+        for name in ("in_channels", "out_channels", "hidden_channels"):
+            value = getattr(self, name)
+            if isinstance(value, bool) or not isinstance(value, Integral) or value < 1:
+                raise ValueError(f"{name} must be a positive integer.")
+        if (
+            isinstance(self.history_steps, bool)
+            or not isinstance(self.history_steps, Integral)
+            or self.history_steps < 0
+        ):
+            raise ValueError("history_steps must be a nonnegative integer.")
+        if self.model not in NEW_BASELINE_MODELS:
+            return
+        if self.baseline_pooling not in ("adaptive", "global_mean"):
+            raise ValueError("baseline_pooling must be 'adaptive' or 'global_mean'.")
+        for name in ("baseline_pool_grid", "baseline_stem_channels"):
+            value = getattr(self, name)
+            if isinstance(value, bool) or not isinstance(value, Integral) or value < 1:
+                raise ValueError(f"{name} must be a positive integer.")
+        if not 0 <= self.dropout <= 1:
+            raise ValueError("dropout must lie between zero and one.")
+        if self.model in STATIC_BASELINE_MODELS and self.history_steps != 0:
+            raise ValueError("Static baselines require history_steps=0 (history_hours=0).")
 
 
 class PACT(nn.Module):
@@ -280,15 +326,25 @@ def build_model(config: ModelConfig):
     """Instantiate the architecture selected by a model configuration.
 
     Args:
-        config: ModelConfig whose model field is pact or baseline.
+        config: ModelConfig selecting PACT, the legacy baseline, or a shallow baseline.
 
     Returns:
-        torch.nn.Module: A newly initialized PACT or Baseline instance.
+        torch.nn.Module: A newly initialized instance of the selected architecture.
 
     Raises:
         KeyError: The model field is not a supported architecture key.
     """
-    return {"pact": PACT, "baseline": Baseline}[config.model](config)
+    return {
+        "pact": PACT,
+        "baseline": Baseline,
+        "baseline_mlp": MLPBaseline,
+        "baseline_cnn": CNNBaseline,
+        "baseline_mlp_lstm": MLPLSTMBaseline,
+        "baseline_mlp_gru": MLPGRUBaseline,
+        "baseline_cnn_lstm": CNNLSTMBaseline,
+        "baseline_cnn_gru": CNNGRUBaseline,
+        "baseline_convlstm": ConvLSTMBaseline,
+    }[config.model](config)
 
 
 def model_config_from_checkpoint(checkpoint):

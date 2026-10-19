@@ -83,6 +83,9 @@ set -u
 
 # Model and history
 : "${MODEL:=baseline}"
+: "${BASELINE_POOLING:=adaptive}"
+: "${BASELINE_POOL_GRID:=4}"
+: "${BASELINE_STEM_CHANNELS:=32}"
 : "${ENCODER_TYPE:=GraphSAGE}"
 : "${CNN_INTERMEDIATE_CHANNEL:=29}"
 : "${TEMPORAL_BLOCK:=Transformer}"
@@ -96,7 +99,11 @@ set -u
 : "${TRANSFORMER_FF_MULT:=4.0}"
 : "${TRANSFORMER_DROPOUT:=0.05}"
 : "${MAX_TIME_STEPS:=32}"
-if [[ -z "${HISTORY_HOURS_LIST+x}" ]]; then HISTORY_HOURS_LIST=(24); fi
+if [[ -z "${HISTORY_HOURS_LIST+x}" ]]; then
+  if [[ "${MODEL}" != baseline_* ]] || ! declare -p HISTORY_HOURS_LIST >/dev/null 2>&1; then
+    HISTORY_HOURS_LIST=(24)
+  fi
+fi
 
 # Optimization and scheduling
 : "${BATCH_SIZE:=256}"
@@ -128,6 +135,52 @@ if [[ -z "${LR_LIST+x}" ]]; then LR_LIST=("3e-3"); fi
 : "${PYTHON_RUN_TAG_BASE:=}"
 
 # Validate experiment settings before creating artifacts.
+NEW_BASELINE=0
+case "${MODEL}" in
+  perceiver3|baseline) ;;
+  baseline_mlp|baseline_cnn|baseline_mlp_lstm|baseline_mlp_gru|baseline_cnn_lstm|baseline_cnn_gru|baseline_convlstm)
+    NEW_BASELINE=1 ;;
+  *) echo "[FATAL] Unsupported MODEL='${MODEL}'." >&2; exit 2 ;;
+esac
+
+BASELINE_POOL_TAG=""
+if [[ "${NEW_BASELINE}" == "1" ]]; then
+  case "${MODEL}" in
+    baseline_mlp*) EFFECTIVE_SPATIAL_ENCODER="MLP" ;;
+    *) EFFECTIVE_SPATIAL_ENCODER="CNN" ;;
+  esac
+  case "${MODEL}" in
+    baseline_mlp|baseline_cnn) EFFECTIVE_TEMPORAL_MODULE="None" ;;
+    *_lstm) EFFECTIVE_TEMPORAL_MODULE="LSTM" ;;
+    *_gru) EFFECTIVE_TEMPORAL_MODULE="GRU" ;;
+    baseline_convlstm) EFFECTIVE_TEMPORAL_MODULE="ConvLSTM" ;;
+  esac
+  for dimension in BASELINE_POOL_GRID BASELINE_STEM_CHANNELS HIDDEN_CHANNELS; do
+    if [[ ! "${!dimension}" =~ ^[1-9][0-9]*$ ]]; then
+      echo "[FATAL] ${dimension} must be a positive integer." >&2
+      exit 2
+    fi
+  done
+  case "${BASELINE_POOLING}" in
+    adaptive) BASELINE_POOL_TAG="adaptive${BASELINE_POOL_GRID}x${BASELINE_POOL_GRID}" ;;
+    global_mean) BASELINE_POOL_TAG="global_mean" ;;
+    *) echo "[FATAL] BASELINE_POOLING must be adaptive or global_mean." >&2; exit 2 ;;
+  esac
+  if (( ${#HISTORY_HOURS_LIST[@]} == 0 )); then
+    echo "[FATAL] HISTORY_HOURS_LIST must contain at least one history length." >&2
+    exit 2
+  fi
+  for H in "${HISTORY_HOURS_LIST[@]}"; do
+    if [[ ! "${H}" =~ ^(0|[1-9][0-9]*)$ ]] || (( H % 6 != 0 )); then
+      echo "[FATAL] History hours must be nonnegative multiples of 6." >&2
+      exit 2
+    fi
+    if [[ "${EFFECTIVE_TEMPORAL_MODULE}" == "None" && "${H}" != "0" ]]; then
+      echo "[FATAL] ${MODEL} requires HISTORY_HOURS_LIST=(0)." >&2
+      exit 2
+    fi
+  done
+fi
 PRESSURE_TAG=""
 case "${PRESSURE_MODE}" in
   anomaly) ;;
@@ -148,18 +201,20 @@ case "${FUTURE_ONLY,,}" in
   *) echo "[FATAL] FUTURE_ONLY must be 0/1 or true/false; got '${FUTURE_ONLY}'"; exit 1 ;;
 esac
 
-case "${ENCODER_TYPE}" in
-  GraphSAGE|CNN) ;;
-  *) echo "[FATAL] ENCODER_TYPE must be GraphSAGE or CNN; got '${ENCODER_TYPE}'"; exit 1 ;;
-esac
+if [[ "${NEW_BASELINE}" == "0" ]]; then
+  case "${ENCODER_TYPE}" in
+    GraphSAGE|CNN) ;;
+    *) echo "[FATAL] ENCODER_TYPE must be GraphSAGE or CNN; got '${ENCODER_TYPE}'"; exit 1 ;;
+  esac
 
-case "${TEMPORAL_BLOCK,,}" in
-  transformer|attn) TEMPORAL_BLOCK="Transformer" ;;
-  mlp) TEMPORAL_BLOCK="MLP" ;;
-  lstm) TEMPORAL_BLOCK="LSTM" ;;
-  gru) TEMPORAL_BLOCK="GRU" ;;
-  *) echo "[FATAL] TEMPORAL_BLOCK must be MLP, LSTM, GRU, or Transformer; got '${TEMPORAL_BLOCK}'"; exit 1 ;;
-esac
+  case "${TEMPORAL_BLOCK,,}" in
+    transformer|attn) TEMPORAL_BLOCK="Transformer" ;;
+    mlp) TEMPORAL_BLOCK="MLP" ;;
+    lstm) TEMPORAL_BLOCK="LSTM" ;;
+    gru) TEMPORAL_BLOCK="GRU" ;;
+    *) echo "[FATAL] TEMPORAL_BLOCK must be MLP, LSTM, GRU, or Transformer; got '${TEMPORAL_BLOCK}'"; exit 1 ;;
+  esac
+fi
 
 case "${CHECKPOINT_SELECTION}" in
   overall|exceedance) ;;
@@ -263,7 +318,13 @@ RUNSTAMP="${PACT_RUNSTAMP:-$(date +"%Y%m%d_%H%M%S")}"
 CONFIG_RUN_NAME="$(basename "${CONFIG_PATH}")"
 CONFIG_RUN_NAME="${CONFIG_RUN_NAME%.sh}"
 CONFIG_RUN_NAME="${CONFIG_RUN_NAME#train_config_}"
-RUN_NAME="${PACT_RUN_NAME:-${SESSION_NAME:-${CONFIG_RUN_NAME}${PRESSURE_TAG}}}"
+if [[ "${NEW_BASELINE}" == "1" ]]; then
+  HISTORY_TAG="$(IFS=-; echo "${HISTORY_HOURS_LIST[*]}")"
+  CONFIG_RUN_NAME="${MODEL}_${STATION:-ALL}_${TRAIN_DATA_TAG}_hist${HISTORY_TAG}h_${BASELINE_POOL_TAG}_p${PRESSURE_MODE}_seed${SEED}"
+  RUN_NAME="${PACT_RUN_NAME:-${SESSION_NAME:-${CONFIG_RUN_NAME}}}"
+else
+  RUN_NAME="${PACT_RUN_NAME:-${SESSION_NAME:-${CONFIG_RUN_NAME}${PRESSURE_TAG}}}"
+fi
 RUN_NAME_SAFE="${RUN_NAME//[^A-Za-z0-9._-]/_}"
 if [[ -z "${RUN_NAME_SAFE}" ]]; then
   RUN_NAME_SAFE="train"
@@ -293,7 +354,8 @@ write_resolved_config() {
   local name
   local config_vars=(
     TRAIN_PY PYTHON_BIN num_gpus ROOT_DIR TEST_ROOT_DIR PRESSURE_MODE STATION MODEL ENCODER_TYPE
-    CNN_INTERMEDIATE_CHANNEL
+    CNN_INTERMEDIATE_CHANNEL BASELINE_POOLING BASELINE_POOL_GRID BASELINE_STEM_CHANNELS
+    EFFECTIVE_SPATIAL_ENCODER EFFECTIVE_TEMPORAL_MODULE
     TEMPORAL_BLOCK STATION_JSON_DIR USE_SITE_ELEVATION USE_BATHYMETRY
     BATCH_SIZE GRAD_ACCUM_STEPS
     EPOCHS HIDDEN_CHANNELS NUM_LAYERS DROPOUT HEAD_DROPOUT SEED TRAIN_RATIO
@@ -329,7 +391,7 @@ write_resolved_config() {
 
 # Create one artifact directory per launch, including launches through tmux.
 if [[ "${DRY_RUN}" != "1" ]] && { [[ "${USE_TMUX}" != "1" || "${TMUX_INNER}" == "1" ]] || ! command -v tmux >/dev/null 2>&1; }; then
-  if [[ "${RUN_DIR_NAME_STYLE}" == "runname_timestamp" || "${PRESSURE_MODE}" != "anomaly" ]]; then
+  if [[ "${RUN_DIR_NAME_STYLE}" == "runname_timestamp" || "${PRESSURE_MODE}" != "anomaly" || "${NEW_BASELINE}" == "1" ]]; then
     mkdir -p "${ALL_RESULTS_ROOT}"
     # A repeated name within the same second must never overwrite a prior run.
     if ! mkdir "${RUN_DIR}"; then
@@ -357,9 +419,16 @@ echo "tmux:          USE_TMUX=${USE_TMUX} SESSION_NAME=${SESSION_NAME:-<unset>} 
 echo "LAUNCHER:      ${TRAIN_LAUNCH[*]}"
 echo "Train script:  ${TRAIN_PY}"
 echo "Model:         ${MODEL}"
-echo "Encoder:       ${ENCODER_TYPE}"
-echo "CNN width:     ${CNN_INTERMEDIATE_CHANNEL} (intermediate channels)"
-echo "Temporal:      ${TEMPORAL_BLOCK}"
+if [[ "${NEW_BASELINE}" == "1" ]]; then
+  echo "Encoder:       ${EFFECTIVE_SPATIAL_ENCODER}"
+  echo "Temporal:      ${EFFECTIVE_TEMPORAL_MODULE}"
+  echo "Pooling:       ${BASELINE_POOL_TAG}"
+  echo "Stem channels: ${BASELINE_STEM_CHANNELS}"
+else
+  echo "Encoder:       ${ENCODER_TYPE}"
+  echo "CNN width:     ${CNN_INTERMEDIATE_CHANNEL} (intermediate channels)"
+  echo "Temporal:      ${TEMPORAL_BLOCK}"
+fi
 echo "Station feats: site_elevation=${USE_SITE_ELEVATION} bathymetry=${USE_BATHYMETRY} (PACT)"
 if (( GRAD_ACCUM_STEPS > 1 )); then
   echo "Grad accum:    ${GRAD_ACCUM_STEPS} (nominal effective batch=$((BATCH_SIZE * GRAD_ACCUM_STEPS)))"
@@ -419,7 +488,7 @@ case "${MODEL}" in
     # Preserve existing automatic Single run names.
     EXTRA_TAG+="_stable1v3_exceedance_hsingle"
     ;;
-  *) echo "[FATAL] Unknown MODEL='${MODEL}'. Use baseline|perceiver3"; exit 1 ;;
+  *) EXTRA_TAG="_${BASELINE_POOL_TAG}_p${PRESSURE_MODE}_seed${SEED}" ;;
 esac
 
 SPLIT_TAG=""
@@ -432,7 +501,7 @@ fi
 
 # Label the optional CNN encoder in automatic run names.
 ENCODER_TAG=""
-if [[ "${ENCODER_TYPE}" == "CNN" ]]; then
+if [[ "${NEW_BASELINE}" == "0" && "${ENCODER_TYPE}" == "CNN" ]]; then
   ENCODER_TAG="_encCNN"
 fi
 
@@ -470,7 +539,14 @@ for LR_CUR in "${LR_LIST[@]}"; do
     fi
 
     AUTO_RUN_TAG="${STATION:-ALL}_${TRAIN_DATA_TAG}to${TEST_DATA_TAG}_${MODEL}${ENCODER_TAG}${TEMPORAL_TAG}${ACCUM_TAG}${EXTRA_TAG}${SPLIT_TAG}${LOSS_TAG}_hist${H}h_hid${HIDDEN_CHANNELS}_L${NUM_LAYERS}_bs${BATCH_SIZE}_lr${LR_CUR}_ep${EPOCHS}_sch${SCHEDULER}_xn${X_NORM}${PRESSURE_TAG}"
+    if [[ "${NEW_BASELINE}" == "1" ]]; then
+      AUTO_RUN_TAG="${MODEL}_${STATION:-ALL}_${TRAIN_DATA_TAG}to${TEST_DATA_TAG}_hist${H}h_${BASELINE_POOL_TAG}_p${PRESSURE_MODE}_seed${SEED}_stem${BASELINE_STEM_CHANNELS}_hid${HIDDEN_CHANNELS}_do${DROPOUT}${ACCUM_TAG}${SPLIT_TAG}${LOSS_TAG}_peak${EPISODE_GT_ALIGNED_PEAK_WEIGHT}_bs${BATCH_SIZE}_lr${LR_CUR}_ep${EPOCHS}_sch${SCHEDULER}_xn${X_NORM}"
+    fi
     RUN_TAG="${PYTHON_RUN_TAG_BASE:-${AUTO_RUN_TAG}}"
+    RUN_OUTPUT_DIR="${RUN_DIR}"
+    if [[ "${NEW_BASELINE}" == "1" ]] && (( ${#LR_LIST[@]} * ${#HISTORY_HOURS_LIST[@]} > 1 )); then
+      RUN_OUTPUT_DIR="${RUN_DIR}/hist${H}h_lr${LR_CUR}"
+    fi
     LOG_TAG="${RUN_TAG}"
     if (( ${#LOG_TAG} > 240 )); then
       LOG_HASH="$(printf '%s' "${RUN_TAG}" | sha256sum)"
@@ -486,8 +562,6 @@ for LR_CUR in "${LR_LIST[@]}"; do
       --model "${MODEL}"
       --exceedance_percentile "${EXCEEDANCE_PERCENTILE}"
       --checkpoint_selection "${CHECKPOINT_SELECTION}"
-      --encoder_type "${ENCODER_TYPE}"
-      --cnn_intermediate_channel "${CNN_INTERMEDIATE_CHANNEL}"
       --batch_size "${BATCH_SIZE}"
       --lr "${LR_CUR}"
       --epochs "${EPOCHS}"
@@ -505,7 +579,7 @@ for LR_CUR in "${LR_LIST[@]}"; do
       --future_only "${FUTURE_ONLY}"
       --future_year_threshold "${FUTURE_YEAR_THRESHOLD}"
       --run_tag "${RUN_TAG}_${RUNSTAMP}"
-      --output_dir "${RUN_DIR}"
+      --output_dir "${RUN_OUTPUT_DIR}"
       --torch_threads "${TORCH_THREADS}"
       --num_workers "${NUM_WORKERS}"
       --prefetch_factor "${PREFETCH_FACTOR}"
@@ -523,6 +597,15 @@ for LR_CUR in "${LR_LIST[@]}"; do
       --use_site_elevation "${USE_SITE_ELEVATION}"
       --use_bathymetry "${USE_BATHYMETRY}"
     )
+
+    if [[ "${NEW_BASELINE}" == "1" ]]; then
+      BASE_CMD+=(--baseline_pooling "${BASELINE_POOLING}"
+                 --baseline_pool_grid "${BASELINE_POOL_GRID}"
+                 --baseline_stem_channels "${BASELINE_STEM_CHANNELS}")
+    else
+      BASE_CMD+=(--encoder_type "${ENCODER_TYPE}"
+                 --cnn_intermediate_channel "${CNN_INTERMEDIATE_CHANNEL}")
+    fi
 
     [[ -n "${STATION}" ]]       && BASE_CMD+=(--station "${STATION}")
     [[ -n "${TEST_ROOT_DIR}" ]] && BASE_CMD+=(--test_root_dir "${TEST_ROOT_DIR}")

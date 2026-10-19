@@ -64,6 +64,95 @@ no jobs.
 Existing final Single checkpoints load through a small metadata compatibility
 adapter, with strict model-state loading. Legacy Dual checkpoints are rejected.
 
+## Shallow neural-network baselines
+
+Seven independent models share the existing data, normalization, optimization,
+ForecastLoss, checkpoint selection, and inference pipeline:
+
+| Model key | Spatial encoder | Temporal module |
+| --- | --- | --- |
+| `baseline_mlp` | Two pointwise linear layers | None; current forcing only |
+| `baseline_cnn` | Two 3×3 convolutions | None; current forcing only |
+| `baseline_mlp_lstm` | Two pointwise linear layers | One-layer LSTM |
+| `baseline_mlp_gru` | Two pointwise linear layers | One-layer GRU |
+| `baseline_cnn_lstm` | Two 3×3 convolutions | One-layer LSTM |
+| `baseline_cnn_gru` | Two 3×3 convolutions | One-layer GRU |
+| `baseline_convlstm` | One shared 3×3 input convolution | One ConvLSTM layer |
+
+The pointwise MLP shares weights across grid cells. CNN/MLP weights are also
+shared across forcing timestamps. The four separable recurrent models pool and
+project each timestamp before recurrence; the final recurrent output feeds a
+single direct multi-horizon regression head. All models use LeakyReLU spatial
+activations and modest configurable dropout, with no attention or autoregression.
+
+`baseline_cnn_gru` is a traditional shallow CNN+GRU. It is distinct from
+`perceiver3` configured with CNN and GRU, which includes PACT station-conditioned
+and horizon-aware cross-attention. The original `baseline` model remains
+available unchanged; its key never selects one of the seven new architectures.
+
+ConvLSTM first applies a shared 3×3 convolution from input features to
+`BASELINE_STEM_CHANNELS` and LeakyReLU. A single 3×3 convolution computes its four
+input/forget/output/candidate gates from the projected input and previous hidden
+map. Hidden and cell states retain their full 2D spatial dimensions and
+`BASELINE_STEM_CHANNELS` channels throughout recurrence. The final hidden map is
+pooled, flattened, projected to `HIDDEN_CHANNELS`, passed through LeakyReLU and
+dropout, and mapped linearly to all output horizons.
+
+The new options, used only by these seven models, are:
+
+| CLI option | Shell variable | Default |
+| --- | --- | --- |
+| `--baseline_pooling` | `BASELINE_POOLING` | `adaptive` |
+| `--baseline_pool_grid` | `BASELINE_POOL_GRID` | `4` |
+| `--baseline_stem_channels` | `BASELINE_STEM_CHANNELS` | `32` |
+
+Adaptive average pooling preserves a configurable coarse square grid (4×4 by
+default); `global_mean` averages the entire spatial grid. Any positive adaptive
+pool size is supported. Models accept different grid resolutions in separate
+batches; each batch must contain a consistent rectangular grid with row-major
+nodes and valid grid metadata. Example configs use `HIDDEN_CHANNELS=128` and
+`DROPOUT=0.05`; legacy PACT defaults are unchanged.
+
+Use `HISTORY_HOURS_LIST=(0)` for static MLP/CNN; positive history is rejected.
+Recurrent examples use an editable 24 hours. Values such as 12, 24, or 48 hours
+select `history_hours // 6 + 1` chronological snapshots, subject to available
+stored history. A recurrent model also accepts zero hours (one snapshot).
+History length is set by the experiment configuration, with no fixed seven-frame
+assumption. All three pressure modes below work through the shared loader, which
+infers five or six input features. Loss remains physical Global MSE plus editable
+Tail and episode peak terms. Example weights are zero for MSE-only training;
+nonzero values retain the existing TRAIN-only Q95 and missing-label semantics.
+
+Assignment-only examples for all seven models are in [configs/baselines](configs/baselines).
+Preview an example without starting training or submitting a job:
+
+```bash
+DRY_RUN=1 USE_TMUX=0 bash train.sh configs/baselines/train_config_baseline_cnn_gru.sh
+```
+
+Automatic names identify model, station, source dataset, history, pooling,
+pressure mode, and seed, while retaining a timestamp. Multi-history or
+multi-learning-rate baseline launches place each combination in its own
+subdirectory. Explicit run names retain their existing meaning. Resolved
+configuration snapshots and checkpoint metadata retain architecture parameters
+and loss weights; checkpoints reconstruct models without the original shell file.
+
+Evaluate any new baseline using the same inference entry point and an optional
+exact model assertion:
+
+```bash
+python infer.py --ckpt /path/to/run/best_overall.pt \
+  --root_dir ./dataset/NCEP/graphs --model baseline_cnn_gru \
+  --save_npz --out_dir ./All_Inference_Results/baseline_example
+```
+
+For cross-dataset evaluation, add `--test_root_dir`, `--years`, and
+`--strict_years` as needed. Inference preserves the exact model key, effective
+spatial/temporal modules, pooling, history, pressure, parameter count, and
+source/target provenance. It reuses source normalization and loads weights with
+`strict=True`. Legacy Single-head PACT and Baseline checkpoint handling remains
+in place, including the existing rejection of retired Dual-head checkpoints.
+
 ## Atmospheric pressure representations
 
 Training accepts `--pressure_mode` (or `PRESSURE_MODE` in shell configs):

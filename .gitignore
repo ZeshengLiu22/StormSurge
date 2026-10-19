@@ -52,6 +52,7 @@ checkpoints/
 cache/
 tmp/
 test/
-tests/
+tests/*
+!tests/test_baseline*.py
 tools/
 docs/
