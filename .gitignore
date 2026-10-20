@@ -56,3 +56,5 @@ tests/*
 !tests/test_baseline*.py
 tools/
 docs/
+tempfiles/
+tempPBS/
