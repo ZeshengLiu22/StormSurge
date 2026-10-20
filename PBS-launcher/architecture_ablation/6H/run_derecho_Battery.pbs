@@ -3,8 +3,7 @@
 # Submit from Derecho: qsub PBS-launcher/architecture_ablation/6H/run_derecho_Battery.pbs
 #PBS -N aa6_Battery
 #PBS -A ULHI0005
-#PBS -q main@desched1
-#PBS -l job_priority=economy
+#PBS -q preempt@desched1
 #PBS -l select=1:ncpus=64:mem=487GB:mpiprocs=4:ompthreads=1:ngpus=4
 #PBS -l walltime=12:00:00
 #PBS -j oe
