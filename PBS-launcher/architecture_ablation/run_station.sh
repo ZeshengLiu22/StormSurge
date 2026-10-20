@@ -2,6 +2,8 @@
 # Shared single-node Derecho launcher: eight sequential four-GPU DDP runs.
 # Usage: DRY_RUN=1 bash run_station.sh Boston 0H
 set -euo pipefail
+export NODE_ATTENTION_BACKEND="${NODE_ATTENTION_BACKEND:-math}"
+export WEIGHT_DECAY_POLICY="${WEIGHT_DECAY_POLICY:-module}"
 
 if [[ $# -ne 2 ]]; then
   echo "Usage: $0 <Boston|CBBT|Lewes|Battery> <0H|6H|12H|18H|24H|30H|36H|42H|48H>" >&2

@@ -2,12 +2,15 @@
 
 import argparse
 import math
+import os
 from pathlib import Path
 
 from emulator.common.cli import parse_bool_int, temporal_block_name
 from emulator.models import BASELINE_ARCHITECTURES, NEW_BASELINE_MODELS, STATIC_BASELINE_MODELS
+from emulator.models.node_attention import NODE_ATTENTION_BACKENDS
 from .checkpoint_selection import ROLES
 from .losses import validate_episode_peak_config
+from .weight_decay import WEIGHT_DECAY_POLICIES
 
 
 def parse_args(argv=None):
@@ -89,6 +92,11 @@ def parse_args(argv=None):
     )
     parser.add_argument("--epochs", type=int, default=300)
     parser.add_argument("--lr", type=float, default=3e-3)
+    parser.add_argument(
+        "--weight_decay_policy", choices=WEIGHT_DECAY_POLICIES,
+        default=os.environ.get("WEIGHT_DECAY_POLICY", "module"),
+        help="Adam decay policy (WEIGHT_DECAY_POLICY or module); legacy_global opts into blanket WD=1e-5.",
+    )
     parser.add_argument("--hidden_channels", type=int, default=64)
     parser.add_argument("--seed", type=int, default=42)
     parser.add_argument("--num_layers", type=int, default=2)
@@ -258,6 +266,11 @@ def parse_args(argv=None):
         help="PACT middle temporal block; 'attn' is accepted as an alias for Transformer.",
     )
     parser.add_argument("--node_read_heads", type=int, default=8)
+    parser.add_argument(
+        "--node_attention_backend", choices=NODE_ATTENTION_BACKENDS,
+        default=os.environ.get("NODE_ATTENTION_BACKEND", "math"),
+        help="PACT station-to-node SDPA (NODE_ATTENTION_BACKEND or math); auto preserves historical dispatch. No effect on models without node attention.",
+    )
     parser.add_argument("--time_read_heads", type=int, default=8)
     parser.add_argument("--transformer_layers", type=int, default=2)
     parser.add_argument("--transformer_ff_mult", type=float, default=4.0)
@@ -289,6 +302,11 @@ def parse_args(argv=None):
     parser.add_argument("--device", choices=["auto", "cpu", "cuda"], default="auto")
     parser.add_argument("--use_station_meta", type=parse_bool_int, choices=[0, 1], default=1)
     args = parser.parse_args(argv)
+    # argparse choices do not validate defaults taken from the environment.
+    if args.node_attention_backend not in NODE_ATTENTION_BACKENDS:
+        parser.error(f"Invalid NODE_ATTENTION_BACKEND: {args.node_attention_backend!r}.")
+    if args.weight_decay_policy not in WEIGHT_DECAY_POLICIES:
+        parser.error(f"Invalid WEIGHT_DECAY_POLICY: {args.weight_decay_policy!r}.")
     if args.station is not None and args.filter is not None and args.station != args.filter:
         parser.error("--station and --filter must select the same station.")
     args.station = args.station or args.filter

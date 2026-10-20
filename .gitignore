@@ -53,6 +53,7 @@ cache/
 tmp/
 test/
 tests/*
+!tests/test_training_protocol.py
 !tests/test_baseline*.py
 tools/
 docs/

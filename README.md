@@ -64,6 +64,25 @@ no jobs.
 Existing final Single checkpoints load through a small metadata compatibility
 adapter, with strict model-state loading. Legacy Dual checkpoints are rejected.
 
+## Training attention and weight decay
+
+Active training configs use `NODE_ATTENTION_BACKEND=math` and
+`WEIGHT_DECAY_POLICY=module`. Math SDPA applies only to station-to-node attention;
+forecast attention keeps its existing dispatch. Native Adam excludes the entire
+`horizon_embed` and `forecast_readout` modules from decay and applies WD=1e-5 to
+all other trainable parameters. Models without those modules retain WD=1e-5.
+The optimizer prints its effective groups once at startup. Existing active LR
+(5e-3), five-epoch warmup, clipping (off), precision, loss and pressure settings
+are unchanged.
+
+The matching CLI options are `--node_attention_backend` and
+`--weight_decay_policy`. Shell configs accept explicit environment overrides;
+`auto` preserves historical node dispatch, and `legacy_global` explicitly restores
+blanket WD=1e-5. Defaults for new training are Math + Module. Python ModelConfig
+construction and old checkpoints without backend metadata retain Auto; new
+checkpoints save and restore their selected backend. Inference uses checkpoint
+metadata, independently of training environment defaults.
+
 ## Shallow neural-network baselines
 
 Seven independent models share the existing data, normalization, optimization,

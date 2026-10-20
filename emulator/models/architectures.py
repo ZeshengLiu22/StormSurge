@@ -21,6 +21,7 @@ from .baselines import (
     MLPLSTMBaseline,
 )
 from .heads import ForecastOutput, SingleHead
+from .node_attention import NODE_ATTENTION_BACKENDS, node_attention
 from .spatial import SpatialEncoder
 from .temporal import TemporalMLP, TemporalRNN, TemporalTransformer
 
@@ -42,6 +43,9 @@ class ModelConfig:
         history_steps: Number of forcing steps preceding the current step.
         max_time_steps: PACT lag-embedding capacity, including the current step.
         node_read_heads: Number of heads in PACT station-to-node attention.
+        node_attention_backend: PACT station-readout SDPA policy, auto or math.
+            Construction and legacy-checkpoint default is auto; training sets it
+            explicitly. Saved in new checkpoints and restored for inference.
         time_read_heads: Number of heads in PACT temporal and forecast attention.
         temporal_layers: Number of PACT temporal blocks or recurrent layers.
         temporal_ff_mult: PACT feedforward width as a multiple of hidden_channels.
@@ -83,11 +87,14 @@ class ModelConfig:
     baseline_pooling: str = "adaptive"
     baseline_pool_grid: int = 4
     baseline_stem_channels: int = 32
+    node_attention_backend: str = "auto"
 
     def __post_init__(self):
         """Check construction contracts without changing legacy architecture defaults."""
         if self.model not in ("pact", "baseline", *NEW_BASELINE_MODELS):
             raise ValueError(f"Unsupported model name: {self.model!r}.")
+        if self.node_attention_backend not in NODE_ATTENTION_BACKENDS:
+            raise ValueError(f"Unknown node_attention_backend: {self.node_attention_backend!r}.")
         for name in ("in_channels", "out_channels", "hidden_channels"):
             value = getattr(self, name)
             if isinstance(value, bool) or not isinstance(value, Integral) or value < 1:
@@ -155,6 +162,7 @@ class PACT(nn.Module):
             else None
         )
         self.node_readout = nn.MultiheadAttention(hidden, config.node_read_heads, batch_first=True)
+        self.node_attention_backend = config.node_attention_backend
 
         self.history_steps = config.history_steps
         if config.max_time_steps < config.history_steps + 1:
@@ -235,8 +243,8 @@ class PACT(nn.Module):
         for x in history.unbind(dim=1):
             nodes = self.spatial(x, batch.edge_index, grid_shape)
             nodes, mask = to_dense_batch(nodes, batch.batch)
-            station, _ = self.node_readout(
-                query, nodes, nodes, key_padding_mask=~mask, need_weights=False
+            station, _ = node_attention(
+                self.node_readout, query, nodes, ~mask, self.node_attention_backend
             )
             station_history.append(F.layer_norm(station.float(), (station.size(-1),)).squeeze(1))
         memory = torch.stack(station_history, dim=1)
@@ -369,6 +377,8 @@ def model_config_from_checkpoint(checkpoint):
             removed.
     """
     saved_config = dict(checkpoint["model_config"])
+    # Training defaults must never reinterpret checkpoints created before this field.
+    saved_config.setdefault("node_attention_backend", "auto")
     head_type = saved_config.pop("head_type", "single")
     state = checkpoint.get("model_state", {})
     obsolete_branches = (

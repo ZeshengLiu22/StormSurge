@@ -11,5 +11,7 @@
 #PBS -o /glade/u/home/zel/scratch/StormSurge/PBS-launcher/architecture_ablation/30H/
 
 set -euo pipefail
+export NODE_ATTENTION_BACKEND="${NODE_ATTENTION_BACKEND:-math}"
+export WEIGHT_DECAY_POLICY="${WEIGHT_DECAY_POLICY:-module}"
 cd /glade/u/home/zel/scratch/StormSurge
 exec bash PBS-launcher/architecture_ablation/run_station.sh Lewes 30H

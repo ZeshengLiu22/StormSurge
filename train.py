@@ -43,6 +43,7 @@ from emulator.training.arguments import parse_args
 from emulator.training.checkpoint_selection import ROLES, CheckpointTracker
 from emulator.training.checkpoints import atomic_save
 from emulator.training.episode_peaks import build_episode_peak_targets
+from emulator.training.weight_decay import build_adam, format_optimizer_groups
 from emulator.training.reporting import (
     compact_comparison_report,
     comparison_report,
@@ -470,9 +471,12 @@ def _build_optimizer_and_scheduler(args, model):
 
     Returns:
         tuple: Adam optimizer and either a LambdaLR warmup/cosine scheduler or
-        a ReduceLROnPlateau scheduler. Adam uses weight decay of 1e-5.
+        a ReduceLROnPlateau scheduler. Adam excludes horizon/forecast modules from
+        decay by default; all other trainable parameters retain weight decay 1e-5.
     """
-    optimizer = torch.optim.Adam(model.parameters(), lr=args.lr, weight_decay=1e-5)
+    optimizer = build_adam(model, args.lr, policy=args.weight_decay_policy)
+    if not dist.is_initialized() or dist.get_rank() == 0:
+        log_message(format_optimizer_groups(optimizer, args.weight_decay_policy))
 
     def lr_multiplier(epoch):
         """Compute the warmup/cosine factor relative to the initial rate.

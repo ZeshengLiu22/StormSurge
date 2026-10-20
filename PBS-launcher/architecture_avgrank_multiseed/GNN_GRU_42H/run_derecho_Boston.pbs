@@ -12,6 +12,8 @@
 #PBS -o /glade/u/home/zel/scratch/StormSurge/PBS-launcher/architecture_avgrank_multiseed/GNN_GRU_42H/
 
 set -euo pipefail
+export NODE_ATTENTION_BACKEND="${NODE_ATTENTION_BACKEND:-math}"
+export WEIGHT_DECAY_POLICY="${WEIGHT_DECAY_POLICY:-module}"
 PROJECT_ROOT=/glade/u/home/zel/scratch/StormSurge
 cd -- "${PROJECT_ROOT}"
 export DRY_RUN="${DRY_RUN:-0}"

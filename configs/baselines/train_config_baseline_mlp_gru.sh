@@ -10,6 +10,8 @@ ROOT_DIR="./dataset/NCEP/graphs"
 TEST_ROOT_DIR=""
 STATION="Battery"
 MODEL="baseline_mlp_gru"
+NODE_ATTENTION_BACKEND="${NODE_ATTENTION_BACKEND:-math}"
+WEIGHT_DECAY_POLICY="${WEIGHT_DECAY_POLICY:-module}"
 # Static models require 0; recurrent histories may be any supported multiple of 6.
 HISTORY_HOURS_LIST=(24)
 BASELINE_POOLING="adaptive"

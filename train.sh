@@ -94,6 +94,7 @@ set -u
 : "${DROPOUT:=0.05}"
 : "${HEAD_DROPOUT:=0.0}"
 : "${NODE_READ_HEADS:=8}"
+: "${NODE_ATTENTION_BACKEND:=math}" # auto | math; station-to-node attention only
 : "${TIME_READ_HEADS:=8}"
 : "${TRANSFORMER_LAYERS:=2}"
 : "${TRANSFORMER_FF_MULT:=4.0}"
@@ -106,6 +107,7 @@ if [[ -z "${HISTORY_HOURS_LIST+x}" ]]; then
 fi
 
 # Optimization and scheduling
+: "${WEIGHT_DECAY_POLICY:=module}" # module | legacy_global
 : "${BATCH_SIZE:=256}"
 : "${GRAD_ACCUM_STEPS:=1}"
 : "${EPOCHS:=300}"
@@ -141,6 +143,15 @@ case "${MODEL}" in
   baseline_mlp|baseline_cnn|baseline_mlp_lstm|baseline_mlp_gru|baseline_cnn_lstm|baseline_cnn_gru|baseline_convlstm)
     NEW_BASELINE=1 ;;
   *) echo "[FATAL] Unsupported MODEL='${MODEL}'." >&2; exit 2 ;;
+esac
+
+case "${NODE_ATTENTION_BACKEND}" in
+  auto|math) ;;
+  *) echo "[FATAL] NODE_ATTENTION_BACKEND must be auto or math." >&2; exit 2 ;;
+esac
+case "${WEIGHT_DECAY_POLICY}" in
+  module|legacy_global) ;;
+  *) echo "[FATAL] WEIGHT_DECAY_POLICY must be module or legacy_global." >&2; exit 2 ;;
 esac
 
 BASELINE_POOL_TAG=""
@@ -371,7 +382,7 @@ write_resolved_config() {
     X_AUG_SCALE X_AUG_BIAS DISABLE_OOD USE_AMP AMP_DTYPE USE_TF32
     TORCH_THREADS NUM_WORKERS PIN_MEMORY PERSISTENT_WORKERS PREFETCH_FACTOR
     MP_CONTEXT USE_TMUX
-    NODE_READ_HEADS TIME_READ_HEADS TRANSFORMER_LAYERS
+    NODE_READ_HEADS NODE_ATTENTION_BACKEND WEIGHT_DECAY_POLICY TIME_READ_HEADS TRANSFORMER_LAYERS
     TRANSFORMER_FF_MULT TRANSFORMER_DROPOUT MAX_TIME_STEPS ALL_RESULTS_ROOT
     RUN_DIR_NAME_STYLE PACT_RUN_NAME PACT_RUNSTAMP SESSION_NAME PYTHON_RUN_TAG_BASE
   )
@@ -419,6 +430,8 @@ echo "tmux:          USE_TMUX=${USE_TMUX} SESSION_NAME=${SESSION_NAME:-<unset>} 
 echo "LAUNCHER:      ${TRAIN_LAUNCH[*]}"
 echo "Train script:  ${TRAIN_PY}"
 echo "Model:         ${MODEL}"
+echo "Node SDPA:     ${NODE_ATTENTION_BACKEND} (PACT only)"
+echo "Adam WD:       ${WEIGHT_DECAY_POLICY}"
 if [[ "${NEW_BASELINE}" == "1" ]]; then
   echo "Encoder:       ${EFFECTIVE_SPATIAL_ENCODER}"
   echo "Temporal:      ${EFFECTIVE_TEMPORAL_MODULE}"
@@ -463,7 +476,7 @@ if [[ "${DRY_RUN}" != "1" && "${USE_TMUX}" == "1" && "${TMUX_INNER}" == "0" ]] &
   if [[ -n "${QSUB_LOCAL_STATUS_FILE:-}" ]]; then
     printf -v STATUS_HANDOFF 'printf "%%s\n" "$status" > %q; ' "${QSUB_LOCAL_STATUS_FILE}"
   fi
-  printf -v TMUX_INNER_CMD 'PYTHON_BIN=%q S0_PYTHON_BIN=%q DRY_RUN=0 PRESSURE_MODE=%q SESSION_NAME=%q PACT_RUNSTAMP=%q PACT_RUN_NAME=%q bash %q %q --_tmux_inner; status=$?; %s if [[ ${status} -ne 0 ]]; then echo; echo "[tmux] train.sh exited with status ${status}; closing failed session so the local queue can continue."; fi; exit "${status}"' "${PYTHON_BIN}" "${PYTHON_BIN}" "${PRESSURE_MODE}" "${SESSION_NAME}" "${RUNSTAMP}" "${RUN_NAME}" "${SCRIPT_PATH}" "${CONFIG_PATH}" "${STATUS_HANDOFF}"
+  printf -v TMUX_INNER_CMD 'PYTHON_BIN=%q S0_PYTHON_BIN=%q DRY_RUN=0 PRESSURE_MODE=%q NODE_ATTENTION_BACKEND=%q WEIGHT_DECAY_POLICY=%q SESSION_NAME=%q PACT_RUNSTAMP=%q PACT_RUN_NAME=%q bash %q %q --_tmux_inner; status=$?; %s if [[ ${status} -ne 0 ]]; then echo; echo "[tmux] train.sh exited with status ${status}; closing failed session so the local queue can continue."; fi; exit "${status}"' "${PYTHON_BIN}" "${PYTHON_BIN}" "${PRESSURE_MODE}" "${NODE_ATTENTION_BACKEND}" "${WEIGHT_DECAY_POLICY}" "${SESSION_NAME}" "${RUNSTAMP}" "${RUN_NAME}" "${SCRIPT_PATH}" "${CONFIG_PATH}" "${STATUS_HANDOFF}"
   printf -v TMUX_CMD 'bash -c %q' "${TMUX_INNER_CMD}"
   echo "[INFO] launching inside tmux session: ${SESSION_NAME}"
   # Carry the active environment and GPU allocation into the detached session.
@@ -560,6 +573,8 @@ for LR_CUR in "${LR_LIST[@]}"; do
       --root_dir "${ROOT_DIR}"
       --pressure_mode "${PRESSURE_MODE}"
       --model "${MODEL}"
+      --node_attention_backend "${NODE_ATTENTION_BACKEND}"
+      --weight_decay_policy "${WEIGHT_DECAY_POLICY}"
       --exceedance_percentile "${EXCEEDANCE_PERCENTILE}"
       --checkpoint_selection "${CHECKPOINT_SELECTION}"
       --batch_size "${BATCH_SIZE}"
