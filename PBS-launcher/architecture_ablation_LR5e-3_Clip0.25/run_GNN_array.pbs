@@ -1,0 +1,18 @@
+#!/bin/bash -l
+# 144 experiments: station-major, then history, then MLP/LSTM/GRU/Attn.
+# Override default %24 concurrency: qsub -J '0-143%48' run_GNN_array.pbs
+#PBS -N ss5c_GNN
+#PBS -A ULHI0005
+#PBS -q preempt@desched1
+#PBS -J 0-143%24
+#PBS -l select=1:ncpus=64:mem=487GB:mpiprocs=4:ompthreads=1:ngpus=4
+#PBS -l walltime=00:35:00
+#PBS -r y
+#PBS -j oe
+#PBS -o /glade/u/home/zel/scratch/StormSurge/PBS-launcher/architecture_ablation_LR5e-3_Clip0.25/logs/
+#PBS -v SS_GROUP=LR5e-3_Clip0.25,SS_ENCODER=GNN
+
+set -euo pipefail
+export DRY_RUN="${DRY_RUN:-0}"
+exec bash /glade/u/home/zel/scratch/StormSurge/PBS-launcher/architecture_ablation_arrays/run_array.sh \
+  LR5e-3_Clip0.25 GNN "${PBS_ARRAY_INDEX:?PBS_ARRAY_INDEX must be set (0..143)}"
