@@ -1,0 +1,4 @@
+*/execution_logs/
+*/manifests/
+*/pbs_logs/*
+!*/pbs_logs/.gitkeep

@@ -1,0 +1,16 @@
+#!/bin/bash -l
+# Twelve sequential four-GPU DDP runs: Battery, Boston, CBBT, Lewes; seeds 42, 123, 2026.
+# Measured estimate: 99.261 minutes for three seeds.
+#PBS -N arC_Attn24
+#PBS -A ULHI0005
+#PBS -q main
+#PBS -l job_priority=economy
+#PBS -l select=1:ncpus=64:mem=487GB:mpiprocs=4:ompthreads=1:ngpus=4
+#PBS -l walltime=02:45:00
+#PBS -j oe
+#PBS -r n
+#PBS -o /glade/u/home/zel/scratch/StormSurge/PBS-launcher/architecture_avgrank_multiseed_LR5e-3_Clip0.25/CNN_Attn_24H/pbs_logs/
+
+set -euo pipefail
+cd -- /glade/u/home/zel/scratch/StormSurge
+exec bash PBS-launcher/architecture_avgrank_multiseed_LR5e-3_Clip0.25/run_architecture.sh CNN_Attn_24H
