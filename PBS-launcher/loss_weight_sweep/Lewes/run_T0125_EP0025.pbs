@@ -1,0 +1,40 @@
+#!/bin/bash -l
+# One independent four-GPU run: Lewes, T0125_EP0025, seed 42.
+# A PBS rerun starts a fresh timestamped run; it does not resume a checkpoint.
+#PBS -N lwLeT0125P0025
+#PBS -A ULHI0005
+#PBS -q preempt@desched1
+#PBS -l select=1:ncpus=64:mem=487GB:mpiprocs=4:ompthreads=1:ngpus=4
+#PBS -l walltime=00:30:00
+#PBS -r y
+#PBS -j oe
+#PBS -o /glade/u/home/zel/scratch/StormSurge/PBS-launcher/loss_weight_sweep/Lewes/
+
+set -euo pipefail
+cd -- /glade/u/home/zel/scratch/StormSurge
+
+export PYTHON_BIN="/glade/work/zel/conda-envs/derecho-ml/bin/python"
+export S0_PYTHON_BIN="${PYTHON_BIN}"
+export USE_TMUX=0 NODE_ATTENTION_BACKEND=math WEIGHT_DECAY_POLICY=module
+export OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 PYTHONUNBUFFERED=1
+unset SLURM_NTASKS_PER_NODE SLURM_JOB_ID PACT_RUNSTAMP
+
+module load cuda/12.9.0
+export TMPDIR="/glade/derecho/scratch/zel/tmp/stormsurge-${PBS_JOBID:?PBS_JOBID must be set}"
+mkdir -p -- "${TMPDIR}"
+
+[[ -x "${PYTHON_BIN}" ]] || { echo "[FATAL] Python is not executable: ${PYTHON_BIN}" >&2; exit 2; }
+[[ -r train.sh && -r train.py && -r "/glade/u/home/zel/scratch/StormSurge/configs/loss_weight_sweep_5e-3_Clip0.25/Lewes/train_config_NCEP_Lewes_CNN_MLP_36H_G0_T0125_EP0025_seed42.sh" ]] || { echo "[FATAL] Missing training entry point or config." >&2; exit 2; }
+"${PYTHON_BIN}" - <<'PYTHON'
+import torch
+import torch.distributed as dist
+
+if not torch.cuda.is_available() or torch.cuda.device_count() != 4:
+    raise SystemExit("[FATAL] Exactly four visible CUDA GPUs are required.")
+if not dist.is_available() or not dist.is_nccl_available():
+    raise SystemExit("[FATAL] PyTorch distributed/NCCL support is required.")
+if any(torch.cuda.get_device_capability(i)[0] < 8 for i in range(4)):
+    raise SystemExit("[FATAL] BF16/TF32 requires Ampere or newer GPUs.")
+PYTHON
+
+exec bash train.sh "/glade/u/home/zel/scratch/StormSurge/configs/loss_weight_sweep_5e-3_Clip0.25/Lewes/train_config_NCEP_Lewes_CNN_MLP_36H_G0_T0125_EP0025_seed42.sh"
