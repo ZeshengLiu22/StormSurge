@@ -1,0 +1,1247 @@
+{
+  "platform": "Derecho",
+  "configs": [
+    {
+      "model": "baseline_mlp",
+      "station": "Battery",
+      "seed": 42,
+      "history_hours": 0,
+      "config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_mlp/Battery/seed42/train_config.sh",
+      "sha256": "3a9ae0b4a9d205ff69a6966caaed49b3af55b958a93318878004409c70597bdd",
+      "run_identity": "Derecho_formal_bf16_MSEOnly_baseline_mlp_Battery_NCEP_0H_seed42_lr5e-3_clip0.25",
+      "result_root": "/glade/u/home/zel/scratch/StormSurge/All_Results/baselines_MSEOnly_Derecho_formal_bf16/baseline_mlp/Battery/seed42",
+      "source": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/train_config_baseline_mlp.sh"
+    },
+    {
+      "model": "baseline_mlp",
+      "station": "Boston",
+      "seed": 42,
+      "history_hours": 0,
+      "config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_mlp/Boston/seed42/train_config.sh",
+      "sha256": "7400c70866a3201d2cbc6745a2895abf7c5aedead29402f796689d7b4e049323",
+      "run_identity": "Derecho_formal_bf16_MSEOnly_baseline_mlp_Boston_NCEP_0H_seed42_lr5e-3_clip0.25",
+      "result_root": "/glade/u/home/zel/scratch/StormSurge/All_Results/baselines_MSEOnly_Derecho_formal_bf16/baseline_mlp/Boston/seed42",
+      "source": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/train_config_baseline_mlp.sh"
+    },
+    {
+      "model": "baseline_mlp",
+      "station": "CBBT",
+      "seed": 42,
+      "history_hours": 0,
+      "config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_mlp/CBBT/seed42/train_config.sh",
+      "sha256": "f5ec4e0add7299ecc54845a63bf99e8997405bed7c76c5b076d1c036186ef3c2",
+      "run_identity": "Derecho_formal_bf16_MSEOnly_baseline_mlp_CBBT_NCEP_0H_seed42_lr5e-3_clip0.25",
+      "result_root": "/glade/u/home/zel/scratch/StormSurge/All_Results/baselines_MSEOnly_Derecho_formal_bf16/baseline_mlp/CBBT/seed42",
+      "source": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/train_config_baseline_mlp.sh"
+    },
+    {
+      "model": "baseline_mlp",
+      "station": "Lewes",
+      "seed": 42,
+      "history_hours": 0,
+      "config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_mlp/Lewes/seed42/train_config.sh",
+      "sha256": "6b23c46041be058e30d648a69033980af710556207471631eeaddb2c7f5275d8",
+      "run_identity": "Derecho_formal_bf16_MSEOnly_baseline_mlp_Lewes_NCEP_0H_seed42_lr5e-3_clip0.25",
+      "result_root": "/glade/u/home/zel/scratch/StormSurge/All_Results/baselines_MSEOnly_Derecho_formal_bf16/baseline_mlp/Lewes/seed42",
+      "source": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/train_config_baseline_mlp.sh"
+    },
+    {
+      "model": "baseline_mlp",
+      "station": "Battery",
+      "seed": 123,
+      "history_hours": 0,
+      "config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_mlp/Battery/seed123/train_config.sh",
+      "sha256": "673370674933ff5e0857f130e70cee72519c50e8466f3035f8f5c9369e182f65",
+      "run_identity": "Derecho_formal_bf16_MSEOnly_baseline_mlp_Battery_NCEP_0H_seed123_lr5e-3_clip0.25",
+      "result_root": "/glade/u/home/zel/scratch/StormSurge/All_Results/baselines_MSEOnly_Derecho_formal_bf16/baseline_mlp/Battery/seed123",
+      "source": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/train_config_baseline_mlp.sh"
+    },
+    {
+      "model": "baseline_mlp",
+      "station": "Boston",
+      "seed": 123,
+      "history_hours": 0,
+      "config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_mlp/Boston/seed123/train_config.sh",
+      "sha256": "ef8abc1e409c4e13d3c8e1ca0f2e50ab6b07ae1e970218c99a2e72b9a8522e30",
+      "run_identity": "Derecho_formal_bf16_MSEOnly_baseline_mlp_Boston_NCEP_0H_seed123_lr5e-3_clip0.25",
+      "result_root": "/glade/u/home/zel/scratch/StormSurge/All_Results/baselines_MSEOnly_Derecho_formal_bf16/baseline_mlp/Boston/seed123",
+      "source": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/train_config_baseline_mlp.sh"
+    },
+    {
+      "model": "baseline_mlp",
+      "station": "CBBT",
+      "seed": 123,
+      "history_hours": 0,
+      "config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_mlp/CBBT/seed123/train_config.sh",
+      "sha256": "12bfd0e780895b6320d94eff867b0510dcd395e402f054b7bacd8828d1d67bb4",
+      "run_identity": "Derecho_formal_bf16_MSEOnly_baseline_mlp_CBBT_NCEP_0H_seed123_lr5e-3_clip0.25",
+      "result_root": "/glade/u/home/zel/scratch/StormSurge/All_Results/baselines_MSEOnly_Derecho_formal_bf16/baseline_mlp/CBBT/seed123",
+      "source": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/train_config_baseline_mlp.sh"
+    },
+    {
+      "model": "baseline_mlp",
+      "station": "Lewes",
+      "seed": 123,
+      "history_hours": 0,
+      "config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_mlp/Lewes/seed123/train_config.sh",
+      "sha256": "916dbf231473d0d8b4e77c831efa3cceba8cc819e1447f07fcaac0872931edf7",
+      "run_identity": "Derecho_formal_bf16_MSEOnly_baseline_mlp_Lewes_NCEP_0H_seed123_lr5e-3_clip0.25",
+      "result_root": "/glade/u/home/zel/scratch/StormSurge/All_Results/baselines_MSEOnly_Derecho_formal_bf16/baseline_mlp/Lewes/seed123",
+      "source": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/train_config_baseline_mlp.sh"
+    },
+    {
+      "model": "baseline_mlp",
+      "station": "Battery",
+      "seed": 2026,
+      "history_hours": 0,
+      "config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_mlp/Battery/seed2026/train_config.sh",
+      "sha256": "21c176970a3ce835583970c5cc563f034f8fd57db5569963794c40aba49c4746",
+      "run_identity": "Derecho_formal_bf16_MSEOnly_baseline_mlp_Battery_NCEP_0H_seed2026_lr5e-3_clip0.25",
+      "result_root": "/glade/u/home/zel/scratch/StormSurge/All_Results/baselines_MSEOnly_Derecho_formal_bf16/baseline_mlp/Battery/seed2026",
+      "source": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/train_config_baseline_mlp.sh"
+    },
+    {
+      "model": "baseline_mlp",
+      "station": "Boston",
+      "seed": 2026,
+      "history_hours": 0,
+      "config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_mlp/Boston/seed2026/train_config.sh",
+      "sha256": "36cb85252992a671e98f7c5a6f95570a4cf76e6ec7b1641a9494a5eefb48cfbd",
+      "run_identity": "Derecho_formal_bf16_MSEOnly_baseline_mlp_Boston_NCEP_0H_seed2026_lr5e-3_clip0.25",
+      "result_root": "/glade/u/home/zel/scratch/StormSurge/All_Results/baselines_MSEOnly_Derecho_formal_bf16/baseline_mlp/Boston/seed2026",
+      "source": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/train_config_baseline_mlp.sh"
+    },
+    {
+      "model": "baseline_mlp",
+      "station": "CBBT",
+      "seed": 2026,
+      "history_hours": 0,
+      "config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_mlp/CBBT/seed2026/train_config.sh",
+      "sha256": "1cc614c37115421b403a94ae06e41965587db98e4dc74ecc3b57384c02dd32be",
+      "run_identity": "Derecho_formal_bf16_MSEOnly_baseline_mlp_CBBT_NCEP_0H_seed2026_lr5e-3_clip0.25",
+      "result_root": "/glade/u/home/zel/scratch/StormSurge/All_Results/baselines_MSEOnly_Derecho_formal_bf16/baseline_mlp/CBBT/seed2026",
+      "source": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/train_config_baseline_mlp.sh"
+    },
+    {
+      "model": "baseline_mlp",
+      "station": "Lewes",
+      "seed": 2026,
+      "history_hours": 0,
+      "config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_mlp/Lewes/seed2026/train_config.sh",
+      "sha256": "0b97e0c4c8424d353af7a70e7db504e6419a2882a83e562a5e2e3a5cdb758432",
+      "run_identity": "Derecho_formal_bf16_MSEOnly_baseline_mlp_Lewes_NCEP_0H_seed2026_lr5e-3_clip0.25",
+      "result_root": "/glade/u/home/zel/scratch/StormSurge/All_Results/baselines_MSEOnly_Derecho_formal_bf16/baseline_mlp/Lewes/seed2026",
+      "source": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/train_config_baseline_mlp.sh"
+    },
+    {
+      "model": "baseline_cnn",
+      "station": "Battery",
+      "seed": 42,
+      "history_hours": 0,
+      "config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_cnn/Battery/seed42/train_config.sh",
+      "sha256": "32c5907929fd7c74b03bd7d60d1fb634414af96b17039950f8042221b6442171",
+      "run_identity": "Derecho_formal_bf16_MSEOnly_baseline_cnn_Battery_NCEP_0H_seed42_lr5e-3_clip0.25",
+      "result_root": "/glade/u/home/zel/scratch/StormSurge/All_Results/baselines_MSEOnly_Derecho_formal_bf16/baseline_cnn/Battery/seed42",
+      "source": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/train_config_baseline_cnn.sh"
+    },
+    {
+      "model": "baseline_cnn",
+      "station": "Boston",
+      "seed": 42,
+      "history_hours": 0,
+      "config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_cnn/Boston/seed42/train_config.sh",
+      "sha256": "828d69629a771573466edcc397ae524b7d873bc29e4332b3adbc91d29fcee4f1",
+      "run_identity": "Derecho_formal_bf16_MSEOnly_baseline_cnn_Boston_NCEP_0H_seed42_lr5e-3_clip0.25",
+      "result_root": "/glade/u/home/zel/scratch/StormSurge/All_Results/baselines_MSEOnly_Derecho_formal_bf16/baseline_cnn/Boston/seed42",
+      "source": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/train_config_baseline_cnn.sh"
+    },
+    {
+      "model": "baseline_cnn",
+      "station": "CBBT",
+      "seed": 42,
+      "history_hours": 0,
+      "config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_cnn/CBBT/seed42/train_config.sh",
+      "sha256": "9a31adb31b2f682fa96a3a71ea61abe2ffee44368690a4c80b278606f13bbd42",
+      "run_identity": "Derecho_formal_bf16_MSEOnly_baseline_cnn_CBBT_NCEP_0H_seed42_lr5e-3_clip0.25",
+      "result_root": "/glade/u/home/zel/scratch/StormSurge/All_Results/baselines_MSEOnly_Derecho_formal_bf16/baseline_cnn/CBBT/seed42",
+      "source": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/train_config_baseline_cnn.sh"
+    },
+    {
+      "model": "baseline_cnn",
+      "station": "Lewes",
+      "seed": 42,
+      "history_hours": 0,
+      "config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_cnn/Lewes/seed42/train_config.sh",
+      "sha256": "cacab31b992e6b501ec88205fc14a6b3869de8cdb40d6c68f8277e13437974b1",
+      "run_identity": "Derecho_formal_bf16_MSEOnly_baseline_cnn_Lewes_NCEP_0H_seed42_lr5e-3_clip0.25",
+      "result_root": "/glade/u/home/zel/scratch/StormSurge/All_Results/baselines_MSEOnly_Derecho_formal_bf16/baseline_cnn/Lewes/seed42",
+      "source": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/train_config_baseline_cnn.sh"
+    },
+    {
+      "model": "baseline_cnn",
+      "station": "Battery",
+      "seed": 123,
+      "history_hours": 0,
+      "config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_cnn/Battery/seed123/train_config.sh",
+      "sha256": "3f440a3dc1d70ce5a93d1f98476798fbd87aba5b803d6fd4ba1c9ee16a8253b2",
+      "run_identity": "Derecho_formal_bf16_MSEOnly_baseline_cnn_Battery_NCEP_0H_seed123_lr5e-3_clip0.25",
+      "result_root": "/glade/u/home/zel/scratch/StormSurge/All_Results/baselines_MSEOnly_Derecho_formal_bf16/baseline_cnn/Battery/seed123",
+      "source": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/train_config_baseline_cnn.sh"
+    },
+    {
+      "model": "baseline_cnn",
+      "station": "Boston",
+      "seed": 123,
+      "history_hours": 0,
+      "config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_cnn/Boston/seed123/train_config.sh",
+      "sha256": "774655e67181a4998ff68f36dacccf90ea84094d9c637c7030ad44c270760947",
+      "run_identity": "Derecho_formal_bf16_MSEOnly_baseline_cnn_Boston_NCEP_0H_seed123_lr5e-3_clip0.25",
+      "result_root": "/glade/u/home/zel/scratch/StormSurge/All_Results/baselines_MSEOnly_Derecho_formal_bf16/baseline_cnn/Boston/seed123",
+      "source": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/train_config_baseline_cnn.sh"
+    },
+    {
+      "model": "baseline_cnn",
+      "station": "CBBT",
+      "seed": 123,
+      "history_hours": 0,
+      "config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_cnn/CBBT/seed123/train_config.sh",
+      "sha256": "db2b8a30194f99f783aec0e422bd0c2356d95d7d4c461ae9e2e21d37f137e7be",
+      "run_identity": "Derecho_formal_bf16_MSEOnly_baseline_cnn_CBBT_NCEP_0H_seed123_lr5e-3_clip0.25",
+      "result_root": "/glade/u/home/zel/scratch/StormSurge/All_Results/baselines_MSEOnly_Derecho_formal_bf16/baseline_cnn/CBBT/seed123",
+      "source": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/train_config_baseline_cnn.sh"
+    },
+    {
+      "model": "baseline_cnn",
+      "station": "Lewes",
+      "seed": 123,
+      "history_hours": 0,
+      "config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_cnn/Lewes/seed123/train_config.sh",
+      "sha256": "295e3a832f85d5337b2bf451382969b2b1ada5b9d094e8173e0ae4b6fbf92886",
+      "run_identity": "Derecho_formal_bf16_MSEOnly_baseline_cnn_Lewes_NCEP_0H_seed123_lr5e-3_clip0.25",
+      "result_root": "/glade/u/home/zel/scratch/StormSurge/All_Results/baselines_MSEOnly_Derecho_formal_bf16/baseline_cnn/Lewes/seed123",
+      "source": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/train_config_baseline_cnn.sh"
+    },
+    {
+      "model": "baseline_cnn",
+      "station": "Battery",
+      "seed": 2026,
+      "history_hours": 0,
+      "config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_cnn/Battery/seed2026/train_config.sh",
+      "sha256": "568eec34f0a6bacef3ef7ea72af179d1490d19c0226736aa71e733a9e512bffc",
+      "run_identity": "Derecho_formal_bf16_MSEOnly_baseline_cnn_Battery_NCEP_0H_seed2026_lr5e-3_clip0.25",
+      "result_root": "/glade/u/home/zel/scratch/StormSurge/All_Results/baselines_MSEOnly_Derecho_formal_bf16/baseline_cnn/Battery/seed2026",
+      "source": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/train_config_baseline_cnn.sh"
+    },
+    {
+      "model": "baseline_cnn",
+      "station": "Boston",
+      "seed": 2026,
+      "history_hours": 0,
+      "config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_cnn/Boston/seed2026/train_config.sh",
+      "sha256": "62fecaefb886d2c539aa55ba2f73608062982fa741fdc85ce003fbb924ea17b9",
+      "run_identity": "Derecho_formal_bf16_MSEOnly_baseline_cnn_Boston_NCEP_0H_seed2026_lr5e-3_clip0.25",
+      "result_root": "/glade/u/home/zel/scratch/StormSurge/All_Results/baselines_MSEOnly_Derecho_formal_bf16/baseline_cnn/Boston/seed2026",
+      "source": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/train_config_baseline_cnn.sh"
+    },
+    {
+      "model": "baseline_cnn",
+      "station": "CBBT",
+      "seed": 2026,
+      "history_hours": 0,
+      "config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_cnn/CBBT/seed2026/train_config.sh",
+      "sha256": "52917d140edafa7ed949f2e656fb396f53cd91cea85cf008bb995e539d2db0f1",
+      "run_identity": "Derecho_formal_bf16_MSEOnly_baseline_cnn_CBBT_NCEP_0H_seed2026_lr5e-3_clip0.25",
+      "result_root": "/glade/u/home/zel/scratch/StormSurge/All_Results/baselines_MSEOnly_Derecho_formal_bf16/baseline_cnn/CBBT/seed2026",
+      "source": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/train_config_baseline_cnn.sh"
+    },
+    {
+      "model": "baseline_cnn",
+      "station": "Lewes",
+      "seed": 2026,
+      "history_hours": 0,
+      "config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_cnn/Lewes/seed2026/train_config.sh",
+      "sha256": "c4e7bfa274ff37419acd719c59f86f3d0d9456e9be344cf511f844519152d1a2",
+      "run_identity": "Derecho_formal_bf16_MSEOnly_baseline_cnn_Lewes_NCEP_0H_seed2026_lr5e-3_clip0.25",
+      "result_root": "/glade/u/home/zel/scratch/StormSurge/All_Results/baselines_MSEOnly_Derecho_formal_bf16/baseline_cnn/Lewes/seed2026",
+      "source": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/train_config_baseline_cnn.sh"
+    },
+    {
+      "model": "baseline_mlp_lstm",
+      "station": "Battery",
+      "seed": 42,
+      "history_hours": 36,
+      "config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_mlp_lstm/Battery/seed42/train_config.sh",
+      "sha256": "b9068201b9f6f6dfa0d9c5f96bad6ad9410aa8c3085ab67f8953a3cd68779d71",
+      "run_identity": "Derecho_formal_bf16_MSEOnly_baseline_mlp_lstm_Battery_NCEP_36H_seed42_lr5e-3_clip0.25",
+      "result_root": "/glade/u/home/zel/scratch/StormSurge/All_Results/baselines_MSEOnly_Derecho_formal_bf16/baseline_mlp_lstm/Battery/seed42",
+      "source": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/train_config_baseline_mlp_lstm.sh"
+    },
+    {
+      "model": "baseline_mlp_lstm",
+      "station": "Boston",
+      "seed": 42,
+      "history_hours": 36,
+      "config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_mlp_lstm/Boston/seed42/train_config.sh",
+      "sha256": "f3ce7bfd2e6dfd6cecc6c096ed99889c1110cf23d40b70cc585453c5cdc7ce4f",
+      "run_identity": "Derecho_formal_bf16_MSEOnly_baseline_mlp_lstm_Boston_NCEP_36H_seed42_lr5e-3_clip0.25",
+      "result_root": "/glade/u/home/zel/scratch/StormSurge/All_Results/baselines_MSEOnly_Derecho_formal_bf16/baseline_mlp_lstm/Boston/seed42",
+      "source": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/train_config_baseline_mlp_lstm.sh"
+    },
+    {
+      "model": "baseline_mlp_lstm",
+      "station": "CBBT",
+      "seed": 42,
+      "history_hours": 36,
+      "config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_mlp_lstm/CBBT/seed42/train_config.sh",
+      "sha256": "3bb90490b25ebf014aa2be51a8cb267990dc37ed04e6bd7ea232af96dfde512b",
+      "run_identity": "Derecho_formal_bf16_MSEOnly_baseline_mlp_lstm_CBBT_NCEP_36H_seed42_lr5e-3_clip0.25",
+      "result_root": "/glade/u/home/zel/scratch/StormSurge/All_Results/baselines_MSEOnly_Derecho_formal_bf16/baseline_mlp_lstm/CBBT/seed42",
+      "source": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/train_config_baseline_mlp_lstm.sh"
+    },
+    {
+      "model": "baseline_mlp_lstm",
+      "station": "Lewes",
+      "seed": 42,
+      "history_hours": 36,
+      "config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_mlp_lstm/Lewes/seed42/train_config.sh",
+      "sha256": "9e7a5ffd7e68863b151f246450488f0c795a5885b18001c56f4719863b2620ae",
+      "run_identity": "Derecho_formal_bf16_MSEOnly_baseline_mlp_lstm_Lewes_NCEP_36H_seed42_lr5e-3_clip0.25",
+      "result_root": "/glade/u/home/zel/scratch/StormSurge/All_Results/baselines_MSEOnly_Derecho_formal_bf16/baseline_mlp_lstm/Lewes/seed42",
+      "source": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/train_config_baseline_mlp_lstm.sh"
+    },
+    {
+      "model": "baseline_mlp_lstm",
+      "station": "Battery",
+      "seed": 123,
+      "history_hours": 36,
+      "config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_mlp_lstm/Battery/seed123/train_config.sh",
+      "sha256": "221a211cea1b19c7c0e8f0a558faf01b838a08deab4074391f77f5596570b3ae",
+      "run_identity": "Derecho_formal_bf16_MSEOnly_baseline_mlp_lstm_Battery_NCEP_36H_seed123_lr5e-3_clip0.25",
+      "result_root": "/glade/u/home/zel/scratch/StormSurge/All_Results/baselines_MSEOnly_Derecho_formal_bf16/baseline_mlp_lstm/Battery/seed123",
+      "source": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/train_config_baseline_mlp_lstm.sh"
+    },
+    {
+      "model": "baseline_mlp_lstm",
+      "station": "Boston",
+      "seed": 123,
+      "history_hours": 36,
+      "config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_mlp_lstm/Boston/seed123/train_config.sh",
+      "sha256": "0b3dace9c50c17820eb9514fb97e738fe317f88511ffeeeedf5611702b1b8047",
+      "run_identity": "Derecho_formal_bf16_MSEOnly_baseline_mlp_lstm_Boston_NCEP_36H_seed123_lr5e-3_clip0.25",
+      "result_root": "/glade/u/home/zel/scratch/StormSurge/All_Results/baselines_MSEOnly_Derecho_formal_bf16/baseline_mlp_lstm/Boston/seed123",
+      "source": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/train_config_baseline_mlp_lstm.sh"
+    },
+    {
+      "model": "baseline_mlp_lstm",
+      "station": "CBBT",
+      "seed": 123,
+      "history_hours": 36,
+      "config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_mlp_lstm/CBBT/seed123/train_config.sh",
+      "sha256": "b3672d3b81e4ea2752505877ffaa478d34a833023d3bb9d5107e57a2c8725797",
+      "run_identity": "Derecho_formal_bf16_MSEOnly_baseline_mlp_lstm_CBBT_NCEP_36H_seed123_lr5e-3_clip0.25",
+      "result_root": "/glade/u/home/zel/scratch/StormSurge/All_Results/baselines_MSEOnly_Derecho_formal_bf16/baseline_mlp_lstm/CBBT/seed123",
+      "source": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/train_config_baseline_mlp_lstm.sh"
+    },
+    {
+      "model": "baseline_mlp_lstm",
+      "station": "Lewes",
+      "seed": 123,
+      "history_hours": 36,
+      "config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_mlp_lstm/Lewes/seed123/train_config.sh",
+      "sha256": "cb89b92575a2f2ecb9be7106e51c75e72b9182b6730a896213f4c15d7c08072a",
+      "run_identity": "Derecho_formal_bf16_MSEOnly_baseline_mlp_lstm_Lewes_NCEP_36H_seed123_lr5e-3_clip0.25",
+      "result_root": "/glade/u/home/zel/scratch/StormSurge/All_Results/baselines_MSEOnly_Derecho_formal_bf16/baseline_mlp_lstm/Lewes/seed123",
+      "source": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/train_config_baseline_mlp_lstm.sh"
+    },
+    {
+      "model": "baseline_mlp_lstm",
+      "station": "Battery",
+      "seed": 2026,
+      "history_hours": 36,
+      "config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_mlp_lstm/Battery/seed2026/train_config.sh",
+      "sha256": "65f8a491b4b050466c22f642680238200c883fe1317f686bce7969da885e8dbb",
+      "run_identity": "Derecho_formal_bf16_MSEOnly_baseline_mlp_lstm_Battery_NCEP_36H_seed2026_lr5e-3_clip0.25",
+      "result_root": "/glade/u/home/zel/scratch/StormSurge/All_Results/baselines_MSEOnly_Derecho_formal_bf16/baseline_mlp_lstm/Battery/seed2026",
+      "source": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/train_config_baseline_mlp_lstm.sh"
+    },
+    {
+      "model": "baseline_mlp_lstm",
+      "station": "Boston",
+      "seed": 2026,
+      "history_hours": 36,
+      "config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_mlp_lstm/Boston/seed2026/train_config.sh",
+      "sha256": "c7e276c5c8aee2d851a7ae3341a8891ed7ff11dd5fd92a21dd9f30a6fe1d512b",
+      "run_identity": "Derecho_formal_bf16_MSEOnly_baseline_mlp_lstm_Boston_NCEP_36H_seed2026_lr5e-3_clip0.25",
+      "result_root": "/glade/u/home/zel/scratch/StormSurge/All_Results/baselines_MSEOnly_Derecho_formal_bf16/baseline_mlp_lstm/Boston/seed2026",
+      "source": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/train_config_baseline_mlp_lstm.sh"
+    },
+    {
+      "model": "baseline_mlp_lstm",
+      "station": "CBBT",
+      "seed": 2026,
+      "history_hours": 36,
+      "config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_mlp_lstm/CBBT/seed2026/train_config.sh",
+      "sha256": "d71fb788303c7d9f686f9de1072a644bc08473395ada7a715f6e29bb6cb38890",
+      "run_identity": "Derecho_formal_bf16_MSEOnly_baseline_mlp_lstm_CBBT_NCEP_36H_seed2026_lr5e-3_clip0.25",
+      "result_root": "/glade/u/home/zel/scratch/StormSurge/All_Results/baselines_MSEOnly_Derecho_formal_bf16/baseline_mlp_lstm/CBBT/seed2026",
+      "source": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/train_config_baseline_mlp_lstm.sh"
+    },
+    {
+      "model": "baseline_mlp_lstm",
+      "station": "Lewes",
+      "seed": 2026,
+      "history_hours": 36,
+      "config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_mlp_lstm/Lewes/seed2026/train_config.sh",
+      "sha256": "500542679dd9b8ee4f1800dcb2350a908b9f7b8d0f191b02ba857c8b4582909e",
+      "run_identity": "Derecho_formal_bf16_MSEOnly_baseline_mlp_lstm_Lewes_NCEP_36H_seed2026_lr5e-3_clip0.25",
+      "result_root": "/glade/u/home/zel/scratch/StormSurge/All_Results/baselines_MSEOnly_Derecho_formal_bf16/baseline_mlp_lstm/Lewes/seed2026",
+      "source": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/train_config_baseline_mlp_lstm.sh"
+    },
+    {
+      "model": "baseline_mlp_gru",
+      "station": "Battery",
+      "seed": 42,
+      "history_hours": 36,
+      "config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_mlp_gru/Battery/seed42/train_config.sh",
+      "sha256": "3aa9385fa0723b325a307fac8cdd9879f6fd43e266984b2cf5769bf3420affb5",
+      "run_identity": "Derecho_formal_bf16_MSEOnly_baseline_mlp_gru_Battery_NCEP_36H_seed42_lr5e-3_clip0.25",
+      "result_root": "/glade/u/home/zel/scratch/StormSurge/All_Results/baselines_MSEOnly_Derecho_formal_bf16/baseline_mlp_gru/Battery/seed42",
+      "source": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/train_config_baseline_mlp_gru.sh"
+    },
+    {
+      "model": "baseline_mlp_gru",
+      "station": "Boston",
+      "seed": 42,
+      "history_hours": 36,
+      "config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_mlp_gru/Boston/seed42/train_config.sh",
+      "sha256": "7147fb1782c8950cc6350b6b904aef4e372a886b9a4274d320e6debd82435edc",
+      "run_identity": "Derecho_formal_bf16_MSEOnly_baseline_mlp_gru_Boston_NCEP_36H_seed42_lr5e-3_clip0.25",
+      "result_root": "/glade/u/home/zel/scratch/StormSurge/All_Results/baselines_MSEOnly_Derecho_formal_bf16/baseline_mlp_gru/Boston/seed42",
+      "source": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/train_config_baseline_mlp_gru.sh"
+    },
+    {
+      "model": "baseline_mlp_gru",
+      "station": "CBBT",
+      "seed": 42,
+      "history_hours": 36,
+      "config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_mlp_gru/CBBT/seed42/train_config.sh",
+      "sha256": "58527db6ee2b3e2abc700731454d8bab76947abc8c639238780c0e7f562f8852",
+      "run_identity": "Derecho_formal_bf16_MSEOnly_baseline_mlp_gru_CBBT_NCEP_36H_seed42_lr5e-3_clip0.25",
+      "result_root": "/glade/u/home/zel/scratch/StormSurge/All_Results/baselines_MSEOnly_Derecho_formal_bf16/baseline_mlp_gru/CBBT/seed42",
+      "source": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/train_config_baseline_mlp_gru.sh"
+    },
+    {
+      "model": "baseline_mlp_gru",
+      "station": "Lewes",
+      "seed": 42,
+      "history_hours": 36,
+      "config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_mlp_gru/Lewes/seed42/train_config.sh",
+      "sha256": "fce00b460fd3531e8563a30b9cbb16a8060150d81437f11c73d1fe4c3500f5cf",
+      "run_identity": "Derecho_formal_bf16_MSEOnly_baseline_mlp_gru_Lewes_NCEP_36H_seed42_lr5e-3_clip0.25",
+      "result_root": "/glade/u/home/zel/scratch/StormSurge/All_Results/baselines_MSEOnly_Derecho_formal_bf16/baseline_mlp_gru/Lewes/seed42",
+      "source": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/train_config_baseline_mlp_gru.sh"
+    },
+    {
+      "model": "baseline_mlp_gru",
+      "station": "Battery",
+      "seed": 123,
+      "history_hours": 36,
+      "config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_mlp_gru/Battery/seed123/train_config.sh",
+      "sha256": "eef2e7d487efcb1d7131128983f2f1d26ec44e80dc1da1fed6f5dca8e1c36387",
+      "run_identity": "Derecho_formal_bf16_MSEOnly_baseline_mlp_gru_Battery_NCEP_36H_seed123_lr5e-3_clip0.25",
+      "result_root": "/glade/u/home/zel/scratch/StormSurge/All_Results/baselines_MSEOnly_Derecho_formal_bf16/baseline_mlp_gru/Battery/seed123",
+      "source": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/train_config_baseline_mlp_gru.sh"
+    },
+    {
+      "model": "baseline_mlp_gru",
+      "station": "Boston",
+      "seed": 123,
+      "history_hours": 36,
+      "config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_mlp_gru/Boston/seed123/train_config.sh",
+      "sha256": "ccb175d9d68018331672003247580e730a132e92e61c7eb43f2dffc9893e9e38",
+      "run_identity": "Derecho_formal_bf16_MSEOnly_baseline_mlp_gru_Boston_NCEP_36H_seed123_lr5e-3_clip0.25",
+      "result_root": "/glade/u/home/zel/scratch/StormSurge/All_Results/baselines_MSEOnly_Derecho_formal_bf16/baseline_mlp_gru/Boston/seed123",
+      "source": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/train_config_baseline_mlp_gru.sh"
+    },
+    {
+      "model": "baseline_mlp_gru",
+      "station": "CBBT",
+      "seed": 123,
+      "history_hours": 36,
+      "config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_mlp_gru/CBBT/seed123/train_config.sh",
+      "sha256": "2dc0d0abc852914379bc63ef9274d49b80de66f5d901944f8a8258f3f01645d5",
+      "run_identity": "Derecho_formal_bf16_MSEOnly_baseline_mlp_gru_CBBT_NCEP_36H_seed123_lr5e-3_clip0.25",
+      "result_root": "/glade/u/home/zel/scratch/StormSurge/All_Results/baselines_MSEOnly_Derecho_formal_bf16/baseline_mlp_gru/CBBT/seed123",
+      "source": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/train_config_baseline_mlp_gru.sh"
+    },
+    {
+      "model": "baseline_mlp_gru",
+      "station": "Lewes",
+      "seed": 123,
+      "history_hours": 36,
+      "config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_mlp_gru/Lewes/seed123/train_config.sh",
+      "sha256": "00b9f3f75f7f4293adf9d0c36dc11268167489a0591a02f24124e42fc5fe87fc",
+      "run_identity": "Derecho_formal_bf16_MSEOnly_baseline_mlp_gru_Lewes_NCEP_36H_seed123_lr5e-3_clip0.25",
+      "result_root": "/glade/u/home/zel/scratch/StormSurge/All_Results/baselines_MSEOnly_Derecho_formal_bf16/baseline_mlp_gru/Lewes/seed123",
+      "source": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/train_config_baseline_mlp_gru.sh"
+    },
+    {
+      "model": "baseline_mlp_gru",
+      "station": "Battery",
+      "seed": 2026,
+      "history_hours": 36,
+      "config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_mlp_gru/Battery/seed2026/train_config.sh",
+      "sha256": "828235ad7044daa84813477a6cfa8c09eb6888a2ef7d5847c77eae0d4ea27963",
+      "run_identity": "Derecho_formal_bf16_MSEOnly_baseline_mlp_gru_Battery_NCEP_36H_seed2026_lr5e-3_clip0.25",
+      "result_root": "/glade/u/home/zel/scratch/StormSurge/All_Results/baselines_MSEOnly_Derecho_formal_bf16/baseline_mlp_gru/Battery/seed2026",
+      "source": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/train_config_baseline_mlp_gru.sh"
+    },
+    {
+      "model": "baseline_mlp_gru",
+      "station": "Boston",
+      "seed": 2026,
+      "history_hours": 36,
+      "config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_mlp_gru/Boston/seed2026/train_config.sh",
+      "sha256": "bb892e7a9e18880851fa73a4a4b71aba0f588f50e4e746d42153357eb499311b",
+      "run_identity": "Derecho_formal_bf16_MSEOnly_baseline_mlp_gru_Boston_NCEP_36H_seed2026_lr5e-3_clip0.25",
+      "result_root": "/glade/u/home/zel/scratch/StormSurge/All_Results/baselines_MSEOnly_Derecho_formal_bf16/baseline_mlp_gru/Boston/seed2026",
+      "source": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/train_config_baseline_mlp_gru.sh"
+    },
+    {
+      "model": "baseline_mlp_gru",
+      "station": "CBBT",
+      "seed": 2026,
+      "history_hours": 36,
+      "config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_mlp_gru/CBBT/seed2026/train_config.sh",
+      "sha256": "84c2b2b429e619c0b44e34670b1b0a9b9f4897e64190c67c8cff9da3134ae890",
+      "run_identity": "Derecho_formal_bf16_MSEOnly_baseline_mlp_gru_CBBT_NCEP_36H_seed2026_lr5e-3_clip0.25",
+      "result_root": "/glade/u/home/zel/scratch/StormSurge/All_Results/baselines_MSEOnly_Derecho_formal_bf16/baseline_mlp_gru/CBBT/seed2026",
+      "source": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/train_config_baseline_mlp_gru.sh"
+    },
+    {
+      "model": "baseline_mlp_gru",
+      "station": "Lewes",
+      "seed": 2026,
+      "history_hours": 36,
+      "config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_mlp_gru/Lewes/seed2026/train_config.sh",
+      "sha256": "b1349bfc839ec136081ff4a62a6a42921bbb56b257a333af8791d6a52eb4ce55",
+      "run_identity": "Derecho_formal_bf16_MSEOnly_baseline_mlp_gru_Lewes_NCEP_36H_seed2026_lr5e-3_clip0.25",
+      "result_root": "/glade/u/home/zel/scratch/StormSurge/All_Results/baselines_MSEOnly_Derecho_formal_bf16/baseline_mlp_gru/Lewes/seed2026",
+      "source": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/train_config_baseline_mlp_gru.sh"
+    },
+    {
+      "model": "baseline_cnn_lstm",
+      "station": "Battery",
+      "seed": 42,
+      "history_hours": 36,
+      "config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_cnn_lstm/Battery/seed42/train_config.sh",
+      "sha256": "d12ac781776987c7721d9ae65d87a63db512b311b2bf934948dd8e996ce715f9",
+      "run_identity": "Derecho_formal_bf16_MSEOnly_baseline_cnn_lstm_Battery_NCEP_36H_seed42_lr5e-3_clip0.25",
+      "result_root": "/glade/u/home/zel/scratch/StormSurge/All_Results/baselines_MSEOnly_Derecho_formal_bf16/baseline_cnn_lstm/Battery/seed42",
+      "source": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/train_config_baseline_cnn_lstm.sh"
+    },
+    {
+      "model": "baseline_cnn_lstm",
+      "station": "Boston",
+      "seed": 42,
+      "history_hours": 36,
+      "config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_cnn_lstm/Boston/seed42/train_config.sh",
+      "sha256": "2f67bc615c2097872ff8c4218ce2649aed45b8077afed7c6bf2a1f9c7da14773",
+      "run_identity": "Derecho_formal_bf16_MSEOnly_baseline_cnn_lstm_Boston_NCEP_36H_seed42_lr5e-3_clip0.25",
+      "result_root": "/glade/u/home/zel/scratch/StormSurge/All_Results/baselines_MSEOnly_Derecho_formal_bf16/baseline_cnn_lstm/Boston/seed42",
+      "source": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/train_config_baseline_cnn_lstm.sh"
+    },
+    {
+      "model": "baseline_cnn_lstm",
+      "station": "CBBT",
+      "seed": 42,
+      "history_hours": 36,
+      "config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_cnn_lstm/CBBT/seed42/train_config.sh",
+      "sha256": "35b598fb2432ce43f3a52a40c57568ee71b381b82d3b1cd5ecfb3800b2788670",
+      "run_identity": "Derecho_formal_bf16_MSEOnly_baseline_cnn_lstm_CBBT_NCEP_36H_seed42_lr5e-3_clip0.25",
+      "result_root": "/glade/u/home/zel/scratch/StormSurge/All_Results/baselines_MSEOnly_Derecho_formal_bf16/baseline_cnn_lstm/CBBT/seed42",
+      "source": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/train_config_baseline_cnn_lstm.sh"
+    },
+    {
+      "model": "baseline_cnn_lstm",
+      "station": "Lewes",
+      "seed": 42,
+      "history_hours": 36,
+      "config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_cnn_lstm/Lewes/seed42/train_config.sh",
+      "sha256": "dbbb81a5686cf4a8983b93508974c1bcc7d55d111a5d04d96a72e701eae3a822",
+      "run_identity": "Derecho_formal_bf16_MSEOnly_baseline_cnn_lstm_Lewes_NCEP_36H_seed42_lr5e-3_clip0.25",
+      "result_root": "/glade/u/home/zel/scratch/StormSurge/All_Results/baselines_MSEOnly_Derecho_formal_bf16/baseline_cnn_lstm/Lewes/seed42",
+      "source": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/train_config_baseline_cnn_lstm.sh"
+    },
+    {
+      "model": "baseline_cnn_lstm",
+      "station": "Battery",
+      "seed": 123,
+      "history_hours": 36,
+      "config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_cnn_lstm/Battery/seed123/train_config.sh",
+      "sha256": "23b0decb1dc955b1dab4296c6ac1a35ce09929a5e237aac65fe25accdfc66709",
+      "run_identity": "Derecho_formal_bf16_MSEOnly_baseline_cnn_lstm_Battery_NCEP_36H_seed123_lr5e-3_clip0.25",
+      "result_root": "/glade/u/home/zel/scratch/StormSurge/All_Results/baselines_MSEOnly_Derecho_formal_bf16/baseline_cnn_lstm/Battery/seed123",
+      "source": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/train_config_baseline_cnn_lstm.sh"
+    },
+    {
+      "model": "baseline_cnn_lstm",
+      "station": "Boston",
+      "seed": 123,
+      "history_hours": 36,
+      "config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_cnn_lstm/Boston/seed123/train_config.sh",
+      "sha256": "267907a198d9e416ed8e384bf50cbbdad5dc1c3e6b126092a3d07b9d1954c6f0",
+      "run_identity": "Derecho_formal_bf16_MSEOnly_baseline_cnn_lstm_Boston_NCEP_36H_seed123_lr5e-3_clip0.25",
+      "result_root": "/glade/u/home/zel/scratch/StormSurge/All_Results/baselines_MSEOnly_Derecho_formal_bf16/baseline_cnn_lstm/Boston/seed123",
+      "source": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/train_config_baseline_cnn_lstm.sh"
+    },
+    {
+      "model": "baseline_cnn_lstm",
+      "station": "CBBT",
+      "seed": 123,
+      "history_hours": 36,
+      "config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_cnn_lstm/CBBT/seed123/train_config.sh",
+      "sha256": "6d31ceaafcb6934df558f0247e082d63f2cba33c3f1db9f3814324462e2daa4e",
+      "run_identity": "Derecho_formal_bf16_MSEOnly_baseline_cnn_lstm_CBBT_NCEP_36H_seed123_lr5e-3_clip0.25",
+      "result_root": "/glade/u/home/zel/scratch/StormSurge/All_Results/baselines_MSEOnly_Derecho_formal_bf16/baseline_cnn_lstm/CBBT/seed123",
+      "source": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/train_config_baseline_cnn_lstm.sh"
+    },
+    {
+      "model": "baseline_cnn_lstm",
+      "station": "Lewes",
+      "seed": 123,
+      "history_hours": 36,
+      "config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_cnn_lstm/Lewes/seed123/train_config.sh",
+      "sha256": "be35e87dcaa56dfd29f30e27f02fb813c2ab431c07e55a0ccfd642a0f6959fb3",
+      "run_identity": "Derecho_formal_bf16_MSEOnly_baseline_cnn_lstm_Lewes_NCEP_36H_seed123_lr5e-3_clip0.25",
+      "result_root": "/glade/u/home/zel/scratch/StormSurge/All_Results/baselines_MSEOnly_Derecho_formal_bf16/baseline_cnn_lstm/Lewes/seed123",
+      "source": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/train_config_baseline_cnn_lstm.sh"
+    },
+    {
+      "model": "baseline_cnn_lstm",
+      "station": "Battery",
+      "seed": 2026,
+      "history_hours": 36,
+      "config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_cnn_lstm/Battery/seed2026/train_config.sh",
+      "sha256": "1a2e8121efc55b61d6d471e5467a1adcd4d97680c74637675b66766f730d21c7",
+      "run_identity": "Derecho_formal_bf16_MSEOnly_baseline_cnn_lstm_Battery_NCEP_36H_seed2026_lr5e-3_clip0.25",
+      "result_root": "/glade/u/home/zel/scratch/StormSurge/All_Results/baselines_MSEOnly_Derecho_formal_bf16/baseline_cnn_lstm/Battery/seed2026",
+      "source": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/train_config_baseline_cnn_lstm.sh"
+    },
+    {
+      "model": "baseline_cnn_lstm",
+      "station": "Boston",
+      "seed": 2026,
+      "history_hours": 36,
+      "config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_cnn_lstm/Boston/seed2026/train_config.sh",
+      "sha256": "2f1677bf93afab9194da3a05a999ce84f325fb6948dc2b2e7796c1c38ec598e8",
+      "run_identity": "Derecho_formal_bf16_MSEOnly_baseline_cnn_lstm_Boston_NCEP_36H_seed2026_lr5e-3_clip0.25",
+      "result_root": "/glade/u/home/zel/scratch/StormSurge/All_Results/baselines_MSEOnly_Derecho_formal_bf16/baseline_cnn_lstm/Boston/seed2026",
+      "source": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/train_config_baseline_cnn_lstm.sh"
+    },
+    {
+      "model": "baseline_cnn_lstm",
+      "station": "CBBT",
+      "seed": 2026,
+      "history_hours": 36,
+      "config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_cnn_lstm/CBBT/seed2026/train_config.sh",
+      "sha256": "939ba0277b5bb38944726f0fc5e3608f3efe393c24dd28c8564de767e8fe33d5",
+      "run_identity": "Derecho_formal_bf16_MSEOnly_baseline_cnn_lstm_CBBT_NCEP_36H_seed2026_lr5e-3_clip0.25",
+      "result_root": "/glade/u/home/zel/scratch/StormSurge/All_Results/baselines_MSEOnly_Derecho_formal_bf16/baseline_cnn_lstm/CBBT/seed2026",
+      "source": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/train_config_baseline_cnn_lstm.sh"
+    },
+    {
+      "model": "baseline_cnn_lstm",
+      "station": "Lewes",
+      "seed": 2026,
+      "history_hours": 36,
+      "config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_cnn_lstm/Lewes/seed2026/train_config.sh",
+      "sha256": "b12a3c2949442d1a82a89a161f14bcbe310ca6d459c39033b5a95d03bc4054e3",
+      "run_identity": "Derecho_formal_bf16_MSEOnly_baseline_cnn_lstm_Lewes_NCEP_36H_seed2026_lr5e-3_clip0.25",
+      "result_root": "/glade/u/home/zel/scratch/StormSurge/All_Results/baselines_MSEOnly_Derecho_formal_bf16/baseline_cnn_lstm/Lewes/seed2026",
+      "source": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/train_config_baseline_cnn_lstm.sh"
+    },
+    {
+      "model": "baseline_cnn_gru",
+      "station": "Battery",
+      "seed": 42,
+      "history_hours": 36,
+      "config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_cnn_gru/Battery/seed42/train_config.sh",
+      "sha256": "0032cce396493a22b1e1adb879d7ead792de778a42ef0e8c2792b126d51e2a53",
+      "run_identity": "Derecho_formal_bf16_MSEOnly_baseline_cnn_gru_Battery_NCEP_36H_seed42_lr5e-3_clip0.25",
+      "result_root": "/glade/u/home/zel/scratch/StormSurge/All_Results/baselines_MSEOnly_Derecho_formal_bf16/baseline_cnn_gru/Battery/seed42",
+      "source": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/train_config_baseline_cnn_gru.sh"
+    },
+    {
+      "model": "baseline_cnn_gru",
+      "station": "Boston",
+      "seed": 42,
+      "history_hours": 36,
+      "config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_cnn_gru/Boston/seed42/train_config.sh",
+      "sha256": "3651082fc0673b0f4621fb4c253ed17e2aaaf1c6dea10d39cd2e603de2c74be8",
+      "run_identity": "Derecho_formal_bf16_MSEOnly_baseline_cnn_gru_Boston_NCEP_36H_seed42_lr5e-3_clip0.25",
+      "result_root": "/glade/u/home/zel/scratch/StormSurge/All_Results/baselines_MSEOnly_Derecho_formal_bf16/baseline_cnn_gru/Boston/seed42",
+      "source": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/train_config_baseline_cnn_gru.sh"
+    },
+    {
+      "model": "baseline_cnn_gru",
+      "station": "CBBT",
+      "seed": 42,
+      "history_hours": 36,
+      "config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_cnn_gru/CBBT/seed42/train_config.sh",
+      "sha256": "1c47673874a224b1ddd6ad51dee375b21bc3180e9e6c655fdce9337761a693fa",
+      "run_identity": "Derecho_formal_bf16_MSEOnly_baseline_cnn_gru_CBBT_NCEP_36H_seed42_lr5e-3_clip0.25",
+      "result_root": "/glade/u/home/zel/scratch/StormSurge/All_Results/baselines_MSEOnly_Derecho_formal_bf16/baseline_cnn_gru/CBBT/seed42",
+      "source": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/train_config_baseline_cnn_gru.sh"
+    },
+    {
+      "model": "baseline_cnn_gru",
+      "station": "Lewes",
+      "seed": 42,
+      "history_hours": 36,
+      "config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_cnn_gru/Lewes/seed42/train_config.sh",
+      "sha256": "dda3c3fa5347915fff78d38a7a4c7c3a68043b2f0622a5c1e7d6c818b6b8e830",
+      "run_identity": "Derecho_formal_bf16_MSEOnly_baseline_cnn_gru_Lewes_NCEP_36H_seed42_lr5e-3_clip0.25",
+      "result_root": "/glade/u/home/zel/scratch/StormSurge/All_Results/baselines_MSEOnly_Derecho_formal_bf16/baseline_cnn_gru/Lewes/seed42",
+      "source": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/train_config_baseline_cnn_gru.sh"
+    },
+    {
+      "model": "baseline_cnn_gru",
+      "station": "Battery",
+      "seed": 123,
+      "history_hours": 36,
+      "config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_cnn_gru/Battery/seed123/train_config.sh",
+      "sha256": "95dac1cf12886673ae978d04362b352fac32e69f1d3a178ab8db9f72b4ef8c69",
+      "run_identity": "Derecho_formal_bf16_MSEOnly_baseline_cnn_gru_Battery_NCEP_36H_seed123_lr5e-3_clip0.25",
+      "result_root": "/glade/u/home/zel/scratch/StormSurge/All_Results/baselines_MSEOnly_Derecho_formal_bf16/baseline_cnn_gru/Battery/seed123",
+      "source": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/train_config_baseline_cnn_gru.sh"
+    },
+    {
+      "model": "baseline_cnn_gru",
+      "station": "Boston",
+      "seed": 123,
+      "history_hours": 36,
+      "config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_cnn_gru/Boston/seed123/train_config.sh",
+      "sha256": "90c932f1d54c6d13e73db4c9d0664eb50f7cb13f6ebef3345f3cda6336f441f7",
+      "run_identity": "Derecho_formal_bf16_MSEOnly_baseline_cnn_gru_Boston_NCEP_36H_seed123_lr5e-3_clip0.25",
+      "result_root": "/glade/u/home/zel/scratch/StormSurge/All_Results/baselines_MSEOnly_Derecho_formal_bf16/baseline_cnn_gru/Boston/seed123",
+      "source": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/train_config_baseline_cnn_gru.sh"
+    },
+    {
+      "model": "baseline_cnn_gru",
+      "station": "CBBT",
+      "seed": 123,
+      "history_hours": 36,
+      "config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_cnn_gru/CBBT/seed123/train_config.sh",
+      "sha256": "b7d37398d09ad8a1d49b12fdf06fb7c050e8ec5c220e876eaec01e069314864f",
+      "run_identity": "Derecho_formal_bf16_MSEOnly_baseline_cnn_gru_CBBT_NCEP_36H_seed123_lr5e-3_clip0.25",
+      "result_root": "/glade/u/home/zel/scratch/StormSurge/All_Results/baselines_MSEOnly_Derecho_formal_bf16/baseline_cnn_gru/CBBT/seed123",
+      "source": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/train_config_baseline_cnn_gru.sh"
+    },
+    {
+      "model": "baseline_cnn_gru",
+      "station": "Lewes",
+      "seed": 123,
+      "history_hours": 36,
+      "config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_cnn_gru/Lewes/seed123/train_config.sh",
+      "sha256": "7b0e0852a664993618d98877bfdd4d4842d2d363706a1a1d84773b97520145e7",
+      "run_identity": "Derecho_formal_bf16_MSEOnly_baseline_cnn_gru_Lewes_NCEP_36H_seed123_lr5e-3_clip0.25",
+      "result_root": "/glade/u/home/zel/scratch/StormSurge/All_Results/baselines_MSEOnly_Derecho_formal_bf16/baseline_cnn_gru/Lewes/seed123",
+      "source": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/train_config_baseline_cnn_gru.sh"
+    },
+    {
+      "model": "baseline_cnn_gru",
+      "station": "Battery",
+      "seed": 2026,
+      "history_hours": 36,
+      "config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_cnn_gru/Battery/seed2026/train_config.sh",
+      "sha256": "93896606e00d6d9cf652466f7ab7103d60afdcea640744721776bda530bc4371",
+      "run_identity": "Derecho_formal_bf16_MSEOnly_baseline_cnn_gru_Battery_NCEP_36H_seed2026_lr5e-3_clip0.25",
+      "result_root": "/glade/u/home/zel/scratch/StormSurge/All_Results/baselines_MSEOnly_Derecho_formal_bf16/baseline_cnn_gru/Battery/seed2026",
+      "source": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/train_config_baseline_cnn_gru.sh"
+    },
+    {
+      "model": "baseline_cnn_gru",
+      "station": "Boston",
+      "seed": 2026,
+      "history_hours": 36,
+      "config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_cnn_gru/Boston/seed2026/train_config.sh",
+      "sha256": "6ebf0ca5e038b3eca9f08a66dabc09215b70c24fe3a3632d031bbe0f2167787e",
+      "run_identity": "Derecho_formal_bf16_MSEOnly_baseline_cnn_gru_Boston_NCEP_36H_seed2026_lr5e-3_clip0.25",
+      "result_root": "/glade/u/home/zel/scratch/StormSurge/All_Results/baselines_MSEOnly_Derecho_formal_bf16/baseline_cnn_gru/Boston/seed2026",
+      "source": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/train_config_baseline_cnn_gru.sh"
+    },
+    {
+      "model": "baseline_cnn_gru",
+      "station": "CBBT",
+      "seed": 2026,
+      "history_hours": 36,
+      "config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_cnn_gru/CBBT/seed2026/train_config.sh",
+      "sha256": "53269a0f26776df892adb079a1de4452c504f27ca098b0d3cbe0bf8f9efc7a50",
+      "run_identity": "Derecho_formal_bf16_MSEOnly_baseline_cnn_gru_CBBT_NCEP_36H_seed2026_lr5e-3_clip0.25",
+      "result_root": "/glade/u/home/zel/scratch/StormSurge/All_Results/baselines_MSEOnly_Derecho_formal_bf16/baseline_cnn_gru/CBBT/seed2026",
+      "source": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/train_config_baseline_cnn_gru.sh"
+    },
+    {
+      "model": "baseline_cnn_gru",
+      "station": "Lewes",
+      "seed": 2026,
+      "history_hours": 36,
+      "config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_cnn_gru/Lewes/seed2026/train_config.sh",
+      "sha256": "5e63b2e968878456878391dd1d0da319546fe564f2b2576ceea091423f423da3",
+      "run_identity": "Derecho_formal_bf16_MSEOnly_baseline_cnn_gru_Lewes_NCEP_36H_seed2026_lr5e-3_clip0.25",
+      "result_root": "/glade/u/home/zel/scratch/StormSurge/All_Results/baselines_MSEOnly_Derecho_formal_bf16/baseline_cnn_gru/Lewes/seed2026",
+      "source": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/train_config_baseline_cnn_gru.sh"
+    },
+    {
+      "model": "baseline_convlstm",
+      "station": "Battery",
+      "seed": 42,
+      "history_hours": 36,
+      "config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_convlstm/Battery/seed42/train_config.sh",
+      "sha256": "74b339a13bda1c520f747a5f753669c558b34ed4077596c71df05d45c5977c5b",
+      "run_identity": "Derecho_formal_bf16_MSEOnly_baseline_convlstm_Battery_NCEP_36H_seed42_lr5e-3_clip0.25",
+      "result_root": "/glade/u/home/zel/scratch/StormSurge/All_Results/baselines_MSEOnly_Derecho_formal_bf16/baseline_convlstm/Battery/seed42",
+      "source": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/train_config_baseline_convlstm.sh"
+    },
+    {
+      "model": "baseline_convlstm",
+      "station": "Boston",
+      "seed": 42,
+      "history_hours": 36,
+      "config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_convlstm/Boston/seed42/train_config.sh",
+      "sha256": "810d80e2e29300f08f070485d5fa25690936d7273154bd85da3c9ad3b5f2880c",
+      "run_identity": "Derecho_formal_bf16_MSEOnly_baseline_convlstm_Boston_NCEP_36H_seed42_lr5e-3_clip0.25",
+      "result_root": "/glade/u/home/zel/scratch/StormSurge/All_Results/baselines_MSEOnly_Derecho_formal_bf16/baseline_convlstm/Boston/seed42",
+      "source": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/train_config_baseline_convlstm.sh"
+    },
+    {
+      "model": "baseline_convlstm",
+      "station": "CBBT",
+      "seed": 42,
+      "history_hours": 36,
+      "config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_convlstm/CBBT/seed42/train_config.sh",
+      "sha256": "ab294226e3a32fa4a0a431c3218cf03c870c54c0d2d9c5d65e26aece68db9fd3",
+      "run_identity": "Derecho_formal_bf16_MSEOnly_baseline_convlstm_CBBT_NCEP_36H_seed42_lr5e-3_clip0.25",
+      "result_root": "/glade/u/home/zel/scratch/StormSurge/All_Results/baselines_MSEOnly_Derecho_formal_bf16/baseline_convlstm/CBBT/seed42",
+      "source": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/train_config_baseline_convlstm.sh"
+    },
+    {
+      "model": "baseline_convlstm",
+      "station": "Lewes",
+      "seed": 42,
+      "history_hours": 36,
+      "config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_convlstm/Lewes/seed42/train_config.sh",
+      "sha256": "521538b3b51bafe5814c9ddea98b680b5bccbe349dff2457f03a6fcdaefe844e",
+      "run_identity": "Derecho_formal_bf16_MSEOnly_baseline_convlstm_Lewes_NCEP_36H_seed42_lr5e-3_clip0.25",
+      "result_root": "/glade/u/home/zel/scratch/StormSurge/All_Results/baselines_MSEOnly_Derecho_formal_bf16/baseline_convlstm/Lewes/seed42",
+      "source": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/train_config_baseline_convlstm.sh"
+    },
+    {
+      "model": "baseline_convlstm",
+      "station": "Battery",
+      "seed": 123,
+      "history_hours": 36,
+      "config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_convlstm/Battery/seed123/train_config.sh",
+      "sha256": "a97f4454510b83fcce76bc286247ed2fe9ab7c479b58d2ab62e41b8ba7f00673",
+      "run_identity": "Derecho_formal_bf16_MSEOnly_baseline_convlstm_Battery_NCEP_36H_seed123_lr5e-3_clip0.25",
+      "result_root": "/glade/u/home/zel/scratch/StormSurge/All_Results/baselines_MSEOnly_Derecho_formal_bf16/baseline_convlstm/Battery/seed123",
+      "source": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/train_config_baseline_convlstm.sh"
+    },
+    {
+      "model": "baseline_convlstm",
+      "station": "Boston",
+      "seed": 123,
+      "history_hours": 36,
+      "config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_convlstm/Boston/seed123/train_config.sh",
+      "sha256": "88536e1dfc9f0db0b8030477dd3ba8fd499054bac0fe803b17cc571e9dbfe2df",
+      "run_identity": "Derecho_formal_bf16_MSEOnly_baseline_convlstm_Boston_NCEP_36H_seed123_lr5e-3_clip0.25",
+      "result_root": "/glade/u/home/zel/scratch/StormSurge/All_Results/baselines_MSEOnly_Derecho_formal_bf16/baseline_convlstm/Boston/seed123",
+      "source": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/train_config_baseline_convlstm.sh"
+    },
+    {
+      "model": "baseline_convlstm",
+      "station": "CBBT",
+      "seed": 123,
+      "history_hours": 36,
+      "config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_convlstm/CBBT/seed123/train_config.sh",
+      "sha256": "a865690308980055424f0ada43a5f5a24e4e7fac60d8531b5045f45b4659c299",
+      "run_identity": "Derecho_formal_bf16_MSEOnly_baseline_convlstm_CBBT_NCEP_36H_seed123_lr5e-3_clip0.25",
+      "result_root": "/glade/u/home/zel/scratch/StormSurge/All_Results/baselines_MSEOnly_Derecho_formal_bf16/baseline_convlstm/CBBT/seed123",
+      "source": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/train_config_baseline_convlstm.sh"
+    },
+    {
+      "model": "baseline_convlstm",
+      "station": "Lewes",
+      "seed": 123,
+      "history_hours": 36,
+      "config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_convlstm/Lewes/seed123/train_config.sh",
+      "sha256": "b3511bf84a997e7be58d5070d96a8791285c50d7f3151273e064ea0209e024e7",
+      "run_identity": "Derecho_formal_bf16_MSEOnly_baseline_convlstm_Lewes_NCEP_36H_seed123_lr5e-3_clip0.25",
+      "result_root": "/glade/u/home/zel/scratch/StormSurge/All_Results/baselines_MSEOnly_Derecho_formal_bf16/baseline_convlstm/Lewes/seed123",
+      "source": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/train_config_baseline_convlstm.sh"
+    },
+    {
+      "model": "baseline_convlstm",
+      "station": "Battery",
+      "seed": 2026,
+      "history_hours": 36,
+      "config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_convlstm/Battery/seed2026/train_config.sh",
+      "sha256": "4bb4befff06f327677b6a97a1244d8dbeee5721c70f6f1d0e6d13873a6b99300",
+      "run_identity": "Derecho_formal_bf16_MSEOnly_baseline_convlstm_Battery_NCEP_36H_seed2026_lr5e-3_clip0.25",
+      "result_root": "/glade/u/home/zel/scratch/StormSurge/All_Results/baselines_MSEOnly_Derecho_formal_bf16/baseline_convlstm/Battery/seed2026",
+      "source": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/train_config_baseline_convlstm.sh"
+    },
+    {
+      "model": "baseline_convlstm",
+      "station": "Boston",
+      "seed": 2026,
+      "history_hours": 36,
+      "config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_convlstm/Boston/seed2026/train_config.sh",
+      "sha256": "375c2444c79f03508bfde6cfef972ad62cc0ffc7e556c7381807cb5a6301f8fc",
+      "run_identity": "Derecho_formal_bf16_MSEOnly_baseline_convlstm_Boston_NCEP_36H_seed2026_lr5e-3_clip0.25",
+      "result_root": "/glade/u/home/zel/scratch/StormSurge/All_Results/baselines_MSEOnly_Derecho_formal_bf16/baseline_convlstm/Boston/seed2026",
+      "source": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/train_config_baseline_convlstm.sh"
+    },
+    {
+      "model": "baseline_convlstm",
+      "station": "CBBT",
+      "seed": 2026,
+      "history_hours": 36,
+      "config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_convlstm/CBBT/seed2026/train_config.sh",
+      "sha256": "8e5ee8e5db0088e12724ea8816982071450bd0a9bf9b078bc861d7f2d0845480",
+      "run_identity": "Derecho_formal_bf16_MSEOnly_baseline_convlstm_CBBT_NCEP_36H_seed2026_lr5e-3_clip0.25",
+      "result_root": "/glade/u/home/zel/scratch/StormSurge/All_Results/baselines_MSEOnly_Derecho_formal_bf16/baseline_convlstm/CBBT/seed2026",
+      "source": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/train_config_baseline_convlstm.sh"
+    },
+    {
+      "model": "baseline_convlstm",
+      "station": "Lewes",
+      "seed": 2026,
+      "history_hours": 36,
+      "config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_convlstm/Lewes/seed2026/train_config.sh",
+      "sha256": "6b1d20132e845f58eb861d41912417ba0a59449f7d4cb9e92ad6c6670251639d",
+      "run_identity": "Derecho_formal_bf16_MSEOnly_baseline_convlstm_Lewes_NCEP_36H_seed2026_lr5e-3_clip0.25",
+      "result_root": "/glade/u/home/zel/scratch/StormSurge/All_Results/baselines_MSEOnly_Derecho_formal_bf16/baseline_convlstm/Lewes/seed2026",
+      "source": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/train_config_baseline_convlstm.sh"
+    }
+  ],
+  "jobs": [
+    {
+      "model": "baseline_mlp",
+      "seed": 42,
+      "pbs": "/glade/u/home/zel/scratch/StormSurge/PBS-launcher/baselines_MSEOnly/baseline_mlp/seed42.pbs",
+      "sha256": "0b9733b0f83f82ad8ceb38a669e2dfb22e4737d685d9d013fc06eb6f494d4486",
+      "configs": [
+        "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_mlp/Battery/seed42/train_config.sh",
+        "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_mlp/Boston/seed42/train_config.sh",
+        "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_mlp/CBBT/seed42/train_config.sh",
+        "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_mlp/Lewes/seed42/train_config.sh"
+      ]
+    },
+    {
+      "model": "baseline_mlp",
+      "seed": 123,
+      "pbs": "/glade/u/home/zel/scratch/StormSurge/PBS-launcher/baselines_MSEOnly/baseline_mlp/seed123.pbs",
+      "sha256": "9afb8e79048c780c66f4ff9a9e34b28ed697313d00ec36f845d8a0379d8dcad9",
+      "configs": [
+        "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_mlp/Battery/seed123/train_config.sh",
+        "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_mlp/Boston/seed123/train_config.sh",
+        "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_mlp/CBBT/seed123/train_config.sh",
+        "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_mlp/Lewes/seed123/train_config.sh"
+      ]
+    },
+    {
+      "model": "baseline_mlp",
+      "seed": 2026,
+      "pbs": "/glade/u/home/zel/scratch/StormSurge/PBS-launcher/baselines_MSEOnly/baseline_mlp/seed2026.pbs",
+      "sha256": "222bff1a46719a2c3bc7b408b6aa1d35f9193399ecc7ff39a911ec285603a38b",
+      "configs": [
+        "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_mlp/Battery/seed2026/train_config.sh",
+        "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_mlp/Boston/seed2026/train_config.sh",
+        "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_mlp/CBBT/seed2026/train_config.sh",
+        "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_mlp/Lewes/seed2026/train_config.sh"
+      ]
+    },
+    {
+      "model": "baseline_cnn",
+      "seed": 42,
+      "pbs": "/glade/u/home/zel/scratch/StormSurge/PBS-launcher/baselines_MSEOnly/baseline_cnn/seed42.pbs",
+      "sha256": "a073a92a674e79bb7c070677653e3fad48cdbe8b46f941566368a9efeab45e0b",
+      "configs": [
+        "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_cnn/Battery/seed42/train_config.sh",
+        "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_cnn/Boston/seed42/train_config.sh",
+        "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_cnn/CBBT/seed42/train_config.sh",
+        "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_cnn/Lewes/seed42/train_config.sh"
+      ]
+    },
+    {
+      "model": "baseline_cnn",
+      "seed": 123,
+      "pbs": "/glade/u/home/zel/scratch/StormSurge/PBS-launcher/baselines_MSEOnly/baseline_cnn/seed123.pbs",
+      "sha256": "2db6c6bab5203da042a1dd7444424155a1d1ae9288f03e8f3397725313bfc7f5",
+      "configs": [
+        "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_cnn/Battery/seed123/train_config.sh",
+        "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_cnn/Boston/seed123/train_config.sh",
+        "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_cnn/CBBT/seed123/train_config.sh",
+        "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_cnn/Lewes/seed123/train_config.sh"
+      ]
+    },
+    {
+      "model": "baseline_cnn",
+      "seed": 2026,
+      "pbs": "/glade/u/home/zel/scratch/StormSurge/PBS-launcher/baselines_MSEOnly/baseline_cnn/seed2026.pbs",
+      "sha256": "c44eaae9088bd984537d9dcc0379ec3b7e70461299d04250c984d79fdec1ec21",
+      "configs": [
+        "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_cnn/Battery/seed2026/train_config.sh",
+        "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_cnn/Boston/seed2026/train_config.sh",
+        "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_cnn/CBBT/seed2026/train_config.sh",
+        "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_cnn/Lewes/seed2026/train_config.sh"
+      ]
+    },
+    {
+      "model": "baseline_mlp_lstm",
+      "seed": 42,
+      "pbs": "/glade/u/home/zel/scratch/StormSurge/PBS-launcher/baselines_MSEOnly/baseline_mlp_lstm/seed42.pbs",
+      "sha256": "6bde01b2e80fc350e6cc809068c88e5b1c483b09b3e4c709231656e28d48cde4",
+      "configs": [
+        "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_mlp_lstm/Battery/seed42/train_config.sh",
+        "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_mlp_lstm/Boston/seed42/train_config.sh",
+        "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_mlp_lstm/CBBT/seed42/train_config.sh",
+        "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_mlp_lstm/Lewes/seed42/train_config.sh"
+      ]
+    },
+    {
+      "model": "baseline_mlp_lstm",
+      "seed": 123,
+      "pbs": "/glade/u/home/zel/scratch/StormSurge/PBS-launcher/baselines_MSEOnly/baseline_mlp_lstm/seed123.pbs",
+      "sha256": "0138c3663ee72d4e99887e52224c987daaf91d441d44f52512e134df4c76a48b",
+      "configs": [
+        "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_mlp_lstm/Battery/seed123/train_config.sh",
+        "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_mlp_lstm/Boston/seed123/train_config.sh",
+        "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_mlp_lstm/CBBT/seed123/train_config.sh",
+        "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_mlp_lstm/Lewes/seed123/train_config.sh"
+      ]
+    },
+    {
+      "model": "baseline_mlp_lstm",
+      "seed": 2026,
+      "pbs": "/glade/u/home/zel/scratch/StormSurge/PBS-launcher/baselines_MSEOnly/baseline_mlp_lstm/seed2026.pbs",
+      "sha256": "a6e52844d3c88c3c951c7234c49ddb8a9decb81333e8319f01ed6a70d6d542c4",
+      "configs": [
+        "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_mlp_lstm/Battery/seed2026/train_config.sh",
+        "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_mlp_lstm/Boston/seed2026/train_config.sh",
+        "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_mlp_lstm/CBBT/seed2026/train_config.sh",
+        "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_mlp_lstm/Lewes/seed2026/train_config.sh"
+      ]
+    },
+    {
+      "model": "baseline_mlp_gru",
+      "seed": 42,
+      "pbs": "/glade/u/home/zel/scratch/StormSurge/PBS-launcher/baselines_MSEOnly/baseline_mlp_gru/seed42.pbs",
+      "sha256": "947231be958077207bac80f65d37a225688e9218c1b0399268ea7d17ac03ff78",
+      "configs": [
+        "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_mlp_gru/Battery/seed42/train_config.sh",
+        "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_mlp_gru/Boston/seed42/train_config.sh",
+        "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_mlp_gru/CBBT/seed42/train_config.sh",
+        "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_mlp_gru/Lewes/seed42/train_config.sh"
+      ]
+    },
+    {
+      "model": "baseline_mlp_gru",
+      "seed": 123,
+      "pbs": "/glade/u/home/zel/scratch/StormSurge/PBS-launcher/baselines_MSEOnly/baseline_mlp_gru/seed123.pbs",
+      "sha256": "96381c73898bdee5e7be6567f51dd0164965671f1976b3bc7622ed385eed7c29",
+      "configs": [
+        "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_mlp_gru/Battery/seed123/train_config.sh",
+        "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_mlp_gru/Boston/seed123/train_config.sh",
+        "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_mlp_gru/CBBT/seed123/train_config.sh",
+        "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_mlp_gru/Lewes/seed123/train_config.sh"
+      ]
+    },
+    {
+      "model": "baseline_mlp_gru",
+      "seed": 2026,
+      "pbs": "/glade/u/home/zel/scratch/StormSurge/PBS-launcher/baselines_MSEOnly/baseline_mlp_gru/seed2026.pbs",
+      "sha256": "07c10615d9e9af2eaec44b7ee4fbaee0b7688227ba6b5fd44954bc8e5f300464",
+      "configs": [
+        "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_mlp_gru/Battery/seed2026/train_config.sh",
+        "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_mlp_gru/Boston/seed2026/train_config.sh",
+        "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_mlp_gru/CBBT/seed2026/train_config.sh",
+        "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_mlp_gru/Lewes/seed2026/train_config.sh"
+      ]
+    },
+    {
+      "model": "baseline_cnn_lstm",
+      "seed": 42,
+      "pbs": "/glade/u/home/zel/scratch/StormSurge/PBS-launcher/baselines_MSEOnly/baseline_cnn_lstm/seed42.pbs",
+      "sha256": "8662df44c64a8dad8f5ce46c5b646b9edf0e4c39c837804aac32009c0fae0a93",
+      "configs": [
+        "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_cnn_lstm/Battery/seed42/train_config.sh",
+        "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_cnn_lstm/Boston/seed42/train_config.sh",
+        "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_cnn_lstm/CBBT/seed42/train_config.sh",
+        "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_cnn_lstm/Lewes/seed42/train_config.sh"
+      ]
+    },
+    {
+      "model": "baseline_cnn_lstm",
+      "seed": 123,
+      "pbs": "/glade/u/home/zel/scratch/StormSurge/PBS-launcher/baselines_MSEOnly/baseline_cnn_lstm/seed123.pbs",
+      "sha256": "a7888d18882fb438f0c2eb02c48209c23278842be178bfbeb629b656785f4cb1",
+      "configs": [
+        "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_cnn_lstm/Battery/seed123/train_config.sh",
+        "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_cnn_lstm/Boston/seed123/train_config.sh",
+        "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_cnn_lstm/CBBT/seed123/train_config.sh",
+        "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_cnn_lstm/Lewes/seed123/train_config.sh"
+      ]
+    },
+    {
+      "model": "baseline_cnn_lstm",
+      "seed": 2026,
+      "pbs": "/glade/u/home/zel/scratch/StormSurge/PBS-launcher/baselines_MSEOnly/baseline_cnn_lstm/seed2026.pbs",
+      "sha256": "1789608228009cf95b3e7628930d99777e416024624fb50a11b0b6cfbb88fe5b",
+      "configs": [
+        "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_cnn_lstm/Battery/seed2026/train_config.sh",
+        "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_cnn_lstm/Boston/seed2026/train_config.sh",
+        "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_cnn_lstm/CBBT/seed2026/train_config.sh",
+        "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_cnn_lstm/Lewes/seed2026/train_config.sh"
+      ]
+    },
+    {
+      "model": "baseline_cnn_gru",
+      "seed": 42,
+      "pbs": "/glade/u/home/zel/scratch/StormSurge/PBS-launcher/baselines_MSEOnly/baseline_cnn_gru/seed42.pbs",
+      "sha256": "7396621bb616b34ee8d40b32a9855c7dd087b719ec876b4fc36e3ba21dc6e36a",
+      "configs": [
+        "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_cnn_gru/Battery/seed42/train_config.sh",
+        "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_cnn_gru/Boston/seed42/train_config.sh",
+        "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_cnn_gru/CBBT/seed42/train_config.sh",
+        "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_cnn_gru/Lewes/seed42/train_config.sh"
+      ]
+    },
+    {
+      "model": "baseline_cnn_gru",
+      "seed": 123,
+      "pbs": "/glade/u/home/zel/scratch/StormSurge/PBS-launcher/baselines_MSEOnly/baseline_cnn_gru/seed123.pbs",
+      "sha256": "01ed4bb23baacd5926126547f0c02790464d0c80ce05123c0f62af547bb2e0b0",
+      "configs": [
+        "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_cnn_gru/Battery/seed123/train_config.sh",
+        "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_cnn_gru/Boston/seed123/train_config.sh",
+        "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_cnn_gru/CBBT/seed123/train_config.sh",
+        "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_cnn_gru/Lewes/seed123/train_config.sh"
+      ]
+    },
+    {
+      "model": "baseline_cnn_gru",
+      "seed": 2026,
+      "pbs": "/glade/u/home/zel/scratch/StormSurge/PBS-launcher/baselines_MSEOnly/baseline_cnn_gru/seed2026.pbs",
+      "sha256": "7b0f5a88f35a5c9570d9446e70435ba314a05400c9e04070f077a3e62db284b4",
+      "configs": [
+        "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_cnn_gru/Battery/seed2026/train_config.sh",
+        "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_cnn_gru/Boston/seed2026/train_config.sh",
+        "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_cnn_gru/CBBT/seed2026/train_config.sh",
+        "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_cnn_gru/Lewes/seed2026/train_config.sh"
+      ]
+    },
+    {
+      "model": "baseline_convlstm",
+      "seed": 42,
+      "pbs": "/glade/u/home/zel/scratch/StormSurge/PBS-launcher/baselines_MSEOnly/baseline_convlstm/seed42.pbs",
+      "sha256": "2fcff1967dcb9a717102c4e288cf0244822c5f918932196464eefd425e3d57bd",
+      "configs": [
+        "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_convlstm/Battery/seed42/train_config.sh",
+        "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_convlstm/Boston/seed42/train_config.sh",
+        "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_convlstm/CBBT/seed42/train_config.sh",
+        "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_convlstm/Lewes/seed42/train_config.sh"
+      ]
+    },
+    {
+      "model": "baseline_convlstm",
+      "seed": 123,
+      "pbs": "/glade/u/home/zel/scratch/StormSurge/PBS-launcher/baselines_MSEOnly/baseline_convlstm/seed123.pbs",
+      "sha256": "dce21cdbc5868711ca5264f4979308e377d249c04fb1636ebd5af63ef6f9aa27",
+      "configs": [
+        "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_convlstm/Battery/seed123/train_config.sh",
+        "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_convlstm/Boston/seed123/train_config.sh",
+        "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_convlstm/CBBT/seed123/train_config.sh",
+        "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_convlstm/Lewes/seed123/train_config.sh"
+      ]
+    },
+    {
+      "model": "baseline_convlstm",
+      "seed": 2026,
+      "pbs": "/glade/u/home/zel/scratch/StormSurge/PBS-launcher/baselines_MSEOnly/baseline_convlstm/seed2026.pbs",
+      "sha256": "a537a39c91354eb95792357e53493a83622dbbb6d987937b228f13161bfd7653",
+      "configs": [
+        "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_convlstm/Battery/seed2026/train_config.sh",
+        "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_convlstm/Boston/seed2026/train_config.sh",
+        "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_convlstm/CBBT/seed2026/train_config.sh",
+        "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_convlstm/Lewes/seed2026/train_config.sh"
+      ]
+    }
+  ],
+  "settings": {
+    "seeds": [
+      42,
+      123,
+      2026
+    ],
+    "precision": "bf16",
+    "tf32": 1,
+    "configs": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho",
+    "pbs": "/glade/u/home/zel/scratch/StormSurge/PBS-launcher/baselines_MSEOnly",
+    "results": "/glade/u/home/zel/scratch/StormSurge/All_Results/baselines_MSEOnly_Derecho_formal_bf16",
+    "validation": "/glade/u/home/zel/scratch/StormSurge/PBS-launcher/baselines_MSEOnly/validation",
+    "account": "ULHI0005",
+    "queue": "main@desched1",
+    "walltime": "01:00:00",
+    "resources": "select=1:ncpus=64:mem=487GB:mpiprocs=4:ompthreads=1:ngpus=4",
+    "python": "/glade/work/zel/conda-envs/derecho-ml/bin/python",
+    "label": "Derecho_formal_bf16"
+  },
+  "protected_sha256": {
+    "train.sh": "dfbd60a9ac53cc54c02c469241091825b255d1bc6bd6926e2b5898ac54b5a4be",
+    "train.py": "4b2c077956315e17467d9a9ea6ba37cb780fccf3785b5fb13a6f89c7604fbce5",
+    "infer.sh": "11e50a545906014f536ddfa2b86fad91e0fb998daf1104329cb411f32195df60",
+    "infer.py": "7607e13f487a70b696113b8daba0a6846b77ac99a731982757f461ae73893e6c",
+    "emulator/__init__.py": "51e67819dff8dab4aa9c6fb6137bdaa752418efe515577eb1bc6ca92f75cbaaa",
+    "emulator/inference/__init__.py": "a4a17f727e269fea79f9974d8f06c75e7959f12ea85fb72c938d63d0982345fa",
+    "emulator/inference/grouping.py": "b961bc6faa75f1daf5c1e23f294de22a2f067439bde31603cdcee88c7dfb744b",
+    "emulator/models/reporting.py": "4e5acf6386546d19def6f7209185c32f887f1222caebe415714f039420254afd",
+    "emulator/models/temporal.py": "eb81cdbc76810480d3d80276731a9ec154798e8e08cbdae51039550c113e304f",
+    "emulator/models/node_attention.py": "63837cd2c44e5fa831eaf0718cdaf51e8cddb5e27cecce4eac45f84df2bf59e6",
+    "emulator/models/baselines.py": "6c740f5bff9efd9b156e44e3b3f9b7e8b6adc6f4ce63d1b3bcb1079782dc17c4",
+    "emulator/models/__init__.py": "6d4317a6373ea356e0ae828be3fcfcfc8020c512aaac5217fc167002934f302a",
+    "emulator/models/heads.py": "330605ca34abcbc604ba6c4d84f7a50f54a1e9e8ec04b97760f5f3cd57033208",
+    "emulator/models/spatial.py": "dbcf93424b3eba2ae62388bddf643a332ec25b096319406f9190a57c61d8d7be",
+    "emulator/models/architectures.py": "1e798ef14f36abd2242fbdaf077455dd7d3c3260433c64da8b3d29491ccb1115",
+    "emulator/training/reporting.py": "789ce6ce7f88342d666b59f61d692285ad0ade030cdf996d9be8afe61167de2f",
+    "emulator/training/arguments.py": "e06bf53698950b3fcc3e51858903cce4e28dd4362beb1754c34eb5098a9970ef",
+    "emulator/training/weight_decay.py": "2a2091f3a1de1ea19f4f04765a0bc73af2731a6446f2b9af05139c142f281638",
+    "emulator/training/metrics.py": "f0c4b98561070179637ed21a12117cef882ff2bfbf63bb838f3bb5fa071d6e70",
+    "emulator/training/engine.py": "ea3552c55210a4e780c703837eec06dc1c15296ba83b4108451cf63897b20abf",
+    "emulator/training/episode_peaks.py": "ebcda48ab413334be817546dd2567609e1947c7ad6a88876f212683a9fb5983b",
+    "emulator/training/checkpoint_selection.py": "3f5c7a58dd7acdf49230eb18c19a9bf4f685cd2de9abb32146f4c117b54ba794",
+    "emulator/training/__init__.py": "4ac2dfd83c96361ae99dabba987ec111b2f7f689f399085be06b1f690ee21121",
+    "emulator/training/checkpoints.py": "66e14a9eb43627aa673e94b6919d423b501f4eff7cd1029c03cb6226307a76f6",
+    "emulator/training/losses.py": "a28a6948caba5a68c075e46676fc183112540904264441a5ad0820c6c1aba46e",
+    "emulator/common/__init__.py": "e085d6d57ddcd94a9f3c4fa2256b2be70a2de95acca98ca1f37b97855c282687",
+    "emulator/common/runtime.py": "d8c1c8cab3d170ad6d3a0b20dd4324132516c8072448ef87d874dbd1224cf6f1",
+    "emulator/common/cli.py": "17615a86e4a65a6b6d766150a99014925bca5bd4c43f29a440d5a37c18eb8f24",
+    "emulator/data/graph_store.py": "f6aea54ee54e730fc2e5c578d9fa303b3b5473ec9150f8b27def658ae7b858a5",
+    "emulator/data/loaders.py": "a98be9e2b27724ba65b744a81e74ec897164787f6dcaaaa37d2b251b7038fefd",
+    "emulator/data/__init__.py": "e2290480d59613e76aaef911082a6a297d6c2e0a359d4bc5c65b676e57f837e7",
+    "emulator/data/normalization.py": "bd4c502e327897a1c0ba5f2c2a4371949342e18bbe98dee34309a8f60812ed0b",
+    "emulator/data/stats.py": "b1b288445638c4c72b5b9a83c8038092d7f16b1eac31a4f9ffa8f53854ec996d",
+    "emulator/data/targets.py": "7b9a140c8872c5be21dbd490b0922e157826065b427dec55716130ae3c4700ce",
+    "emulator/data/station_metadata.py": "6ab90e91d03b5178ba548d87d789801b0938408b09da5d5f7f1f549d3cc12a13",
+    "configs/baselines_MSEOnly/train_config_baseline_mlp_lstm.sh": "c56508b7ea8996872a4cbf517f4fb03f918c14b3d127cb546cbf4da3786fbfae",
+    "configs/baselines_MSEOnly/train_config_baseline_cnn_gru.sh": "315cea150494eee8adf69ad0855d88786963b979341156e24ed222cd8df45797",
+    "configs/baselines_MSEOnly/train_config_baseline_cnn.sh": "77ad3f8f624d9cc7d61dff33314e8cc02d34ea862090db57528aeda5f8325cec",
+    "configs/baselines_MSEOnly/train_config_baseline_convlstm.sh": "f3b001ed4facc152e8dedcf7ab0a2e05b6ecdd541126e6312ef179a8a257a698",
+    "configs/baselines_MSEOnly/train_config_baseline_mlp.sh": "86290e6dc9926827d9480cf23037f77b1c9f5c69d24b1d1c02ee8979ce79270e",
+    "configs/baselines_MSEOnly/train_config_baseline_mlp_gru.sh": "c071b70bdc4bdc643fb5b143cacce710928068e6afab57a056686e519a77b053",
+    "configs/baselines_MSEOnly/train_config_baseline_cnn_lstm.sh": "d93499fa4c4759f0863104927e63e30c59d44765635b3b8ee453f4715dc21f3c"
+  },
+  "initial_git_status": " D configs/baselines/train_config_baseline_cnn.sh\n D configs/baselines/train_config_baseline_cnn_gru.sh\n D configs/baselines/train_config_baseline_cnn_lstm.sh\n D configs/baselines/train_config_baseline_convlstm.sh\n D configs/baselines/train_config_baseline_mlp.sh\n D configs/baselines/train_config_baseline_mlp_gru.sh\n D configs/baselines/train_config_baseline_mlp_lstm.sh\n?? configs/baselines_MSEOnly/\n"
+}

@@ -1,0 +1,97 @@
+{
+  "probe": "CPU-only read of one existing year shard per station; no model construction, forward pass or training",
+  "stations": [
+    {
+      "station": "Battery",
+      "shards": 36,
+      "disk_bytes": 3595163256,
+      "sample_file": "/glade/u/home/zel/scratch/StormSurge/dataset/NCEP/graphs/1979_1980_Battery_peryear_hist48_graphs.pt",
+      "graphs_in_sample_file": 604,
+      "sample_shapes": {
+        "x": [
+          928,
+          5
+        ],
+        "x_hist": [
+          9,
+          928,
+          5
+        ],
+        "y": [
+          6
+        ]
+      },
+      "grid_H": "29",
+      "grid_W": "32"
+    },
+    {
+      "station": "Boston",
+      "shards": 36,
+      "disk_bytes": 3595056604,
+      "sample_file": "/glade/u/home/zel/scratch/StormSurge/dataset/NCEP/graphs/1979_1980_Boston_peryear_hist48_graphs.pt",
+      "graphs_in_sample_file": 604,
+      "sample_shapes": {
+        "x": [
+          928,
+          5
+        ],
+        "x_hist": [
+          9,
+          928,
+          5
+        ],
+        "y": [
+          6
+        ]
+      },
+      "grid_H": "29",
+      "grid_W": "32"
+    },
+    {
+      "station": "CBBT",
+      "shards": 36,
+      "disk_bytes": 3594843300,
+      "sample_file": "/glade/u/home/zel/scratch/StormSurge/dataset/NCEP/graphs/1979_1980_CBBT_peryear_hist48_graphs.pt",
+      "graphs_in_sample_file": 604,
+      "sample_shapes": {
+        "x": [
+          928,
+          5
+        ],
+        "x_hist": [
+          9,
+          928,
+          5
+        ],
+        "y": [
+          6
+        ]
+      },
+      "grid_H": "29",
+      "grid_W": "32"
+    },
+    {
+      "station": "Lewes",
+      "shards": 36,
+      "disk_bytes": 3594949952,
+      "sample_file": "/glade/u/home/zel/scratch/StormSurge/dataset/NCEP/graphs/1979_1980_Lewes_peryear_hist48_graphs.pt",
+      "graphs_in_sample_file": 604,
+      "sample_shapes": {
+        "x": [
+          928,
+          5
+        ],
+        "x_hist": [
+          9,
+          928,
+          5
+        ],
+        "y": [
+          6
+        ]
+      },
+      "grid_H": "29",
+      "grid_W": "32"
+    }
+  ]
+}

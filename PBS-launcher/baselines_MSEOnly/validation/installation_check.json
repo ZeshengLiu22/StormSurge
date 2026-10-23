@@ -1,0 +1,16 @@
+{
+  "active_pbs": 84,
+  "archived_sequential_pbs": 21,
+  "unchanged_formal_configs": 84,
+  "pbs_log_directories": 28,
+  "full_pbs_cpu_dry_runs": 84,
+  "bash_syntax_checks": 168,
+  "protected_files_unchanged": 320,
+  "archived_validation_files_unchanged": 112,
+  "queue": "preempt@desched1",
+  "walltime": "00:20:00",
+  "new_formal_results_created": 0,
+  "jobs_submitted": 0,
+  "training_runs_started": 0,
+  "installed_bytes_match_validated_stage": true
+}

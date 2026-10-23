@@ -1,0 +1,153 @@
+StormSurge MSE-only baselines — Derecho validation report
+
+RESULT: PASS for static checks and CPU-only dry runs.
+Generated configurations: 84
+Generated PBS scripts: 21
+Seeds: 42, 123, 2026
+bash -n passes: 105
+Direct configuration DRY_RUN passes: 84
+Full PBS DRY_RUN passes: 21
+Training CLI parse passes: 168 (direct + PBS commands)
+Protected original files unchanged: 42
+Training results created: 0. PBS jobs submitted: 0.
+
+Paths
+-----
+Repository: /glade/u/home/zel/scratch/StormSurge
+Configurations: /glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/<model>/<station>/seed<seed>/train_config.sh
+PBS scripts: /glade/u/home/zel/scratch/StormSurge/PBS-launcher/baselines_MSEOnly/<model>/seed<seed>.pbs
+Results: /glade/u/home/zel/scratch/StormSurge/All_Results/baselines_MSEOnly_Derecho_formal_bf16/<model>/<station>/seed<seed>/<timestamp>_<run_identity>/
+Validation: /glade/u/home/zel/scratch/StormSurge/PBS-launcher/baselines_MSEOnly/validation
+
+PBS request
+-----------
+Account: ULHI0005
+Queue: main@desched1
+Resources: select=1:ncpus=64:mem=487GB:mpiprocs=4:ompthreads=1:ngpus=4
+Walltime: 01:00:00
+Python: /glade/work/zel/conda-envs/derecho-ml/bin/python
+CUDA module: cuda/12.9.0. USE_TMUX=0. One node, four GPUs, four ranks/run.
+Output log directories already exist at PBS/<model>/pbs_logs (Casper) or
+PBS-launcher/baselines_MSEOnly/<model>/pbs_logs (Derecho).
+PBS stdout names use scheduler job IDs; runs use their own unique output roots.
+
+Derecho-specific findings
+-------------------------
+Exactly 84 generated configs live under configs/baselines_MSEOnly/Derecho.
+The parent configs/baselines_MSEOnly also retains seven original source templates;
+counting that whole parent recursively therefore yields 91 shell config files.
+The production matrix and the PBS scripts select only the 84 generated configs.
+Exactly 21 PBS scripts live under PBS-launcher/baselines_MSEOnly.
+Account ULHI0005, main@desched1 and job_priority=economy are explicit in every PBS.
+Resources match the existing Derecho launchers: 64 CPUs, 487GB host memory,
+mpiprocs=4, ompthreads=1, four GPUs on one node.
+USE_AMP=1, AMP_DTYPE="bf16", USE_TF32=1 in all formal configs.
+Formal results root does not yet exist: CPU previews created no training outputs.
+The one-hour walltime is preserved. Do not assume every model will fit until
+timed; the related historical reference and uncertainty are detailed below.
+
+Representative PBS (full file ready for inspection):
+/glade/u/home/zel/scratch/StormSurge/PBS-launcher/baselines_MSEOnly/baseline_mlp/seed42.pbs
+Representative config:
+/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_mlp/Battery/seed42/train_config.sh
+
+Reproduce a CPU-only PBS preview from the repository:
+CUDA_VISIBLE_DEVICES='' DRY_RUN=1 bash PBS-launcher/baselines_MSEOnly/baseline_mlp/seed42.pbs
+
+Prepared: 2026-10-22T21:16:50-04:00 (America/New_York).
+Scope: configuration, PBS generation and CPU-only validation. No qsub, training,
+model forward/backward, GPU operation or distributed process group was executed.
+
+Common experiment protocol
+--------------------------
+Models: baseline_mlp, baseline_cnn, baseline_mlp_lstm, baseline_mlp_gru,
+baseline_cnn_lstm, baseline_cnn_gru, baseline_convlstm.
+Station order in every PBS: Battery -> Boston -> CBBT -> Lewes.
+Each PBS uses one foreground bash train.sh invocation per station, with one
+torch.distributed.run launcher creating four ranks. No outer MPI launcher,
+PBS arrays, concurrent station runs, automatic resubmission or checkpoint resume.
+set -euo pipefail stops the sequence if a station fails; #PBS -r n disables rerun.
+
+Static MLP/CNN: 0H history. All five temporal models: 36H history (seven input
+timestamps at the existing six-hour spacing). Original datasets store 48H
+history; the existing preprocessing selects the requested window.
+LR_LIST=("5e-3"), EPOCHS=300, BATCH_SIZE=256, GRAD_ACCUM_STEPS=1,
+MAX_GRAD_NORM=0.25, PRESSURE_MODE="raw", EXCEEDANCE_LOSS_WEIGHT=0,
+EPISODE_GT_ALIGNED_PEAK_WEIGHT=0, CHECKPOINT_SELECTION="overall", num_gpus=4.
+The unchanged DataLoader interprets BATCH_SIZE=256 PER RANK, giving a nominal
+global batch of 1024 across four GPUs (the final batch may be smaller).
+
+Preserved from the actual local configs/baselines_MSEOnly/train_config_*.sh:
+adaptive 4x4 pooling, stem channels 32, hidden channels 128, dropout 0.05,
+module weight decay, cosine scheduler, five warmup epochs, warmup factor 0.1,
+minimum LR 1e-6, z-score normalization, no clipping/augmentation of inputs,
+no site elevation/bathymetry, zero workers, one Torch thread, and chronological
+0.6/0.2 TRAIN/VAL ratios with SHUFFLE_YEARS=0 and FUTURE_ONLY=0.
+The original seven source templates are retained byte-for-byte. They are not
+generated experiment configurations and retain their original defaults.
+
+Validation evidence
+-------------------
+manifest.json: complete matrix, source/code hashes, generated file hashes and paths.
+matrix.tsv: one row per configuration, including identity and result root.
+validation.json: per-config/per-PBS pass records and resolved dry-run output paths.
+bash_n.txt: syntax result for each generated config and PBS script.
+config_dry_runs/: exact DRY_RUN=1 output for every config.
+pbs_dry_runs/: exact DRY_RUN=1 output for every PBS, with four ordered commands.
+environment.json: CPU-only import observations of the selected Python environment.
+dataset_metadata.json: CPU-only read of one existing year shard per station.
+
+Every generated command was also parsed by the repository's existing
+emulator.training.arguments.parse_args. No training entry point was called.
+Configuration checks compare every preserved assignment with its local source,
+not with an old GitHub version. All 42 protected source/template files match
+their pre-generation SHA-256 hashes. The seven old configs/baselines deletions
+already existed and were not restored. No changes were made to train.sh,
+train.py, emulator code, inference code or existing results.
+
+Every configuration has a distinct result root, PACT_RUN_NAME and
+PYTHON_RUN_TAG_BASE. Across both studies all 112 result roots, run identities,
+resolved dry-run directories and Python run tags are unique. train.sh adds a
+fresh timestamp, creates the run directory with exclusive mkdir, and refuses an
+existing same-name directory. train.py additionally refuses existing baseline
+result markers. Launchers clear inherited run-name/timestamp and Slurm overrides.
+
+Resource and runtime limitations
+-------------------------------
+Syntax and dry runs do not validate scheduler admission, a GPU allocation, CUDA
+driver execution, NCCL collectives, GPU memory peak, throughput or convergence.
+Runtime preflight in each PBS checks exactly four visible GPUs and NCCL support;
+it is skipped in DRY_RUN. CUDA_VISIBLE_DEVICES is respected, not forced to 0-3.
+The existing torchrun launcher uses a random local rendezvous port; rare port
+collisions remain possible. No extra MPI process layer is introduced.
+
+Each station has 36 year shards, approximately 3.35 GiB serialized. Samples have
+a 29x32 grid (928 nodes), five raw source features and six target values. The
+four DDP ranks load their own data, so host-memory use is replicated; serialized
+file size is not a resident-memory bound. Temporal models retain seven frames,
+and ConvLSTM keeps full-grid recurrent states before pooling. Actual memory
+peaks, especially the V100's 32 GiB device limit, need the user's pilot run.
+Batch size, history, pooling, hidden dimensions and preprocessing were not reduced.
+
+Existing local timing reference:
+PBS-launcher/architecture_avgrank_multiseed/README.md and experiments.py report
+32.251-46.727 minutes for four sequential 300-epoch station runs of RELATED
+PACT/CNN architectures on Derecho. These are historical documented estimates,
+not measurements of the seven new shallow baselines and not Casper benchmarks.
+One hour is plausible for faster baselines, but is not established for every
+model. It allows 15 minutes per station, or 3 seconds per epoch before startup,
+data loading, validation, final evaluation and output costs. ConvLSTM is the
+largest runtime uncertainty. The requested walltimes were left unchanged.
+
+References checked on 2026-10-22
+------------------------------
+NCAR PBS syntax and chunk-level GPU types (old job-level gpu_type syntax is obsolete):
+https://ncar-hpc-docs.readthedocs.io/en/latest/pbs/job-scripts/
+NCAR Casper node hardware (four V100 SXM2 32GB GPUs; 36 CPU cores):
+https://ncar-hpc-docs.readthedocs.io/en/latest/compute-systems/casper/
+NCAR Casper script examples:
+https://ncar-hpc-docs.readthedocs.io/en/latest/pbs/job-scripts/casper-job-script-examples/
+NCAR queue/priority documentation:
+https://ncar-hpc-docs.readthedocs.io/en/latest/pbs/charging/
+PyTorch 2.8 AMP/GradScaler and unscale-before-clipping examples:
+https://docs.pytorch.org/docs/2.8/notes/amp_examples.html

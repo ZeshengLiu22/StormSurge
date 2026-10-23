@@ -1,0 +1,33 @@
+{
+  "platform": "Derecho",
+  "observation": "CPU-only imports completed successfully; no CUDA operation executed",
+  "python": "/glade/work/zel/conda-envs/derecho-ml/bin/python",
+  "versions": {
+    "python": "3.11.17",
+    "torch": "2.8.0+cu126",
+    "torch_cuda_build": "12.6",
+    "torch_geometric": "2.8.0.post1",
+    "numpy": "2.4.6",
+    "pandas": "2.3.3",
+    "scipy": "1.17.1",
+    "sklearn": "1.9.1",
+    "matplotlib": "3.11.2",
+    "xarray": "2026.9.0",
+    "netCDF4": "1.7.4"
+  },
+  "compiled_cuda_architectures": [
+    "sm_50",
+    "sm_60",
+    "sm_70",
+    "sm_75",
+    "sm_80",
+    "sm_86",
+    "sm_90"
+  ],
+  "nccl_available": true,
+  "torch_amp_GradScaler_available": true,
+  "train_module_import": "PASS; main was not called",
+  "CUDA_VISIBLE_DEVICES": "",
+  "requested_cuda_module": "cuda/12.9.0",
+  "note": "PyTorch wheel was built with CUDA 12.6; the requested CUDA module is 12.9.0. Actual allocated-node driver/kernel compatibility remains a runtime check."
+}

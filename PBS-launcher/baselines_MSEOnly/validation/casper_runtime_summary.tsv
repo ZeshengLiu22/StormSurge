@@ -1,0 +1,8 @@
+model	completed_runs	min_seconds	median_seconds	max_seconds	requested_walltime_seconds	max_observed_fraction
+baseline_mlp	4	343	361.5	365	1200	0.3042
+baseline_cnn	4	322	335.5	350	1200	0.2917
+baseline_mlp_lstm	4	516	522.5	535	1200	0.4458
+baseline_mlp_gru	4	521	536.0	550	1200	0.4583
+baseline_cnn_lstm	4	520	539.5	552	1200	0.4600
+baseline_cnn_gru	4	526	536.5	548	1200	0.4567
+baseline_convlstm	4	554	575.5	588	1200	0.4900

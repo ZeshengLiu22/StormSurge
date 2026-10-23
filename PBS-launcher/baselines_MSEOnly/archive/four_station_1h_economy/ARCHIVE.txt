@@ -1,0 +1,4 @@
+Historical four-station, one-hour economy launchers and their original validation evidence.
+The 21 launchers are retained verbatim with .pbs.disabled filenames.
+Active jobs now use ../../<model>/<station>/seed<seed>.pbs: one config, 20 minutes, preempt@desched1.
+Do not include this archive in active submission globs.

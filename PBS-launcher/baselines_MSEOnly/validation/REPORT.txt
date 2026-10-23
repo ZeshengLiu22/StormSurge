@@ -1,0 +1,106 @@
+StormSurge MSE-only baselines: independent 20-minute Derecho preempt jobs
+Prepared: 2026-10-23T00:15:23-04:00 (America/New_York)
+
+Scope and outcome
+The user confirmed baselines_MSEOnly formal Derecho jobs as the target.
+84 active PBS scripts: 7 models x 4 stations x seeds 42, 123, 2026.
+Each PBS runs exactly one existing formal config with four DDP ranks.
+All 84 formal configs are byte-for-byte unchanged. Each still runs all 300 epochs.
+PBS path: /glade/u/home/zel/scratch/StormSurge/PBS-launcher/baselines_MSEOnly/<model>/<station>/seed<seed>.pbs
+Config path: /glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/<model>/<station>/seed<seed>/train_config.sh
+PBS logs: /glade/u/home/zel/scratch/StormSurge/PBS-launcher/baselines_MSEOnly/<model>/<station>/pbs_logs/
+The old 21 four-station, one-hour economy scripts and previous validation evidence
+are archived under archive/four_station_1h_economy/. Archived scripts use
+.pbs.disabled filenames and are excluded from active *.pbs submission globs.
+The unrelated loss-weight sweep files and existing scheduled jobs are unchanged.
+
+PBS settings
+Account: ULHI0005
+Queue: preempt@desched1 (explicit Derecho server; valid from Casper or Derecho)
+Walltime: 00:20:00
+Resources: select=1:ncpus=64:mem=487GB:mpiprocs=4:ompthreads=1:ngpus=4
+Rerunnable: n. Joined output: oe. No job_priority=economy directive.
+No arrays, automatic submissions, multi-config launchers or retry schedulers.
+28 station-specific pbs_logs directories; 84 unique job names no longer than 15 characters.
+Python: /glade/work/zel/conda-envs/derecho-ml/bin/python
+module load cuda/12.9.0; USE_TMUX=0; OMP/MKL/OPENBLAS thread counts=1.
+TMPDIR=/glade/derecho/scratch/zel/tmp/stormsurge-mseonly-${PBS_JOBID}
+MPLCONFIGDIR=${TMPDIR}/matplotlib; existing CUDA/NCCL/BF16 preflight retained.
+
+Measured Casper V100 timing
+All 28 temporary FP16 seed42 runs completed 300 epochs and have exit_status=0.
+Their PBS logs confirm four Tesla V100-SXM2-32GB GPUs per run.
+Reported times below use the PBS wrapper's [END] elapsed_seconds, covering the
+full train.sh invocation including loading, training, final evaluation and output;
+module loading and the PBS-level GPU preflight precede that timer.
+baseline_mlp: 343-365 seconds (5.72-6.08 minutes), 4 completed station runs.
+baseline_cnn: 322-350 seconds (5.37-5.83 minutes), 4 completed station runs.
+baseline_mlp_lstm: 516-535 seconds (8.60-8.92 minutes), 4 completed station runs.
+baseline_mlp_gru: 521-550 seconds (8.68-9.17 minutes), 4 completed station runs.
+baseline_cnn_lstm: 520-552 seconds (8.67-9.20 minutes), 4 completed station runs.
+baseline_cnn_gru: 526-548 seconds (8.77-9.13 minutes), 4 completed station runs.
+baseline_convlstm: 554-588 seconds (9.23-9.80 minutes), 4 completed station runs.
+The slowest measured full train.sh invocation was 588 seconds (9 minutes 48 seconds).
+A 1200-second limit leaves 612 seconds beyond that observed maximum, about 2.04x
+its duration. This supports the user's 20-minute allocation choice; it is not a
+measured Derecho duration or a guaranteed A100/V100 speedup. Formal jobs retain
+BF16+TF32, while Casper pilots used FP16 with TF32 disabled. Seeds 123/2026 have
+not been timed in this baseline pilot. No new benchmark was launched.
+
+Preserved formal training protocol
+Models: baseline_mlp, baseline_cnn, baseline_mlp_lstm, baseline_mlp_gru,
+baseline_cnn_lstm, baseline_cnn_gru, baseline_convlstm.
+Stations: Battery, Boston, CBBT, Lewes. Seeds: 42, 123, 2026.
+Static MLP/CNN history=0H; five temporal models history=36H.
+EPOCHS=300; LR=5e-3; BATCH_SIZE=256 per rank; GRAD_ACCUM_STEPS=1; MAX_GRAD_NORM=0.25.
+PRESSURE_MODE=raw; WEIGHT_DECAY_POLICY=module; MSE-only (both optional weights=0).
+CHECKPOINT_SELECTION=overall; AMP=bf16; TF32=1; num_gpus=4.
+NCEP data, chronological splits, normalization, architecture, pooling, optimizer,
+scheduler and precision settings are unchanged. No training or loss code changed.
+Results keep the existing baselines_MSEOnly_Derecho_formal_bf16 destination,
+per-model/station/seed roots, unique run identities and timestamped run directories.
+
+Validation
+PASS: 84 PBS scripts and 84 unchanged configs; exact 7x4x3 coverage.
+PASS: 168 bash -n checks (84 PBS + 84 configs).
+PASS: 84 embedded GPU-preflight Python snippets parse successfully.
+PASS: all 84 full PBS scripts pass CPU-only CUDA_VISIBLE_DEVICES='' DRY_RUN=1.
+PASS: exactly one training command and four-rank DDP launcher printed per PBS.
+PASS: printed training flags match previous validated config commands; only the
+current run timestamp differs in output_dir and run_tag.
+PASS: unique run identities, full output paths, PBS names and correct log paths.
+PASS: 320 protected files unchanged, including formal/source configs,
+training code, Casper configs/logs and the unrelated loss-weight multiseed files.
+PASS: CPU previews created no training result directory or GPU process.
+No PBS script was executed with DRY_RUN=0. No qsub, qalter, qmove or qdel was run.
+
+Manual submission from either login system (run only when ready)
+cd /glade/u/home/zel/scratch/StormSurge
+for pbs in PBS-launcher/baselines_MSEOnly/baseline_*/{Battery,Boston,CBBT,Lewes}/seed{42,123,2026}.pbs; do
+    printf '%s: ' "$pbs"
+    qsub "$pbs" || break
+done
+
+Read-only queue status
+qstat -u "$USER" @desched1
+
+Preempt behavior and limits
+preempt is an interruptible queue using otherwise idle resources; it does not
+promise 20 uninterrupted minutes or a quicker start. Existing #PBS -r n is
+preserved: a preempted job is not automatically rerun. train.sh stops on SIGTERM;
+these launchers do not resume a prior checkpoint. Any manual retry creates a
+fresh timestamped run. Live Derecho GPU execution and scheduling were not tested.
+
+Evidence
+matrix.tsv: 84 config/PBS mappings and destinations.
+manifest.json: unchanged config hashes, new PBS hashes, timing evidence and settings.
+validation.json and pbs_dry_runs/: all 84 successful CPU previews.
+casper_runtime_evidence.tsv: 28 measured runtimes with exact source-log paths.
+casper_runtime_summary.tsv: per-model ranges and walltime margins.
+archive/four_station_1h_economy/: previous PBS scripts and validation evidence.
+
+Official documentation checked
+https://ncar-hpc-docs.readthedocs.io/en/latest/pbs/peer-scheduling/
+https://ncar-hpc-docs.readthedocs.io/en/latest/pbs/preemption/
+
+Zero jobs submitted; zero training runs started by this change.
