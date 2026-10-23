@@ -1,0 +1,35 @@
+Future-inference compatibility: PASS (source and interface checks; no inference executed).
+Protocol A trains once on PastOnly and evaluates its chronological historical TEST after VAL-only checkpoint selection.
+Protocol B must use that exact run directory's best_overall.pt. It creates no second training run.
+The checkpoint stores model_config, model_state, source TRAIN normalization, threshold_metadata and episode_peak_metadata.
+infer.py restores model_state strictly, reads checkpoint normalization, and reads threshold_metadata.tau_physical.
+It does not call fit_statistics or fit_loss_thresholds. Future data are never used to fit statistics or select a checkpoint.
+An explicit --test_root_dir selects external data. Always supply --years and --strict_years.
+Do not use --scope test with --test_root_dir. Architecture comes from the saved checkpoint; pressure_mode=raw is an assertion.
+All 36 actual target-root/station year selections passed infer.py's parser and selection logic using a filename-only test store.
+Missing, duplicate, malformed and empty year requests were rejected. Every future graph file was separately inspected for dimensions and timestamps.
+Trained checkpoints do not exist yet; no end-to-end trained-model evaluation was attempted.
+
+Exact future groups (identical for all nine GCMs and all four stations):
+2070_2071,2071_2072,2072_2073,2073_2074,2074_2075,2075_2076,2076_2077,2077_2078,2078_2079,2079_2080,2080_2081,2081_2082,2082_2083,2083_2084,2084_2085,2085_2086,2086_2087,2087_2088,2088_2089,2089_2090,2090_2091,2091_2092,2092_2093,2093_2094,2094_2095,2095_2096,2096_2097,2097_2098,2098_2099,2099_2100
+
+The 2099_2100 tag is present, but its stored target coverage ends in 2099; see the per-file audit. Do not infer target calendar dates from filenames alone.
+
+Manual example for later, inside a suitable GPU allocation. Replace the one historical_run placeholder with the completed run selected for Protocol A; do not select a rerun by future TEST scores. These commands have NOT been run:
+cd /glade/u/home/zel/scratch/StormSurge
+historical_run="/glade/u/home/zel/scratch/PACT_StormSurge_FormalRuns_1021_LR5e-3_Clip0.25/cmip6/CMIP6_AWI/Battery/seed42/PACT_MSE/<timestamp>_CMIP6_AWI_Battery_seed42_PACT_MSE_36H_lr5e-3_clip0.25"
+checkpoint="${historical_run}/best_overall.pt"
+test -r "${checkpoint}" || exit 1
+future_years="2070_2071,2071_2072,2072_2073,2073_2074,2074_2075,2075_2076,2076_2077,2077_2078,2078_2079,2079_2080,2080_2081,2081_2082,2082_2083,2083_2084,2084_2085,2085_2086,2086_2087,2087_2088,2088_2089,2089_2090,2090_2091,2091_2092,2092_2093,2093_2094,2094_2095,2095_2096,2096_2097,2097_2098,2098_2099,2099_2100"
+future_output="$(mktemp -d "${historical_run}/future_inference_$(date -u +%Y%m%d_%H%M%S)_XXXXXX")"
+/glade/work/zel/conda-envs/derecho-ml/bin/python infer.py \
+  --ckpt "${checkpoint}" \
+  --root_dir /glade/u/home/zel/scratch/PACT-Data-Final/CMIP6_AWI_PastOnly/graphs \
+  --test_root_dir /glade/u/home/zel/scratch/PACT-Data-Final/CMIP6_AWI/graphs \
+  --station Battery --years "${future_years}" --strict_years \
+  --pressure_mode raw --device cuda --amp --amp_dtype bf16 --tf32 \
+  --batch_size 256 --num_workers 0 --torch_threads 1 --save_npz \
+  --model_label PACT_MSE --out_dir "${future_output}"
+
+For each other combination use its manifest data_root/full_data_root, station, variant and selected historical best_overall.pt.
+The fresh mktemp output directory prevents later future-evaluation reruns from overwriting earlier outputs.

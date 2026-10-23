@@ -1,0 +1,37 @@
+{
+  "status": "PASS",
+  "ready_combinations": 540,
+  "total_combinations": 540,
+  "generated_at_utc": "2026-10-23T15:20:55.647722+00:00",
+  "generated_at_client_time": "2026-10-23T11:20:55.647722-04:00",
+  "repository_revision": "4fbee08e32dd7fc3c67d389ffffea0d43595d7eb",
+  "categories": {
+    "A_dataset_audit": "PASS",
+    "B_exact_matrix_and_uniqueness": "PASS",
+    "C_formal_NCEP_scientific_comparability": "PASS",
+    "D_PBS_syntax_and_540_CPU_dry_runs": "PASS",
+    "E_preservation_and_no_results_created": "PASS",
+    "F_future_inference_interface": "PASS"
+  },
+  "missing_files_or_invalid_data": [],
+  "scientific_deviations": [],
+  "data_notes": [
+    "No scientific hyperparameter, optimizer, architecture, loss, or split changes from the 60 matching formal station/seed NCEP references.",
+    "Authorized operational changes: CMIP6 PastOnly roots, unique output/log/run paths, Derecho Python, USE_TMUX=0, timestamp_runname, independent PBS jobs, and requested walltimes.",
+    "train.sh appends its launch timestamp to PYTHON_RUN_TAG_BASE; validation checks that existing behavior. Its fresh-directory mkdir refuses collisions, including reruns within one second.",
+    "Historical 2014_2015 and future 2099_2100 boundary files have fewer windows than full winter groups. No requested year group is missing; existing groups are preserved intact. See shortened_year_groups.json for exact coverage."
+  ],
+  "risks_and_limits": [
+    "CUDA/NCCL/BF16 device preflight is retained but intentionally not executed on GPUs. CPU validation cannot establish GPU memory fit or the actual time required for 300 epochs.",
+    "EC_EARTH requests exactly 02:00:00; other GCMs request exactly 01:00:00. These are user-specified limits, not measured CMIP6 completion estimates.",
+    "The preempt queue can interrupt runs. #PBS -r n prevents automatic reruns; no automatic resume mechanism was added.",
+    "Historical checkpoints do not exist until training completes. End-to-end inference with trained weights is deferred; source and interface checks passed.",
+    "Numerical payload checks are sampled at file boundaries as detailed in the dataset audit; all graph shapes and target timestamps were checked."
+  ],
+  "pbs_submissions": 0,
+  "training_launches": 0,
+  "future_inference_launches": 0,
+  "manifest": "/glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/validation/manifest.tsv",
+  "year_summary": "/glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/validation/year_groups.tsv",
+  "manual_commands": "/glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/validation/manual_qsub_commands.txt"
+}

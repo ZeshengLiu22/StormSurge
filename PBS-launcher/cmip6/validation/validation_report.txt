@@ -1,0 +1,56 @@
+CMIP6 PastOnly preparation: PASS
+540/540 combinations ready for manual submission after CPU validation.
+Validated at 2026-10-23T11:20:55.647722-04:00 (America/New_York).
+Repository revision: 4fbee08e32dd7fc3c67d389ffffea0d43595d7eb
+No qsub, qdel, training, or future inference was executed.
+
+Category results:
+PASS: A_dataset_audit
+PASS: B_exact_matrix_and_uniqueness
+PASS: C_formal_NCEP_scientific_comparability
+PASS: D_PBS_syntax_and_540_CPU_dry_runs
+PASS: E_preservation_and_no_results_created
+PASS: F_future_inference_interface
+
+Matrix: 540 configs, 540 independent PBS scripts, 540 unique tuples/output roots/run names/PBS names/log locations.
+Distributions: 60/GCM; 135/station; 180/seed; 108/variant. Maximum PBS job-name length: 12.
+All 1,080 generated shell/PBS files pass bash -n; all 540 PBS CPU DRY_RUNs pass.
+All 540 effective scientific command lines match their exact formal station/seed reference.
+All 540 command lines parse with the repository training argument parser.
+Data: 1296 PastOnly files and 1080 future files; 1,401,696 graphs inspected.
+All 36 GCM/station pairs have the same chronological year split for seeds 42, 123, and 2026:
+  TRAIN: 22 groups, 1979_1980 through 2000_2001.
+  VAL:    7 groups, 2001_2002 through 2007_2008.
+  TEST:   7 groups, 2008_2009 through 2014_2015.
+Future availability: 30 groups, 2070_2071 through 2099_2100, for every pair.
+All observed target timestamps are unique; partitions and their requested 36H forcing contexts are chronologically separated; historical timestamps precede 2030.
+No missing requested GCM/station/year files or malformed filenames were detected.
+
+Scientific comparability and data notes:
+- No scientific hyperparameter, optimizer, architecture, loss, or split changes from the 60 matching formal station/seed NCEP references.
+- Authorized operational changes: CMIP6 PastOnly roots, unique output/log/run paths, Derecho Python, USE_TMUX=0, timestamp_runname, independent PBS jobs, and requested walltimes.
+- train.sh appends its launch timestamp to PYTHON_RUN_TAG_BASE; validation checks that existing behavior. Its fresh-directory mkdir refuses collisions, including reruns within one second.
+- Historical 2014_2015 and future 2099_2100 boundary files have fewer windows than full winter groups. No requested year group is missing; existing groups are preserved intact. See shortened_year_groups.json for exact coverage.
+
+Validation scope:
+All 1,296 PastOnly files and 1,080 future files were deserialized one file per CPU worker, with at most four workers. Every graph was checked for feature/target/history dimensions, CNN grid sizes, pressure metadata shape, and supervised timestamps. Actual target hours were checked for duplicates and chronological split separation. Numerical target/pressure values and raw-pressure transformation/forcing finiteness were checked at least on the first and last graph of every file; several cached initial pairs had all target/pressure values checked. This is not a bytewise checksum or exhaustive finiteness scan of all forcing tensors.
+
+Runtime and PBS limits:
+- CUDA/NCCL/BF16 device preflight is retained but intentionally not executed on GPUs. CPU validation cannot establish GPU memory fit or the actual time required for 300 epochs.
+- EC_EARTH requests exactly 02:00:00; other GCMs request exactly 01:00:00. These are user-specified limits, not measured CMIP6 completion estimates.
+- The preempt queue can interrupt runs. #PBS -r n prevents automatic reruns; no automatic resume mechanism was added.
+- Historical checkpoints do not exist until training completes. End-to-end inference with trained weights is deferred; source and interface checks passed.
+- Numerical payload checks are sampled at file boundaries as detailed in the dataset audit; all graph shapes and target timestamps were checked.
+
+Preservation:
+All 2835 pre-existing tracked files retain their SHA256 hashes.
+No tracked files changed. New repository files are confined to configs/cmip6 and PBS-launcher/cmip6.
+The existing cmip6 results parent remains empty. Results are created only by actual training.
+
+Artifacts:
+manifest.tsv / manifest.json: one record per combination, with template and generated-file SHA256 provenance.
+matrix_validation.json and dry_run/: per-combination checks and all 540 CPU previews.
+dataset_audit.json, data_details/, graph_file_audit.tsv: exact graph/time/shape audit evidence.
+year_groups.tsv / year_groups.json: every GCM/station split and future year group.
+future_inference_compatibility.txt and interface_validation.json: deferred evaluation procedure and checks.
+manual_qsub_commands.txt / pbs_paths.txt: manual staged/full submission commands.

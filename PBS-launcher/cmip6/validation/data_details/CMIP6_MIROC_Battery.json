@@ -1,0 +1,1869 @@
+{
+  "gcm": "CMIP6_MIROC",
+  "station": "Battery",
+  "status": "PASS",
+  "errors": [],
+  "historical_files": [
+    {
+      "path": "/glade/u/home/zel/scratch/PACT-Data-Final/CMIP6_MIROC_PastOnly/graphs/1979_1980_Battery_peryear_hist48_graphs.pt",
+      "bytes": 183541034,
+      "mtime_ns": 1792290245000000000,
+      "graph_count": 604,
+      "signatures": [
+        [
+          39,
+          43,
+          1677,
+          5,
+          9,
+          48,
+          6
+        ]
+      ],
+      "first_target_utc": "1979-11-01T00:00:00",
+      "last_target_utc": "1980-03-30T23:00:00",
+      "target_min": 0.040012359619140625,
+      "target_max": 0.28678998351097107,
+      "numeric_values_scope": "boundary",
+      "numeric_graph_count": 2,
+      "target_hour_count": 3624,
+      "status": "PASS"
+    },
+    {
+      "path": "/glade/u/home/zel/scratch/PACT-Data-Final/CMIP6_MIROC_PastOnly/graphs/1980_1981_Battery_peryear_hist48_graphs.pt",
+      "bytes": 182326206,
+      "mtime_ns": 1792290266000000000,
+      "graph_count": 600,
+      "signatures": [
+        [
+          39,
+          43,
+          1677,
+          5,
+          9,
+          48,
+          6
+        ]
+      ],
+      "first_target_utc": "1980-11-01T00:00:00",
+      "last_target_utc": "1981-03-30T23:00:00",
+      "target_min": 0.0378553569316864,
+      "target_max": 0.17449268698692322,
+      "numeric_values_scope": "boundary",
+      "numeric_graph_count": 2,
+      "target_hour_count": 3600,
+      "status": "PASS"
+    },
+    {
+      "path": "/glade/u/home/zel/scratch/PACT-Data-Final/CMIP6_MIROC_PastOnly/graphs/1981_1982_Battery_peryear_hist48_graphs.pt",
+      "bytes": 182326206,
+      "mtime_ns": 1792290268000000000,
+      "graph_count": 600,
+      "signatures": [
+        [
+          39,
+          43,
+          1677,
+          5,
+          9,
+          48,
+          6
+        ]
+      ],
+      "first_target_utc": "1981-11-01T00:00:00",
+      "last_target_utc": "1982-03-30T23:00:00",
+      "target_min": 0.07209250330924988,
+      "target_max": 0.22269004583358765,
+      "numeric_values_scope": "boundary",
+      "numeric_graph_count": 2,
+      "target_hour_count": 3600,
+      "status": "PASS"
+    },
+    {
+      "path": "/glade/u/home/zel/scratch/PACT-Data-Final/CMIP6_MIROC_PastOnly/graphs/1982_1983_Battery_peryear_hist48_graphs.pt",
+      "bytes": 182326206,
+      "mtime_ns": 1792290269000000000,
+      "graph_count": 600,
+      "signatures": [
+        [
+          39,
+          43,
+          1677,
+          5,
+          9,
+          48,
+          6
+        ]
+      ],
+      "first_target_utc": "1982-11-01T00:00:00",
+      "last_target_utc": "1983-03-30T23:00:00",
+      "target_min": -0.014497756958007812,
+      "target_max": 0.17613518238067627,
+      "numeric_values_scope": "boundary",
+      "numeric_graph_count": 2,
+      "target_hour_count": 3600,
+      "status": "PASS"
+    },
+    {
+      "path": "/glade/u/home/zel/scratch/PACT-Data-Final/CMIP6_MIROC_PastOnly/graphs/1983_1984_Battery_peryear_hist48_graphs.pt",
+      "bytes": 183541034,
+      "mtime_ns": 1792290259000000000,
+      "graph_count": 604,
+      "signatures": [
+        [
+          39,
+          43,
+          1677,
+          5,
+          9,
+          48,
+          6
+        ]
+      ],
+      "first_target_utc": "1983-11-01T00:00:00",
+      "last_target_utc": "1984-03-30T23:00:00",
+      "target_min": 0.12349603325128555,
+      "target_max": 0.22379112243652344,
+      "numeric_values_scope": "boundary",
+      "numeric_graph_count": 2,
+      "target_hour_count": 3624,
+      "status": "PASS"
+    },
+    {
+      "path": "/glade/u/home/zel/scratch/PACT-Data-Final/CMIP6_MIROC_PastOnly/graphs/1984_1985_Battery_peryear_hist48_graphs.pt",
+      "bytes": 182326206,
+      "mtime_ns": 1792290267000000000,
+      "graph_count": 600,
+      "signatures": [
+        [
+          39,
+          43,
+          1677,
+          5,
+          9,
+          48,
+          6
+        ]
+      ],
+      "first_target_utc": "1984-11-01T00:00:00",
+      "last_target_utc": "1985-03-30T23:00:00",
+      "target_min": 0.07130198180675507,
+      "target_max": 0.21279242634773254,
+      "numeric_values_scope": "boundary",
+      "numeric_graph_count": 2,
+      "target_hour_count": 3600,
+      "status": "PASS"
+    },
+    {
+      "path": "/glade/u/home/zel/scratch/PACT-Data-Final/CMIP6_MIROC_PastOnly/graphs/1985_1986_Battery_peryear_hist48_graphs.pt",
+      "bytes": 182326206,
+      "mtime_ns": 1792290274000000000,
+      "graph_count": 600,
+      "signatures": [
+        [
+          39,
+          43,
+          1677,
+          5,
+          9,
+          48,
+          6
+        ]
+      ],
+      "first_target_utc": "1985-11-01T00:00:00",
+      "last_target_utc": "1986-03-30T23:00:00",
+      "target_min": 0.11487433314323425,
+      "target_max": 0.19174271821975708,
+      "numeric_values_scope": "boundary",
+      "numeric_graph_count": 2,
+      "target_hour_count": 3600,
+      "status": "PASS"
+    },
+    {
+      "path": "/glade/u/home/zel/scratch/PACT-Data-Final/CMIP6_MIROC_PastOnly/graphs/1986_1987_Battery_peryear_hist48_graphs.pt",
+      "bytes": 182326206,
+      "mtime_ns": 1792290269000000000,
+      "graph_count": 600,
+      "signatures": [
+        [
+          39,
+          43,
+          1677,
+          5,
+          9,
+          48,
+          6
+        ]
+      ],
+      "first_target_utc": "1986-11-01T00:00:00",
+      "last_target_utc": "1987-03-30T23:00:00",
+      "target_min": 0.22010450065135956,
+      "target_max": 0.3639736771583557,
+      "numeric_values_scope": "boundary",
+      "numeric_graph_count": 2,
+      "target_hour_count": 3600,
+      "status": "PASS"
+    },
+    {
+      "path": "/glade/u/home/zel/scratch/PACT-Data-Final/CMIP6_MIROC_PastOnly/graphs/1987_1988_Battery_peryear_hist48_graphs.pt",
+      "bytes": 183541034,
+      "mtime_ns": 1792290249000000000,
+      "graph_count": 604,
+      "signatures": [
+        [
+          39,
+          43,
+          1677,
+          5,
+          9,
+          48,
+          6
+        ]
+      ],
+      "first_target_utc": "1987-11-01T00:00:00",
+      "last_target_utc": "1988-03-30T23:00:00",
+      "target_min": 0.10845176875591278,
+      "target_max": 0.1531962901353836,
+      "numeric_values_scope": "boundary",
+      "numeric_graph_count": 2,
+      "target_hour_count": 3624,
+      "status": "PASS"
+    },
+    {
+      "path": "/glade/u/home/zel/scratch/PACT-Data-Final/CMIP6_MIROC_PastOnly/graphs/1988_1989_Battery_peryear_hist48_graphs.pt",
+      "bytes": 182326206,
+      "mtime_ns": 1792290269000000000,
+      "graph_count": 600,
+      "signatures": [
+        [
+          39,
+          43,
+          1677,
+          5,
+          9,
+          48,
+          6
+        ]
+      ],
+      "first_target_utc": "1988-11-01T00:00:00",
+      "last_target_utc": "1989-03-30T23:00:00",
+      "target_min": 0.09993371367454529,
+      "target_max": 0.2618502676486969,
+      "numeric_values_scope": "boundary",
+      "numeric_graph_count": 2,
+      "target_hour_count": 3600,
+      "status": "PASS"
+    },
+    {
+      "path": "/glade/u/home/zel/scratch/PACT-Data-Final/CMIP6_MIROC_PastOnly/graphs/1989_1990_Battery_peryear_hist48_graphs.pt",
+      "bytes": 182326206,
+      "mtime_ns": 1792290268000000000,
+      "graph_count": 600,
+      "signatures": [
+        [
+          39,
+          43,
+          1677,
+          5,
+          9,
+          48,
+          6
+        ]
+      ],
+      "first_target_utc": "1989-11-01T00:00:00",
+      "last_target_utc": "1990-03-30T23:00:00",
+      "target_min": 0.0003974437713623047,
+      "target_max": 0.07701265066862106,
+      "numeric_values_scope": "boundary",
+      "numeric_graph_count": 2,
+      "target_hour_count": 3600,
+      "status": "PASS"
+    },
+    {
+      "path": "/glade/u/home/zel/scratch/PACT-Data-Final/CMIP6_MIROC_PastOnly/graphs/1990_1991_Battery_peryear_hist48_graphs.pt",
+      "bytes": 182326206,
+      "mtime_ns": 1792290270000000000,
+      "graph_count": 600,
+      "signatures": [
+        [
+          39,
+          43,
+          1677,
+          5,
+          9,
+          48,
+          6
+        ]
+      ],
+      "first_target_utc": "1990-11-01T00:00:00",
+      "last_target_utc": "1991-03-30T23:00:00",
+      "target_min": -0.04457122087478638,
+      "target_max": 0.06736224889755249,
+      "numeric_values_scope": "boundary",
+      "numeric_graph_count": 2,
+      "target_hour_count": 3600,
+      "status": "PASS"
+    },
+    {
+      "path": "/glade/u/home/zel/scratch/PACT-Data-Final/CMIP6_MIROC_PastOnly/graphs/1991_1992_Battery_peryear_hist48_graphs.pt",
+      "bytes": 183541034,
+      "mtime_ns": 1792290255000000000,
+      "graph_count": 604,
+      "signatures": [
+        [
+          39,
+          43,
+          1677,
+          5,
+          9,
+          48,
+          6
+        ]
+      ],
+      "first_target_utc": "1991-11-01T00:00:00",
+      "last_target_utc": "1992-03-30T23:00:00",
+      "target_min": 0.11341899633407593,
+      "target_max": 0.2629149854183197,
+      "numeric_values_scope": "boundary",
+      "numeric_graph_count": 2,
+      "target_hour_count": 3624,
+      "status": "PASS"
+    },
+    {
+      "path": "/glade/u/home/zel/scratch/PACT-Data-Final/CMIP6_MIROC_PastOnly/graphs/1992_1993_Battery_peryear_hist48_graphs.pt",
+      "bytes": 182326206,
+      "mtime_ns": 1792290276000000000,
+      "graph_count": 600,
+      "signatures": [
+        [
+          39,
+          43,
+          1677,
+          5,
+          9,
+          48,
+          6
+        ]
+      ],
+      "first_target_utc": "1992-11-01T00:00:00",
+      "last_target_utc": "1993-03-30T23:00:00",
+      "target_min": -0.07874840497970581,
+      "target_max": 0.07130089402198792,
+      "numeric_values_scope": "boundary",
+      "numeric_graph_count": 2,
+      "target_hour_count": 3600,
+      "status": "PASS"
+    },
+    {
+      "path": "/glade/u/home/zel/scratch/PACT-Data-Final/CMIP6_MIROC_PastOnly/graphs/1993_1994_Battery_peryear_hist48_graphs.pt",
+      "bytes": 182326206,
+      "mtime_ns": 1792290275000000000,
+      "graph_count": 600,
+      "signatures": [
+        [
+          39,
+          43,
+          1677,
+          5,
+          9,
+          48,
+          6
+        ]
+      ],
+      "first_target_utc": "1993-11-01T00:00:00",
+      "last_target_utc": "1994-03-30T23:00:00",
+      "target_min": 0.177632138133049,
+      "target_max": 0.2888633608818054,
+      "numeric_values_scope": "boundary",
+      "numeric_graph_count": 2,
+      "target_hour_count": 3600,
+      "status": "PASS"
+    },
+    {
+      "path": "/glade/u/home/zel/scratch/PACT-Data-Final/CMIP6_MIROC_PastOnly/graphs/1994_1995_Battery_peryear_hist48_graphs.pt",
+      "bytes": 182326206,
+      "mtime_ns": 1792290271000000000,
+      "graph_count": 600,
+      "signatures": [
+        [
+          39,
+          43,
+          1677,
+          5,
+          9,
+          48,
+          6
+        ]
+      ],
+      "first_target_utc": "1994-11-01T00:00:00",
+      "last_target_utc": "1995-03-30T23:00:00",
+      "target_min": -0.15067711472511292,
+      "target_max": 0.2518841028213501,
+      "numeric_values_scope": "boundary",
+      "numeric_graph_count": 2,
+      "target_hour_count": 3600,
+      "status": "PASS"
+    },
+    {
+      "path": "/glade/u/home/zel/scratch/PACT-Data-Final/CMIP6_MIROC_PastOnly/graphs/1995_1996_Battery_peryear_hist48_graphs.pt",
+      "bytes": 183541034,
+      "mtime_ns": 1792290242000000000,
+      "graph_count": 604,
+      "signatures": [
+        [
+          39,
+          43,
+          1677,
+          5,
+          9,
+          48,
+          6
+        ]
+      ],
+      "first_target_utc": "1995-11-01T00:00:00",
+      "last_target_utc": "1996-03-30T23:00:00",
+      "target_min": 0.02490931749343872,
+      "target_max": 0.3891388773918152,
+      "numeric_values_scope": "boundary",
+      "numeric_graph_count": 2,
+      "target_hour_count": 3624,
+      "status": "PASS"
+    },
+    {
+      "path": "/glade/u/home/zel/scratch/PACT-Data-Final/CMIP6_MIROC_PastOnly/graphs/1996_1997_Battery_peryear_hist48_graphs.pt",
+      "bytes": 182326206,
+      "mtime_ns": 1792290269000000000,
+      "graph_count": 600,
+      "signatures": [
+        [
+          39,
+          43,
+          1677,
+          5,
+          9,
+          48,
+          6
+        ]
+      ],
+      "first_target_utc": "1996-11-01T00:00:00",
+      "last_target_utc": "1997-03-30T23:00:00",
+      "target_min": 0.03198084235191345,
+      "target_max": 0.13281100988388062,
+      "numeric_values_scope": "boundary",
+      "numeric_graph_count": 2,
+      "target_hour_count": 3600,
+      "status": "PASS"
+    },
+    {
+      "path": "/glade/u/home/zel/scratch/PACT-Data-Final/CMIP6_MIROC_PastOnly/graphs/1997_1998_Battery_peryear_hist48_graphs.pt",
+      "bytes": 182326206,
+      "mtime_ns": 1792290271000000000,
+      "graph_count": 600,
+      "signatures": [
+        [
+          39,
+          43,
+          1677,
+          5,
+          9,
+          48,
+          6
+        ]
+      ],
+      "first_target_utc": "1997-11-01T00:00:00",
+      "last_target_utc": "1998-03-30T23:00:00",
+      "target_min": 0.0383324921131134,
+      "target_max": 0.3361484706401825,
+      "numeric_values_scope": "boundary",
+      "numeric_graph_count": 2,
+      "target_hour_count": 3600,
+      "status": "PASS"
+    },
+    {
+      "path": "/glade/u/home/zel/scratch/PACT-Data-Final/CMIP6_MIROC_PastOnly/graphs/1998_1999_Battery_peryear_hist48_graphs.pt",
+      "bytes": 182326206,
+      "mtime_ns": 1792290271000000000,
+      "graph_count": 600,
+      "signatures": [
+        [
+          39,
+          43,
+          1677,
+          5,
+          9,
+          48,
+          6
+        ]
+      ],
+      "first_target_utc": "1998-11-01T00:00:00",
+      "last_target_utc": "1999-03-30T23:00:00",
+      "target_min": -0.03195470571517944,
+      "target_max": 0.4177197813987732,
+      "numeric_values_scope": "boundary",
+      "numeric_graph_count": 2,
+      "target_hour_count": 3600,
+      "status": "PASS"
+    },
+    {
+      "path": "/glade/u/home/zel/scratch/PACT-Data-Final/CMIP6_MIROC_PastOnly/graphs/1999_2000_Battery_peryear_hist48_graphs.pt",
+      "bytes": 183541034,
+      "mtime_ns": 1792290245000000000,
+      "graph_count": 604,
+      "signatures": [
+        [
+          39,
+          43,
+          1677,
+          5,
+          9,
+          48,
+          6
+        ]
+      ],
+      "first_target_utc": "1999-11-01T00:00:00",
+      "last_target_utc": "2000-03-30T23:00:00",
+      "target_min": -0.013799851760268211,
+      "target_max": 0.3652271032333374,
+      "numeric_values_scope": "boundary",
+      "numeric_graph_count": 2,
+      "target_hour_count": 3624,
+      "status": "PASS"
+    },
+    {
+      "path": "/glade/u/home/zel/scratch/PACT-Data-Final/CMIP6_MIROC_PastOnly/graphs/2000_2001_Battery_peryear_hist48_graphs.pt",
+      "bytes": 182326206,
+      "mtime_ns": 1792290277000000000,
+      "graph_count": 600,
+      "signatures": [
+        [
+          39,
+          43,
+          1677,
+          5,
+          9,
+          48,
+          6
+        ]
+      ],
+      "first_target_utc": "2000-11-01T00:00:00",
+      "last_target_utc": "2001-03-30T23:00:00",
+      "target_min": 0.07462555170059204,
+      "target_max": 0.2995607554912567,
+      "numeric_values_scope": "boundary",
+      "numeric_graph_count": 2,
+      "target_hour_count": 3600,
+      "status": "PASS"
+    },
+    {
+      "path": "/glade/u/home/zel/scratch/PACT-Data-Final/CMIP6_MIROC_PastOnly/graphs/2001_2002_Battery_peryear_hist48_graphs.pt",
+      "bytes": 182326206,
+      "mtime_ns": 1792290276000000000,
+      "graph_count": 600,
+      "signatures": [
+        [
+          39,
+          43,
+          1677,
+          5,
+          9,
+          48,
+          6
+        ]
+      ],
+      "first_target_utc": "2001-11-01T00:00:00",
+      "last_target_utc": "2002-03-30T23:00:00",
+      "target_min": 0.055974602699279785,
+      "target_max": 0.15110886096954346,
+      "numeric_values_scope": "boundary",
+      "numeric_graph_count": 2,
+      "target_hour_count": 3600,
+      "status": "PASS"
+    },
+    {
+      "path": "/glade/u/home/zel/scratch/PACT-Data-Final/CMIP6_MIROC_PastOnly/graphs/2002_2003_Battery_peryear_hist48_graphs.pt",
+      "bytes": 182326206,
+      "mtime_ns": 1792290278000000000,
+      "graph_count": 600,
+      "signatures": [
+        [
+          39,
+          43,
+          1677,
+          5,
+          9,
+          48,
+          6
+        ]
+      ],
+      "first_target_utc": "2002-11-01T00:00:00",
+      "last_target_utc": "2003-03-30T23:00:00",
+      "target_min": 0.07172787189483643,
+      "target_max": 0.3207587003707886,
+      "numeric_values_scope": "boundary",
+      "numeric_graph_count": 2,
+      "target_hour_count": 3600,
+      "status": "PASS"
+    },
+    {
+      "path": "/glade/u/home/zel/scratch/PACT-Data-Final/CMIP6_MIROC_PastOnly/graphs/2003_2004_Battery_peryear_hist48_graphs.pt",
+      "bytes": 183541034,
+      "mtime_ns": 1792290245000000000,
+      "graph_count": 604,
+      "signatures": [
+        [
+          39,
+          43,
+          1677,
+          5,
+          9,
+          48,
+          6
+        ]
+      ],
+      "first_target_utc": "2003-11-01T00:00:00",
+      "last_target_utc": "2004-03-30T23:00:00",
+      "target_min": 0.0732046365737915,
+      "target_max": 0.19668048620224,
+      "numeric_values_scope": "boundary",
+      "numeric_graph_count": 2,
+      "target_hour_count": 3624,
+      "status": "PASS"
+    },
+    {
+      "path": "/glade/u/home/zel/scratch/PACT-Data-Final/CMIP6_MIROC_PastOnly/graphs/2004_2005_Battery_peryear_hist48_graphs.pt",
+      "bytes": 182326206,
+      "mtime_ns": 1792290270000000000,
+      "graph_count": 600,
+      "signatures": [
+        [
+          39,
+          43,
+          1677,
+          5,
+          9,
+          48,
+          6
+        ]
+      ],
+      "first_target_utc": "2004-11-01T00:00:00",
+      "last_target_utc": "2005-03-30T23:00:00",
+      "target_min": -0.06780344247817993,
+      "target_max": 0.13560129702091217,
+      "numeric_values_scope": "boundary",
+      "numeric_graph_count": 2,
+      "target_hour_count": 3600,
+      "status": "PASS"
+    },
+    {
+      "path": "/glade/u/home/zel/scratch/PACT-Data-Final/CMIP6_MIROC_PastOnly/graphs/2005_2006_Battery_peryear_hist48_graphs.pt",
+      "bytes": 182326206,
+      "mtime_ns": 1792290276000000000,
+      "graph_count": 600,
+      "signatures": [
+        [
+          39,
+          43,
+          1677,
+          5,
+          9,
+          48,
+          6
+        ]
+      ],
+      "first_target_utc": "2005-11-01T00:00:00",
+      "last_target_utc": "2006-03-30T23:00:00",
+      "target_min": 0.08635632693767548,
+      "target_max": 0.16972941160202026,
+      "numeric_values_scope": "boundary",
+      "numeric_graph_count": 2,
+      "target_hour_count": 3600,
+      "status": "PASS"
+    },
+    {
+      "path": "/glade/u/home/zel/scratch/PACT-Data-Final/CMIP6_MIROC_PastOnly/graphs/2006_2007_Battery_peryear_hist48_graphs.pt",
+      "bytes": 182326206,
+      "mtime_ns": 1792290274000000000,
+      "graph_count": 600,
+      "signatures": [
+        [
+          39,
+          43,
+          1677,
+          5,
+          9,
+          48,
+          6
+        ]
+      ],
+      "first_target_utc": "2006-11-01T00:00:00",
+      "last_target_utc": "2007-03-30T23:00:00",
+      "target_min": -0.06941983103752136,
+      "target_max": 0.3273009657859802,
+      "numeric_values_scope": "boundary",
+      "numeric_graph_count": 2,
+      "target_hour_count": 3600,
+      "status": "PASS"
+    },
+    {
+      "path": "/glade/u/home/zel/scratch/PACT-Data-Final/CMIP6_MIROC_PastOnly/graphs/2007_2008_Battery_peryear_hist48_graphs.pt",
+      "bytes": 183541034,
+      "mtime_ns": 1792290252000000000,
+      "graph_count": 604,
+      "signatures": [
+        [
+          39,
+          43,
+          1677,
+          5,
+          9,
+          48,
+          6
+        ]
+      ],
+      "first_target_utc": "2007-11-01T00:00:00",
+      "last_target_utc": "2008-03-30T23:00:00",
+      "target_min": -0.028361231088638306,
+      "target_max": 0.5857815742492676,
+      "numeric_values_scope": "boundary",
+      "numeric_graph_count": 2,
+      "target_hour_count": 3624,
+      "status": "PASS"
+    },
+    {
+      "path": "/glade/u/home/zel/scratch/PACT-Data-Final/CMIP6_MIROC_PastOnly/graphs/2008_2009_Battery_peryear_hist48_graphs.pt",
+      "bytes": 182326206,
+      "mtime_ns": 1792290275000000000,
+      "graph_count": 600,
+      "signatures": [
+        [
+          39,
+          43,
+          1677,
+          5,
+          9,
+          48,
+          6
+        ]
+      ],
+      "first_target_utc": "2008-11-01T00:00:00",
+      "last_target_utc": "2009-03-30T23:00:00",
+      "target_min": 0.06586470454931259,
+      "target_max": 0.17129242420196533,
+      "numeric_values_scope": "boundary",
+      "numeric_graph_count": 2,
+      "target_hour_count": 3600,
+      "status": "PASS"
+    },
+    {
+      "path": "/glade/u/home/zel/scratch/PACT-Data-Final/CMIP6_MIROC_PastOnly/graphs/2009_2010_Battery_peryear_hist48_graphs.pt",
+      "bytes": 182326206,
+      "mtime_ns": 1792290277000000000,
+      "graph_count": 600,
+      "signatures": [
+        [
+          39,
+          43,
+          1677,
+          5,
+          9,
+          48,
+          6
+        ]
+      ],
+      "first_target_utc": "2009-11-01T00:00:00",
+      "last_target_utc": "2010-03-30T23:00:00",
+      "target_min": 0.033266544342041016,
+      "target_max": 0.3825550079345703,
+      "numeric_values_scope": "boundary",
+      "numeric_graph_count": 2,
+      "target_hour_count": 3600,
+      "status": "PASS"
+    },
+    {
+      "path": "/glade/u/home/zel/scratch/PACT-Data-Final/CMIP6_MIROC_PastOnly/graphs/2010_2011_Battery_peryear_hist48_graphs.pt",
+      "bytes": 182326206,
+      "mtime_ns": 1792290278000000000,
+      "graph_count": 600,
+      "signatures": [
+        [
+          39,
+          43,
+          1677,
+          5,
+          9,
+          48,
+          6
+        ]
+      ],
+      "first_target_utc": "2010-11-01T00:00:00",
+      "last_target_utc": "2011-03-30T23:00:00",
+      "target_min": 0.06345421075820923,
+      "target_max": 0.23319518566131592,
+      "numeric_values_scope": "boundary",
+      "numeric_graph_count": 2,
+      "target_hour_count": 3600,
+      "status": "PASS"
+    },
+    {
+      "path": "/glade/u/home/zel/scratch/PACT-Data-Final/CMIP6_MIROC_PastOnly/graphs/2011_2012_Battery_peryear_hist48_graphs.pt",
+      "bytes": 183541034,
+      "mtime_ns": 1792290253000000000,
+      "graph_count": 604,
+      "signatures": [
+        [
+          39,
+          43,
+          1677,
+          5,
+          9,
+          48,
+          6
+        ]
+      ],
+      "first_target_utc": "2011-11-01T00:00:00",
+      "last_target_utc": "2012-03-30T23:00:00",
+      "target_min": 0.014659285545349121,
+      "target_max": 0.20481140911579132,
+      "numeric_values_scope": "boundary",
+      "numeric_graph_count": 2,
+      "target_hour_count": 3624,
+      "status": "PASS"
+    },
+    {
+      "path": "/glade/u/home/zel/scratch/PACT-Data-Final/CMIP6_MIROC_PastOnly/graphs/2012_2013_Battery_peryear_hist48_graphs.pt",
+      "bytes": 182326206,
+      "mtime_ns": 1792290270000000000,
+      "graph_count": 600,
+      "signatures": [
+        [
+          39,
+          43,
+          1677,
+          5,
+          9,
+          48,
+          6
+        ]
+      ],
+      "first_target_utc": "2012-11-01T00:00:00",
+      "last_target_utc": "2013-03-30T23:00:00",
+      "target_min": 0.07438966631889343,
+      "target_max": 0.36796367168426514,
+      "numeric_values_scope": "boundary",
+      "numeric_graph_count": 2,
+      "target_hour_count": 3600,
+      "status": "PASS"
+    },
+    {
+      "path": "/glade/u/home/zel/scratch/PACT-Data-Final/CMIP6_MIROC_PastOnly/graphs/2013_2014_Battery_peryear_hist48_graphs.pt",
+      "bytes": 182326206,
+      "mtime_ns": 1792290271000000000,
+      "graph_count": 600,
+      "signatures": [
+        [
+          39,
+          43,
+          1677,
+          5,
+          9,
+          48,
+          6
+        ]
+      ],
+      "first_target_utc": "2013-11-01T00:00:00",
+      "last_target_utc": "2014-03-30T23:00:00",
+      "target_min": -0.09931743144989014,
+      "target_max": 0.1260855495929718,
+      "numeric_values_scope": "boundary",
+      "numeric_graph_count": 2,
+      "target_hour_count": 3600,
+      "status": "PASS"
+    },
+    {
+      "path": "/glade/u/home/zel/scratch/PACT-Data-Final/CMIP6_MIROC_PastOnly/graphs/2014_2015_Battery_peryear_hist48_graphs.pt",
+      "bytes": 74207602,
+      "mtime_ns": 1792290381000000000,
+      "graph_count": 244,
+      "signatures": [
+        [
+          39,
+          43,
+          1677,
+          5,
+          9,
+          48,
+          6
+        ]
+      ],
+      "first_target_utc": "2014-11-01T00:00:00",
+      "last_target_utc": "2014-12-31T23:00:00",
+      "target_min": -0.1371995508670807,
+      "target_max": 0.12154316902160645,
+      "numeric_values_scope": "boundary",
+      "numeric_graph_count": 2,
+      "target_hour_count": 1464,
+      "status": "PASS"
+    }
+  ],
+  "future_files": [
+    {
+      "path": "/glade/u/home/zel/scratch/PACT-Data-Final/CMIP6_MIROC/graphs/2070_2071_Battery_peryear_hist48_graphs.pt",
+      "bytes": 182326206,
+      "mtime_ns": 1792296901000000000,
+      "graph_count": 600,
+      "signatures": [
+        [
+          39,
+          43,
+          1677,
+          5,
+          9,
+          48,
+          6
+        ]
+      ],
+      "first_target_utc": "2070-11-01T00:00:00",
+      "last_target_utc": "2071-03-30T23:00:00",
+      "target_min": 0.0641222596168518,
+      "target_max": 0.2631393074989319,
+      "numeric_values_scope": "boundary",
+      "numeric_graph_count": 2,
+      "target_hour_count": 3600,
+      "status": "PASS"
+    },
+    {
+      "path": "/glade/u/home/zel/scratch/PACT-Data-Final/CMIP6_MIROC/graphs/2071_2072_Battery_peryear_hist48_graphs.pt",
+      "bytes": 183541034,
+      "mtime_ns": 1792296883000000000,
+      "graph_count": 604,
+      "signatures": [
+        [
+          39,
+          43,
+          1677,
+          5,
+          9,
+          48,
+          6
+        ]
+      ],
+      "first_target_utc": "2071-11-01T00:00:00",
+      "last_target_utc": "2072-03-30T23:00:00",
+      "target_min": -0.14278894662857056,
+      "target_max": -0.00674167275428772,
+      "numeric_values_scope": "boundary",
+      "numeric_graph_count": 2,
+      "target_hour_count": 3624,
+      "status": "PASS"
+    },
+    {
+      "path": "/glade/u/home/zel/scratch/PACT-Data-Final/CMIP6_MIROC/graphs/2072_2073_Battery_peryear_hist48_graphs.pt",
+      "bytes": 182326206,
+      "mtime_ns": 1792296908000000000,
+      "graph_count": 600,
+      "signatures": [
+        [
+          39,
+          43,
+          1677,
+          5,
+          9,
+          48,
+          6
+        ]
+      ],
+      "first_target_utc": "2072-11-01T00:00:00",
+      "last_target_utc": "2073-03-30T23:00:00",
+      "target_min": -0.005161851644515991,
+      "target_max": 0.13255345821380615,
+      "numeric_values_scope": "boundary",
+      "numeric_graph_count": 2,
+      "target_hour_count": 3600,
+      "status": "PASS"
+    },
+    {
+      "path": "/glade/u/home/zel/scratch/PACT-Data-Final/CMIP6_MIROC/graphs/2073_2074_Battery_peryear_hist48_graphs.pt",
+      "bytes": 182326206,
+      "mtime_ns": 1792296905000000000,
+      "graph_count": 600,
+      "signatures": [
+        [
+          39,
+          43,
+          1677,
+          5,
+          9,
+          48,
+          6
+        ]
+      ],
+      "first_target_utc": "2073-11-01T00:00:00",
+      "last_target_utc": "2074-03-30T23:00:00",
+      "target_min": 0.09622636437416077,
+      "target_max": 0.31854212284088135,
+      "numeric_values_scope": "boundary",
+      "numeric_graph_count": 2,
+      "target_hour_count": 3600,
+      "status": "PASS"
+    },
+    {
+      "path": "/glade/u/home/zel/scratch/PACT-Data-Final/CMIP6_MIROC/graphs/2074_2075_Battery_peryear_hist48_graphs.pt",
+      "bytes": 182326206,
+      "mtime_ns": 1792296902000000000,
+      "graph_count": 600,
+      "signatures": [
+        [
+          39,
+          43,
+          1677,
+          5,
+          9,
+          48,
+          6
+        ]
+      ],
+      "first_target_utc": "2074-11-01T00:00:00",
+      "last_target_utc": "2075-03-30T23:00:00",
+      "target_min": 0.17621943354606628,
+      "target_max": 0.36535605788230896,
+      "numeric_values_scope": "boundary",
+      "numeric_graph_count": 2,
+      "target_hour_count": 3600,
+      "status": "PASS"
+    },
+    {
+      "path": "/glade/u/home/zel/scratch/PACT-Data-Final/CMIP6_MIROC/graphs/2075_2076_Battery_peryear_hist48_graphs.pt",
+      "bytes": 183541034,
+      "mtime_ns": 1792296876000000000,
+      "graph_count": 604,
+      "signatures": [
+        [
+          39,
+          43,
+          1677,
+          5,
+          9,
+          48,
+          6
+        ]
+      ],
+      "first_target_utc": "2075-11-01T00:00:00",
+      "last_target_utc": "2076-03-30T23:00:00",
+      "target_min": 0.07182842493057251,
+      "target_max": 0.23166120052337646,
+      "numeric_values_scope": "boundary",
+      "numeric_graph_count": 2,
+      "target_hour_count": 3624,
+      "status": "PASS"
+    },
+    {
+      "path": "/glade/u/home/zel/scratch/PACT-Data-Final/CMIP6_MIROC/graphs/2076_2077_Battery_peryear_hist48_graphs.pt",
+      "bytes": 182326206,
+      "mtime_ns": 1792296905000000000,
+      "graph_count": 600,
+      "signatures": [
+        [
+          39,
+          43,
+          1677,
+          5,
+          9,
+          48,
+          6
+        ]
+      ],
+      "first_target_utc": "2076-11-01T00:00:00",
+      "last_target_utc": "2077-03-30T23:00:00",
+      "target_min": 0.1322370171546936,
+      "target_max": 0.491484671831131,
+      "numeric_values_scope": "boundary",
+      "numeric_graph_count": 2,
+      "target_hour_count": 3600,
+      "status": "PASS"
+    },
+    {
+      "path": "/glade/u/home/zel/scratch/PACT-Data-Final/CMIP6_MIROC/graphs/2077_2078_Battery_peryear_hist48_graphs.pt",
+      "bytes": 182326206,
+      "mtime_ns": 1792296905000000000,
+      "graph_count": 600,
+      "signatures": [
+        [
+          39,
+          43,
+          1677,
+          5,
+          9,
+          48,
+          6
+        ]
+      ],
+      "first_target_utc": "2077-11-01T00:00:00",
+      "last_target_utc": "2078-03-30T23:00:00",
+      "target_min": -0.06372052431106567,
+      "target_max": 0.07167428731918335,
+      "numeric_values_scope": "boundary",
+      "numeric_graph_count": 2,
+      "target_hour_count": 3600,
+      "status": "PASS"
+    },
+    {
+      "path": "/glade/u/home/zel/scratch/PACT-Data-Final/CMIP6_MIROC/graphs/2078_2079_Battery_peryear_hist48_graphs.pt",
+      "bytes": 182326206,
+      "mtime_ns": 1792296906000000000,
+      "graph_count": 600,
+      "signatures": [
+        [
+          39,
+          43,
+          1677,
+          5,
+          9,
+          48,
+          6
+        ]
+      ],
+      "first_target_utc": "2078-11-01T00:00:00",
+      "last_target_utc": "2079-03-30T23:00:00",
+      "target_min": 0.06692236661911011,
+      "target_max": 0.17823156714439392,
+      "numeric_values_scope": "boundary",
+      "numeric_graph_count": 2,
+      "target_hour_count": 3600,
+      "status": "PASS"
+    },
+    {
+      "path": "/glade/u/home/zel/scratch/PACT-Data-Final/CMIP6_MIROC/graphs/2079_2080_Battery_peryear_hist48_graphs.pt",
+      "bytes": 183541034,
+      "mtime_ns": 1792296887000000000,
+      "graph_count": 604,
+      "signatures": [
+        [
+          39,
+          43,
+          1677,
+          5,
+          9,
+          48,
+          6
+        ]
+      ],
+      "first_target_utc": "2079-11-01T00:00:00",
+      "last_target_utc": "2080-03-30T23:00:00",
+      "target_min": 0.10131341218948364,
+      "target_max": 0.42610302567481995,
+      "numeric_values_scope": "boundary",
+      "numeric_graph_count": 2,
+      "target_hour_count": 3624,
+      "status": "PASS"
+    },
+    {
+      "path": "/glade/u/home/zel/scratch/PACT-Data-Final/CMIP6_MIROC/graphs/2080_2081_Battery_peryear_hist48_graphs.pt",
+      "bytes": 182326206,
+      "mtime_ns": 1792296906000000000,
+      "graph_count": 600,
+      "signatures": [
+        [
+          39,
+          43,
+          1677,
+          5,
+          9,
+          48,
+          6
+        ]
+      ],
+      "first_target_utc": "2080-11-01T00:00:00",
+      "last_target_utc": "2081-03-30T23:00:00",
+      "target_min": 0.08224162459373474,
+      "target_max": 0.21531006693840027,
+      "numeric_values_scope": "boundary",
+      "numeric_graph_count": 2,
+      "target_hour_count": 3600,
+      "status": "PASS"
+    },
+    {
+      "path": "/glade/u/home/zel/scratch/PACT-Data-Final/CMIP6_MIROC/graphs/2081_2082_Battery_peryear_hist48_graphs.pt",
+      "bytes": 182326206,
+      "mtime_ns": 1792296908000000000,
+      "graph_count": 600,
+      "signatures": [
+        [
+          39,
+          43,
+          1677,
+          5,
+          9,
+          48,
+          6
+        ]
+      ],
+      "first_target_utc": "2081-11-01T00:00:00",
+      "last_target_utc": "2082-03-30T23:00:00",
+      "target_min": 0.15974584221839905,
+      "target_max": 0.24533218145370483,
+      "numeric_values_scope": "boundary",
+      "numeric_graph_count": 2,
+      "target_hour_count": 3600,
+      "status": "PASS"
+    },
+    {
+      "path": "/glade/u/home/zel/scratch/PACT-Data-Final/CMIP6_MIROC/graphs/2082_2083_Battery_peryear_hist48_graphs.pt",
+      "bytes": 182326206,
+      "mtime_ns": 1792296906000000000,
+      "graph_count": 600,
+      "signatures": [
+        [
+          39,
+          43,
+          1677,
+          5,
+          9,
+          48,
+          6
+        ]
+      ],
+      "first_target_utc": "2082-11-01T00:00:00",
+      "last_target_utc": "2083-03-30T23:00:00",
+      "target_min": 0.015672802925109863,
+      "target_max": 0.16615304350852966,
+      "numeric_values_scope": "boundary",
+      "numeric_graph_count": 2,
+      "target_hour_count": 3600,
+      "status": "PASS"
+    },
+    {
+      "path": "/glade/u/home/zel/scratch/PACT-Data-Final/CMIP6_MIROC/graphs/2083_2084_Battery_peryear_hist48_graphs.pt",
+      "bytes": 183541034,
+      "mtime_ns": 1792296876000000000,
+      "graph_count": 604,
+      "signatures": [
+        [
+          39,
+          43,
+          1677,
+          5,
+          9,
+          48,
+          6
+        ]
+      ],
+      "first_target_utc": "2083-11-01T00:00:00",
+      "last_target_utc": "2084-03-30T23:00:00",
+      "target_min": 0.1918361634016037,
+      "target_max": 0.3856809139251709,
+      "numeric_values_scope": "boundary",
+      "numeric_graph_count": 2,
+      "target_hour_count": 3624,
+      "status": "PASS"
+    },
+    {
+      "path": "/glade/u/home/zel/scratch/PACT-Data-Final/CMIP6_MIROC/graphs/2084_2085_Battery_peryear_hist48_graphs.pt",
+      "bytes": 182326206,
+      "mtime_ns": 1792296909000000000,
+      "graph_count": 600,
+      "signatures": [
+        [
+          39,
+          43,
+          1677,
+          5,
+          9,
+          48,
+          6
+        ]
+      ],
+      "first_target_utc": "2084-11-01T00:00:00",
+      "last_target_utc": "2085-03-30T23:00:00",
+      "target_min": 0.010351121425628662,
+      "target_max": 0.18736858665943146,
+      "numeric_values_scope": "boundary",
+      "numeric_graph_count": 2,
+      "target_hour_count": 3600,
+      "status": "PASS"
+    },
+    {
+      "path": "/glade/u/home/zel/scratch/PACT-Data-Final/CMIP6_MIROC/graphs/2085_2086_Battery_peryear_hist48_graphs.pt",
+      "bytes": 182326206,
+      "mtime_ns": 1792296903000000000,
+      "graph_count": 600,
+      "signatures": [
+        [
+          39,
+          43,
+          1677,
+          5,
+          9,
+          48,
+          6
+        ]
+      ],
+      "first_target_utc": "2085-11-01T00:00:00",
+      "last_target_utc": "2086-03-30T23:00:00",
+      "target_min": 0.07570204138755798,
+      "target_max": 0.18285620212554932,
+      "numeric_values_scope": "boundary",
+      "numeric_graph_count": 2,
+      "target_hour_count": 3600,
+      "status": "PASS"
+    },
+    {
+      "path": "/glade/u/home/zel/scratch/PACT-Data-Final/CMIP6_MIROC/graphs/2086_2087_Battery_peryear_hist48_graphs.pt",
+      "bytes": 182326206,
+      "mtime_ns": 1792296907000000000,
+      "graph_count": 600,
+      "signatures": [
+        [
+          39,
+          43,
+          1677,
+          5,
+          9,
+          48,
+          6
+        ]
+      ],
+      "first_target_utc": "2086-11-01T00:00:00",
+      "last_target_utc": "2087-03-30T23:00:00",
+      "target_min": -0.18322229385375977,
+      "target_max": 0.1731225550174713,
+      "numeric_values_scope": "boundary",
+      "numeric_graph_count": 2,
+      "target_hour_count": 3600,
+      "status": "PASS"
+    },
+    {
+      "path": "/glade/u/home/zel/scratch/PACT-Data-Final/CMIP6_MIROC/graphs/2087_2088_Battery_peryear_hist48_graphs.pt",
+      "bytes": 183541034,
+      "mtime_ns": 1792296880000000000,
+      "graph_count": 604,
+      "signatures": [
+        [
+          39,
+          43,
+          1677,
+          5,
+          9,
+          48,
+          6
+        ]
+      ],
+      "first_target_utc": "2087-11-01T00:00:00",
+      "last_target_utc": "2088-03-30T23:00:00",
+      "target_min": -0.2145066112279892,
+      "target_max": 0.6936361193656921,
+      "numeric_values_scope": "boundary",
+      "numeric_graph_count": 2,
+      "target_hour_count": 3624,
+      "status": "PASS"
+    },
+    {
+      "path": "/glade/u/home/zel/scratch/PACT-Data-Final/CMIP6_MIROC/graphs/2088_2089_Battery_peryear_hist48_graphs.pt",
+      "bytes": 182326206,
+      "mtime_ns": 1792296906000000000,
+      "graph_count": 600,
+      "signatures": [
+        [
+          39,
+          43,
+          1677,
+          5,
+          9,
+          48,
+          6
+        ]
+      ],
+      "first_target_utc": "2088-11-01T00:00:00",
+      "last_target_utc": "2089-03-30T23:00:00",
+      "target_min": 0.26762765645980835,
+      "target_max": 0.37504464387893677,
+      "numeric_values_scope": "boundary",
+      "numeric_graph_count": 2,
+      "target_hour_count": 3600,
+      "status": "PASS"
+    },
+    {
+      "path": "/glade/u/home/zel/scratch/PACT-Data-Final/CMIP6_MIROC/graphs/2089_2090_Battery_peryear_hist48_graphs.pt",
+      "bytes": 182326206,
+      "mtime_ns": 1792296904000000000,
+      "graph_count": 600,
+      "signatures": [
+        [
+          39,
+          43,
+          1677,
+          5,
+          9,
+          48,
+          6
+        ]
+      ],
+      "first_target_utc": "2089-11-01T00:00:00",
+      "last_target_utc": "2090-03-30T23:00:00",
+      "target_min": -0.04731547832489014,
+      "target_max": 0.08084090054035187,
+      "numeric_values_scope": "boundary",
+      "numeric_graph_count": 2,
+      "target_hour_count": 3600,
+      "status": "PASS"
+    },
+    {
+      "path": "/glade/u/home/zel/scratch/PACT-Data-Final/CMIP6_MIROC/graphs/2090_2091_Battery_peryear_hist48_graphs.pt",
+      "bytes": 182326206,
+      "mtime_ns": 1792296905000000000,
+      "graph_count": 600,
+      "signatures": [
+        [
+          39,
+          43,
+          1677,
+          5,
+          9,
+          48,
+          6
+        ]
+      ],
+      "first_target_utc": "2090-11-01T00:00:00",
+      "last_target_utc": "2091-03-30T23:00:00",
+      "target_min": -0.31016266345977783,
+      "target_max": 0.4353260099887848,
+      "numeric_values_scope": "boundary",
+      "numeric_graph_count": 2,
+      "target_hour_count": 3600,
+      "status": "PASS"
+    },
+    {
+      "path": "/glade/u/home/zel/scratch/PACT-Data-Final/CMIP6_MIROC/graphs/2091_2092_Battery_peryear_hist48_graphs.pt",
+      "bytes": 183541034,
+      "mtime_ns": 1792296885000000000,
+      "graph_count": 604,
+      "signatures": [
+        [
+          39,
+          43,
+          1677,
+          5,
+          9,
+          48,
+          6
+        ]
+      ],
+      "first_target_utc": "2091-11-01T00:00:00",
+      "last_target_utc": "2092-03-30T23:00:00",
+      "target_min": -0.027486741542816162,
+      "target_max": 0.26456359028816223,
+      "numeric_values_scope": "boundary",
+      "numeric_graph_count": 2,
+      "target_hour_count": 3624,
+      "status": "PASS"
+    },
+    {
+      "path": "/glade/u/home/zel/scratch/PACT-Data-Final/CMIP6_MIROC/graphs/2092_2093_Battery_peryear_hist48_graphs.pt",
+      "bytes": 182326206,
+      "mtime_ns": 1792296906000000000,
+      "graph_count": 600,
+      "signatures": [
+        [
+          39,
+          43,
+          1677,
+          5,
+          9,
+          48,
+          6
+        ]
+      ],
+      "first_target_utc": "2092-11-01T00:00:00",
+      "last_target_utc": "2093-03-30T23:00:00",
+      "target_min": 0.10786014795303345,
+      "target_max": 0.22633546590805054,
+      "numeric_values_scope": "boundary",
+      "numeric_graph_count": 2,
+      "target_hour_count": 3600,
+      "status": "PASS"
+    },
+    {
+      "path": "/glade/u/home/zel/scratch/PACT-Data-Final/CMIP6_MIROC/graphs/2093_2094_Battery_peryear_hist48_graphs.pt",
+      "bytes": 182326206,
+      "mtime_ns": 1792296910000000000,
+      "graph_count": 600,
+      "signatures": [
+        [
+          39,
+          43,
+          1677,
+          5,
+          9,
+          48,
+          6
+        ]
+      ],
+      "first_target_utc": "2093-11-01T00:00:00",
+      "last_target_utc": "2094-03-30T23:00:00",
+      "target_min": 0.04201096296310425,
+      "target_max": 0.1957322061061859,
+      "numeric_values_scope": "boundary",
+      "numeric_graph_count": 2,
+      "target_hour_count": 3600,
+      "status": "PASS"
+    },
+    {
+      "path": "/glade/u/home/zel/scratch/PACT-Data-Final/CMIP6_MIROC/graphs/2094_2095_Battery_peryear_hist48_graphs.pt",
+      "bytes": 182326206,
+      "mtime_ns": 1792296911000000000,
+      "graph_count": 600,
+      "signatures": [
+        [
+          39,
+          43,
+          1677,
+          5,
+          9,
+          48,
+          6
+        ]
+      ],
+      "first_target_utc": "2094-11-01T00:00:00",
+      "last_target_utc": "2095-03-30T23:00:00",
+      "target_min": -0.008110810071229935,
+      "target_max": 0.21294717490673065,
+      "numeric_values_scope": "boundary",
+      "numeric_graph_count": 2,
+      "target_hour_count": 3600,
+      "status": "PASS"
+    },
+    {
+      "path": "/glade/u/home/zel/scratch/PACT-Data-Final/CMIP6_MIROC/graphs/2095_2096_Battery_peryear_hist48_graphs.pt",
+      "bytes": 183541034,
+      "mtime_ns": 1792296881000000000,
+      "graph_count": 604,
+      "signatures": [
+        [
+          39,
+          43,
+          1677,
+          5,
+          9,
+          48,
+          6
+        ]
+      ],
+      "first_target_utc": "2095-11-01T00:00:00",
+      "last_target_utc": "2096-03-30T23:00:00",
+      "target_min": 0.007553070783615112,
+      "target_max": 0.24350543320178986,
+      "numeric_values_scope": "boundary",
+      "numeric_graph_count": 2,
+      "target_hour_count": 3624,
+      "status": "PASS"
+    },
+    {
+      "path": "/glade/u/home/zel/scratch/PACT-Data-Final/CMIP6_MIROC/graphs/2096_2097_Battery_peryear_hist48_graphs.pt",
+      "bytes": 182326206,
+      "mtime_ns": 1792296909000000000,
+      "graph_count": 600,
+      "signatures": [
+        [
+          39,
+          43,
+          1677,
+          5,
+          9,
+          48,
+          6
+        ]
+      ],
+      "first_target_utc": "2096-11-01T00:00:00",
+      "last_target_utc": "2097-03-30T23:00:00",
+      "target_min": 0.06617426872253418,
+      "target_max": 0.18817532062530518,
+      "numeric_values_scope": "boundary",
+      "numeric_graph_count": 2,
+      "target_hour_count": 3600,
+      "status": "PASS"
+    },
+    {
+      "path": "/glade/u/home/zel/scratch/PACT-Data-Final/CMIP6_MIROC/graphs/2097_2098_Battery_peryear_hist48_graphs.pt",
+      "bytes": 182326206,
+      "mtime_ns": 1792296905000000000,
+      "graph_count": 600,
+      "signatures": [
+        [
+          39,
+          43,
+          1677,
+          5,
+          9,
+          48,
+          6
+        ]
+      ],
+      "first_target_utc": "2097-11-01T00:00:00",
+      "last_target_utc": "2098-03-30T23:00:00",
+      "target_min": 0.08687067031860352,
+      "target_max": 0.16248568892478943,
+      "numeric_values_scope": "boundary",
+      "numeric_graph_count": 2,
+      "target_hour_count": 3600,
+      "status": "PASS"
+    },
+    {
+      "path": "/glade/u/home/zel/scratch/PACT-Data-Final/CMIP6_MIROC/graphs/2098_2099_Battery_peryear_hist48_graphs.pt",
+      "bytes": 182326206,
+      "mtime_ns": 1792296907000000000,
+      "graph_count": 600,
+      "signatures": [
+        [
+          39,
+          43,
+          1677,
+          5,
+          9,
+          48,
+          6
+        ]
+      ],
+      "first_target_utc": "2098-11-01T00:00:00",
+      "last_target_utc": "2099-03-30T23:00:00",
+      "target_min": -0.0023714303970336914,
+      "target_max": 0.20327797532081604,
+      "numeric_values_scope": "boundary",
+      "numeric_graph_count": 2,
+      "target_hour_count": 3600,
+      "status": "PASS"
+    },
+    {
+      "path": "/glade/u/home/zel/scratch/PACT-Data-Final/CMIP6_MIROC/graphs/2099_2100_Battery_peryear_hist48_graphs.pt",
+      "bytes": 74207602,
+      "mtime_ns": 1792296996000000000,
+      "graph_count": 244,
+      "signatures": [
+        [
+          39,
+          43,
+          1677,
+          5,
+          9,
+          48,
+          6
+        ]
+      ],
+      "first_target_utc": "2099-11-01T00:00:00",
+      "last_target_utc": "2099-12-31T23:00:00",
+      "target_min": 0.0523563027381897,
+      "target_max": 0.1625531166791916,
+      "numeric_values_scope": "boundary",
+      "numeric_graph_count": 2,
+      "target_hour_count": 1464,
+      "status": "PASS"
+    }
+  ],
+  "future_detail": "all",
+  "numeric_values_scope": "boundary",
+  "split_by_seed": {
+    "42": {
+      "train": [
+        "1979_1980",
+        "1980_1981",
+        "1981_1982",
+        "1982_1983",
+        "1983_1984",
+        "1984_1985",
+        "1985_1986",
+        "1986_1987",
+        "1987_1988",
+        "1988_1989",
+        "1989_1990",
+        "1990_1991",
+        "1991_1992",
+        "1992_1993",
+        "1993_1994",
+        "1994_1995",
+        "1995_1996",
+        "1996_1997",
+        "1997_1998",
+        "1998_1999",
+        "1999_2000",
+        "2000_2001"
+      ],
+      "val": [
+        "2001_2002",
+        "2002_2003",
+        "2003_2004",
+        "2004_2005",
+        "2005_2006",
+        "2006_2007",
+        "2007_2008"
+      ],
+      "test": [
+        "2008_2009",
+        "2009_2010",
+        "2010_2011",
+        "2011_2012",
+        "2012_2013",
+        "2013_2014",
+        "2014_2015"
+      ]
+    },
+    "123": {
+      "train": [
+        "1979_1980",
+        "1980_1981",
+        "1981_1982",
+        "1982_1983",
+        "1983_1984",
+        "1984_1985",
+        "1985_1986",
+        "1986_1987",
+        "1987_1988",
+        "1988_1989",
+        "1989_1990",
+        "1990_1991",
+        "1991_1992",
+        "1992_1993",
+        "1993_1994",
+        "1994_1995",
+        "1995_1996",
+        "1996_1997",
+        "1997_1998",
+        "1998_1999",
+        "1999_2000",
+        "2000_2001"
+      ],
+      "val": [
+        "2001_2002",
+        "2002_2003",
+        "2003_2004",
+        "2004_2005",
+        "2005_2006",
+        "2006_2007",
+        "2007_2008"
+      ],
+      "test": [
+        "2008_2009",
+        "2009_2010",
+        "2010_2011",
+        "2011_2012",
+        "2012_2013",
+        "2013_2014",
+        "2014_2015"
+      ]
+    },
+    "2026": {
+      "train": [
+        "1979_1980",
+        "1980_1981",
+        "1981_1982",
+        "1982_1983",
+        "1983_1984",
+        "1984_1985",
+        "1985_1986",
+        "1986_1987",
+        "1987_1988",
+        "1988_1989",
+        "1989_1990",
+        "1990_1991",
+        "1991_1992",
+        "1992_1993",
+        "1993_1994",
+        "1994_1995",
+        "1995_1996",
+        "1996_1997",
+        "1997_1998",
+        "1998_1999",
+        "1999_2000",
+        "2000_2001"
+      ],
+      "val": [
+        "2001_2002",
+        "2002_2003",
+        "2003_2004",
+        "2004_2005",
+        "2005_2006",
+        "2006_2007",
+        "2007_2008"
+      ],
+      "test": [
+        "2008_2009",
+        "2009_2010",
+        "2010_2011",
+        "2011_2012",
+        "2012_2013",
+        "2013_2014",
+        "2014_2015"
+      ]
+    }
+  },
+  "split_groups": {
+    "train": [
+      "1979_1980",
+      "1980_1981",
+      "1981_1982",
+      "1982_1983",
+      "1983_1984",
+      "1984_1985",
+      "1985_1986",
+      "1986_1987",
+      "1987_1988",
+      "1988_1989",
+      "1989_1990",
+      "1990_1991",
+      "1991_1992",
+      "1992_1993",
+      "1993_1994",
+      "1994_1995",
+      "1995_1996",
+      "1996_1997",
+      "1997_1998",
+      "1998_1999",
+      "1999_2000",
+      "2000_2001"
+    ],
+    "val": [
+      "2001_2002",
+      "2002_2003",
+      "2003_2004",
+      "2004_2005",
+      "2005_2006",
+      "2006_2007",
+      "2007_2008"
+    ],
+    "test": [
+      "2008_2009",
+      "2009_2010",
+      "2010_2011",
+      "2011_2012",
+      "2012_2013",
+      "2013_2014",
+      "2014_2015"
+    ]
+  },
+  "split_time_ranges": {
+    "train": {
+      "first": "1979-11-01T00:00:00",
+      "last": "2001-03-30T23:00:00",
+      "graph_count": 13224,
+      "target_hours": 79344
+    },
+    "val": {
+      "first": "2001-11-01T00:00:00",
+      "last": "2008-03-30T23:00:00",
+      "graph_count": 4208,
+      "target_hours": 25248
+    },
+    "test": {
+      "first": "2008-11-01T00:00:00",
+      "last": "2014-12-31T23:00:00",
+      "graph_count": 3848,
+      "target_hours": 23088
+    }
+  },
+  "dimensions": [
+    39,
+    43,
+    1677,
+    5,
+    9,
+    48,
+    6
+  ]
+}

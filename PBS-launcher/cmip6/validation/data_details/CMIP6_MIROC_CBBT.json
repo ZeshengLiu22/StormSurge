@@ -1,0 +1,1869 @@
+{
+  "gcm": "CMIP6_MIROC",
+  "station": "CBBT",
+  "status": "PASS",
+  "errors": [],
+  "historical_files": [
+    {
+      "path": "/glade/u/home/zel/scratch/PACT-Data-Final/CMIP6_MIROC_PastOnly/graphs/1979_1980_CBBT_peryear_hist48_graphs.pt",
+      "bytes": 183531953,
+      "mtime_ns": 1792290255000000000,
+      "graph_count": 604,
+      "signatures": [
+        [
+          39,
+          43,
+          1677,
+          5,
+          9,
+          48,
+          6
+        ]
+      ],
+      "first_target_utc": "1979-11-01T00:00:00",
+      "last_target_utc": "1980-03-30T23:00:00",
+      "target_min": -0.07584890723228455,
+      "target_max": 0.08967463672161102,
+      "numeric_values_scope": "boundary",
+      "numeric_graph_count": 2,
+      "target_hour_count": 3624,
+      "status": "PASS"
+    },
+    {
+      "path": "/glade/u/home/zel/scratch/PACT-Data-Final/CMIP6_MIROC_PastOnly/graphs/1980_1981_CBBT_peryear_hist48_graphs.pt",
+      "bytes": 182317185,
+      "mtime_ns": 1792290311000000000,
+      "graph_count": 600,
+      "signatures": [
+        [
+          39,
+          43,
+          1677,
+          5,
+          9,
+          48,
+          6
+        ]
+      ],
+      "first_target_utc": "1980-11-01T00:00:00",
+      "last_target_utc": "1981-03-30T23:00:00",
+      "target_min": -0.09049052745103836,
+      "target_max": -0.026988372206687927,
+      "numeric_values_scope": "boundary",
+      "numeric_graph_count": 2,
+      "target_hour_count": 3600,
+      "status": "PASS"
+    },
+    {
+      "path": "/glade/u/home/zel/scratch/PACT-Data-Final/CMIP6_MIROC_PastOnly/graphs/1981_1982_CBBT_peryear_hist48_graphs.pt",
+      "bytes": 182317185,
+      "mtime_ns": 1792290307000000000,
+      "graph_count": 600,
+      "signatures": [
+        [
+          39,
+          43,
+          1677,
+          5,
+          9,
+          48,
+          6
+        ]
+      ],
+      "first_target_utc": "1981-11-01T00:00:00",
+      "last_target_utc": "1982-03-30T23:00:00",
+      "target_min": -0.0005436092615127563,
+      "target_max": 0.0864507406949997,
+      "numeric_values_scope": "boundary",
+      "numeric_graph_count": 2,
+      "target_hour_count": 3600,
+      "status": "PASS"
+    },
+    {
+      "path": "/glade/u/home/zel/scratch/PACT-Data-Final/CMIP6_MIROC_PastOnly/graphs/1982_1983_CBBT_peryear_hist48_graphs.pt",
+      "bytes": 182317185,
+      "mtime_ns": 1792290307000000000,
+      "graph_count": 600,
+      "signatures": [
+        [
+          39,
+          43,
+          1677,
+          5,
+          9,
+          48,
+          6
+        ]
+      ],
+      "first_target_utc": "1982-11-01T00:00:00",
+      "last_target_utc": "1983-03-30T23:00:00",
+      "target_min": -0.08379802107810974,
+      "target_max": -0.04972951114177704,
+      "numeric_values_scope": "boundary",
+      "numeric_graph_count": 2,
+      "target_hour_count": 3600,
+      "status": "PASS"
+    },
+    {
+      "path": "/glade/u/home/zel/scratch/PACT-Data-Final/CMIP6_MIROC_PastOnly/graphs/1983_1984_CBBT_peryear_hist48_graphs.pt",
+      "bytes": 183531953,
+      "mtime_ns": 1792290259000000000,
+      "graph_count": 604,
+      "signatures": [
+        [
+          39,
+          43,
+          1677,
+          5,
+          9,
+          48,
+          6
+        ]
+      ],
+      "first_target_utc": "1983-11-01T00:00:00",
+      "last_target_utc": "1984-03-30T23:00:00",
+      "target_min": 0.019717946648597717,
+      "target_max": 0.03776475787162781,
+      "numeric_values_scope": "boundary",
+      "numeric_graph_count": 2,
+      "target_hour_count": 3624,
+      "status": "PASS"
+    },
+    {
+      "path": "/glade/u/home/zel/scratch/PACT-Data-Final/CMIP6_MIROC_PastOnly/graphs/1984_1985_CBBT_peryear_hist48_graphs.pt",
+      "bytes": 182317185,
+      "mtime_ns": 1792290312000000000,
+      "graph_count": 600,
+      "signatures": [
+        [
+          39,
+          43,
+          1677,
+          5,
+          9,
+          48,
+          6
+        ]
+      ],
+      "first_target_utc": "1984-11-01T00:00:00",
+      "last_target_utc": "1985-03-30T23:00:00",
+      "target_min": -0.028629537671804428,
+      "target_max": 0.13085688650608063,
+      "numeric_values_scope": "boundary",
+      "numeric_graph_count": 2,
+      "target_hour_count": 3600,
+      "status": "PASS"
+    },
+    {
+      "path": "/glade/u/home/zel/scratch/PACT-Data-Final/CMIP6_MIROC_PastOnly/graphs/1985_1986_CBBT_peryear_hist48_graphs.pt",
+      "bytes": 182317185,
+      "mtime_ns": 1792290307000000000,
+      "graph_count": 600,
+      "signatures": [
+        [
+          39,
+          43,
+          1677,
+          5,
+          9,
+          48,
+          6
+        ]
+      ],
+      "first_target_utc": "1985-11-01T00:00:00",
+      "last_target_utc": "1986-03-30T23:00:00",
+      "target_min": -0.056317225098609924,
+      "target_max": 0.034467339515686035,
+      "numeric_values_scope": "boundary",
+      "numeric_graph_count": 2,
+      "target_hour_count": 3600,
+      "status": "PASS"
+    },
+    {
+      "path": "/glade/u/home/zel/scratch/PACT-Data-Final/CMIP6_MIROC_PastOnly/graphs/1986_1987_CBBT_peryear_hist48_graphs.pt",
+      "bytes": 182317185,
+      "mtime_ns": 1792290313000000000,
+      "graph_count": 600,
+      "signatures": [
+        [
+          39,
+          43,
+          1677,
+          5,
+          9,
+          48,
+          6
+        ]
+      ],
+      "first_target_utc": "1986-11-01T00:00:00",
+      "last_target_utc": "1987-03-30T23:00:00",
+      "target_min": -0.014580577611923218,
+      "target_max": 0.04783681035041809,
+      "numeric_values_scope": "boundary",
+      "numeric_graph_count": 2,
+      "target_hour_count": 3600,
+      "status": "PASS"
+    },
+    {
+      "path": "/glade/u/home/zel/scratch/PACT-Data-Final/CMIP6_MIROC_PastOnly/graphs/1987_1988_CBBT_peryear_hist48_graphs.pt",
+      "bytes": 183531953,
+      "mtime_ns": 1792290263000000000,
+      "graph_count": 604,
+      "signatures": [
+        [
+          39,
+          43,
+          1677,
+          5,
+          9,
+          48,
+          6
+        ]
+      ],
+      "first_target_utc": "1987-11-01T00:00:00",
+      "last_target_utc": "1988-03-30T23:00:00",
+      "target_min": -0.026234664022922516,
+      "target_max": 0.0341104194521904,
+      "numeric_values_scope": "boundary",
+      "numeric_graph_count": 2,
+      "target_hour_count": 3624,
+      "status": "PASS"
+    },
+    {
+      "path": "/glade/u/home/zel/scratch/PACT-Data-Final/CMIP6_MIROC_PastOnly/graphs/1988_1989_CBBT_peryear_hist48_graphs.pt",
+      "bytes": 182317185,
+      "mtime_ns": 1792290313000000000,
+      "graph_count": 600,
+      "signatures": [
+        [
+          39,
+          43,
+          1677,
+          5,
+          9,
+          48,
+          6
+        ]
+      ],
+      "first_target_utc": "1988-11-01T00:00:00",
+      "last_target_utc": "1989-03-30T23:00:00",
+      "target_min": -0.0586286261677742,
+      "target_max": 0.08105069398880005,
+      "numeric_values_scope": "boundary",
+      "numeric_graph_count": 2,
+      "target_hour_count": 3600,
+      "status": "PASS"
+    },
+    {
+      "path": "/glade/u/home/zel/scratch/PACT-Data-Final/CMIP6_MIROC_PastOnly/graphs/1989_1990_CBBT_peryear_hist48_graphs.pt",
+      "bytes": 182317185,
+      "mtime_ns": 1792290312000000000,
+      "graph_count": 600,
+      "signatures": [
+        [
+          39,
+          43,
+          1677,
+          5,
+          9,
+          48,
+          6
+        ]
+      ],
+      "first_target_utc": "1989-11-01T00:00:00",
+      "last_target_utc": "1990-03-30T23:00:00",
+      "target_min": -0.11369642615318298,
+      "target_max": -0.06254903227090836,
+      "numeric_values_scope": "boundary",
+      "numeric_graph_count": 2,
+      "target_hour_count": 3600,
+      "status": "PASS"
+    },
+    {
+      "path": "/glade/u/home/zel/scratch/PACT-Data-Final/CMIP6_MIROC_PastOnly/graphs/1990_1991_CBBT_peryear_hist48_graphs.pt",
+      "bytes": 182317185,
+      "mtime_ns": 1792290310000000000,
+      "graph_count": 600,
+      "signatures": [
+        [
+          39,
+          43,
+          1677,
+          5,
+          9,
+          48,
+          6
+        ]
+      ],
+      "first_target_utc": "1990-11-01T00:00:00",
+      "last_target_utc": "1991-03-30T23:00:00",
+      "target_min": -0.20971354842185974,
+      "target_max": -0.05578222870826721,
+      "numeric_values_scope": "boundary",
+      "numeric_graph_count": 2,
+      "target_hour_count": 3600,
+      "status": "PASS"
+    },
+    {
+      "path": "/glade/u/home/zel/scratch/PACT-Data-Final/CMIP6_MIROC_PastOnly/graphs/1991_1992_CBBT_peryear_hist48_graphs.pt",
+      "bytes": 183531953,
+      "mtime_ns": 1792290258000000000,
+      "graph_count": 604,
+      "signatures": [
+        [
+          39,
+          43,
+          1677,
+          5,
+          9,
+          48,
+          6
+        ]
+      ],
+      "first_target_utc": "1991-11-01T00:00:00",
+      "last_target_utc": "1992-03-30T23:00:00",
+      "target_min": 0.0238838791847229,
+      "target_max": 0.07106372714042664,
+      "numeric_values_scope": "boundary",
+      "numeric_graph_count": 2,
+      "target_hour_count": 3624,
+      "status": "PASS"
+    },
+    {
+      "path": "/glade/u/home/zel/scratch/PACT-Data-Final/CMIP6_MIROC_PastOnly/graphs/1992_1993_CBBT_peryear_hist48_graphs.pt",
+      "bytes": 182317185,
+      "mtime_ns": 1792290308000000000,
+      "graph_count": 600,
+      "signatures": [
+        [
+          39,
+          43,
+          1677,
+          5,
+          9,
+          48,
+          6
+        ]
+      ],
+      "first_target_utc": "1992-11-01T00:00:00",
+      "last_target_utc": "1993-03-30T23:00:00",
+      "target_min": -0.23018869757652283,
+      "target_max": -0.06561055779457092,
+      "numeric_values_scope": "boundary",
+      "numeric_graph_count": 2,
+      "target_hour_count": 3600,
+      "status": "PASS"
+    },
+    {
+      "path": "/glade/u/home/zel/scratch/PACT-Data-Final/CMIP6_MIROC_PastOnly/graphs/1993_1994_CBBT_peryear_hist48_graphs.pt",
+      "bytes": 182317185,
+      "mtime_ns": 1792290308000000000,
+      "graph_count": 600,
+      "signatures": [
+        [
+          39,
+          43,
+          1677,
+          5,
+          9,
+          48,
+          6
+        ]
+      ],
+      "first_target_utc": "1993-11-01T00:00:00",
+      "last_target_utc": "1994-03-30T23:00:00",
+      "target_min": 0.11420905590057373,
+      "target_max": 0.15239623188972473,
+      "numeric_values_scope": "boundary",
+      "numeric_graph_count": 2,
+      "target_hour_count": 3600,
+      "status": "PASS"
+    },
+    {
+      "path": "/glade/u/home/zel/scratch/PACT-Data-Final/CMIP6_MIROC_PastOnly/graphs/1994_1995_CBBT_peryear_hist48_graphs.pt",
+      "bytes": 182317185,
+      "mtime_ns": 1792290308000000000,
+      "graph_count": 600,
+      "signatures": [
+        [
+          39,
+          43,
+          1677,
+          5,
+          9,
+          48,
+          6
+        ]
+      ],
+      "first_target_utc": "1994-11-01T00:00:00",
+      "last_target_utc": "1995-03-30T23:00:00",
+      "target_min": -0.23005641996860504,
+      "target_max": 0.15325528383255005,
+      "numeric_values_scope": "boundary",
+      "numeric_graph_count": 2,
+      "target_hour_count": 3600,
+      "status": "PASS"
+    },
+    {
+      "path": "/glade/u/home/zel/scratch/PACT-Data-Final/CMIP6_MIROC_PastOnly/graphs/1995_1996_CBBT_peryear_hist48_graphs.pt",
+      "bytes": 183531953,
+      "mtime_ns": 1792290270000000000,
+      "graph_count": 604,
+      "signatures": [
+        [
+          39,
+          43,
+          1677,
+          5,
+          9,
+          48,
+          6
+        ]
+      ],
+      "first_target_utc": "1995-11-01T00:00:00",
+      "last_target_utc": "1996-03-30T23:00:00",
+      "target_min": -0.15673062205314636,
+      "target_max": 0.21469545364379883,
+      "numeric_values_scope": "boundary",
+      "numeric_graph_count": 2,
+      "target_hour_count": 3624,
+      "status": "PASS"
+    },
+    {
+      "path": "/glade/u/home/zel/scratch/PACT-Data-Final/CMIP6_MIROC_PastOnly/graphs/1996_1997_CBBT_peryear_hist48_graphs.pt",
+      "bytes": 182317185,
+      "mtime_ns": 1792290314000000000,
+      "graph_count": 600,
+      "signatures": [
+        [
+          39,
+          43,
+          1677,
+          5,
+          9,
+          48,
+          6
+        ]
+      ],
+      "first_target_utc": "1996-11-01T00:00:00",
+      "last_target_utc": "1997-03-30T23:00:00",
+      "target_min": -0.13009390234947205,
+      "target_max": -0.024348020553588867,
+      "numeric_values_scope": "boundary",
+      "numeric_graph_count": 2,
+      "target_hour_count": 3600,
+      "status": "PASS"
+    },
+    {
+      "path": "/glade/u/home/zel/scratch/PACT-Data-Final/CMIP6_MIROC_PastOnly/graphs/1997_1998_CBBT_peryear_hist48_graphs.pt",
+      "bytes": 182317185,
+      "mtime_ns": 1792290314000000000,
+      "graph_count": 600,
+      "signatures": [
+        [
+          39,
+          43,
+          1677,
+          5,
+          9,
+          48,
+          6
+        ]
+      ],
+      "first_target_utc": "1997-11-01T00:00:00",
+      "last_target_utc": "1998-03-30T23:00:00",
+      "target_min": -0.057744063436985016,
+      "target_max": 0.13943855464458466,
+      "numeric_values_scope": "boundary",
+      "numeric_graph_count": 2,
+      "target_hour_count": 3600,
+      "status": "PASS"
+    },
+    {
+      "path": "/glade/u/home/zel/scratch/PACT-Data-Final/CMIP6_MIROC_PastOnly/graphs/1998_1999_CBBT_peryear_hist48_graphs.pt",
+      "bytes": 182317185,
+      "mtime_ns": 1792290314000000000,
+      "graph_count": 600,
+      "signatures": [
+        [
+          39,
+          43,
+          1677,
+          5,
+          9,
+          48,
+          6
+        ]
+      ],
+      "first_target_utc": "1998-11-01T00:00:00",
+      "last_target_utc": "1999-03-30T23:00:00",
+      "target_min": -0.11287807673215866,
+      "target_max": 0.19795750081539154,
+      "numeric_values_scope": "boundary",
+      "numeric_graph_count": 2,
+      "target_hour_count": 3600,
+      "status": "PASS"
+    },
+    {
+      "path": "/glade/u/home/zel/scratch/PACT-Data-Final/CMIP6_MIROC_PastOnly/graphs/1999_2000_CBBT_peryear_hist48_graphs.pt",
+      "bytes": 183531953,
+      "mtime_ns": 1792290272000000000,
+      "graph_count": 604,
+      "signatures": [
+        [
+          39,
+          43,
+          1677,
+          5,
+          9,
+          48,
+          6
+        ]
+      ],
+      "first_target_utc": "1999-11-01T00:00:00",
+      "last_target_utc": "2000-03-30T23:00:00",
+      "target_min": -0.12667682766914368,
+      "target_max": 0.175548255443573,
+      "numeric_values_scope": "boundary",
+      "numeric_graph_count": 2,
+      "target_hour_count": 3624,
+      "status": "PASS"
+    },
+    {
+      "path": "/glade/u/home/zel/scratch/PACT-Data-Final/CMIP6_MIROC_PastOnly/graphs/2000_2001_CBBT_peryear_hist48_graphs.pt",
+      "bytes": 182317185,
+      "mtime_ns": 1792290311000000000,
+      "graph_count": 600,
+      "signatures": [
+        [
+          39,
+          43,
+          1677,
+          5,
+          9,
+          48,
+          6
+        ]
+      ],
+      "first_target_utc": "2000-11-01T00:00:00",
+      "last_target_utc": "2001-03-30T23:00:00",
+      "target_min": -0.05649428069591522,
+      "target_max": 0.1280970722436905,
+      "numeric_values_scope": "boundary",
+      "numeric_graph_count": 2,
+      "target_hour_count": 3600,
+      "status": "PASS"
+    },
+    {
+      "path": "/glade/u/home/zel/scratch/PACT-Data-Final/CMIP6_MIROC_PastOnly/graphs/2001_2002_CBBT_peryear_hist48_graphs.pt",
+      "bytes": 182317185,
+      "mtime_ns": 1792290315000000000,
+      "graph_count": 600,
+      "signatures": [
+        [
+          39,
+          43,
+          1677,
+          5,
+          9,
+          48,
+          6
+        ]
+      ],
+      "first_target_utc": "2001-11-01T00:00:00",
+      "last_target_utc": "2002-03-30T23:00:00",
+      "target_min": -0.07474058866500854,
+      "target_max": -0.02730192244052887,
+      "numeric_values_scope": "boundary",
+      "numeric_graph_count": 2,
+      "target_hour_count": 3600,
+      "status": "PASS"
+    },
+    {
+      "path": "/glade/u/home/zel/scratch/PACT-Data-Final/CMIP6_MIROC_PastOnly/graphs/2002_2003_CBBT_peryear_hist48_graphs.pt",
+      "bytes": 182317185,
+      "mtime_ns": 1792290309000000000,
+      "graph_count": 600,
+      "signatures": [
+        [
+          39,
+          43,
+          1677,
+          5,
+          9,
+          48,
+          6
+        ]
+      ],
+      "first_target_utc": "2002-11-01T00:00:00",
+      "last_target_utc": "2003-03-30T23:00:00",
+      "target_min": -0.019386887550354004,
+      "target_max": 0.1092686653137207,
+      "numeric_values_scope": "boundary",
+      "numeric_graph_count": 2,
+      "target_hour_count": 3600,
+      "status": "PASS"
+    },
+    {
+      "path": "/glade/u/home/zel/scratch/PACT-Data-Final/CMIP6_MIROC_PastOnly/graphs/2003_2004_CBBT_peryear_hist48_graphs.pt",
+      "bytes": 183531953,
+      "mtime_ns": 1792290267000000000,
+      "graph_count": 604,
+      "signatures": [
+        [
+          39,
+          43,
+          1677,
+          5,
+          9,
+          48,
+          6
+        ]
+      ],
+      "first_target_utc": "2003-11-01T00:00:00",
+      "last_target_utc": "2004-03-30T23:00:00",
+      "target_min": -0.03747672960162163,
+      "target_max": 0.02140146493911743,
+      "numeric_values_scope": "boundary",
+      "numeric_graph_count": 2,
+      "target_hour_count": 3624,
+      "status": "PASS"
+    },
+    {
+      "path": "/glade/u/home/zel/scratch/PACT-Data-Final/CMIP6_MIROC_PastOnly/graphs/2004_2005_CBBT_peryear_hist48_graphs.pt",
+      "bytes": 182317185,
+      "mtime_ns": 1792290309000000000,
+      "graph_count": 600,
+      "signatures": [
+        [
+          39,
+          43,
+          1677,
+          5,
+          9,
+          48,
+          6
+        ]
+      ],
+      "first_target_utc": "2004-11-01T00:00:00",
+      "last_target_utc": "2005-03-30T23:00:00",
+      "target_min": -0.13221555948257446,
+      "target_max": -0.09686271846294403,
+      "numeric_values_scope": "boundary",
+      "numeric_graph_count": 2,
+      "target_hour_count": 3600,
+      "status": "PASS"
+    },
+    {
+      "path": "/glade/u/home/zel/scratch/PACT-Data-Final/CMIP6_MIROC_PastOnly/graphs/2005_2006_CBBT_peryear_hist48_graphs.pt",
+      "bytes": 182317185,
+      "mtime_ns": 1792290309000000000,
+      "graph_count": 600,
+      "signatures": [
+        [
+          39,
+          43,
+          1677,
+          5,
+          9,
+          48,
+          6
+        ]
+      ],
+      "first_target_utc": "2005-11-01T00:00:00",
+      "last_target_utc": "2006-03-30T23:00:00",
+      "target_min": -0.07260841131210327,
+      "target_max": 0.029797345399856567,
+      "numeric_values_scope": "boundary",
+      "numeric_graph_count": 2,
+      "target_hour_count": 3600,
+      "status": "PASS"
+    },
+    {
+      "path": "/glade/u/home/zel/scratch/PACT-Data-Final/CMIP6_MIROC_PastOnly/graphs/2006_2007_CBBT_peryear_hist48_graphs.pt",
+      "bytes": 182317185,
+      "mtime_ns": 1792290317000000000,
+      "graph_count": 600,
+      "signatures": [
+        [
+          39,
+          43,
+          1677,
+          5,
+          9,
+          48,
+          6
+        ]
+      ],
+      "first_target_utc": "2006-11-01T00:00:00",
+      "last_target_utc": "2007-03-30T23:00:00",
+      "target_min": -0.17277540266513824,
+      "target_max": 0.1412104219198227,
+      "numeric_values_scope": "boundary",
+      "numeric_graph_count": 2,
+      "target_hour_count": 3600,
+      "status": "PASS"
+    },
+    {
+      "path": "/glade/u/home/zel/scratch/PACT-Data-Final/CMIP6_MIROC_PastOnly/graphs/2007_2008_CBBT_peryear_hist48_graphs.pt",
+      "bytes": 183531953,
+      "mtime_ns": 1792290268000000000,
+      "graph_count": 604,
+      "signatures": [
+        [
+          39,
+          43,
+          1677,
+          5,
+          9,
+          48,
+          6
+        ]
+      ],
+      "first_target_utc": "2007-11-01T00:00:00",
+      "last_target_utc": "2008-03-30T23:00:00",
+      "target_min": -0.09626446664333344,
+      "target_max": 0.3670385479927063,
+      "numeric_values_scope": "boundary",
+      "numeric_graph_count": 2,
+      "target_hour_count": 3624,
+      "status": "PASS"
+    },
+    {
+      "path": "/glade/u/home/zel/scratch/PACT-Data-Final/CMIP6_MIROC_PastOnly/graphs/2008_2009_CBBT_peryear_hist48_graphs.pt",
+      "bytes": 182317185,
+      "mtime_ns": 1792290315000000000,
+      "graph_count": 600,
+      "signatures": [
+        [
+          39,
+          43,
+          1677,
+          5,
+          9,
+          48,
+          6
+        ]
+      ],
+      "first_target_utc": "2008-11-01T00:00:00",
+      "last_target_utc": "2009-03-30T23:00:00",
+      "target_min": -0.10238460451364517,
+      "target_max": 0.028849124908447266,
+      "numeric_values_scope": "boundary",
+      "numeric_graph_count": 2,
+      "target_hour_count": 3600,
+      "status": "PASS"
+    },
+    {
+      "path": "/glade/u/home/zel/scratch/PACT-Data-Final/CMIP6_MIROC_PastOnly/graphs/2009_2010_CBBT_peryear_hist48_graphs.pt",
+      "bytes": 182317185,
+      "mtime_ns": 1792290316000000000,
+      "graph_count": 600,
+      "signatures": [
+        [
+          39,
+          43,
+          1677,
+          5,
+          9,
+          48,
+          6
+        ]
+      ],
+      "first_target_utc": "2009-11-01T00:00:00",
+      "last_target_utc": "2010-03-30T23:00:00",
+      "target_min": -0.041127581149339676,
+      "target_max": 0.07507678866386414,
+      "numeric_values_scope": "boundary",
+      "numeric_graph_count": 2,
+      "target_hour_count": 3600,
+      "status": "PASS"
+    },
+    {
+      "path": "/glade/u/home/zel/scratch/PACT-Data-Final/CMIP6_MIROC_PastOnly/graphs/2010_2011_CBBT_peryear_hist48_graphs.pt",
+      "bytes": 182317185,
+      "mtime_ns": 1792290310000000000,
+      "graph_count": 600,
+      "signatures": [
+        [
+          39,
+          43,
+          1677,
+          5,
+          9,
+          48,
+          6
+        ]
+      ],
+      "first_target_utc": "2010-11-01T00:00:00",
+      "last_target_utc": "2011-03-30T23:00:00",
+      "target_min": -0.10886313021183014,
+      "target_max": 0.022945374250411987,
+      "numeric_values_scope": "boundary",
+      "numeric_graph_count": 2,
+      "target_hour_count": 3600,
+      "status": "PASS"
+    },
+    {
+      "path": "/glade/u/home/zel/scratch/PACT-Data-Final/CMIP6_MIROC_PastOnly/graphs/2011_2012_CBBT_peryear_hist48_graphs.pt",
+      "bytes": 183531953,
+      "mtime_ns": 1792290264000000000,
+      "graph_count": 604,
+      "signatures": [
+        [
+          39,
+          43,
+          1677,
+          5,
+          9,
+          48,
+          6
+        ]
+      ],
+      "first_target_utc": "2011-11-01T00:00:00",
+      "last_target_utc": "2012-03-30T23:00:00",
+      "target_min": -0.10445152968168259,
+      "target_max": 0.03846462070941925,
+      "numeric_values_scope": "boundary",
+      "numeric_graph_count": 2,
+      "target_hour_count": 3624,
+      "status": "PASS"
+    },
+    {
+      "path": "/glade/u/home/zel/scratch/PACT-Data-Final/CMIP6_MIROC_PastOnly/graphs/2012_2013_CBBT_peryear_hist48_graphs.pt",
+      "bytes": 182317185,
+      "mtime_ns": 1792290310000000000,
+      "graph_count": 600,
+      "signatures": [
+        [
+          39,
+          43,
+          1677,
+          5,
+          9,
+          48,
+          6
+        ]
+      ],
+      "first_target_utc": "2012-11-01T00:00:00",
+      "last_target_utc": "2013-03-30T23:00:00",
+      "target_min": -0.1295137107372284,
+      "target_max": 0.12644989788532257,
+      "numeric_values_scope": "boundary",
+      "numeric_graph_count": 2,
+      "target_hour_count": 3600,
+      "status": "PASS"
+    },
+    {
+      "path": "/glade/u/home/zel/scratch/PACT-Data-Final/CMIP6_MIROC_PastOnly/graphs/2013_2014_CBBT_peryear_hist48_graphs.pt",
+      "bytes": 182317185,
+      "mtime_ns": 1792290309000000000,
+      "graph_count": 600,
+      "signatures": [
+        [
+          39,
+          43,
+          1677,
+          5,
+          9,
+          48,
+          6
+        ]
+      ],
+      "first_target_utc": "2013-11-01T00:00:00",
+      "last_target_utc": "2014-03-30T23:00:00",
+      "target_min": -0.18504762649536133,
+      "target_max": -0.10010173916816711,
+      "numeric_values_scope": "boundary",
+      "numeric_graph_count": 2,
+      "target_hour_count": 3600,
+      "status": "PASS"
+    },
+    {
+      "path": "/glade/u/home/zel/scratch/PACT-Data-Final/CMIP6_MIROC_PastOnly/graphs/2014_2015_CBBT_peryear_hist48_graphs.pt",
+      "bytes": 74203921,
+      "mtime_ns": 1792290385000000000,
+      "graph_count": 244,
+      "signatures": [
+        [
+          39,
+          43,
+          1677,
+          5,
+          9,
+          48,
+          6
+        ]
+      ],
+      "first_target_utc": "2014-11-01T00:00:00",
+      "last_target_utc": "2014-12-31T23:00:00",
+      "target_min": -0.298694372177124,
+      "target_max": -0.03243836760520935,
+      "numeric_values_scope": "boundary",
+      "numeric_graph_count": 2,
+      "target_hour_count": 1464,
+      "status": "PASS"
+    }
+  ],
+  "future_files": [
+    {
+      "path": "/glade/u/home/zel/scratch/PACT-Data-Final/CMIP6_MIROC/graphs/2070_2071_CBBT_peryear_hist48_graphs.pt",
+      "bytes": 182317185,
+      "mtime_ns": 1792296943000000000,
+      "graph_count": 600,
+      "signatures": [
+        [
+          39,
+          43,
+          1677,
+          5,
+          9,
+          48,
+          6
+        ]
+      ],
+      "first_target_utc": "2070-11-01T00:00:00",
+      "last_target_utc": "2071-03-30T23:00:00",
+      "target_min": -0.06052686646580696,
+      "target_max": 0.048896849155426025,
+      "numeric_values_scope": "boundary",
+      "numeric_graph_count": 2,
+      "target_hour_count": 3600,
+      "status": "PASS"
+    },
+    {
+      "path": "/glade/u/home/zel/scratch/PACT-Data-Final/CMIP6_MIROC/graphs/2071_2072_CBBT_peryear_hist48_graphs.pt",
+      "bytes": 183531953,
+      "mtime_ns": 1792296898000000000,
+      "graph_count": 604,
+      "signatures": [
+        [
+          39,
+          43,
+          1677,
+          5,
+          9,
+          48,
+          6
+        ]
+      ],
+      "first_target_utc": "2071-11-01T00:00:00",
+      "last_target_utc": "2072-03-30T23:00:00",
+      "target_min": -0.1776086390018463,
+      "target_max": -0.1283797323703766,
+      "numeric_values_scope": "boundary",
+      "numeric_graph_count": 2,
+      "target_hour_count": 3624,
+      "status": "PASS"
+    },
+    {
+      "path": "/glade/u/home/zel/scratch/PACT-Data-Final/CMIP6_MIROC/graphs/2072_2073_CBBT_peryear_hist48_graphs.pt",
+      "bytes": 182317185,
+      "mtime_ns": 1792296945000000000,
+      "graph_count": 600,
+      "signatures": [
+        [
+          39,
+          43,
+          1677,
+          5,
+          9,
+          48,
+          6
+        ]
+      ],
+      "first_target_utc": "2072-11-01T00:00:00",
+      "last_target_utc": "2073-03-30T23:00:00",
+      "target_min": -0.14280609786510468,
+      "target_max": -0.10638904571533203,
+      "numeric_values_scope": "boundary",
+      "numeric_graph_count": 2,
+      "target_hour_count": 3600,
+      "status": "PASS"
+    },
+    {
+      "path": "/glade/u/home/zel/scratch/PACT-Data-Final/CMIP6_MIROC/graphs/2073_2074_CBBT_peryear_hist48_graphs.pt",
+      "bytes": 182317185,
+      "mtime_ns": 1792296943000000000,
+      "graph_count": 600,
+      "signatures": [
+        [
+          39,
+          43,
+          1677,
+          5,
+          9,
+          48,
+          6
+        ]
+      ],
+      "first_target_utc": "2073-11-01T00:00:00",
+      "last_target_utc": "2074-03-30T23:00:00",
+      "target_min": 0.029732435941696167,
+      "target_max": 0.21713250875473022,
+      "numeric_values_scope": "boundary",
+      "numeric_graph_count": 2,
+      "target_hour_count": 3600,
+      "status": "PASS"
+    },
+    {
+      "path": "/glade/u/home/zel/scratch/PACT-Data-Final/CMIP6_MIROC/graphs/2074_2075_CBBT_peryear_hist48_graphs.pt",
+      "bytes": 182317185,
+      "mtime_ns": 1792296947000000000,
+      "graph_count": 600,
+      "signatures": [
+        [
+          39,
+          43,
+          1677,
+          5,
+          9,
+          48,
+          6
+        ]
+      ],
+      "first_target_utc": "2074-11-01T00:00:00",
+      "last_target_utc": "2075-03-30T23:00:00",
+      "target_min": 0.1171623021364212,
+      "target_max": 0.21032795310020447,
+      "numeric_values_scope": "boundary",
+      "numeric_graph_count": 2,
+      "target_hour_count": 3600,
+      "status": "PASS"
+    },
+    {
+      "path": "/glade/u/home/zel/scratch/PACT-Data-Final/CMIP6_MIROC/graphs/2075_2076_CBBT_peryear_hist48_graphs.pt",
+      "bytes": 183531953,
+      "mtime_ns": 1792296899000000000,
+      "graph_count": 604,
+      "signatures": [
+        [
+          39,
+          43,
+          1677,
+          5,
+          9,
+          48,
+          6
+        ]
+      ],
+      "first_target_utc": "2075-11-01T00:00:00",
+      "last_target_utc": "2076-03-30T23:00:00",
+      "target_min": -0.07830613851547241,
+      "target_max": -0.006945520639419556,
+      "numeric_values_scope": "boundary",
+      "numeric_graph_count": 2,
+      "target_hour_count": 3624,
+      "status": "PASS"
+    },
+    {
+      "path": "/glade/u/home/zel/scratch/PACT-Data-Final/CMIP6_MIROC/graphs/2076_2077_CBBT_peryear_hist48_graphs.pt",
+      "bytes": 182317185,
+      "mtime_ns": 1792296941000000000,
+      "graph_count": 600,
+      "signatures": [
+        [
+          39,
+          43,
+          1677,
+          5,
+          9,
+          48,
+          6
+        ]
+      ],
+      "first_target_utc": "2076-11-01T00:00:00",
+      "last_target_utc": "2077-03-30T23:00:00",
+      "target_min": -0.018508106470108032,
+      "target_max": 0.26192373037338257,
+      "numeric_values_scope": "boundary",
+      "numeric_graph_count": 2,
+      "target_hour_count": 3600,
+      "status": "PASS"
+    },
+    {
+      "path": "/glade/u/home/zel/scratch/PACT-Data-Final/CMIP6_MIROC/graphs/2077_2078_CBBT_peryear_hist48_graphs.pt",
+      "bytes": 182317185,
+      "mtime_ns": 1792296946000000000,
+      "graph_count": 600,
+      "signatures": [
+        [
+          39,
+          43,
+          1677,
+          5,
+          9,
+          48,
+          6
+        ]
+      ],
+      "first_target_utc": "2077-11-01T00:00:00",
+      "last_target_utc": "2078-03-30T23:00:00",
+      "target_min": -0.22343558073043823,
+      "target_max": -0.05986329913139343,
+      "numeric_values_scope": "boundary",
+      "numeric_graph_count": 2,
+      "target_hour_count": 3600,
+      "status": "PASS"
+    },
+    {
+      "path": "/glade/u/home/zel/scratch/PACT-Data-Final/CMIP6_MIROC/graphs/2078_2079_CBBT_peryear_hist48_graphs.pt",
+      "bytes": 182317185,
+      "mtime_ns": 1792296945000000000,
+      "graph_count": 600,
+      "signatures": [
+        [
+          39,
+          43,
+          1677,
+          5,
+          9,
+          48,
+          6
+        ]
+      ],
+      "first_target_utc": "2078-11-01T00:00:00",
+      "last_target_utc": "2079-03-30T23:00:00",
+      "target_min": -0.1588251292705536,
+      "target_max": 0.004808872938156128,
+      "numeric_values_scope": "boundary",
+      "numeric_graph_count": 2,
+      "target_hour_count": 3600,
+      "status": "PASS"
+    },
+    {
+      "path": "/glade/u/home/zel/scratch/PACT-Data-Final/CMIP6_MIROC/graphs/2079_2080_CBBT_peryear_hist48_graphs.pt",
+      "bytes": 183531953,
+      "mtime_ns": 1792296889000000000,
+      "graph_count": 604,
+      "signatures": [
+        [
+          39,
+          43,
+          1677,
+          5,
+          9,
+          48,
+          6
+        ]
+      ],
+      "first_target_utc": "2079-11-01T00:00:00",
+      "last_target_utc": "2080-03-30T23:00:00",
+      "target_min": 0.010882586240768433,
+      "target_max": 0.2388007491827011,
+      "numeric_values_scope": "boundary",
+      "numeric_graph_count": 2,
+      "target_hour_count": 3624,
+      "status": "PASS"
+    },
+    {
+      "path": "/glade/u/home/zel/scratch/PACT-Data-Final/CMIP6_MIROC/graphs/2080_2081_CBBT_peryear_hist48_graphs.pt",
+      "bytes": 182317185,
+      "mtime_ns": 1792296940000000000,
+      "graph_count": 600,
+      "signatures": [
+        [
+          39,
+          43,
+          1677,
+          5,
+          9,
+          48,
+          6
+        ]
+      ],
+      "first_target_utc": "2080-11-01T00:00:00",
+      "last_target_utc": "2081-03-30T23:00:00",
+      "target_min": -0.0546930730342865,
+      "target_max": 0.09892866015434265,
+      "numeric_values_scope": "boundary",
+      "numeric_graph_count": 2,
+      "target_hour_count": 3600,
+      "status": "PASS"
+    },
+    {
+      "path": "/glade/u/home/zel/scratch/PACT-Data-Final/CMIP6_MIROC/graphs/2081_2082_CBBT_peryear_hist48_graphs.pt",
+      "bytes": 182317185,
+      "mtime_ns": 1792296943000000000,
+      "graph_count": 600,
+      "signatures": [
+        [
+          39,
+          43,
+          1677,
+          5,
+          9,
+          48,
+          6
+        ]
+      ],
+      "first_target_utc": "2081-11-01T00:00:00",
+      "last_target_utc": "2082-03-30T23:00:00",
+      "target_min": 0.018927685916423798,
+      "target_max": 0.0570235550403595,
+      "numeric_values_scope": "boundary",
+      "numeric_graph_count": 2,
+      "target_hour_count": 3600,
+      "status": "PASS"
+    },
+    {
+      "path": "/glade/u/home/zel/scratch/PACT-Data-Final/CMIP6_MIROC/graphs/2082_2083_CBBT_peryear_hist48_graphs.pt",
+      "bytes": 182317185,
+      "mtime_ns": 1792296944000000000,
+      "graph_count": 600,
+      "signatures": [
+        [
+          39,
+          43,
+          1677,
+          5,
+          9,
+          48,
+          6
+        ]
+      ],
+      "first_target_utc": "2082-11-01T00:00:00",
+      "last_target_utc": "2083-03-30T23:00:00",
+      "target_min": -0.037030041217803955,
+      "target_max": 0.05226758122444153,
+      "numeric_values_scope": "boundary",
+      "numeric_graph_count": 2,
+      "target_hour_count": 3600,
+      "status": "PASS"
+    },
+    {
+      "path": "/glade/u/home/zel/scratch/PACT-Data-Final/CMIP6_MIROC/graphs/2083_2084_CBBT_peryear_hist48_graphs.pt",
+      "bytes": 183531953,
+      "mtime_ns": 1792296890000000000,
+      "graph_count": 604,
+      "signatures": [
+        [
+          39,
+          43,
+          1677,
+          5,
+          9,
+          48,
+          6
+        ]
+      ],
+      "first_target_utc": "2083-11-01T00:00:00",
+      "last_target_utc": "2084-03-30T23:00:00",
+      "target_min": -0.05264207720756531,
+      "target_max": 0.09938625991344452,
+      "numeric_values_scope": "boundary",
+      "numeric_graph_count": 2,
+      "target_hour_count": 3624,
+      "status": "PASS"
+    },
+    {
+      "path": "/glade/u/home/zel/scratch/PACT-Data-Final/CMIP6_MIROC/graphs/2084_2085_CBBT_peryear_hist48_graphs.pt",
+      "bytes": 182317185,
+      "mtime_ns": 1792296946000000000,
+      "graph_count": 600,
+      "signatures": [
+        [
+          39,
+          43,
+          1677,
+          5,
+          9,
+          48,
+          6
+        ]
+      ],
+      "first_target_utc": "2084-11-01T00:00:00",
+      "last_target_utc": "2085-03-30T23:00:00",
+      "target_min": -0.06925760209560394,
+      "target_max": 0.016251713037490845,
+      "numeric_values_scope": "boundary",
+      "numeric_graph_count": 2,
+      "target_hour_count": 3600,
+      "status": "PASS"
+    },
+    {
+      "path": "/glade/u/home/zel/scratch/PACT-Data-Final/CMIP6_MIROC/graphs/2085_2086_CBBT_peryear_hist48_graphs.pt",
+      "bytes": 182317185,
+      "mtime_ns": 1792296941000000000,
+      "graph_count": 600,
+      "signatures": [
+        [
+          39,
+          43,
+          1677,
+          5,
+          9,
+          48,
+          6
+        ]
+      ],
+      "first_target_utc": "2085-11-01T00:00:00",
+      "last_target_utc": "2086-03-30T23:00:00",
+      "target_min": -0.009276226162910461,
+      "target_max": 0.15826278924942017,
+      "numeric_values_scope": "boundary",
+      "numeric_graph_count": 2,
+      "target_hour_count": 3600,
+      "status": "PASS"
+    },
+    {
+      "path": "/glade/u/home/zel/scratch/PACT-Data-Final/CMIP6_MIROC/graphs/2086_2087_CBBT_peryear_hist48_graphs.pt",
+      "bytes": 182317185,
+      "mtime_ns": 1792296948000000000,
+      "graph_count": 600,
+      "signatures": [
+        [
+          39,
+          43,
+          1677,
+          5,
+          9,
+          48,
+          6
+        ]
+      ],
+      "first_target_utc": "2086-11-01T00:00:00",
+      "last_target_utc": "2087-03-30T23:00:00",
+      "target_min": -0.27410441637039185,
+      "target_max": 0.021656334400177002,
+      "numeric_values_scope": "boundary",
+      "numeric_graph_count": 2,
+      "target_hour_count": 3600,
+      "status": "PASS"
+    },
+    {
+      "path": "/glade/u/home/zel/scratch/PACT-Data-Final/CMIP6_MIROC/graphs/2087_2088_CBBT_peryear_hist48_graphs.pt",
+      "bytes": 183531953,
+      "mtime_ns": 1792296897000000000,
+      "graph_count": 604,
+      "signatures": [
+        [
+          39,
+          43,
+          1677,
+          5,
+          9,
+          48,
+          6
+        ]
+      ],
+      "first_target_utc": "2087-11-01T00:00:00",
+      "last_target_utc": "2088-03-30T23:00:00",
+      "target_min": -0.24801483750343323,
+      "target_max": 0.31633293628692627,
+      "numeric_values_scope": "boundary",
+      "numeric_graph_count": 2,
+      "target_hour_count": 3624,
+      "status": "PASS"
+    },
+    {
+      "path": "/glade/u/home/zel/scratch/PACT-Data-Final/CMIP6_MIROC/graphs/2088_2089_CBBT_peryear_hist48_graphs.pt",
+      "bytes": 182317185,
+      "mtime_ns": 1792296941000000000,
+      "graph_count": 600,
+      "signatures": [
+        [
+          39,
+          43,
+          1677,
+          5,
+          9,
+          48,
+          6
+        ]
+      ],
+      "first_target_utc": "2088-11-01T00:00:00",
+      "last_target_utc": "2089-03-30T23:00:00",
+      "target_min": 0.11175039410591125,
+      "target_max": 0.22519804537296295,
+      "numeric_values_scope": "boundary",
+      "numeric_graph_count": 2,
+      "target_hour_count": 3600,
+      "status": "PASS"
+    },
+    {
+      "path": "/glade/u/home/zel/scratch/PACT-Data-Final/CMIP6_MIROC/graphs/2089_2090_CBBT_peryear_hist48_graphs.pt",
+      "bytes": 182317185,
+      "mtime_ns": 1792296944000000000,
+      "graph_count": 600,
+      "signatures": [
+        [
+          39,
+          43,
+          1677,
+          5,
+          9,
+          48,
+          6
+        ]
+      ],
+      "first_target_utc": "2089-11-01T00:00:00",
+      "last_target_utc": "2090-03-30T23:00:00",
+      "target_min": -0.167283296585083,
+      "target_max": -0.09144993126392365,
+      "numeric_values_scope": "boundary",
+      "numeric_graph_count": 2,
+      "target_hour_count": 3600,
+      "status": "PASS"
+    },
+    {
+      "path": "/glade/u/home/zel/scratch/PACT-Data-Final/CMIP6_MIROC/graphs/2090_2091_CBBT_peryear_hist48_graphs.pt",
+      "bytes": 182317185,
+      "mtime_ns": 1792296942000000000,
+      "graph_count": 600,
+      "signatures": [
+        [
+          39,
+          43,
+          1677,
+          5,
+          9,
+          48,
+          6
+        ]
+      ],
+      "first_target_utc": "2090-11-01T00:00:00",
+      "last_target_utc": "2091-03-30T23:00:00",
+      "target_min": -0.42495787143707275,
+      "target_max": 0.23871749639511108,
+      "numeric_values_scope": "boundary",
+      "numeric_graph_count": 2,
+      "target_hour_count": 3600,
+      "status": "PASS"
+    },
+    {
+      "path": "/glade/u/home/zel/scratch/PACT-Data-Final/CMIP6_MIROC/graphs/2091_2092_CBBT_peryear_hist48_graphs.pt",
+      "bytes": 183531953,
+      "mtime_ns": 1792296891000000000,
+      "graph_count": 604,
+      "signatures": [
+        [
+          39,
+          43,
+          1677,
+          5,
+          9,
+          48,
+          6
+        ]
+      ],
+      "first_target_utc": "2091-11-01T00:00:00",
+      "last_target_utc": "2092-03-30T23:00:00",
+      "target_min": -0.17899471521377563,
+      "target_max": 0.06748247146606445,
+      "numeric_values_scope": "boundary",
+      "numeric_graph_count": 2,
+      "target_hour_count": 3624,
+      "status": "PASS"
+    },
+    {
+      "path": "/glade/u/home/zel/scratch/PACT-Data-Final/CMIP6_MIROC/graphs/2092_2093_CBBT_peryear_hist48_graphs.pt",
+      "bytes": 182317185,
+      "mtime_ns": 1792296947000000000,
+      "graph_count": 600,
+      "signatures": [
+        [
+          39,
+          43,
+          1677,
+          5,
+          9,
+          48,
+          6
+        ]
+      ],
+      "first_target_utc": "2092-11-01T00:00:00",
+      "last_target_utc": "2093-03-30T23:00:00",
+      "target_min": -0.06692573428153992,
+      "target_max": 0.0667981207370758,
+      "numeric_values_scope": "boundary",
+      "numeric_graph_count": 2,
+      "target_hour_count": 3600,
+      "status": "PASS"
+    },
+    {
+      "path": "/glade/u/home/zel/scratch/PACT-Data-Final/CMIP6_MIROC/graphs/2093_2094_CBBT_peryear_hist48_graphs.pt",
+      "bytes": 182317185,
+      "mtime_ns": 1792296945000000000,
+      "graph_count": 600,
+      "signatures": [
+        [
+          39,
+          43,
+          1677,
+          5,
+          9,
+          48,
+          6
+        ]
+      ],
+      "first_target_utc": "2093-11-01T00:00:00",
+      "last_target_utc": "2094-03-30T23:00:00",
+      "target_min": -0.08275490999221802,
+      "target_max": 0.002782672643661499,
+      "numeric_values_scope": "boundary",
+      "numeric_graph_count": 2,
+      "target_hour_count": 3600,
+      "status": "PASS"
+    },
+    {
+      "path": "/glade/u/home/zel/scratch/PACT-Data-Final/CMIP6_MIROC/graphs/2094_2095_CBBT_peryear_hist48_graphs.pt",
+      "bytes": 182317185,
+      "mtime_ns": 1792296947000000000,
+      "graph_count": 600,
+      "signatures": [
+        [
+          39,
+          43,
+          1677,
+          5,
+          9,
+          48,
+          6
+        ]
+      ],
+      "first_target_utc": "2094-11-01T00:00:00",
+      "last_target_utc": "2095-03-30T23:00:00",
+      "target_min": -0.11000097543001175,
+      "target_max": 0.08503609895706177,
+      "numeric_values_scope": "boundary",
+      "numeric_graph_count": 2,
+      "target_hour_count": 3600,
+      "status": "PASS"
+    },
+    {
+      "path": "/glade/u/home/zel/scratch/PACT-Data-Final/CMIP6_MIROC/graphs/2095_2096_CBBT_peryear_hist48_graphs.pt",
+      "bytes": 183531953,
+      "mtime_ns": 1792296897000000000,
+      "graph_count": 604,
+      "signatures": [
+        [
+          39,
+          43,
+          1677,
+          5,
+          9,
+          48,
+          6
+        ]
+      ],
+      "first_target_utc": "2095-11-01T00:00:00",
+      "last_target_utc": "2096-03-30T23:00:00",
+      "target_min": -0.09912949800491333,
+      "target_max": 0.04586455225944519,
+      "numeric_values_scope": "boundary",
+      "numeric_graph_count": 2,
+      "target_hour_count": 3624,
+      "status": "PASS"
+    },
+    {
+      "path": "/glade/u/home/zel/scratch/PACT-Data-Final/CMIP6_MIROC/graphs/2096_2097_CBBT_peryear_hist48_graphs.pt",
+      "bytes": 182317185,
+      "mtime_ns": 1792296949000000000,
+      "graph_count": 600,
+      "signatures": [
+        [
+          39,
+          43,
+          1677,
+          5,
+          9,
+          48,
+          6
+        ]
+      ],
+      "first_target_utc": "2096-11-01T00:00:00",
+      "last_target_utc": "2097-03-30T23:00:00",
+      "target_min": -0.04266887158155441,
+      "target_max": 0.0012820959091186523,
+      "numeric_values_scope": "boundary",
+      "numeric_graph_count": 2,
+      "target_hour_count": 3600,
+      "status": "PASS"
+    },
+    {
+      "path": "/glade/u/home/zel/scratch/PACT-Data-Final/CMIP6_MIROC/graphs/2097_2098_CBBT_peryear_hist48_graphs.pt",
+      "bytes": 182317185,
+      "mtime_ns": 1792296947000000000,
+      "graph_count": 600,
+      "signatures": [
+        [
+          39,
+          43,
+          1677,
+          5,
+          9,
+          48,
+          6
+        ]
+      ],
+      "first_target_utc": "2097-11-01T00:00:00",
+      "last_target_utc": "2098-03-30T23:00:00",
+      "target_min": -0.11935105919837952,
+      "target_max": 0.01118120551109314,
+      "numeric_values_scope": "boundary",
+      "numeric_graph_count": 2,
+      "target_hour_count": 3600,
+      "status": "PASS"
+    },
+    {
+      "path": "/glade/u/home/zel/scratch/PACT-Data-Final/CMIP6_MIROC/graphs/2098_2099_CBBT_peryear_hist48_graphs.pt",
+      "bytes": 182317185,
+      "mtime_ns": 1792296942000000000,
+      "graph_count": 600,
+      "signatures": [
+        [
+          39,
+          43,
+          1677,
+          5,
+          9,
+          48,
+          6
+        ]
+      ],
+      "first_target_utc": "2098-11-01T00:00:00",
+      "last_target_utc": "2099-03-30T23:00:00",
+      "target_min": -0.10921315848827362,
+      "target_max": 0.043313682079315186,
+      "numeric_values_scope": "boundary",
+      "numeric_graph_count": 2,
+      "target_hour_count": 3600,
+      "status": "PASS"
+    },
+    {
+      "path": "/glade/u/home/zel/scratch/PACT-Data-Final/CMIP6_MIROC/graphs/2099_2100_CBBT_peryear_hist48_graphs.pt",
+      "bytes": 74203921,
+      "mtime_ns": 1792296999000000000,
+      "graph_count": 244,
+      "signatures": [
+        [
+          39,
+          43,
+          1677,
+          5,
+          9,
+          48,
+          6
+        ]
+      ],
+      "first_target_utc": "2099-11-01T00:00:00",
+      "last_target_utc": "2099-12-31T23:00:00",
+      "target_min": -0.11575924605131149,
+      "target_max": -0.014299467206001282,
+      "numeric_values_scope": "boundary",
+      "numeric_graph_count": 2,
+      "target_hour_count": 1464,
+      "status": "PASS"
+    }
+  ],
+  "future_detail": "all",
+  "numeric_values_scope": "boundary",
+  "split_by_seed": {
+    "42": {
+      "train": [
+        "1979_1980",
+        "1980_1981",
+        "1981_1982",
+        "1982_1983",
+        "1983_1984",
+        "1984_1985",
+        "1985_1986",
+        "1986_1987",
+        "1987_1988",
+        "1988_1989",
+        "1989_1990",
+        "1990_1991",
+        "1991_1992",
+        "1992_1993",
+        "1993_1994",
+        "1994_1995",
+        "1995_1996",
+        "1996_1997",
+        "1997_1998",
+        "1998_1999",
+        "1999_2000",
+        "2000_2001"
+      ],
+      "val": [
+        "2001_2002",
+        "2002_2003",
+        "2003_2004",
+        "2004_2005",
+        "2005_2006",
+        "2006_2007",
+        "2007_2008"
+      ],
+      "test": [
+        "2008_2009",
+        "2009_2010",
+        "2010_2011",
+        "2011_2012",
+        "2012_2013",
+        "2013_2014",
+        "2014_2015"
+      ]
+    },
+    "123": {
+      "train": [
+        "1979_1980",
+        "1980_1981",
+        "1981_1982",
+        "1982_1983",
+        "1983_1984",
+        "1984_1985",
+        "1985_1986",
+        "1986_1987",
+        "1987_1988",
+        "1988_1989",
+        "1989_1990",
+        "1990_1991",
+        "1991_1992",
+        "1992_1993",
+        "1993_1994",
+        "1994_1995",
+        "1995_1996",
+        "1996_1997",
+        "1997_1998",
+        "1998_1999",
+        "1999_2000",
+        "2000_2001"
+      ],
+      "val": [
+        "2001_2002",
+        "2002_2003",
+        "2003_2004",
+        "2004_2005",
+        "2005_2006",
+        "2006_2007",
+        "2007_2008"
+      ],
+      "test": [
+        "2008_2009",
+        "2009_2010",
+        "2010_2011",
+        "2011_2012",
+        "2012_2013",
+        "2013_2014",
+        "2014_2015"
+      ]
+    },
+    "2026": {
+      "train": [
+        "1979_1980",
+        "1980_1981",
+        "1981_1982",
+        "1982_1983",
+        "1983_1984",
+        "1984_1985",
+        "1985_1986",
+        "1986_1987",
+        "1987_1988",
+        "1988_1989",
+        "1989_1990",
+        "1990_1991",
+        "1991_1992",
+        "1992_1993",
+        "1993_1994",
+        "1994_1995",
+        "1995_1996",
+        "1996_1997",
+        "1997_1998",
+        "1998_1999",
+        "1999_2000",
+        "2000_2001"
+      ],
+      "val": [
+        "2001_2002",
+        "2002_2003",
+        "2003_2004",
+        "2004_2005",
+        "2005_2006",
+        "2006_2007",
+        "2007_2008"
+      ],
+      "test": [
+        "2008_2009",
+        "2009_2010",
+        "2010_2011",
+        "2011_2012",
+        "2012_2013",
+        "2013_2014",
+        "2014_2015"
+      ]
+    }
+  },
+  "split_groups": {
+    "train": [
+      "1979_1980",
+      "1980_1981",
+      "1981_1982",
+      "1982_1983",
+      "1983_1984",
+      "1984_1985",
+      "1985_1986",
+      "1986_1987",
+      "1987_1988",
+      "1988_1989",
+      "1989_1990",
+      "1990_1991",
+      "1991_1992",
+      "1992_1993",
+      "1993_1994",
+      "1994_1995",
+      "1995_1996",
+      "1996_1997",
+      "1997_1998",
+      "1998_1999",
+      "1999_2000",
+      "2000_2001"
+    ],
+    "val": [
+      "2001_2002",
+      "2002_2003",
+      "2003_2004",
+      "2004_2005",
+      "2005_2006",
+      "2006_2007",
+      "2007_2008"
+    ],
+    "test": [
+      "2008_2009",
+      "2009_2010",
+      "2010_2011",
+      "2011_2012",
+      "2012_2013",
+      "2013_2014",
+      "2014_2015"
+    ]
+  },
+  "split_time_ranges": {
+    "train": {
+      "first": "1979-11-01T00:00:00",
+      "last": "2001-03-30T23:00:00",
+      "graph_count": 13224,
+      "target_hours": 79344
+    },
+    "val": {
+      "first": "2001-11-01T00:00:00",
+      "last": "2008-03-30T23:00:00",
+      "graph_count": 4208,
+      "target_hours": 25248
+    },
+    "test": {
+      "first": "2008-11-01T00:00:00",
+      "last": "2014-12-31T23:00:00",
+      "graph_count": 3848,
+      "target_hours": 23088
+    }
+  },
+  "dimensions": [
+    39,
+    43,
+    1677,
+    5,
+    9,
+    48,
+    6
+  ]
+}

@@ -1,0 +1,28 @@
+{
+  "prefix": "c6",
+  "format": "c6<GCM2><station2><seed><variant2>",
+  "gcm": {
+    "CMIP6_AWI": "AW",
+    "CMIP6_BCC": "BC",
+    "CMIP6_Cane5": "CA",
+    "CMIP6_CNRM": "CN",
+    "CMIP6_EC_EARTH": "EC",
+    "CMIP6_IPSL": "IP",
+    "CMIP6_MIROC": "MI",
+    "CMIP6_MPI": "MP",
+    "CMIP6_MRI": "MR"
+  },
+  "station": {
+    "Battery": "Bt",
+    "Boston": "Bo",
+    "CBBT": "Cb",
+    "Lewes": "Le"
+  },
+  "variant": {
+    "PACT_MSE": "PM",
+    "PACT_Peak": "PP",
+    "PACT_Both": "PB",
+    "CNN_GRU_MSE": "GM",
+    "CNN_GRU_Tail": "GT"
+  }
+}

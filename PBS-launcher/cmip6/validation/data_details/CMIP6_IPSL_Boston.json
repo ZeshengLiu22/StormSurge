@@ -1,0 +1,1869 @@
+{
+  "gcm": "CMIP6_IPSL",
+  "station": "Boston",
+  "status": "PASS",
+  "errors": [],
+  "historical_files": [
+    {
+      "path": "/glade/u/home/zel/scratch/PACT-Data-Final/CMIP6_IPSL_PastOnly/graphs/1979_1980_Boston_peryear_hist48_graphs.pt",
+      "bytes": 120759191,
+      "mtime_ns": 1792290317000000000,
+      "graph_count": 604,
+      "signatures": [
+        [
+          44,
+          25,
+          1100,
+          5,
+          9,
+          48,
+          6
+        ]
+      ],
+      "first_target_utc": "1979-11-01T00:00:00",
+      "last_target_utc": "1980-03-30T23:00:00",
+      "target_min": 0.08096665143966675,
+      "target_max": 0.16425436735153198,
+      "numeric_values_scope": "boundary",
+      "numeric_graph_count": 2,
+      "target_hour_count": 3624,
+      "status": "PASS"
+    },
+    {
+      "path": "/glade/u/home/zel/scratch/PACT-Data-Final/CMIP6_IPSL_PastOnly/graphs/1980_1981_Boston_peryear_hist48_graphs.pt",
+      "bytes": 119959871,
+      "mtime_ns": 1792290326000000000,
+      "graph_count": 600,
+      "signatures": [
+        [
+          44,
+          25,
+          1100,
+          5,
+          9,
+          48,
+          6
+        ]
+      ],
+      "first_target_utc": "1980-11-01T00:00:00",
+      "last_target_utc": "1981-03-30T23:00:00",
+      "target_min": 0.09034335613250732,
+      "target_max": 0.35426998138427734,
+      "numeric_values_scope": "boundary",
+      "numeric_graph_count": 2,
+      "target_hour_count": 3600,
+      "status": "PASS"
+    },
+    {
+      "path": "/glade/u/home/zel/scratch/PACT-Data-Final/CMIP6_IPSL_PastOnly/graphs/1981_1982_Boston_peryear_hist48_graphs.pt",
+      "bytes": 119959871,
+      "mtime_ns": 1792290332000000000,
+      "graph_count": 600,
+      "signatures": [
+        [
+          44,
+          25,
+          1100,
+          5,
+          9,
+          48,
+          6
+        ]
+      ],
+      "first_target_utc": "1981-11-01T00:00:00",
+      "last_target_utc": "1982-03-30T23:00:00",
+      "target_min": -0.11529576778411865,
+      "target_max": 0.32615047693252563,
+      "numeric_values_scope": "boundary",
+      "numeric_graph_count": 2,
+      "target_hour_count": 3600,
+      "status": "PASS"
+    },
+    {
+      "path": "/glade/u/home/zel/scratch/PACT-Data-Final/CMIP6_IPSL_PastOnly/graphs/1982_1983_Boston_peryear_hist48_graphs.pt",
+      "bytes": 119959871,
+      "mtime_ns": 1792290326000000000,
+      "graph_count": 600,
+      "signatures": [
+        [
+          44,
+          25,
+          1100,
+          5,
+          9,
+          48,
+          6
+        ]
+      ],
+      "first_target_utc": "1982-11-01T00:00:00",
+      "last_target_utc": "1983-03-30T23:00:00",
+      "target_min": -0.01965475082397461,
+      "target_max": 0.10235738754272461,
+      "numeric_values_scope": "boundary",
+      "numeric_graph_count": 2,
+      "target_hour_count": 3600,
+      "status": "PASS"
+    },
+    {
+      "path": "/glade/u/home/zel/scratch/PACT-Data-Final/CMIP6_IPSL_PastOnly/graphs/1983_1984_Boston_peryear_hist48_graphs.pt",
+      "bytes": 120759191,
+      "mtime_ns": 1792290321000000000,
+      "graph_count": 604,
+      "signatures": [
+        [
+          44,
+          25,
+          1100,
+          5,
+          9,
+          48,
+          6
+        ]
+      ],
+      "first_target_utc": "1983-11-01T00:00:00",
+      "last_target_utc": "1984-03-30T23:00:00",
+      "target_min": -0.04937639832496643,
+      "target_max": 0.2234797477722168,
+      "numeric_values_scope": "boundary",
+      "numeric_graph_count": 2,
+      "target_hour_count": 3624,
+      "status": "PASS"
+    },
+    {
+      "path": "/glade/u/home/zel/scratch/PACT-Data-Final/CMIP6_IPSL_PastOnly/graphs/1984_1985_Boston_peryear_hist48_graphs.pt",
+      "bytes": 119959871,
+      "mtime_ns": 1792290334000000000,
+      "graph_count": 600,
+      "signatures": [
+        [
+          44,
+          25,
+          1100,
+          5,
+          9,
+          48,
+          6
+        ]
+      ],
+      "first_target_utc": "1984-11-01T00:00:00",
+      "last_target_utc": "1985-03-30T23:00:00",
+      "target_min": 0.08951056003570557,
+      "target_max": 0.25435447692871094,
+      "numeric_values_scope": "boundary",
+      "numeric_graph_count": 2,
+      "target_hour_count": 3600,
+      "status": "PASS"
+    },
+    {
+      "path": "/glade/u/home/zel/scratch/PACT-Data-Final/CMIP6_IPSL_PastOnly/graphs/1985_1986_Boston_peryear_hist48_graphs.pt",
+      "bytes": 119959871,
+      "mtime_ns": 1792290332000000000,
+      "graph_count": 600,
+      "signatures": [
+        [
+          44,
+          25,
+          1100,
+          5,
+          9,
+          48,
+          6
+        ]
+      ],
+      "first_target_utc": "1985-11-01T00:00:00",
+      "last_target_utc": "1986-03-30T23:00:00",
+      "target_min": 0.0033368468284606934,
+      "target_max": 0.13791918754577637,
+      "numeric_values_scope": "boundary",
+      "numeric_graph_count": 2,
+      "target_hour_count": 3600,
+      "status": "PASS"
+    },
+    {
+      "path": "/glade/u/home/zel/scratch/PACT-Data-Final/CMIP6_IPSL_PastOnly/graphs/1986_1987_Boston_peryear_hist48_graphs.pt",
+      "bytes": 119959871,
+      "mtime_ns": 1792290333000000000,
+      "graph_count": 600,
+      "signatures": [
+        [
+          44,
+          25,
+          1100,
+          5,
+          9,
+          48,
+          6
+        ]
+      ],
+      "first_target_utc": "1986-11-01T00:00:00",
+      "last_target_utc": "1987-03-30T23:00:00",
+      "target_min": 0.11026549339294434,
+      "target_max": 0.2961353063583374,
+      "numeric_values_scope": "boundary",
+      "numeric_graph_count": 2,
+      "target_hour_count": 3600,
+      "status": "PASS"
+    },
+    {
+      "path": "/glade/u/home/zel/scratch/PACT-Data-Final/CMIP6_IPSL_PastOnly/graphs/1987_1988_Boston_peryear_hist48_graphs.pt",
+      "bytes": 120759191,
+      "mtime_ns": 1792290316000000000,
+      "graph_count": 604,
+      "signatures": [
+        [
+          44,
+          25,
+          1100,
+          5,
+          9,
+          48,
+          6
+        ]
+      ],
+      "first_target_utc": "1987-11-01T00:00:00",
+      "last_target_utc": "1988-03-30T23:00:00",
+      "target_min": 0.10540549457073212,
+      "target_max": 0.14949876070022583,
+      "numeric_values_scope": "boundary",
+      "numeric_graph_count": 2,
+      "target_hour_count": 3624,
+      "status": "PASS"
+    },
+    {
+      "path": "/glade/u/home/zel/scratch/PACT-Data-Final/CMIP6_IPSL_PastOnly/graphs/1988_1989_Boston_peryear_hist48_graphs.pt",
+      "bytes": 119959871,
+      "mtime_ns": 1792290327000000000,
+      "graph_count": 600,
+      "signatures": [
+        [
+          44,
+          25,
+          1100,
+          5,
+          9,
+          48,
+          6
+        ]
+      ],
+      "first_target_utc": "1988-11-01T00:00:00",
+      "last_target_utc": "1989-03-30T23:00:00",
+      "target_min": -0.24656033515930176,
+      "target_max": 0.026435017585754395,
+      "numeric_values_scope": "boundary",
+      "numeric_graph_count": 2,
+      "target_hour_count": 3600,
+      "status": "PASS"
+    },
+    {
+      "path": "/glade/u/home/zel/scratch/PACT-Data-Final/CMIP6_IPSL_PastOnly/graphs/1989_1990_Boston_peryear_hist48_graphs.pt",
+      "bytes": 119959871,
+      "mtime_ns": 1792290327000000000,
+      "graph_count": 600,
+      "signatures": [
+        [
+          44,
+          25,
+          1100,
+          5,
+          9,
+          48,
+          6
+        ]
+      ],
+      "first_target_utc": "1989-11-01T00:00:00",
+      "last_target_utc": "1990-03-30T23:00:00",
+      "target_min": -0.004755258560180664,
+      "target_max": 0.1349729299545288,
+      "numeric_values_scope": "boundary",
+      "numeric_graph_count": 2,
+      "target_hour_count": 3600,
+      "status": "PASS"
+    },
+    {
+      "path": "/glade/u/home/zel/scratch/PACT-Data-Final/CMIP6_IPSL_PastOnly/graphs/1990_1991_Boston_peryear_hist48_graphs.pt",
+      "bytes": 119959871,
+      "mtime_ns": 1792290332000000000,
+      "graph_count": 600,
+      "signatures": [
+        [
+          44,
+          25,
+          1100,
+          5,
+          9,
+          48,
+          6
+        ]
+      ],
+      "first_target_utc": "1990-11-01T00:00:00",
+      "last_target_utc": "1991-03-30T23:00:00",
+      "target_min": -0.016023755073547363,
+      "target_max": 0.13861840963363647,
+      "numeric_values_scope": "boundary",
+      "numeric_graph_count": 2,
+      "target_hour_count": 3600,
+      "status": "PASS"
+    },
+    {
+      "path": "/glade/u/home/zel/scratch/PACT-Data-Final/CMIP6_IPSL_PastOnly/graphs/1991_1992_Boston_peryear_hist48_graphs.pt",
+      "bytes": 120759191,
+      "mtime_ns": 1792290322000000000,
+      "graph_count": 604,
+      "signatures": [
+        [
+          44,
+          25,
+          1100,
+          5,
+          9,
+          48,
+          6
+        ]
+      ],
+      "first_target_utc": "1991-11-01T00:00:00",
+      "last_target_utc": "1992-03-30T23:00:00",
+      "target_min": -0.02775287628173828,
+      "target_max": 0.14729857444763184,
+      "numeric_values_scope": "boundary",
+      "numeric_graph_count": 2,
+      "target_hour_count": 3624,
+      "status": "PASS"
+    },
+    {
+      "path": "/glade/u/home/zel/scratch/PACT-Data-Final/CMIP6_IPSL_PastOnly/graphs/1992_1993_Boston_peryear_hist48_graphs.pt",
+      "bytes": 119959871,
+      "mtime_ns": 1792290332000000000,
+      "graph_count": 600,
+      "signatures": [
+        [
+          44,
+          25,
+          1100,
+          5,
+          9,
+          48,
+          6
+        ]
+      ],
+      "first_target_utc": "1992-11-01T00:00:00",
+      "last_target_utc": "1993-03-30T23:00:00",
+      "target_min": 0.13275189697742462,
+      "target_max": 0.2597758173942566,
+      "numeric_values_scope": "boundary",
+      "numeric_graph_count": 2,
+      "target_hour_count": 3600,
+      "status": "PASS"
+    },
+    {
+      "path": "/glade/u/home/zel/scratch/PACT-Data-Final/CMIP6_IPSL_PastOnly/graphs/1993_1994_Boston_peryear_hist48_graphs.pt",
+      "bytes": 119959871,
+      "mtime_ns": 1792290327000000000,
+      "graph_count": 600,
+      "signatures": [
+        [
+          44,
+          25,
+          1100,
+          5,
+          9,
+          48,
+          6
+        ]
+      ],
+      "first_target_utc": "1993-11-01T00:00:00",
+      "last_target_utc": "1994-03-30T23:00:00",
+      "target_min": -0.13040220737457275,
+      "target_max": 0.2235318422317505,
+      "numeric_values_scope": "boundary",
+      "numeric_graph_count": 2,
+      "target_hour_count": 3600,
+      "status": "PASS"
+    },
+    {
+      "path": "/glade/u/home/zel/scratch/PACT-Data-Final/CMIP6_IPSL_PastOnly/graphs/1994_1995_Boston_peryear_hist48_graphs.pt",
+      "bytes": 119959871,
+      "mtime_ns": 1792290335000000000,
+      "graph_count": 600,
+      "signatures": [
+        [
+          44,
+          25,
+          1100,
+          5,
+          9,
+          48,
+          6
+        ]
+      ],
+      "first_target_utc": "1994-11-01T00:00:00",
+      "last_target_utc": "1995-03-30T23:00:00",
+      "target_min": 0.09336632490158081,
+      "target_max": 0.30319738388061523,
+      "numeric_values_scope": "boundary",
+      "numeric_graph_count": 2,
+      "target_hour_count": 3600,
+      "status": "PASS"
+    },
+    {
+      "path": "/glade/u/home/zel/scratch/PACT-Data-Final/CMIP6_IPSL_PastOnly/graphs/1995_1996_Boston_peryear_hist48_graphs.pt",
+      "bytes": 120759191,
+      "mtime_ns": 1792290316000000000,
+      "graph_count": 604,
+      "signatures": [
+        [
+          44,
+          25,
+          1100,
+          5,
+          9,
+          48,
+          6
+        ]
+      ],
+      "first_target_utc": "1995-11-01T00:00:00",
+      "last_target_utc": "1996-03-30T23:00:00",
+      "target_min": -0.07686781883239746,
+      "target_max": 0.0664147138595581,
+      "numeric_values_scope": "boundary",
+      "numeric_graph_count": 2,
+      "target_hour_count": 3624,
+      "status": "PASS"
+    },
+    {
+      "path": "/glade/u/home/zel/scratch/PACT-Data-Final/CMIP6_IPSL_PastOnly/graphs/1996_1997_Boston_peryear_hist48_graphs.pt",
+      "bytes": 119959871,
+      "mtime_ns": 1792290333000000000,
+      "graph_count": 600,
+      "signatures": [
+        [
+          44,
+          25,
+          1100,
+          5,
+          9,
+          48,
+          6
+        ]
+      ],
+      "first_target_utc": "1996-11-01T00:00:00",
+      "last_target_utc": "1997-03-30T23:00:00",
+      "target_min": 0.0016503632068634033,
+      "target_max": 0.17838060855865479,
+      "numeric_values_scope": "boundary",
+      "numeric_graph_count": 2,
+      "target_hour_count": 3600,
+      "status": "PASS"
+    },
+    {
+      "path": "/glade/u/home/zel/scratch/PACT-Data-Final/CMIP6_IPSL_PastOnly/graphs/1997_1998_Boston_peryear_hist48_graphs.pt",
+      "bytes": 119959871,
+      "mtime_ns": 1792290333000000000,
+      "graph_count": 600,
+      "signatures": [
+        [
+          44,
+          25,
+          1100,
+          5,
+          9,
+          48,
+          6
+        ]
+      ],
+      "first_target_utc": "1997-11-01T00:00:00",
+      "last_target_utc": "1998-03-30T23:00:00",
+      "target_min": 0.07139289379119873,
+      "target_max": 0.21182429790496826,
+      "numeric_values_scope": "boundary",
+      "numeric_graph_count": 2,
+      "target_hour_count": 3600,
+      "status": "PASS"
+    },
+    {
+      "path": "/glade/u/home/zel/scratch/PACT-Data-Final/CMIP6_IPSL_PastOnly/graphs/1998_1999_Boston_peryear_hist48_graphs.pt",
+      "bytes": 119959871,
+      "mtime_ns": 1792290328000000000,
+      "graph_count": 600,
+      "signatures": [
+        [
+          44,
+          25,
+          1100,
+          5,
+          9,
+          48,
+          6
+        ]
+      ],
+      "first_target_utc": "1998-11-01T00:00:00",
+      "last_target_utc": "1999-03-30T23:00:00",
+      "target_min": 0.09606099128723145,
+      "target_max": 0.13974547386169434,
+      "numeric_values_scope": "boundary",
+      "numeric_graph_count": 2,
+      "target_hour_count": 3600,
+      "status": "PASS"
+    },
+    {
+      "path": "/glade/u/home/zel/scratch/PACT-Data-Final/CMIP6_IPSL_PastOnly/graphs/1999_2000_Boston_peryear_hist48_graphs.pt",
+      "bytes": 120759191,
+      "mtime_ns": 1792290318000000000,
+      "graph_count": 604,
+      "signatures": [
+        [
+          44,
+          25,
+          1100,
+          5,
+          9,
+          48,
+          6
+        ]
+      ],
+      "first_target_utc": "1999-11-01T00:00:00",
+      "last_target_utc": "2000-03-30T23:00:00",
+      "target_min": 0.11085963249206543,
+      "target_max": 0.21443074941635132,
+      "numeric_values_scope": "boundary",
+      "numeric_graph_count": 2,
+      "target_hour_count": 3624,
+      "status": "PASS"
+    },
+    {
+      "path": "/glade/u/home/zel/scratch/PACT-Data-Final/CMIP6_IPSL_PastOnly/graphs/2000_2001_Boston_peryear_hist48_graphs.pt",
+      "bytes": 119959871,
+      "mtime_ns": 1792290328000000000,
+      "graph_count": 600,
+      "signatures": [
+        [
+          44,
+          25,
+          1100,
+          5,
+          9,
+          48,
+          6
+        ]
+      ],
+      "first_target_utc": "2000-11-01T00:00:00",
+      "last_target_utc": "2001-03-30T23:00:00",
+      "target_min": -0.12758173048496246,
+      "target_max": 0.1707444190979004,
+      "numeric_values_scope": "boundary",
+      "numeric_graph_count": 2,
+      "target_hour_count": 3600,
+      "status": "PASS"
+    },
+    {
+      "path": "/glade/u/home/zel/scratch/PACT-Data-Final/CMIP6_IPSL_PastOnly/graphs/2001_2002_Boston_peryear_hist48_graphs.pt",
+      "bytes": 119959871,
+      "mtime_ns": 1792290334000000000,
+      "graph_count": 600,
+      "signatures": [
+        [
+          44,
+          25,
+          1100,
+          5,
+          9,
+          48,
+          6
+        ]
+      ],
+      "first_target_utc": "2001-11-01T00:00:00",
+      "last_target_utc": "2002-03-30T23:00:00",
+      "target_min": -0.23935449123382568,
+      "target_max": 0.3261394500732422,
+      "numeric_values_scope": "boundary",
+      "numeric_graph_count": 2,
+      "target_hour_count": 3600,
+      "status": "PASS"
+    },
+    {
+      "path": "/glade/u/home/zel/scratch/PACT-Data-Final/CMIP6_IPSL_PastOnly/graphs/2002_2003_Boston_peryear_hist48_graphs.pt",
+      "bytes": 119959871,
+      "mtime_ns": 1792290328000000000,
+      "graph_count": 600,
+      "signatures": [
+        [
+          44,
+          25,
+          1100,
+          5,
+          9,
+          48,
+          6
+        ]
+      ],
+      "first_target_utc": "2002-11-01T00:00:00",
+      "last_target_utc": "2003-03-30T23:00:00",
+      "target_min": 0.07750272750854492,
+      "target_max": 0.14147377014160156,
+      "numeric_values_scope": "boundary",
+      "numeric_graph_count": 2,
+      "target_hour_count": 3600,
+      "status": "PASS"
+    },
+    {
+      "path": "/glade/u/home/zel/scratch/PACT-Data-Final/CMIP6_IPSL_PastOnly/graphs/2003_2004_Boston_peryear_hist48_graphs.pt",
+      "bytes": 120759191,
+      "mtime_ns": 1792290317000000000,
+      "graph_count": 604,
+      "signatures": [
+        [
+          44,
+          25,
+          1100,
+          5,
+          9,
+          48,
+          6
+        ]
+      ],
+      "first_target_utc": "2003-11-01T00:00:00",
+      "last_target_utc": "2004-03-30T23:00:00",
+      "target_min": 0.0021484792232513428,
+      "target_max": 0.1820436716079712,
+      "numeric_values_scope": "boundary",
+      "numeric_graph_count": 2,
+      "target_hour_count": 3624,
+      "status": "PASS"
+    },
+    {
+      "path": "/glade/u/home/zel/scratch/PACT-Data-Final/CMIP6_IPSL_PastOnly/graphs/2004_2005_Boston_peryear_hist48_graphs.pt",
+      "bytes": 119959871,
+      "mtime_ns": 1792290329000000000,
+      "graph_count": 600,
+      "signatures": [
+        [
+          44,
+          25,
+          1100,
+          5,
+          9,
+          48,
+          6
+        ]
+      ],
+      "first_target_utc": "2004-11-01T00:00:00",
+      "last_target_utc": "2005-03-30T23:00:00",
+      "target_min": -0.052191704511642456,
+      "target_max": 0.18115878105163574,
+      "numeric_values_scope": "boundary",
+      "numeric_graph_count": 2,
+      "target_hour_count": 3600,
+      "status": "PASS"
+    },
+    {
+      "path": "/glade/u/home/zel/scratch/PACT-Data-Final/CMIP6_IPSL_PastOnly/graphs/2005_2006_Boston_peryear_hist48_graphs.pt",
+      "bytes": 119959871,
+      "mtime_ns": 1792290334000000000,
+      "graph_count": 600,
+      "signatures": [
+        [
+          44,
+          25,
+          1100,
+          5,
+          9,
+          48,
+          6
+        ]
+      ],
+      "first_target_utc": "2005-11-01T00:00:00",
+      "last_target_utc": "2006-03-30T23:00:00",
+      "target_min": 0.08062881976366043,
+      "target_max": 0.13037574291229248,
+      "numeric_values_scope": "boundary",
+      "numeric_graph_count": 2,
+      "target_hour_count": 3600,
+      "status": "PASS"
+    },
+    {
+      "path": "/glade/u/home/zel/scratch/PACT-Data-Final/CMIP6_IPSL_PastOnly/graphs/2006_2007_Boston_peryear_hist48_graphs.pt",
+      "bytes": 119959871,
+      "mtime_ns": 1792290333000000000,
+      "graph_count": 600,
+      "signatures": [
+        [
+          44,
+          25,
+          1100,
+          5,
+          9,
+          48,
+          6
+        ]
+      ],
+      "first_target_utc": "2006-11-01T00:00:00",
+      "last_target_utc": "2007-03-30T23:00:00",
+      "target_min": 0.04213225841522217,
+      "target_max": 0.09412407875061035,
+      "numeric_values_scope": "boundary",
+      "numeric_graph_count": 2,
+      "target_hour_count": 3600,
+      "status": "PASS"
+    },
+    {
+      "path": "/glade/u/home/zel/scratch/PACT-Data-Final/CMIP6_IPSL_PastOnly/graphs/2007_2008_Boston_peryear_hist48_graphs.pt",
+      "bytes": 120759191,
+      "mtime_ns": 1792290323000000000,
+      "graph_count": 604,
+      "signatures": [
+        [
+          44,
+          25,
+          1100,
+          5,
+          9,
+          48,
+          6
+        ]
+      ],
+      "first_target_utc": "2007-11-01T00:00:00",
+      "last_target_utc": "2008-03-30T23:00:00",
+      "target_min": -0.021265625953674316,
+      "target_max": 0.24448180198669434,
+      "numeric_values_scope": "boundary",
+      "numeric_graph_count": 2,
+      "target_hour_count": 3624,
+      "status": "PASS"
+    },
+    {
+      "path": "/glade/u/home/zel/scratch/PACT-Data-Final/CMIP6_IPSL_PastOnly/graphs/2008_2009_Boston_peryear_hist48_graphs.pt",
+      "bytes": 119959871,
+      "mtime_ns": 1792290329000000000,
+      "graph_count": 600,
+      "signatures": [
+        [
+          44,
+          25,
+          1100,
+          5,
+          9,
+          48,
+          6
+        ]
+      ],
+      "first_target_utc": "2008-11-01T00:00:00",
+      "last_target_utc": "2009-03-30T23:00:00",
+      "target_min": -0.15270304679870605,
+      "target_max": 0.15683555603027344,
+      "numeric_values_scope": "boundary",
+      "numeric_graph_count": 2,
+      "target_hour_count": 3600,
+      "status": "PASS"
+    },
+    {
+      "path": "/glade/u/home/zel/scratch/PACT-Data-Final/CMIP6_IPSL_PastOnly/graphs/2009_2010_Boston_peryear_hist48_graphs.pt",
+      "bytes": 119959871,
+      "mtime_ns": 1792290329000000000,
+      "graph_count": 600,
+      "signatures": [
+        [
+          44,
+          25,
+          1100,
+          5,
+          9,
+          48,
+          6
+        ]
+      ],
+      "first_target_utc": "2009-11-01T00:00:00",
+      "last_target_utc": "2010-03-30T23:00:00",
+      "target_min": 0.16609564423561096,
+      "target_max": 0.2634803056716919,
+      "numeric_values_scope": "boundary",
+      "numeric_graph_count": 2,
+      "target_hour_count": 3600,
+      "status": "PASS"
+    },
+    {
+      "path": "/glade/u/home/zel/scratch/PACT-Data-Final/CMIP6_IPSL_PastOnly/graphs/2010_2011_Boston_peryear_hist48_graphs.pt",
+      "bytes": 119959871,
+      "mtime_ns": 1792290330000000000,
+      "graph_count": 600,
+      "signatures": [
+        [
+          44,
+          25,
+          1100,
+          5,
+          9,
+          48,
+          6
+        ]
+      ],
+      "first_target_utc": "2010-11-01T00:00:00",
+      "last_target_utc": "2011-03-30T23:00:00",
+      "target_min": -0.028550148010253906,
+      "target_max": 0.09971106052398682,
+      "numeric_values_scope": "boundary",
+      "numeric_graph_count": 2,
+      "target_hour_count": 3600,
+      "status": "PASS"
+    },
+    {
+      "path": "/glade/u/home/zel/scratch/PACT-Data-Final/CMIP6_IPSL_PastOnly/graphs/2011_2012_Boston_peryear_hist48_graphs.pt",
+      "bytes": 120759191,
+      "mtime_ns": 1792290317000000000,
+      "graph_count": 604,
+      "signatures": [
+        [
+          44,
+          25,
+          1100,
+          5,
+          9,
+          48,
+          6
+        ]
+      ],
+      "first_target_utc": "2011-11-01T00:00:00",
+      "last_target_utc": "2012-03-30T23:00:00",
+      "target_min": -0.076515793800354,
+      "target_max": 0.17754030227661133,
+      "numeric_values_scope": "boundary",
+      "numeric_graph_count": 2,
+      "target_hour_count": 3624,
+      "status": "PASS"
+    },
+    {
+      "path": "/glade/u/home/zel/scratch/PACT-Data-Final/CMIP6_IPSL_PastOnly/graphs/2012_2013_Boston_peryear_hist48_graphs.pt",
+      "bytes": 119959871,
+      "mtime_ns": 1792290335000000000,
+      "graph_count": 600,
+      "signatures": [
+        [
+          44,
+          25,
+          1100,
+          5,
+          9,
+          48,
+          6
+        ]
+      ],
+      "first_target_utc": "2012-11-01T00:00:00",
+      "last_target_utc": "2013-03-30T23:00:00",
+      "target_min": -0.13329067826271057,
+      "target_max": 0.10312959551811218,
+      "numeric_values_scope": "boundary",
+      "numeric_graph_count": 2,
+      "target_hour_count": 3600,
+      "status": "PASS"
+    },
+    {
+      "path": "/glade/u/home/zel/scratch/PACT-Data-Final/CMIP6_IPSL_PastOnly/graphs/2013_2014_Boston_peryear_hist48_graphs.pt",
+      "bytes": 119959871,
+      "mtime_ns": 1792290329000000000,
+      "graph_count": 600,
+      "signatures": [
+        [
+          44,
+          25,
+          1100,
+          5,
+          9,
+          48,
+          6
+        ]
+      ],
+      "first_target_utc": "2013-11-01T00:00:00",
+      "last_target_utc": "2014-03-30T23:00:00",
+      "target_min": 0.00702744722366333,
+      "target_max": 0.08539342880249023,
+      "numeric_values_scope": "boundary",
+      "numeric_graph_count": 2,
+      "target_hour_count": 3600,
+      "status": "PASS"
+    },
+    {
+      "path": "/glade/u/home/zel/scratch/PACT-Data-Final/CMIP6_IPSL_PastOnly/graphs/2014_2015_Boston_peryear_hist48_graphs.pt",
+      "bytes": 48823591,
+      "mtime_ns": 1792290387000000000,
+      "graph_count": 244,
+      "signatures": [
+        [
+          44,
+          25,
+          1100,
+          5,
+          9,
+          48,
+          6
+        ]
+      ],
+      "first_target_utc": "2014-11-01T00:00:00",
+      "last_target_utc": "2014-12-31T23:00:00",
+      "target_min": -0.08579730987548828,
+      "target_max": 0.28492647409439087,
+      "numeric_values_scope": "boundary",
+      "numeric_graph_count": 2,
+      "target_hour_count": 1464,
+      "status": "PASS"
+    }
+  ],
+  "future_files": [
+    {
+      "path": "/glade/u/home/zel/scratch/PACT-Data-Final/CMIP6_IPSL/graphs/2070_2071_Boston_peryear_hist48_graphs.pt",
+      "bytes": 119959871,
+      "mtime_ns": 1792296964000000000,
+      "graph_count": 600,
+      "signatures": [
+        [
+          44,
+          25,
+          1100,
+          5,
+          9,
+          48,
+          6
+        ]
+      ],
+      "first_target_utc": "2070-11-01T00:00:00",
+      "last_target_utc": "2071-03-30T23:00:00",
+      "target_min": 0.03219962120056152,
+      "target_max": 0.13660335540771484,
+      "numeric_values_scope": "boundary",
+      "numeric_graph_count": 2,
+      "target_hour_count": 3600,
+      "status": "PASS"
+    },
+    {
+      "path": "/glade/u/home/zel/scratch/PACT-Data-Final/CMIP6_IPSL/graphs/2071_2072_Boston_peryear_hist48_graphs.pt",
+      "bytes": 120759191,
+      "mtime_ns": 1792296953000000000,
+      "graph_count": 604,
+      "signatures": [
+        [
+          44,
+          25,
+          1100,
+          5,
+          9,
+          48,
+          6
+        ]
+      ],
+      "first_target_utc": "2071-11-01T00:00:00",
+      "last_target_utc": "2072-03-30T23:00:00",
+      "target_min": -0.07240194082260132,
+      "target_max": 0.17189770936965942,
+      "numeric_values_scope": "boundary",
+      "numeric_graph_count": 2,
+      "target_hour_count": 3624,
+      "status": "PASS"
+    },
+    {
+      "path": "/glade/u/home/zel/scratch/PACT-Data-Final/CMIP6_IPSL/graphs/2072_2073_Boston_peryear_hist48_graphs.pt",
+      "bytes": 119959871,
+      "mtime_ns": 1792296959000000000,
+      "graph_count": 600,
+      "signatures": [
+        [
+          44,
+          25,
+          1100,
+          5,
+          9,
+          48,
+          6
+        ]
+      ],
+      "first_target_utc": "2072-11-01T00:00:00",
+      "last_target_utc": "2073-03-30T23:00:00",
+      "target_min": -0.011045902967453003,
+      "target_max": 0.12292201071977615,
+      "numeric_values_scope": "boundary",
+      "numeric_graph_count": 2,
+      "target_hour_count": 3600,
+      "status": "PASS"
+    },
+    {
+      "path": "/glade/u/home/zel/scratch/PACT-Data-Final/CMIP6_IPSL/graphs/2073_2074_Boston_peryear_hist48_graphs.pt",
+      "bytes": 119959871,
+      "mtime_ns": 1792296959000000000,
+      "graph_count": 600,
+      "signatures": [
+        [
+          44,
+          25,
+          1100,
+          5,
+          9,
+          48,
+          6
+        ]
+      ],
+      "first_target_utc": "2073-11-01T00:00:00",
+      "last_target_utc": "2074-03-30T23:00:00",
+      "target_min": 0.05470383167266846,
+      "target_max": 0.16539844870567322,
+      "numeric_values_scope": "boundary",
+      "numeric_graph_count": 2,
+      "target_hour_count": 3600,
+      "status": "PASS"
+    },
+    {
+      "path": "/glade/u/home/zel/scratch/PACT-Data-Final/CMIP6_IPSL/graphs/2074_2075_Boston_peryear_hist48_graphs.pt",
+      "bytes": 119959871,
+      "mtime_ns": 1792296958000000000,
+      "graph_count": 600,
+      "signatures": [
+        [
+          44,
+          25,
+          1100,
+          5,
+          9,
+          48,
+          6
+        ]
+      ],
+      "first_target_utc": "2074-11-01T00:00:00",
+      "last_target_utc": "2075-03-30T23:00:00",
+      "target_min": 0.1398332715034485,
+      "target_max": 0.3642200827598572,
+      "numeric_values_scope": "boundary",
+      "numeric_graph_count": 2,
+      "target_hour_count": 3600,
+      "status": "PASS"
+    },
+    {
+      "path": "/glade/u/home/zel/scratch/PACT-Data-Final/CMIP6_IPSL/graphs/2075_2076_Boston_peryear_hist48_graphs.pt",
+      "bytes": 120759191,
+      "mtime_ns": 1792296949000000000,
+      "graph_count": 604,
+      "signatures": [
+        [
+          44,
+          25,
+          1100,
+          5,
+          9,
+          48,
+          6
+        ]
+      ],
+      "first_target_utc": "2075-11-01T00:00:00",
+      "last_target_utc": "2076-03-30T23:00:00",
+      "target_min": 0.012676388025283813,
+      "target_max": 0.11068993806838989,
+      "numeric_values_scope": "boundary",
+      "numeric_graph_count": 2,
+      "target_hour_count": 3624,
+      "status": "PASS"
+    },
+    {
+      "path": "/glade/u/home/zel/scratch/PACT-Data-Final/CMIP6_IPSL/graphs/2076_2077_Boston_peryear_hist48_graphs.pt",
+      "bytes": 119959871,
+      "mtime_ns": 1792296963000000000,
+      "graph_count": 600,
+      "signatures": [
+        [
+          44,
+          25,
+          1100,
+          5,
+          9,
+          48,
+          6
+        ]
+      ],
+      "first_target_utc": "2076-11-01T00:00:00",
+      "last_target_utc": "2077-03-30T23:00:00",
+      "target_min": 0.031707167625427246,
+      "target_max": 0.1452704668045044,
+      "numeric_values_scope": "boundary",
+      "numeric_graph_count": 2,
+      "target_hour_count": 3600,
+      "status": "PASS"
+    },
+    {
+      "path": "/glade/u/home/zel/scratch/PACT-Data-Final/CMIP6_IPSL/graphs/2077_2078_Boston_peryear_hist48_graphs.pt",
+      "bytes": 119959871,
+      "mtime_ns": 1792296959000000000,
+      "graph_count": 600,
+      "signatures": [
+        [
+          44,
+          25,
+          1100,
+          5,
+          9,
+          48,
+          6
+        ]
+      ],
+      "first_target_utc": "2077-11-01T00:00:00",
+      "last_target_utc": "2078-03-30T23:00:00",
+      "target_min": -0.14385974407196045,
+      "target_max": 0.29902565479278564,
+      "numeric_values_scope": "boundary",
+      "numeric_graph_count": 2,
+      "target_hour_count": 3600,
+      "status": "PASS"
+    },
+    {
+      "path": "/glade/u/home/zel/scratch/PACT-Data-Final/CMIP6_IPSL/graphs/2078_2079_Boston_peryear_hist48_graphs.pt",
+      "bytes": 119959871,
+      "mtime_ns": 1792296965000000000,
+      "graph_count": 600,
+      "signatures": [
+        [
+          44,
+          25,
+          1100,
+          5,
+          9,
+          48,
+          6
+        ]
+      ],
+      "first_target_utc": "2078-11-01T00:00:00",
+      "last_target_utc": "2079-03-30T23:00:00",
+      "target_min": 0.00848737359046936,
+      "target_max": 0.051746368408203125,
+      "numeric_values_scope": "boundary",
+      "numeric_graph_count": 2,
+      "target_hour_count": 3600,
+      "status": "PASS"
+    },
+    {
+      "path": "/glade/u/home/zel/scratch/PACT-Data-Final/CMIP6_IPSL/graphs/2079_2080_Boston_peryear_hist48_graphs.pt",
+      "bytes": 120759191,
+      "mtime_ns": 1792296946000000000,
+      "graph_count": 604,
+      "signatures": [
+        [
+          44,
+          25,
+          1100,
+          5,
+          9,
+          48,
+          6
+        ]
+      ],
+      "first_target_utc": "2079-11-01T00:00:00",
+      "last_target_utc": "2080-03-30T23:00:00",
+      "target_min": 0.025456666946411133,
+      "target_max": 0.13582420349121094,
+      "numeric_values_scope": "boundary",
+      "numeric_graph_count": 2,
+      "target_hour_count": 3624,
+      "status": "PASS"
+    },
+    {
+      "path": "/glade/u/home/zel/scratch/PACT-Data-Final/CMIP6_IPSL/graphs/2080_2081_Boston_peryear_hist48_graphs.pt",
+      "bytes": 119959871,
+      "mtime_ns": 1792296964000000000,
+      "graph_count": 600,
+      "signatures": [
+        [
+          44,
+          25,
+          1100,
+          5,
+          9,
+          48,
+          6
+        ]
+      ],
+      "first_target_utc": "2080-11-01T00:00:00",
+      "last_target_utc": "2081-03-30T23:00:00",
+      "target_min": -0.025335311889648438,
+      "target_max": 0.15959274768829346,
+      "numeric_values_scope": "boundary",
+      "numeric_graph_count": 2,
+      "target_hour_count": 3600,
+      "status": "PASS"
+    },
+    {
+      "path": "/glade/u/home/zel/scratch/PACT-Data-Final/CMIP6_IPSL/graphs/2081_2082_Boston_peryear_hist48_graphs.pt",
+      "bytes": 119959871,
+      "mtime_ns": 1792296960000000000,
+      "graph_count": 600,
+      "signatures": [
+        [
+          44,
+          25,
+          1100,
+          5,
+          9,
+          48,
+          6
+        ]
+      ],
+      "first_target_utc": "2081-11-01T00:00:00",
+      "last_target_utc": "2082-03-30T23:00:00",
+      "target_min": -0.036269187927246094,
+      "target_max": 0.04322707653045654,
+      "numeric_values_scope": "boundary",
+      "numeric_graph_count": 2,
+      "target_hour_count": 3600,
+      "status": "PASS"
+    },
+    {
+      "path": "/glade/u/home/zel/scratch/PACT-Data-Final/CMIP6_IPSL/graphs/2082_2083_Boston_peryear_hist48_graphs.pt",
+      "bytes": 119959871,
+      "mtime_ns": 1792296965000000000,
+      "graph_count": 600,
+      "signatures": [
+        [
+          44,
+          25,
+          1100,
+          5,
+          9,
+          48,
+          6
+        ]
+      ],
+      "first_target_utc": "2082-11-01T00:00:00",
+      "last_target_utc": "2083-03-30T23:00:00",
+      "target_min": -0.04517576843500137,
+      "target_max": 0.18112754821777344,
+      "numeric_values_scope": "boundary",
+      "numeric_graph_count": 2,
+      "target_hour_count": 3600,
+      "status": "PASS"
+    },
+    {
+      "path": "/glade/u/home/zel/scratch/PACT-Data-Final/CMIP6_IPSL/graphs/2083_2084_Boston_peryear_hist48_graphs.pt",
+      "bytes": 120759191,
+      "mtime_ns": 1792296949000000000,
+      "graph_count": 604,
+      "signatures": [
+        [
+          44,
+          25,
+          1100,
+          5,
+          9,
+          48,
+          6
+        ]
+      ],
+      "first_target_utc": "2083-11-01T00:00:00",
+      "last_target_utc": "2084-03-30T23:00:00",
+      "target_min": -0.0009331703186035156,
+      "target_max": 0.10205638408660889,
+      "numeric_values_scope": "boundary",
+      "numeric_graph_count": 2,
+      "target_hour_count": 3624,
+      "status": "PASS"
+    },
+    {
+      "path": "/glade/u/home/zel/scratch/PACT-Data-Final/CMIP6_IPSL/graphs/2084_2085_Boston_peryear_hist48_graphs.pt",
+      "bytes": 119959871,
+      "mtime_ns": 1792296958000000000,
+      "graph_count": 600,
+      "signatures": [
+        [
+          44,
+          25,
+          1100,
+          5,
+          9,
+          48,
+          6
+        ]
+      ],
+      "first_target_utc": "2084-11-01T00:00:00",
+      "last_target_utc": "2085-03-30T23:00:00",
+      "target_min": -0.09124016761779785,
+      "target_max": 0.18516041338443756,
+      "numeric_values_scope": "boundary",
+      "numeric_graph_count": 2,
+      "target_hour_count": 3600,
+      "status": "PASS"
+    },
+    {
+      "path": "/glade/u/home/zel/scratch/PACT-Data-Final/CMIP6_IPSL/graphs/2085_2086_Boston_peryear_hist48_graphs.pt",
+      "bytes": 119959871,
+      "mtime_ns": 1792296960000000000,
+      "graph_count": 600,
+      "signatures": [
+        [
+          44,
+          25,
+          1100,
+          5,
+          9,
+          48,
+          6
+        ]
+      ],
+      "first_target_utc": "2085-11-01T00:00:00",
+      "last_target_utc": "2086-03-30T23:00:00",
+      "target_min": -0.0038423538208007812,
+      "target_max": 0.3482779264450073,
+      "numeric_values_scope": "boundary",
+      "numeric_graph_count": 2,
+      "target_hour_count": 3600,
+      "status": "PASS"
+    },
+    {
+      "path": "/glade/u/home/zel/scratch/PACT-Data-Final/CMIP6_IPSL/graphs/2086_2087_Boston_peryear_hist48_graphs.pt",
+      "bytes": 119959871,
+      "mtime_ns": 1792296960000000000,
+      "graph_count": 600,
+      "signatures": [
+        [
+          44,
+          25,
+          1100,
+          5,
+          9,
+          48,
+          6
+        ]
+      ],
+      "first_target_utc": "2086-11-01T00:00:00",
+      "last_target_utc": "2087-03-30T23:00:00",
+      "target_min": -0.003806471824645996,
+      "target_max": 0.28324058651924133,
+      "numeric_values_scope": "boundary",
+      "numeric_graph_count": 2,
+      "target_hour_count": 3600,
+      "status": "PASS"
+    },
+    {
+      "path": "/glade/u/home/zel/scratch/PACT-Data-Final/CMIP6_IPSL/graphs/2087_2088_Boston_peryear_hist48_graphs.pt",
+      "bytes": 120759191,
+      "mtime_ns": 1792296952000000000,
+      "graph_count": 604,
+      "signatures": [
+        [
+          44,
+          25,
+          1100,
+          5,
+          9,
+          48,
+          6
+        ]
+      ],
+      "first_target_utc": "2087-11-01T00:00:00",
+      "last_target_utc": "2088-03-30T23:00:00",
+      "target_min": -0.10644209384918213,
+      "target_max": 0.17502427101135254,
+      "numeric_values_scope": "boundary",
+      "numeric_graph_count": 2,
+      "target_hour_count": 3624,
+      "status": "PASS"
+    },
+    {
+      "path": "/glade/u/home/zel/scratch/PACT-Data-Final/CMIP6_IPSL/graphs/2088_2089_Boston_peryear_hist48_graphs.pt",
+      "bytes": 119959871,
+      "mtime_ns": 1792296964000000000,
+      "graph_count": 600,
+      "signatures": [
+        [
+          44,
+          25,
+          1100,
+          5,
+          9,
+          48,
+          6
+        ]
+      ],
+      "first_target_utc": "2088-11-01T00:00:00",
+      "last_target_utc": "2089-03-30T23:00:00",
+      "target_min": 0.023670315742492676,
+      "target_max": 0.12781429290771484,
+      "numeric_values_scope": "boundary",
+      "numeric_graph_count": 2,
+      "target_hour_count": 3600,
+      "status": "PASS"
+    },
+    {
+      "path": "/glade/u/home/zel/scratch/PACT-Data-Final/CMIP6_IPSL/graphs/2089_2090_Boston_peryear_hist48_graphs.pt",
+      "bytes": 119959871,
+      "mtime_ns": 1792296961000000000,
+      "graph_count": 600,
+      "signatures": [
+        [
+          44,
+          25,
+          1100,
+          5,
+          9,
+          48,
+          6
+        ]
+      ],
+      "first_target_utc": "2089-11-01T00:00:00",
+      "last_target_utc": "2090-03-30T23:00:00",
+      "target_min": -0.06601941585540771,
+      "target_max": 0.15369832515716553,
+      "numeric_values_scope": "boundary",
+      "numeric_graph_count": 2,
+      "target_hour_count": 3600,
+      "status": "PASS"
+    },
+    {
+      "path": "/glade/u/home/zel/scratch/PACT-Data-Final/CMIP6_IPSL/graphs/2090_2091_Boston_peryear_hist48_graphs.pt",
+      "bytes": 119959871,
+      "mtime_ns": 1792296959000000000,
+      "graph_count": 600,
+      "signatures": [
+        [
+          44,
+          25,
+          1100,
+          5,
+          9,
+          48,
+          6
+        ]
+      ],
+      "first_target_utc": "2090-11-01T00:00:00",
+      "last_target_utc": "2091-03-30T23:00:00",
+      "target_min": -0.06815880537033081,
+      "target_max": 0.024747371673583984,
+      "numeric_values_scope": "boundary",
+      "numeric_graph_count": 2,
+      "target_hour_count": 3600,
+      "status": "PASS"
+    },
+    {
+      "path": "/glade/u/home/zel/scratch/PACT-Data-Final/CMIP6_IPSL/graphs/2091_2092_Boston_peryear_hist48_graphs.pt",
+      "bytes": 120759191,
+      "mtime_ns": 1792296948000000000,
+      "graph_count": 604,
+      "signatures": [
+        [
+          44,
+          25,
+          1100,
+          5,
+          9,
+          48,
+          6
+        ]
+      ],
+      "first_target_utc": "2091-11-01T00:00:00",
+      "last_target_utc": "2092-03-30T23:00:00",
+      "target_min": 0.04607188701629639,
+      "target_max": 0.2847553491592407,
+      "numeric_values_scope": "boundary",
+      "numeric_graph_count": 2,
+      "target_hour_count": 3624,
+      "status": "PASS"
+    },
+    {
+      "path": "/glade/u/home/zel/scratch/PACT-Data-Final/CMIP6_IPSL/graphs/2092_2093_Boston_peryear_hist48_graphs.pt",
+      "bytes": 119959871,
+      "mtime_ns": 1792296966000000000,
+      "graph_count": 600,
+      "signatures": [
+        [
+          44,
+          25,
+          1100,
+          5,
+          9,
+          48,
+          6
+        ]
+      ],
+      "first_target_utc": "2092-11-01T00:00:00",
+      "last_target_utc": "2093-03-30T23:00:00",
+      "target_min": 0.1078643798828125,
+      "target_max": 0.25337788462638855,
+      "numeric_values_scope": "boundary",
+      "numeric_graph_count": 2,
+      "target_hour_count": 3600,
+      "status": "PASS"
+    },
+    {
+      "path": "/glade/u/home/zel/scratch/PACT-Data-Final/CMIP6_IPSL/graphs/2093_2094_Boston_peryear_hist48_graphs.pt",
+      "bytes": 119959871,
+      "mtime_ns": 1792296960000000000,
+      "graph_count": 600,
+      "signatures": [
+        [
+          44,
+          25,
+          1100,
+          5,
+          9,
+          48,
+          6
+        ]
+      ],
+      "first_target_utc": "2093-11-01T00:00:00",
+      "last_target_utc": "2094-03-30T23:00:00",
+      "target_min": -0.033686161041259766,
+      "target_max": 0.31325745582580566,
+      "numeric_values_scope": "boundary",
+      "numeric_graph_count": 2,
+      "target_hour_count": 3600,
+      "status": "PASS"
+    },
+    {
+      "path": "/glade/u/home/zel/scratch/PACT-Data-Final/CMIP6_IPSL/graphs/2094_2095_Boston_peryear_hist48_graphs.pt",
+      "bytes": 119959871,
+      "mtime_ns": 1792296965000000000,
+      "graph_count": 600,
+      "signatures": [
+        [
+          44,
+          25,
+          1100,
+          5,
+          9,
+          48,
+          6
+        ]
+      ],
+      "first_target_utc": "2094-11-01T00:00:00",
+      "last_target_utc": "2095-03-30T23:00:00",
+      "target_min": -0.34406691789627075,
+      "target_max": 0.10344767570495605,
+      "numeric_values_scope": "boundary",
+      "numeric_graph_count": 2,
+      "target_hour_count": 3600,
+      "status": "PASS"
+    },
+    {
+      "path": "/glade/u/home/zel/scratch/PACT-Data-Final/CMIP6_IPSL/graphs/2095_2096_Boston_peryear_hist48_graphs.pt",
+      "bytes": 120759191,
+      "mtime_ns": 1792296954000000000,
+      "graph_count": 604,
+      "signatures": [
+        [
+          44,
+          25,
+          1100,
+          5,
+          9,
+          48,
+          6
+        ]
+      ],
+      "first_target_utc": "2095-11-01T00:00:00",
+      "last_target_utc": "2096-03-30T23:00:00",
+      "target_min": 0.03738832473754883,
+      "target_max": 0.1745234727859497,
+      "numeric_values_scope": "boundary",
+      "numeric_graph_count": 2,
+      "target_hour_count": 3624,
+      "status": "PASS"
+    },
+    {
+      "path": "/glade/u/home/zel/scratch/PACT-Data-Final/CMIP6_IPSL/graphs/2096_2097_Boston_peryear_hist48_graphs.pt",
+      "bytes": 119959871,
+      "mtime_ns": 1792296966000000000,
+      "graph_count": 600,
+      "signatures": [
+        [
+          44,
+          25,
+          1100,
+          5,
+          9,
+          48,
+          6
+        ]
+      ],
+      "first_target_utc": "2096-11-01T00:00:00",
+      "last_target_utc": "2097-03-30T23:00:00",
+      "target_min": 0.08012998104095459,
+      "target_max": 0.1823420524597168,
+      "numeric_values_scope": "boundary",
+      "numeric_graph_count": 2,
+      "target_hour_count": 3600,
+      "status": "PASS"
+    },
+    {
+      "path": "/glade/u/home/zel/scratch/PACT-Data-Final/CMIP6_IPSL/graphs/2097_2098_Boston_peryear_hist48_graphs.pt",
+      "bytes": 119959871,
+      "mtime_ns": 1792296961000000000,
+      "graph_count": 600,
+      "signatures": [
+        [
+          44,
+          25,
+          1100,
+          5,
+          9,
+          48,
+          6
+        ]
+      ],
+      "first_target_utc": "2097-11-01T00:00:00",
+      "last_target_utc": "2098-03-30T23:00:00",
+      "target_min": 0.1217421293258667,
+      "target_max": 0.17252719402313232,
+      "numeric_values_scope": "boundary",
+      "numeric_graph_count": 2,
+      "target_hour_count": 3600,
+      "status": "PASS"
+    },
+    {
+      "path": "/glade/u/home/zel/scratch/PACT-Data-Final/CMIP6_IPSL/graphs/2098_2099_Boston_peryear_hist48_graphs.pt",
+      "bytes": 119959871,
+      "mtime_ns": 1792296961000000000,
+      "graph_count": 600,
+      "signatures": [
+        [
+          44,
+          25,
+          1100,
+          5,
+          9,
+          48,
+          6
+        ]
+      ],
+      "first_target_utc": "2098-11-01T00:00:00",
+      "last_target_utc": "2099-03-30T23:00:00",
+      "target_min": -0.08480310440063477,
+      "target_max": 0.06515464186668396,
+      "numeric_values_scope": "boundary",
+      "numeric_graph_count": 2,
+      "target_hour_count": 3600,
+      "status": "PASS"
+    },
+    {
+      "path": "/glade/u/home/zel/scratch/PACT-Data-Final/CMIP6_IPSL/graphs/2099_2100_Boston_peryear_hist48_graphs.pt",
+      "bytes": 48823591,
+      "mtime_ns": 1792296996000000000,
+      "graph_count": 244,
+      "signatures": [
+        [
+          44,
+          25,
+          1100,
+          5,
+          9,
+          48,
+          6
+        ]
+      ],
+      "first_target_utc": "2099-11-01T00:00:00",
+      "last_target_utc": "2099-12-31T23:00:00",
+      "target_min": 0.038780808448791504,
+      "target_max": 0.16468824446201324,
+      "numeric_values_scope": "boundary",
+      "numeric_graph_count": 2,
+      "target_hour_count": 1464,
+      "status": "PASS"
+    }
+  ],
+  "future_detail": "all",
+  "numeric_values_scope": "boundary",
+  "split_by_seed": {
+    "42": {
+      "train": [
+        "1979_1980",
+        "1980_1981",
+        "1981_1982",
+        "1982_1983",
+        "1983_1984",
+        "1984_1985",
+        "1985_1986",
+        "1986_1987",
+        "1987_1988",
+        "1988_1989",
+        "1989_1990",
+        "1990_1991",
+        "1991_1992",
+        "1992_1993",
+        "1993_1994",
+        "1994_1995",
+        "1995_1996",
+        "1996_1997",
+        "1997_1998",
+        "1998_1999",
+        "1999_2000",
+        "2000_2001"
+      ],
+      "val": [
+        "2001_2002",
+        "2002_2003",
+        "2003_2004",
+        "2004_2005",
+        "2005_2006",
+        "2006_2007",
+        "2007_2008"
+      ],
+      "test": [
+        "2008_2009",
+        "2009_2010",
+        "2010_2011",
+        "2011_2012",
+        "2012_2013",
+        "2013_2014",
+        "2014_2015"
+      ]
+    },
+    "123": {
+      "train": [
+        "1979_1980",
+        "1980_1981",
+        "1981_1982",
+        "1982_1983",
+        "1983_1984",
+        "1984_1985",
+        "1985_1986",
+        "1986_1987",
+        "1987_1988",
+        "1988_1989",
+        "1989_1990",
+        "1990_1991",
+        "1991_1992",
+        "1992_1993",
+        "1993_1994",
+        "1994_1995",
+        "1995_1996",
+        "1996_1997",
+        "1997_1998",
+        "1998_1999",
+        "1999_2000",
+        "2000_2001"
+      ],
+      "val": [
+        "2001_2002",
+        "2002_2003",
+        "2003_2004",
+        "2004_2005",
+        "2005_2006",
+        "2006_2007",
+        "2007_2008"
+      ],
+      "test": [
+        "2008_2009",
+        "2009_2010",
+        "2010_2011",
+        "2011_2012",
+        "2012_2013",
+        "2013_2014",
+        "2014_2015"
+      ]
+    },
+    "2026": {
+      "train": [
+        "1979_1980",
+        "1980_1981",
+        "1981_1982",
+        "1982_1983",
+        "1983_1984",
+        "1984_1985",
+        "1985_1986",
+        "1986_1987",
+        "1987_1988",
+        "1988_1989",
+        "1989_1990",
+        "1990_1991",
+        "1991_1992",
+        "1992_1993",
+        "1993_1994",
+        "1994_1995",
+        "1995_1996",
+        "1996_1997",
+        "1997_1998",
+        "1998_1999",
+        "1999_2000",
+        "2000_2001"
+      ],
+      "val": [
+        "2001_2002",
+        "2002_2003",
+        "2003_2004",
+        "2004_2005",
+        "2005_2006",
+        "2006_2007",
+        "2007_2008"
+      ],
+      "test": [
+        "2008_2009",
+        "2009_2010",
+        "2010_2011",
+        "2011_2012",
+        "2012_2013",
+        "2013_2014",
+        "2014_2015"
+      ]
+    }
+  },
+  "split_groups": {
+    "train": [
+      "1979_1980",
+      "1980_1981",
+      "1981_1982",
+      "1982_1983",
+      "1983_1984",
+      "1984_1985",
+      "1985_1986",
+      "1986_1987",
+      "1987_1988",
+      "1988_1989",
+      "1989_1990",
+      "1990_1991",
+      "1991_1992",
+      "1992_1993",
+      "1993_1994",
+      "1994_1995",
+      "1995_1996",
+      "1996_1997",
+      "1997_1998",
+      "1998_1999",
+      "1999_2000",
+      "2000_2001"
+    ],
+    "val": [
+      "2001_2002",
+      "2002_2003",
+      "2003_2004",
+      "2004_2005",
+      "2005_2006",
+      "2006_2007",
+      "2007_2008"
+    ],
+    "test": [
+      "2008_2009",
+      "2009_2010",
+      "2010_2011",
+      "2011_2012",
+      "2012_2013",
+      "2013_2014",
+      "2014_2015"
+    ]
+  },
+  "split_time_ranges": {
+    "train": {
+      "first": "1979-11-01T00:00:00",
+      "last": "2001-03-30T23:00:00",
+      "graph_count": 13224,
+      "target_hours": 79344
+    },
+    "val": {
+      "first": "2001-11-01T00:00:00",
+      "last": "2008-03-30T23:00:00",
+      "graph_count": 4208,
+      "target_hours": 25248
+    },
+    "test": {
+      "first": "2008-11-01T00:00:00",
+      "last": "2014-12-31T23:00:00",
+      "graph_count": 3848,
+      "target_hours": 23088
+    }
+  },
+  "dimensions": [
+    44,
+    25,
+    1100,
+    5,
+    9,
+    48,
+    6
+  ]
+}

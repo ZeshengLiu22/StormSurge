@@ -1,0 +1,56 @@
+#!/bin/bash -l
+# Formal CMIP6 historical PastOnly: CMIP6_AWI, Lewes, seed 2026, PACT_MSE.
+# One independent configuration; four DDP ranks; no automatic rerun after preemption.
+# Preview on CPU: CUDA_VISIBLE_DEVICES='' DRY_RUN=1 bash <this-file>
+#PBS -N c6AWLe2026PM
+#PBS -A ULHI0005
+#PBS -q preempt@desched1
+#PBS -l select=1:ncpus=64:mem=487GB:mpiprocs=4:ompthreads=1:ngpus=4
+#PBS -l walltime=01:00:00
+#PBS -r n
+#PBS -j oe
+#PBS -o /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_AWI/Lewes/seed2026/pbs_logs/PACT_MSE/
+
+set -euo pipefail
+cd -- /glade/u/home/zel/scratch/StormSurge
+export PYTHON_BIN="/glade/work/zel/conda-envs/derecho-ml/bin/python"
+export S0_PYTHON_BIN="${PYTHON_BIN}"
+export USE_TMUX=0
+export OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1
+export PYTHONUNBUFFERED=1 PYTHONDONTWRITEBYTECODE=1
+export DRY_RUN="${DRY_RUN:-0}"
+case "${DRY_RUN}" in 0|1) ;; *) echo '[FATAL] DRY_RUN must be 0 or 1.' >&2; exit 2 ;; esac
+unset SLURM_NTASKS_PER_NODE SLURM_JOB_ID PACT_RUNSTAMP PACT_RUN_NAME SESSION_NAME PYTHON_RUN_TAG_BASE
+
+config=/glade/u/home/zel/scratch/StormSurge/configs/cmip6/CMIP6_AWI/Lewes/seed2026/train_config_PACT_MSE.sh
+[[ -x "${PYTHON_BIN}" && -r train.sh && -r train.py ]] || { echo '[FATAL] Missing Python or training entry point.' >&2; exit 2; }
+[[ -r "${config}" ]] || { echo "[FATAL] Missing config: ${config}" >&2; exit 2; }
+
+# DRY_RUN skips modules, CUDA probes and all output-directory creation.
+if [[ "${DRY_RUN}" != 1 ]]; then
+  [[ -n "${PBS_JOBID:-}" ]] || { echo '[FATAL] A PBS allocation is required; use DRY_RUN=1 for CPU previews.' >&2; exit 2; }
+  module load cuda/12.9.0
+  export TMPDIR="/glade/derecho/scratch/zel/tmp/stormsurge-cmip6-${PBS_JOBID}"
+  export MPLCONFIGDIR="${TMPDIR}/matplotlib"
+  mkdir -p -- "${MPLCONFIGDIR}"
+  "${PYTHON_BIN}" - <<'PYTHON'
+import sys
+import torch
+import torch.distributed as dist
+import torch_geometric
+
+if not torch.cuda.is_available() or torch.cuda.device_count() != 4:
+    raise SystemExit("[FATAL] Exactly four visible CUDA GPUs are required.")
+if not dist.is_available() or not dist.is_nccl_available():
+    raise SystemExit("[FATAL] PyTorch distributed/NCCL support is required.")
+if any(torch.cuda.get_device_capability(i)[0] < 8 for i in range(4)):
+    raise SystemExit("[FATAL] Derecho BF16/TF32 requires Ampere or newer GPUs.")
+for index in range(4):
+    print(f"[GPU {index}] {torch.cuda.get_device_name(index)}")
+print(f"[RUNTIME] {sys.executable}; torch={torch.__version__}; CUDA={torch.version.cuda}; PyG={torch_geometric.__version__}")
+PYTHON
+fi
+
+# One configuration; train.sh launches exactly four DDP ranks.
+printf '[START] %s\n' "${config}"
+exec bash train.sh "${config}"
