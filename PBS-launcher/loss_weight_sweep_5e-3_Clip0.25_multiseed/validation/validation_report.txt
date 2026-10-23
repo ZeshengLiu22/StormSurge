@@ -1,0 +1,105 @@
+StormSurge selected loss-weight multiseed generation: PASS
+
+Generated files
+Configs: 48
+Independent PBS scripts: 48
+pbs_logs directories: 8 (all present and empty)
+Config root: /glade/u/home/zel/scratch/StormSurge/configs/loss_weight_sweep_5e-3_Clip0.25_multiseed
+PBS root: /glade/u/home/zel/scratch/StormSurge/PBS-launcher/loss_weight_sweep_5e-3_Clip0.25_multiseed
+Results root: /glade/u/home/zel/scratch/PACT_StormSurge_FormalRuns_1021_LR5e-3_Clip0.25/loss_weight_sweep_multiseed
+
+Counts (configs / PBS scripts)
+Station     seed123    seed2026    Total
+Battery       6 / 6      6 / 6     12 / 12
+Boston        6 / 6      6 / 6     12 / 12
+CBBT          6 / 6      6 / 6     12 / 12
+Lewes         6 / 6      6 / 6     12 / 12
+Total        24 / 24    24 / 24    48 / 48
+
+Six combinations per station and seed
+T0250_EP0000: Tail=0.025, EpisodePeak=0
+T0500_EP0000: Tail=0.05, EpisodePeak=0
+T0000_EP0050: Tail=0, EpisodePeak=0.005
+T0000_EP0100: Tail=0, EpisodePeak=0.01
+T0250_EP0100: Tail=0.025, EpisodePeak=0.01
+T0500_EP0100: Tail=0.05, EpisodePeak=0.01
+New training seeds are exactly 123 and 2026; no seed42 or MSE-only jobs.
+Existing seed42 loss-weight sweep and prior MSE-only multiseed results are retained for later analysis; no results were copied, regenerated or changed.
+
+Training settings preserved
+MODEL=perceiver3; ENCODER_TYPE=CNN; TEMPORAL_BLOCK=MLP; HISTORY_HOURS_LIST=(36).
+PRESSURE_MODE=raw; NODE_ATTENTION_BACKEND=math; WEIGHT_DECAY_POLICY=module.
+Adam implementation unchanged; existing module decay groups and coefficients unchanged.
+LR_LIST=(5e-3); MAX_GRAD_NORM=0.25; EPOCHS=300; BATCH_SIZE=256; GRAD_ACCUM_STEPS=1.
+CHECKPOINT_SELECTION=overall; EXCEEDANCE_PERCENTILE=95; original loss values preserved verbatim.
+NCEP graph dataset; ROOT_DIR=./dataset/NCEP/graphs; TEST_ROOT_DIR empty; station-specific source retained.
+TRAIN_RATIO=0.6; VAL_RATIO=0.2; SHUFFLE_YEARS=0; FUTURE_ONLY=0; FUTURE_YEAR_THRESHOLD=2030.
+X_NORM=zscore; DISABLE_OOD=1; X_CLIP=0; X_AUG=0; other normalization settings identical to source.
+CNN_INTERMEDIATE_CHANNEL=29; HIDDEN_CHANNELS=128; NUM_LAYERS=2; DROPOUT=0.05; HEAD_DROPOUT=0.05.
+NODE_READ_HEADS=8; TIME_READ_HEADS=8; TRANSFORMER_LAYERS=2; TRANSFORMER_FF_MULT=4.0; TRANSFORMER_DROPOUT=0.0; MAX_TIME_STEPS=32.
+SCHEDULER=cosine; WARMUP_EPOCHS=5; WARMUP_START_FACTOR=0.1; MIN_LR=1e-6; inactive ROP defaults unchanged.
+USE_AMP=1; AMP_DTYPE=bf16; USE_TF32=1; DETERMINISTIC=0.
+NUM_WORKERS=0; TORCH_THREADS=1; PIN_MEMORY=0; PERSISTENT_WORKERS=0; PREFETCH_FACTOR=0; MP_CONTEXT=fork.
+All 78 assignments checked against the corresponding seed42 source; exactly four assignments differ in every new config.
+
+All effective differences from seed42 sources
+1. SEED: 42 -> 123 or 2026.
+2. ALL_RESULTS_ROOT: .../loss_weight_sweep/<station> -> .../loss_weight_sweep_multiseed/<station>/seed<seed>.
+3. PACT_RUN_NAME: NCEP_<station>_CNN_MLP_36H_G0_<loss>_seed42 -> same identity with seed123 or seed2026.
+4. PYTHON_RUN_TAG_BASE: same seed suffix change as PACT_RUN_NAME.
+The only additional textual difference is the first header's seed 42 -> seed 123 or seed 2026.
+Original architecture source comments retain seed42 as accurate provenance.
+RUN_DIR_NAME_STYLE remains runname_timestamp. Eight station/seed roots intentionally contain six distinct run-name prefixes each.
+48 unique PACT_RUN_NAME values, 48 unique PYTHON_RUN_TAG_BASE values, and 48 unique full run-directory patterns.
+Existing train.sh will add the timestamp at actual job execution. No result directories were created by validation.
+Per-file exact textual changes: config_differences.diff (48 diffs).
+Per-file effective Bash changes: effective_differences.tsv (192 rows, four per config).
+
+PBS settings
+Account: ULHI0005
+Queue: main; regular/default priority; no economy or preempt directives.
+Walltime: 00:30:00
+Resources: select=1:ncpus=64:mem=487GB:mpiprocs=4:ompthreads=1:ngpus=4
+Rerunnable: n; joined stdout/stderr: oe; no arrays, submission calls, retries or multi-config launchers.
+Every PBS ends with exactly one exec bash train.sh <absolute matching config>.
+Python: /glade/work/zel/conda-envs/derecho-ml/bin/python
+USE_TMUX=0; NODE_ATTENTION_BACKEND=math; WEIGHT_DECAY_POLICY=module.
+OMP_NUM_THREADS=1; MKL_NUM_THREADS=1; OPENBLAS_NUM_THREADS=1; PYTHONUNBUFFERED=1.
+module load cuda/12.9.0
+TMPDIR=/glade/derecho/scratch/zel/tmp/stormsurge-${PBS_JOBID}
+Four-GPU DDP launch retained, along with existing CUDA, NCCL and BF16/TF32 compatibility checks.
+All runtime PBS bodies match the working loss-sweep references apart from the matching config paths.
+PBS job names are unique and 13 or 14 characters: station code + seed + TxxxPxxx.
+Station codes: Ba=Battery, Bo=Boston, CB=CBBT, Le=Lewes. xxx is weight*10000, padded to three digits.
+For example Ba2026T500P100 encodes Battery, seed2026, Tail=0.05, Peak=0.01.
+All #PBS -o paths point to the matching station/seed/pbs_logs/ directory.
+
+Validation
+PASS: exact file counts, directory organization, six-combination coverage, allowed seeds, weight-name agreement.
+PASS: all 48 configs preserve the 74 other assignments byte-for-byte and as effective Bash declarations.
+PASS: 48 unique config/PBS mappings, run identities, output patterns and PBS job names.
+PASS: exact PBS directives, regular main queue, resources, walltime, single-config execution and log directories.
+PASS: bash -n on 48 configs and 48 PBS scripts (96 files).
+PASS: embedded GPU-preflight Python syntax in all 48 PBS scripts (parsed, not executed).
+PASS: CPU-only DRY_RUN=1 for all 48 new configs and 24 source configs (72 successful command validations).
+PASS: every dry-run prints exactly one train.py command and a four-process torch.distributed.run launcher.
+PASS: generated versus source commands differ only in --seed, --run_tag and --output_dir.
+PASS: required Derecho interpreter exists and is executable; the interpreter was not invoked by train.sh dry runs.
+PASS: 2055 pre-existing repository files retain their original SHA-256 values, including configs, launchers, training and loss code.
+PASS: pre-existing Git changes preserved; before adding these validation artifacts, only the requested 96 new files were added.
+PASS: results-root existence and entries unchanged; no training/result artifacts created.
+
+Conflicts, reference fallback and limits
+Both destination directories existed and were empty. No file conflicts or overwrites occurred; all 96 requested files used exclusive creation.
+The original PBS-launcher/loss_weight_sweep/ working-tree files were already deleted. Their Git HEAD versions were read without restoring them and matched the available PBS-launcher/loss_weight_sweep_5e-3_Clip0.25/ files.
+The architecture multiseed PBS/environment references were also inspected; their economy/sequence settings were not included.
+The scratch repository was read-only in the sandbox; authorized write access was obtained for creating the requested files.
+No remaining blockers for generation or CPU command validation.
+Live PBS scheduling, CUDA/NCCL execution and GPU training were not tested; no PBS script was executed.
+No existing results were modified. Zero PBS jobs submitted. Zero training runs started.
+
+Evidence files
+manifest.tsv: 48 config/PBS mappings, source paths, weights, run identities, log/output paths, SHA-256 values, validation status.
+config_differences.diff: every textual difference from the corresponding source config.
+effective_differences.tsv: every changed effective Bash declaration.
+dry_run_commands.log: full CPU-only dry-run output for 48 generated and 24 source configs.

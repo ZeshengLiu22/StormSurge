@@ -1,0 +1,1392 @@
+--- /glade/u/home/zel/scratch/StormSurge/configs/loss_weight_sweep_5e-3_Clip0.25/Battery/train_config_NCEP_Battery_CNN_MLP_36H_G0_T0250_EP0000_seed42.sh
++++ /glade/u/home/zel/scratch/StormSurge/configs/loss_weight_sweep_5e-3_Clip0.25_multiseed/Battery/seed123/train_config_NCEP_Battery_CNN_MLP_36H_G0_T0250_EP0000_seed123.sh
+@@ -1,5 +1,5 @@
+ #!/usr/bin/env bash
+-# Loss-weight sweep: CNN_MLP_36H, Battery, seed 42, T0250_EP0000.
++# Loss-weight sweep: CNN_MLP_36H, Battery, seed 123, T0250_EP0000.
+ # Source: configs/architecture_avgrank_multiseed_LR5e-3_Clip0.25/CNN_MLP_36H/Battery/seed42/train_config_NCEP_Battery_CNN_MLP_36H_G0_T0000_EP0000_seed42.sh
+ # Architecture ablation: Battery, CNN x MLP, history=36h.
+ # Objective: GlobalMSE + 0.025 * TailMSE + 0.0 * EpisodeGTAlignedPeakMSE.
+@@ -40,7 +40,7 @@
+ SHUFFLE_YEARS=0
+ FUTURE_ONLY=0
+ FUTURE_YEAR_THRESHOLD=2030
+-SEED=42
++SEED=123
+ STATION_JSON_DIR="./station_json"
+ USE_SITE_ELEVATION=0
+ USE_BATHYMETRY=0
+@@ -91,7 +91,7 @@
+ 
+ CHECKPOINT_SELECTION="overall"
+ 
+-ALL_RESULTS_ROOT="/glade/u/home/zel/scratch/PACT_StormSurge_FormalRuns_1021_LR5e-3_Clip0.25/loss_weight_sweep/Battery"
++ALL_RESULTS_ROOT="/glade/u/home/zel/scratch/PACT_StormSurge_FormalRuns_1021_LR5e-3_Clip0.25/loss_weight_sweep_multiseed/Battery/seed123"
+ RUN_DIR_NAME_STYLE="runname_timestamp"
+-PACT_RUN_NAME="NCEP_Battery_CNN_MLP_36H_G0_T0250_EP0000_seed42"
+-PYTHON_RUN_TAG_BASE="NCEP_Battery_CNN_MLP_36H_G0_T0250_EP0000_seed42"
++PACT_RUN_NAME="NCEP_Battery_CNN_MLP_36H_G0_T0250_EP0000_seed123"
++PYTHON_RUN_TAG_BASE="NCEP_Battery_CNN_MLP_36H_G0_T0250_EP0000_seed123"
+--- /glade/u/home/zel/scratch/StormSurge/configs/loss_weight_sweep_5e-3_Clip0.25/Battery/train_config_NCEP_Battery_CNN_MLP_36H_G0_T0250_EP0000_seed42.sh
++++ /glade/u/home/zel/scratch/StormSurge/configs/loss_weight_sweep_5e-3_Clip0.25_multiseed/Battery/seed2026/train_config_NCEP_Battery_CNN_MLP_36H_G0_T0250_EP0000_seed2026.sh
+@@ -1,5 +1,5 @@
+ #!/usr/bin/env bash
+-# Loss-weight sweep: CNN_MLP_36H, Battery, seed 42, T0250_EP0000.
++# Loss-weight sweep: CNN_MLP_36H, Battery, seed 2026, T0250_EP0000.
+ # Source: configs/architecture_avgrank_multiseed_LR5e-3_Clip0.25/CNN_MLP_36H/Battery/seed42/train_config_NCEP_Battery_CNN_MLP_36H_G0_T0000_EP0000_seed42.sh
+ # Architecture ablation: Battery, CNN x MLP, history=36h.
+ # Objective: GlobalMSE + 0.025 * TailMSE + 0.0 * EpisodeGTAlignedPeakMSE.
+@@ -40,7 +40,7 @@
+ SHUFFLE_YEARS=0
+ FUTURE_ONLY=0
+ FUTURE_YEAR_THRESHOLD=2030
+-SEED=42
++SEED=2026
+ STATION_JSON_DIR="./station_json"
+ USE_SITE_ELEVATION=0
+ USE_BATHYMETRY=0
+@@ -91,7 +91,7 @@
+ 
+ CHECKPOINT_SELECTION="overall"
+ 
+-ALL_RESULTS_ROOT="/glade/u/home/zel/scratch/PACT_StormSurge_FormalRuns_1021_LR5e-3_Clip0.25/loss_weight_sweep/Battery"
++ALL_RESULTS_ROOT="/glade/u/home/zel/scratch/PACT_StormSurge_FormalRuns_1021_LR5e-3_Clip0.25/loss_weight_sweep_multiseed/Battery/seed2026"
+ RUN_DIR_NAME_STYLE="runname_timestamp"
+-PACT_RUN_NAME="NCEP_Battery_CNN_MLP_36H_G0_T0250_EP0000_seed42"
+-PYTHON_RUN_TAG_BASE="NCEP_Battery_CNN_MLP_36H_G0_T0250_EP0000_seed42"
++PACT_RUN_NAME="NCEP_Battery_CNN_MLP_36H_G0_T0250_EP0000_seed2026"
++PYTHON_RUN_TAG_BASE="NCEP_Battery_CNN_MLP_36H_G0_T0250_EP0000_seed2026"
+--- /glade/u/home/zel/scratch/StormSurge/configs/loss_weight_sweep_5e-3_Clip0.25/Battery/train_config_NCEP_Battery_CNN_MLP_36H_G0_T0500_EP0000_seed42.sh
++++ /glade/u/home/zel/scratch/StormSurge/configs/loss_weight_sweep_5e-3_Clip0.25_multiseed/Battery/seed123/train_config_NCEP_Battery_CNN_MLP_36H_G0_T0500_EP0000_seed123.sh
+@@ -1,5 +1,5 @@
+ #!/usr/bin/env bash
+-# Loss-weight sweep: CNN_MLP_36H, Battery, seed 42, T0500_EP0000.
++# Loss-weight sweep: CNN_MLP_36H, Battery, seed 123, T0500_EP0000.
+ # Source: configs/architecture_avgrank_multiseed_LR5e-3_Clip0.25/CNN_MLP_36H/Battery/seed42/train_config_NCEP_Battery_CNN_MLP_36H_G0_T0000_EP0000_seed42.sh
+ # Architecture ablation: Battery, CNN x MLP, history=36h.
+ # Objective: GlobalMSE + 0.05 * TailMSE + 0.0 * EpisodeGTAlignedPeakMSE.
+@@ -40,7 +40,7 @@
+ SHUFFLE_YEARS=0
+ FUTURE_ONLY=0
+ FUTURE_YEAR_THRESHOLD=2030
+-SEED=42
++SEED=123
+ STATION_JSON_DIR="./station_json"
+ USE_SITE_ELEVATION=0
+ USE_BATHYMETRY=0
+@@ -91,7 +91,7 @@
+ 
+ CHECKPOINT_SELECTION="overall"
+ 
+-ALL_RESULTS_ROOT="/glade/u/home/zel/scratch/PACT_StormSurge_FormalRuns_1021_LR5e-3_Clip0.25/loss_weight_sweep/Battery"
++ALL_RESULTS_ROOT="/glade/u/home/zel/scratch/PACT_StormSurge_FormalRuns_1021_LR5e-3_Clip0.25/loss_weight_sweep_multiseed/Battery/seed123"
+ RUN_DIR_NAME_STYLE="runname_timestamp"
+-PACT_RUN_NAME="NCEP_Battery_CNN_MLP_36H_G0_T0500_EP0000_seed42"
+-PYTHON_RUN_TAG_BASE="NCEP_Battery_CNN_MLP_36H_G0_T0500_EP0000_seed42"
++PACT_RUN_NAME="NCEP_Battery_CNN_MLP_36H_G0_T0500_EP0000_seed123"
++PYTHON_RUN_TAG_BASE="NCEP_Battery_CNN_MLP_36H_G0_T0500_EP0000_seed123"
+--- /glade/u/home/zel/scratch/StormSurge/configs/loss_weight_sweep_5e-3_Clip0.25/Battery/train_config_NCEP_Battery_CNN_MLP_36H_G0_T0500_EP0000_seed42.sh
++++ /glade/u/home/zel/scratch/StormSurge/configs/loss_weight_sweep_5e-3_Clip0.25_multiseed/Battery/seed2026/train_config_NCEP_Battery_CNN_MLP_36H_G0_T0500_EP0000_seed2026.sh
+@@ -1,5 +1,5 @@
+ #!/usr/bin/env bash
+-# Loss-weight sweep: CNN_MLP_36H, Battery, seed 42, T0500_EP0000.
++# Loss-weight sweep: CNN_MLP_36H, Battery, seed 2026, T0500_EP0000.
+ # Source: configs/architecture_avgrank_multiseed_LR5e-3_Clip0.25/CNN_MLP_36H/Battery/seed42/train_config_NCEP_Battery_CNN_MLP_36H_G0_T0000_EP0000_seed42.sh
+ # Architecture ablation: Battery, CNN x MLP, history=36h.
+ # Objective: GlobalMSE + 0.05 * TailMSE + 0.0 * EpisodeGTAlignedPeakMSE.
+@@ -40,7 +40,7 @@
+ SHUFFLE_YEARS=0
+ FUTURE_ONLY=0
+ FUTURE_YEAR_THRESHOLD=2030
+-SEED=42
++SEED=2026
+ STATION_JSON_DIR="./station_json"
+ USE_SITE_ELEVATION=0
+ USE_BATHYMETRY=0
+@@ -91,7 +91,7 @@
+ 
+ CHECKPOINT_SELECTION="overall"
+ 
+-ALL_RESULTS_ROOT="/glade/u/home/zel/scratch/PACT_StormSurge_FormalRuns_1021_LR5e-3_Clip0.25/loss_weight_sweep/Battery"
++ALL_RESULTS_ROOT="/glade/u/home/zel/scratch/PACT_StormSurge_FormalRuns_1021_LR5e-3_Clip0.25/loss_weight_sweep_multiseed/Battery/seed2026"
+ RUN_DIR_NAME_STYLE="runname_timestamp"
+-PACT_RUN_NAME="NCEP_Battery_CNN_MLP_36H_G0_T0500_EP0000_seed42"
+-PYTHON_RUN_TAG_BASE="NCEP_Battery_CNN_MLP_36H_G0_T0500_EP0000_seed42"
++PACT_RUN_NAME="NCEP_Battery_CNN_MLP_36H_G0_T0500_EP0000_seed2026"
++PYTHON_RUN_TAG_BASE="NCEP_Battery_CNN_MLP_36H_G0_T0500_EP0000_seed2026"
+--- /glade/u/home/zel/scratch/StormSurge/configs/loss_weight_sweep_5e-3_Clip0.25/Battery/train_config_NCEP_Battery_CNN_MLP_36H_G0_T0000_EP0050_seed42.sh
++++ /glade/u/home/zel/scratch/StormSurge/configs/loss_weight_sweep_5e-3_Clip0.25_multiseed/Battery/seed123/train_config_NCEP_Battery_CNN_MLP_36H_G0_T0000_EP0050_seed123.sh
+@@ -1,5 +1,5 @@
+ #!/usr/bin/env bash
+-# Loss-weight sweep: CNN_MLP_36H, Battery, seed 42, T0000_EP0050.
++# Loss-weight sweep: CNN_MLP_36H, Battery, seed 123, T0000_EP0050.
+ # Source: configs/architecture_avgrank_multiseed_LR5e-3_Clip0.25/CNN_MLP_36H/Battery/seed42/train_config_NCEP_Battery_CNN_MLP_36H_G0_T0000_EP0000_seed42.sh
+ # Architecture ablation: Battery, CNN x MLP, history=36h.
+ # Objective: GlobalMSE + 0.0 * TailMSE + 0.005 * EpisodeGTAlignedPeakMSE.
+@@ -40,7 +40,7 @@
+ SHUFFLE_YEARS=0
+ FUTURE_ONLY=0
+ FUTURE_YEAR_THRESHOLD=2030
+-SEED=42
++SEED=123
+ STATION_JSON_DIR="./station_json"
+ USE_SITE_ELEVATION=0
+ USE_BATHYMETRY=0
+@@ -91,7 +91,7 @@
+ 
+ CHECKPOINT_SELECTION="overall"
+ 
+-ALL_RESULTS_ROOT="/glade/u/home/zel/scratch/PACT_StormSurge_FormalRuns_1021_LR5e-3_Clip0.25/loss_weight_sweep/Battery"
++ALL_RESULTS_ROOT="/glade/u/home/zel/scratch/PACT_StormSurge_FormalRuns_1021_LR5e-3_Clip0.25/loss_weight_sweep_multiseed/Battery/seed123"
+ RUN_DIR_NAME_STYLE="runname_timestamp"
+-PACT_RUN_NAME="NCEP_Battery_CNN_MLP_36H_G0_T0000_EP0050_seed42"
+-PYTHON_RUN_TAG_BASE="NCEP_Battery_CNN_MLP_36H_G0_T0000_EP0050_seed42"
++PACT_RUN_NAME="NCEP_Battery_CNN_MLP_36H_G0_T0000_EP0050_seed123"
++PYTHON_RUN_TAG_BASE="NCEP_Battery_CNN_MLP_36H_G0_T0000_EP0050_seed123"
+--- /glade/u/home/zel/scratch/StormSurge/configs/loss_weight_sweep_5e-3_Clip0.25/Battery/train_config_NCEP_Battery_CNN_MLP_36H_G0_T0000_EP0050_seed42.sh
++++ /glade/u/home/zel/scratch/StormSurge/configs/loss_weight_sweep_5e-3_Clip0.25_multiseed/Battery/seed2026/train_config_NCEP_Battery_CNN_MLP_36H_G0_T0000_EP0050_seed2026.sh
+@@ -1,5 +1,5 @@
+ #!/usr/bin/env bash
+-# Loss-weight sweep: CNN_MLP_36H, Battery, seed 42, T0000_EP0050.
++# Loss-weight sweep: CNN_MLP_36H, Battery, seed 2026, T0000_EP0050.
+ # Source: configs/architecture_avgrank_multiseed_LR5e-3_Clip0.25/CNN_MLP_36H/Battery/seed42/train_config_NCEP_Battery_CNN_MLP_36H_G0_T0000_EP0000_seed42.sh
+ # Architecture ablation: Battery, CNN x MLP, history=36h.
+ # Objective: GlobalMSE + 0.0 * TailMSE + 0.005 * EpisodeGTAlignedPeakMSE.
+@@ -40,7 +40,7 @@
+ SHUFFLE_YEARS=0
+ FUTURE_ONLY=0
+ FUTURE_YEAR_THRESHOLD=2030
+-SEED=42
++SEED=2026
+ STATION_JSON_DIR="./station_json"
+ USE_SITE_ELEVATION=0
+ USE_BATHYMETRY=0
+@@ -91,7 +91,7 @@
+ 
+ CHECKPOINT_SELECTION="overall"
+ 
+-ALL_RESULTS_ROOT="/glade/u/home/zel/scratch/PACT_StormSurge_FormalRuns_1021_LR5e-3_Clip0.25/loss_weight_sweep/Battery"
++ALL_RESULTS_ROOT="/glade/u/home/zel/scratch/PACT_StormSurge_FormalRuns_1021_LR5e-3_Clip0.25/loss_weight_sweep_multiseed/Battery/seed2026"
+ RUN_DIR_NAME_STYLE="runname_timestamp"
+-PACT_RUN_NAME="NCEP_Battery_CNN_MLP_36H_G0_T0000_EP0050_seed42"
+-PYTHON_RUN_TAG_BASE="NCEP_Battery_CNN_MLP_36H_G0_T0000_EP0050_seed42"
++PACT_RUN_NAME="NCEP_Battery_CNN_MLP_36H_G0_T0000_EP0050_seed2026"
++PYTHON_RUN_TAG_BASE="NCEP_Battery_CNN_MLP_36H_G0_T0000_EP0050_seed2026"
+--- /glade/u/home/zel/scratch/StormSurge/configs/loss_weight_sweep_5e-3_Clip0.25/Battery/train_config_NCEP_Battery_CNN_MLP_36H_G0_T0000_EP0100_seed42.sh
++++ /glade/u/home/zel/scratch/StormSurge/configs/loss_weight_sweep_5e-3_Clip0.25_multiseed/Battery/seed123/train_config_NCEP_Battery_CNN_MLP_36H_G0_T0000_EP0100_seed123.sh
+@@ -1,5 +1,5 @@
+ #!/usr/bin/env bash
+-# Loss-weight sweep: CNN_MLP_36H, Battery, seed 42, T0000_EP0100.
++# Loss-weight sweep: CNN_MLP_36H, Battery, seed 123, T0000_EP0100.
+ # Source: configs/architecture_avgrank_multiseed_LR5e-3_Clip0.25/CNN_MLP_36H/Battery/seed42/train_config_NCEP_Battery_CNN_MLP_36H_G0_T0000_EP0000_seed42.sh
+ # Architecture ablation: Battery, CNN x MLP, history=36h.
+ # Objective: GlobalMSE + 0.0 * TailMSE + 0.01 * EpisodeGTAlignedPeakMSE.
+@@ -40,7 +40,7 @@
+ SHUFFLE_YEARS=0
+ FUTURE_ONLY=0
+ FUTURE_YEAR_THRESHOLD=2030
+-SEED=42
++SEED=123
+ STATION_JSON_DIR="./station_json"
+ USE_SITE_ELEVATION=0
+ USE_BATHYMETRY=0
+@@ -91,7 +91,7 @@
+ 
+ CHECKPOINT_SELECTION="overall"
+ 
+-ALL_RESULTS_ROOT="/glade/u/home/zel/scratch/PACT_StormSurge_FormalRuns_1021_LR5e-3_Clip0.25/loss_weight_sweep/Battery"
++ALL_RESULTS_ROOT="/glade/u/home/zel/scratch/PACT_StormSurge_FormalRuns_1021_LR5e-3_Clip0.25/loss_weight_sweep_multiseed/Battery/seed123"
+ RUN_DIR_NAME_STYLE="runname_timestamp"
+-PACT_RUN_NAME="NCEP_Battery_CNN_MLP_36H_G0_T0000_EP0100_seed42"
+-PYTHON_RUN_TAG_BASE="NCEP_Battery_CNN_MLP_36H_G0_T0000_EP0100_seed42"
++PACT_RUN_NAME="NCEP_Battery_CNN_MLP_36H_G0_T0000_EP0100_seed123"
++PYTHON_RUN_TAG_BASE="NCEP_Battery_CNN_MLP_36H_G0_T0000_EP0100_seed123"
+--- /glade/u/home/zel/scratch/StormSurge/configs/loss_weight_sweep_5e-3_Clip0.25/Battery/train_config_NCEP_Battery_CNN_MLP_36H_G0_T0000_EP0100_seed42.sh
++++ /glade/u/home/zel/scratch/StormSurge/configs/loss_weight_sweep_5e-3_Clip0.25_multiseed/Battery/seed2026/train_config_NCEP_Battery_CNN_MLP_36H_G0_T0000_EP0100_seed2026.sh
+@@ -1,5 +1,5 @@
+ #!/usr/bin/env bash
+-# Loss-weight sweep: CNN_MLP_36H, Battery, seed 42, T0000_EP0100.
++# Loss-weight sweep: CNN_MLP_36H, Battery, seed 2026, T0000_EP0100.
+ # Source: configs/architecture_avgrank_multiseed_LR5e-3_Clip0.25/CNN_MLP_36H/Battery/seed42/train_config_NCEP_Battery_CNN_MLP_36H_G0_T0000_EP0000_seed42.sh
+ # Architecture ablation: Battery, CNN x MLP, history=36h.
+ # Objective: GlobalMSE + 0.0 * TailMSE + 0.01 * EpisodeGTAlignedPeakMSE.
+@@ -40,7 +40,7 @@
+ SHUFFLE_YEARS=0
+ FUTURE_ONLY=0
+ FUTURE_YEAR_THRESHOLD=2030
+-SEED=42
++SEED=2026
+ STATION_JSON_DIR="./station_json"
+ USE_SITE_ELEVATION=0
+ USE_BATHYMETRY=0
+@@ -91,7 +91,7 @@
+ 
+ CHECKPOINT_SELECTION="overall"
+ 
+-ALL_RESULTS_ROOT="/glade/u/home/zel/scratch/PACT_StormSurge_FormalRuns_1021_LR5e-3_Clip0.25/loss_weight_sweep/Battery"
++ALL_RESULTS_ROOT="/glade/u/home/zel/scratch/PACT_StormSurge_FormalRuns_1021_LR5e-3_Clip0.25/loss_weight_sweep_multiseed/Battery/seed2026"
+ RUN_DIR_NAME_STYLE="runname_timestamp"
+-PACT_RUN_NAME="NCEP_Battery_CNN_MLP_36H_G0_T0000_EP0100_seed42"
+-PYTHON_RUN_TAG_BASE="NCEP_Battery_CNN_MLP_36H_G0_T0000_EP0100_seed42"
++PACT_RUN_NAME="NCEP_Battery_CNN_MLP_36H_G0_T0000_EP0100_seed2026"
++PYTHON_RUN_TAG_BASE="NCEP_Battery_CNN_MLP_36H_G0_T0000_EP0100_seed2026"
+--- /glade/u/home/zel/scratch/StormSurge/configs/loss_weight_sweep_5e-3_Clip0.25/Battery/train_config_NCEP_Battery_CNN_MLP_36H_G0_T0250_EP0100_seed42.sh
++++ /glade/u/home/zel/scratch/StormSurge/configs/loss_weight_sweep_5e-3_Clip0.25_multiseed/Battery/seed123/train_config_NCEP_Battery_CNN_MLP_36H_G0_T0250_EP0100_seed123.sh
+@@ -1,5 +1,5 @@
+ #!/usr/bin/env bash
+-# Loss-weight sweep: CNN_MLP_36H, Battery, seed 42, T0250_EP0100.
++# Loss-weight sweep: CNN_MLP_36H, Battery, seed 123, T0250_EP0100.
+ # Source: configs/architecture_avgrank_multiseed_LR5e-3_Clip0.25/CNN_MLP_36H/Battery/seed42/train_config_NCEP_Battery_CNN_MLP_36H_G0_T0000_EP0000_seed42.sh
+ # Architecture ablation: Battery, CNN x MLP, history=36h.
+ # Objective: GlobalMSE + 0.025 * TailMSE + 0.01 * EpisodeGTAlignedPeakMSE.
+@@ -40,7 +40,7 @@
+ SHUFFLE_YEARS=0
+ FUTURE_ONLY=0
+ FUTURE_YEAR_THRESHOLD=2030
+-SEED=42
++SEED=123
+ STATION_JSON_DIR="./station_json"
+ USE_SITE_ELEVATION=0
+ USE_BATHYMETRY=0
+@@ -91,7 +91,7 @@
+ 
+ CHECKPOINT_SELECTION="overall"
+ 
+-ALL_RESULTS_ROOT="/glade/u/home/zel/scratch/PACT_StormSurge_FormalRuns_1021_LR5e-3_Clip0.25/loss_weight_sweep/Battery"
++ALL_RESULTS_ROOT="/glade/u/home/zel/scratch/PACT_StormSurge_FormalRuns_1021_LR5e-3_Clip0.25/loss_weight_sweep_multiseed/Battery/seed123"
+ RUN_DIR_NAME_STYLE="runname_timestamp"
+-PACT_RUN_NAME="NCEP_Battery_CNN_MLP_36H_G0_T0250_EP0100_seed42"
+-PYTHON_RUN_TAG_BASE="NCEP_Battery_CNN_MLP_36H_G0_T0250_EP0100_seed42"
++PACT_RUN_NAME="NCEP_Battery_CNN_MLP_36H_G0_T0250_EP0100_seed123"
++PYTHON_RUN_TAG_BASE="NCEP_Battery_CNN_MLP_36H_G0_T0250_EP0100_seed123"
+--- /glade/u/home/zel/scratch/StormSurge/configs/loss_weight_sweep_5e-3_Clip0.25/Battery/train_config_NCEP_Battery_CNN_MLP_36H_G0_T0250_EP0100_seed42.sh
++++ /glade/u/home/zel/scratch/StormSurge/configs/loss_weight_sweep_5e-3_Clip0.25_multiseed/Battery/seed2026/train_config_NCEP_Battery_CNN_MLP_36H_G0_T0250_EP0100_seed2026.sh
+@@ -1,5 +1,5 @@
+ #!/usr/bin/env bash
+-# Loss-weight sweep: CNN_MLP_36H, Battery, seed 42, T0250_EP0100.
++# Loss-weight sweep: CNN_MLP_36H, Battery, seed 2026, T0250_EP0100.
+ # Source: configs/architecture_avgrank_multiseed_LR5e-3_Clip0.25/CNN_MLP_36H/Battery/seed42/train_config_NCEP_Battery_CNN_MLP_36H_G0_T0000_EP0000_seed42.sh
+ # Architecture ablation: Battery, CNN x MLP, history=36h.
+ # Objective: GlobalMSE + 0.025 * TailMSE + 0.01 * EpisodeGTAlignedPeakMSE.
+@@ -40,7 +40,7 @@
+ SHUFFLE_YEARS=0
+ FUTURE_ONLY=0
+ FUTURE_YEAR_THRESHOLD=2030
+-SEED=42
++SEED=2026
+ STATION_JSON_DIR="./station_json"
+ USE_SITE_ELEVATION=0
+ USE_BATHYMETRY=0
+@@ -91,7 +91,7 @@
+ 
+ CHECKPOINT_SELECTION="overall"
+ 
+-ALL_RESULTS_ROOT="/glade/u/home/zel/scratch/PACT_StormSurge_FormalRuns_1021_LR5e-3_Clip0.25/loss_weight_sweep/Battery"
++ALL_RESULTS_ROOT="/glade/u/home/zel/scratch/PACT_StormSurge_FormalRuns_1021_LR5e-3_Clip0.25/loss_weight_sweep_multiseed/Battery/seed2026"
+ RUN_DIR_NAME_STYLE="runname_timestamp"
+-PACT_RUN_NAME="NCEP_Battery_CNN_MLP_36H_G0_T0250_EP0100_seed42"
+-PYTHON_RUN_TAG_BASE="NCEP_Battery_CNN_MLP_36H_G0_T0250_EP0100_seed42"
++PACT_RUN_NAME="NCEP_Battery_CNN_MLP_36H_G0_T0250_EP0100_seed2026"
++PYTHON_RUN_TAG_BASE="NCEP_Battery_CNN_MLP_36H_G0_T0250_EP0100_seed2026"
+--- /glade/u/home/zel/scratch/StormSurge/configs/loss_weight_sweep_5e-3_Clip0.25/Battery/train_config_NCEP_Battery_CNN_MLP_36H_G0_T0500_EP0100_seed42.sh
++++ /glade/u/home/zel/scratch/StormSurge/configs/loss_weight_sweep_5e-3_Clip0.25_multiseed/Battery/seed123/train_config_NCEP_Battery_CNN_MLP_36H_G0_T0500_EP0100_seed123.sh
+@@ -1,5 +1,5 @@
+ #!/usr/bin/env bash
+-# Loss-weight sweep: CNN_MLP_36H, Battery, seed 42, T0500_EP0100.
++# Loss-weight sweep: CNN_MLP_36H, Battery, seed 123, T0500_EP0100.
+ # Source: configs/architecture_avgrank_multiseed_LR5e-3_Clip0.25/CNN_MLP_36H/Battery/seed42/train_config_NCEP_Battery_CNN_MLP_36H_G0_T0000_EP0000_seed42.sh
+ # Architecture ablation: Battery, CNN x MLP, history=36h.
+ # Objective: GlobalMSE + 0.05 * TailMSE + 0.01 * EpisodeGTAlignedPeakMSE.
+@@ -40,7 +40,7 @@
+ SHUFFLE_YEARS=0
+ FUTURE_ONLY=0
+ FUTURE_YEAR_THRESHOLD=2030
+-SEED=42
++SEED=123
+ STATION_JSON_DIR="./station_json"
+ USE_SITE_ELEVATION=0
+ USE_BATHYMETRY=0
+@@ -91,7 +91,7 @@
+ 
+ CHECKPOINT_SELECTION="overall"
+ 
+-ALL_RESULTS_ROOT="/glade/u/home/zel/scratch/PACT_StormSurge_FormalRuns_1021_LR5e-3_Clip0.25/loss_weight_sweep/Battery"
++ALL_RESULTS_ROOT="/glade/u/home/zel/scratch/PACT_StormSurge_FormalRuns_1021_LR5e-3_Clip0.25/loss_weight_sweep_multiseed/Battery/seed123"
+ RUN_DIR_NAME_STYLE="runname_timestamp"
+-PACT_RUN_NAME="NCEP_Battery_CNN_MLP_36H_G0_T0500_EP0100_seed42"
+-PYTHON_RUN_TAG_BASE="NCEP_Battery_CNN_MLP_36H_G0_T0500_EP0100_seed42"
++PACT_RUN_NAME="NCEP_Battery_CNN_MLP_36H_G0_T0500_EP0100_seed123"
++PYTHON_RUN_TAG_BASE="NCEP_Battery_CNN_MLP_36H_G0_T0500_EP0100_seed123"
+--- /glade/u/home/zel/scratch/StormSurge/configs/loss_weight_sweep_5e-3_Clip0.25/Battery/train_config_NCEP_Battery_CNN_MLP_36H_G0_T0500_EP0100_seed42.sh
++++ /glade/u/home/zel/scratch/StormSurge/configs/loss_weight_sweep_5e-3_Clip0.25_multiseed/Battery/seed2026/train_config_NCEP_Battery_CNN_MLP_36H_G0_T0500_EP0100_seed2026.sh
+@@ -1,5 +1,5 @@
+ #!/usr/bin/env bash
+-# Loss-weight sweep: CNN_MLP_36H, Battery, seed 42, T0500_EP0100.
++# Loss-weight sweep: CNN_MLP_36H, Battery, seed 2026, T0500_EP0100.
+ # Source: configs/architecture_avgrank_multiseed_LR5e-3_Clip0.25/CNN_MLP_36H/Battery/seed42/train_config_NCEP_Battery_CNN_MLP_36H_G0_T0000_EP0000_seed42.sh
+ # Architecture ablation: Battery, CNN x MLP, history=36h.
+ # Objective: GlobalMSE + 0.05 * TailMSE + 0.01 * EpisodeGTAlignedPeakMSE.
+@@ -40,7 +40,7 @@
+ SHUFFLE_YEARS=0
+ FUTURE_ONLY=0
+ FUTURE_YEAR_THRESHOLD=2030
+-SEED=42
++SEED=2026
+ STATION_JSON_DIR="./station_json"
+ USE_SITE_ELEVATION=0
+ USE_BATHYMETRY=0
+@@ -91,7 +91,7 @@
+ 
+ CHECKPOINT_SELECTION="overall"
+ 
+-ALL_RESULTS_ROOT="/glade/u/home/zel/scratch/PACT_StormSurge_FormalRuns_1021_LR5e-3_Clip0.25/loss_weight_sweep/Battery"
++ALL_RESULTS_ROOT="/glade/u/home/zel/scratch/PACT_StormSurge_FormalRuns_1021_LR5e-3_Clip0.25/loss_weight_sweep_multiseed/Battery/seed2026"
+ RUN_DIR_NAME_STYLE="runname_timestamp"
+-PACT_RUN_NAME="NCEP_Battery_CNN_MLP_36H_G0_T0500_EP0100_seed42"
+-PYTHON_RUN_TAG_BASE="NCEP_Battery_CNN_MLP_36H_G0_T0500_EP0100_seed42"
++PACT_RUN_NAME="NCEP_Battery_CNN_MLP_36H_G0_T0500_EP0100_seed2026"
++PYTHON_RUN_TAG_BASE="NCEP_Battery_CNN_MLP_36H_G0_T0500_EP0100_seed2026"
+--- /glade/u/home/zel/scratch/StormSurge/configs/loss_weight_sweep_5e-3_Clip0.25/Boston/train_config_NCEP_Boston_CNN_MLP_36H_G0_T0250_EP0000_seed42.sh
++++ /glade/u/home/zel/scratch/StormSurge/configs/loss_weight_sweep_5e-3_Clip0.25_multiseed/Boston/seed123/train_config_NCEP_Boston_CNN_MLP_36H_G0_T0250_EP0000_seed123.sh
+@@ -1,5 +1,5 @@
+ #!/usr/bin/env bash
+-# Loss-weight sweep: CNN_MLP_36H, Boston, seed 42, T0250_EP0000.
++# Loss-weight sweep: CNN_MLP_36H, Boston, seed 123, T0250_EP0000.
+ # Source: configs/architecture_avgrank_multiseed_LR5e-3_Clip0.25/CNN_MLP_36H/Boston/seed42/train_config_NCEP_Boston_CNN_MLP_36H_G0_T0000_EP0000_seed42.sh
+ # Architecture ablation: Boston, CNN x MLP, history=36h.
+ # Objective: GlobalMSE + 0.025 * TailMSE + 0.0 * EpisodeGTAlignedPeakMSE.
+@@ -40,7 +40,7 @@
+ SHUFFLE_YEARS=0
+ FUTURE_ONLY=0
+ FUTURE_YEAR_THRESHOLD=2030
+-SEED=42
++SEED=123
+ STATION_JSON_DIR="./station_json"
+ USE_SITE_ELEVATION=0
+ USE_BATHYMETRY=0
+@@ -91,7 +91,7 @@
+ 
+ CHECKPOINT_SELECTION="overall"
+ 
+-ALL_RESULTS_ROOT="/glade/u/home/zel/scratch/PACT_StormSurge_FormalRuns_1021_LR5e-3_Clip0.25/loss_weight_sweep/Boston"
++ALL_RESULTS_ROOT="/glade/u/home/zel/scratch/PACT_StormSurge_FormalRuns_1021_LR5e-3_Clip0.25/loss_weight_sweep_multiseed/Boston/seed123"
+ RUN_DIR_NAME_STYLE="runname_timestamp"
+-PACT_RUN_NAME="NCEP_Boston_CNN_MLP_36H_G0_T0250_EP0000_seed42"
+-PYTHON_RUN_TAG_BASE="NCEP_Boston_CNN_MLP_36H_G0_T0250_EP0000_seed42"
++PACT_RUN_NAME="NCEP_Boston_CNN_MLP_36H_G0_T0250_EP0000_seed123"
++PYTHON_RUN_TAG_BASE="NCEP_Boston_CNN_MLP_36H_G0_T0250_EP0000_seed123"
+--- /glade/u/home/zel/scratch/StormSurge/configs/loss_weight_sweep_5e-3_Clip0.25/Boston/train_config_NCEP_Boston_CNN_MLP_36H_G0_T0250_EP0000_seed42.sh
++++ /glade/u/home/zel/scratch/StormSurge/configs/loss_weight_sweep_5e-3_Clip0.25_multiseed/Boston/seed2026/train_config_NCEP_Boston_CNN_MLP_36H_G0_T0250_EP0000_seed2026.sh
+@@ -1,5 +1,5 @@
+ #!/usr/bin/env bash
+-# Loss-weight sweep: CNN_MLP_36H, Boston, seed 42, T0250_EP0000.
++# Loss-weight sweep: CNN_MLP_36H, Boston, seed 2026, T0250_EP0000.
+ # Source: configs/architecture_avgrank_multiseed_LR5e-3_Clip0.25/CNN_MLP_36H/Boston/seed42/train_config_NCEP_Boston_CNN_MLP_36H_G0_T0000_EP0000_seed42.sh
+ # Architecture ablation: Boston, CNN x MLP, history=36h.
+ # Objective: GlobalMSE + 0.025 * TailMSE + 0.0 * EpisodeGTAlignedPeakMSE.
+@@ -40,7 +40,7 @@
+ SHUFFLE_YEARS=0
+ FUTURE_ONLY=0
+ FUTURE_YEAR_THRESHOLD=2030
+-SEED=42
++SEED=2026
+ STATION_JSON_DIR="./station_json"
+ USE_SITE_ELEVATION=0
+ USE_BATHYMETRY=0
+@@ -91,7 +91,7 @@
+ 
+ CHECKPOINT_SELECTION="overall"
+ 
+-ALL_RESULTS_ROOT="/glade/u/home/zel/scratch/PACT_StormSurge_FormalRuns_1021_LR5e-3_Clip0.25/loss_weight_sweep/Boston"
++ALL_RESULTS_ROOT="/glade/u/home/zel/scratch/PACT_StormSurge_FormalRuns_1021_LR5e-3_Clip0.25/loss_weight_sweep_multiseed/Boston/seed2026"
+ RUN_DIR_NAME_STYLE="runname_timestamp"
+-PACT_RUN_NAME="NCEP_Boston_CNN_MLP_36H_G0_T0250_EP0000_seed42"
+-PYTHON_RUN_TAG_BASE="NCEP_Boston_CNN_MLP_36H_G0_T0250_EP0000_seed42"
++PACT_RUN_NAME="NCEP_Boston_CNN_MLP_36H_G0_T0250_EP0000_seed2026"
++PYTHON_RUN_TAG_BASE="NCEP_Boston_CNN_MLP_36H_G0_T0250_EP0000_seed2026"
+--- /glade/u/home/zel/scratch/StormSurge/configs/loss_weight_sweep_5e-3_Clip0.25/Boston/train_config_NCEP_Boston_CNN_MLP_36H_G0_T0500_EP0000_seed42.sh
++++ /glade/u/home/zel/scratch/StormSurge/configs/loss_weight_sweep_5e-3_Clip0.25_multiseed/Boston/seed123/train_config_NCEP_Boston_CNN_MLP_36H_G0_T0500_EP0000_seed123.sh
+@@ -1,5 +1,5 @@
+ #!/usr/bin/env bash
+-# Loss-weight sweep: CNN_MLP_36H, Boston, seed 42, T0500_EP0000.
++# Loss-weight sweep: CNN_MLP_36H, Boston, seed 123, T0500_EP0000.
+ # Source: configs/architecture_avgrank_multiseed_LR5e-3_Clip0.25/CNN_MLP_36H/Boston/seed42/train_config_NCEP_Boston_CNN_MLP_36H_G0_T0000_EP0000_seed42.sh
+ # Architecture ablation: Boston, CNN x MLP, history=36h.
+ # Objective: GlobalMSE + 0.05 * TailMSE + 0.0 * EpisodeGTAlignedPeakMSE.
+@@ -40,7 +40,7 @@
+ SHUFFLE_YEARS=0
+ FUTURE_ONLY=0
+ FUTURE_YEAR_THRESHOLD=2030
+-SEED=42
++SEED=123
+ STATION_JSON_DIR="./station_json"
+ USE_SITE_ELEVATION=0
+ USE_BATHYMETRY=0
+@@ -91,7 +91,7 @@
+ 
+ CHECKPOINT_SELECTION="overall"
+ 
+-ALL_RESULTS_ROOT="/glade/u/home/zel/scratch/PACT_StormSurge_FormalRuns_1021_LR5e-3_Clip0.25/loss_weight_sweep/Boston"
++ALL_RESULTS_ROOT="/glade/u/home/zel/scratch/PACT_StormSurge_FormalRuns_1021_LR5e-3_Clip0.25/loss_weight_sweep_multiseed/Boston/seed123"
+ RUN_DIR_NAME_STYLE="runname_timestamp"
+-PACT_RUN_NAME="NCEP_Boston_CNN_MLP_36H_G0_T0500_EP0000_seed42"
+-PYTHON_RUN_TAG_BASE="NCEP_Boston_CNN_MLP_36H_G0_T0500_EP0000_seed42"
++PACT_RUN_NAME="NCEP_Boston_CNN_MLP_36H_G0_T0500_EP0000_seed123"
++PYTHON_RUN_TAG_BASE="NCEP_Boston_CNN_MLP_36H_G0_T0500_EP0000_seed123"
+--- /glade/u/home/zel/scratch/StormSurge/configs/loss_weight_sweep_5e-3_Clip0.25/Boston/train_config_NCEP_Boston_CNN_MLP_36H_G0_T0500_EP0000_seed42.sh
++++ /glade/u/home/zel/scratch/StormSurge/configs/loss_weight_sweep_5e-3_Clip0.25_multiseed/Boston/seed2026/train_config_NCEP_Boston_CNN_MLP_36H_G0_T0500_EP0000_seed2026.sh
+@@ -1,5 +1,5 @@
+ #!/usr/bin/env bash
+-# Loss-weight sweep: CNN_MLP_36H, Boston, seed 42, T0500_EP0000.
++# Loss-weight sweep: CNN_MLP_36H, Boston, seed 2026, T0500_EP0000.
+ # Source: configs/architecture_avgrank_multiseed_LR5e-3_Clip0.25/CNN_MLP_36H/Boston/seed42/train_config_NCEP_Boston_CNN_MLP_36H_G0_T0000_EP0000_seed42.sh
+ # Architecture ablation: Boston, CNN x MLP, history=36h.
+ # Objective: GlobalMSE + 0.05 * TailMSE + 0.0 * EpisodeGTAlignedPeakMSE.
+@@ -40,7 +40,7 @@
+ SHUFFLE_YEARS=0
+ FUTURE_ONLY=0
+ FUTURE_YEAR_THRESHOLD=2030
+-SEED=42
++SEED=2026
+ STATION_JSON_DIR="./station_json"
+ USE_SITE_ELEVATION=0
+ USE_BATHYMETRY=0
+@@ -91,7 +91,7 @@
+ 
+ CHECKPOINT_SELECTION="overall"
+ 
+-ALL_RESULTS_ROOT="/glade/u/home/zel/scratch/PACT_StormSurge_FormalRuns_1021_LR5e-3_Clip0.25/loss_weight_sweep/Boston"
++ALL_RESULTS_ROOT="/glade/u/home/zel/scratch/PACT_StormSurge_FormalRuns_1021_LR5e-3_Clip0.25/loss_weight_sweep_multiseed/Boston/seed2026"
+ RUN_DIR_NAME_STYLE="runname_timestamp"
+-PACT_RUN_NAME="NCEP_Boston_CNN_MLP_36H_G0_T0500_EP0000_seed42"
+-PYTHON_RUN_TAG_BASE="NCEP_Boston_CNN_MLP_36H_G0_T0500_EP0000_seed42"
++PACT_RUN_NAME="NCEP_Boston_CNN_MLP_36H_G0_T0500_EP0000_seed2026"
++PYTHON_RUN_TAG_BASE="NCEP_Boston_CNN_MLP_36H_G0_T0500_EP0000_seed2026"
+--- /glade/u/home/zel/scratch/StormSurge/configs/loss_weight_sweep_5e-3_Clip0.25/Boston/train_config_NCEP_Boston_CNN_MLP_36H_G0_T0000_EP0050_seed42.sh
++++ /glade/u/home/zel/scratch/StormSurge/configs/loss_weight_sweep_5e-3_Clip0.25_multiseed/Boston/seed123/train_config_NCEP_Boston_CNN_MLP_36H_G0_T0000_EP0050_seed123.sh
+@@ -1,5 +1,5 @@
+ #!/usr/bin/env bash
+-# Loss-weight sweep: CNN_MLP_36H, Boston, seed 42, T0000_EP0050.
++# Loss-weight sweep: CNN_MLP_36H, Boston, seed 123, T0000_EP0050.
+ # Source: configs/architecture_avgrank_multiseed_LR5e-3_Clip0.25/CNN_MLP_36H/Boston/seed42/train_config_NCEP_Boston_CNN_MLP_36H_G0_T0000_EP0000_seed42.sh
+ # Architecture ablation: Boston, CNN x MLP, history=36h.
+ # Objective: GlobalMSE + 0.0 * TailMSE + 0.005 * EpisodeGTAlignedPeakMSE.
+@@ -40,7 +40,7 @@
+ SHUFFLE_YEARS=0
+ FUTURE_ONLY=0
+ FUTURE_YEAR_THRESHOLD=2030
+-SEED=42
++SEED=123
+ STATION_JSON_DIR="./station_json"
+ USE_SITE_ELEVATION=0
+ USE_BATHYMETRY=0
+@@ -91,7 +91,7 @@
+ 
+ CHECKPOINT_SELECTION="overall"
+ 
+-ALL_RESULTS_ROOT="/glade/u/home/zel/scratch/PACT_StormSurge_FormalRuns_1021_LR5e-3_Clip0.25/loss_weight_sweep/Boston"
++ALL_RESULTS_ROOT="/glade/u/home/zel/scratch/PACT_StormSurge_FormalRuns_1021_LR5e-3_Clip0.25/loss_weight_sweep_multiseed/Boston/seed123"
+ RUN_DIR_NAME_STYLE="runname_timestamp"
+-PACT_RUN_NAME="NCEP_Boston_CNN_MLP_36H_G0_T0000_EP0050_seed42"
+-PYTHON_RUN_TAG_BASE="NCEP_Boston_CNN_MLP_36H_G0_T0000_EP0050_seed42"
++PACT_RUN_NAME="NCEP_Boston_CNN_MLP_36H_G0_T0000_EP0050_seed123"
++PYTHON_RUN_TAG_BASE="NCEP_Boston_CNN_MLP_36H_G0_T0000_EP0050_seed123"
+--- /glade/u/home/zel/scratch/StormSurge/configs/loss_weight_sweep_5e-3_Clip0.25/Boston/train_config_NCEP_Boston_CNN_MLP_36H_G0_T0000_EP0050_seed42.sh
++++ /glade/u/home/zel/scratch/StormSurge/configs/loss_weight_sweep_5e-3_Clip0.25_multiseed/Boston/seed2026/train_config_NCEP_Boston_CNN_MLP_36H_G0_T0000_EP0050_seed2026.sh
+@@ -1,5 +1,5 @@
+ #!/usr/bin/env bash
+-# Loss-weight sweep: CNN_MLP_36H, Boston, seed 42, T0000_EP0050.
++# Loss-weight sweep: CNN_MLP_36H, Boston, seed 2026, T0000_EP0050.
+ # Source: configs/architecture_avgrank_multiseed_LR5e-3_Clip0.25/CNN_MLP_36H/Boston/seed42/train_config_NCEP_Boston_CNN_MLP_36H_G0_T0000_EP0000_seed42.sh
+ # Architecture ablation: Boston, CNN x MLP, history=36h.
+ # Objective: GlobalMSE + 0.0 * TailMSE + 0.005 * EpisodeGTAlignedPeakMSE.
+@@ -40,7 +40,7 @@
+ SHUFFLE_YEARS=0
+ FUTURE_ONLY=0
+ FUTURE_YEAR_THRESHOLD=2030
+-SEED=42
++SEED=2026
+ STATION_JSON_DIR="./station_json"
+ USE_SITE_ELEVATION=0
+ USE_BATHYMETRY=0
+@@ -91,7 +91,7 @@
+ 
+ CHECKPOINT_SELECTION="overall"
+ 
+-ALL_RESULTS_ROOT="/glade/u/home/zel/scratch/PACT_StormSurge_FormalRuns_1021_LR5e-3_Clip0.25/loss_weight_sweep/Boston"
++ALL_RESULTS_ROOT="/glade/u/home/zel/scratch/PACT_StormSurge_FormalRuns_1021_LR5e-3_Clip0.25/loss_weight_sweep_multiseed/Boston/seed2026"
+ RUN_DIR_NAME_STYLE="runname_timestamp"
+-PACT_RUN_NAME="NCEP_Boston_CNN_MLP_36H_G0_T0000_EP0050_seed42"
+-PYTHON_RUN_TAG_BASE="NCEP_Boston_CNN_MLP_36H_G0_T0000_EP0050_seed42"
++PACT_RUN_NAME="NCEP_Boston_CNN_MLP_36H_G0_T0000_EP0050_seed2026"
++PYTHON_RUN_TAG_BASE="NCEP_Boston_CNN_MLP_36H_G0_T0000_EP0050_seed2026"
+--- /glade/u/home/zel/scratch/StormSurge/configs/loss_weight_sweep_5e-3_Clip0.25/Boston/train_config_NCEP_Boston_CNN_MLP_36H_G0_T0000_EP0100_seed42.sh
++++ /glade/u/home/zel/scratch/StormSurge/configs/loss_weight_sweep_5e-3_Clip0.25_multiseed/Boston/seed123/train_config_NCEP_Boston_CNN_MLP_36H_G0_T0000_EP0100_seed123.sh
+@@ -1,5 +1,5 @@
+ #!/usr/bin/env bash
+-# Loss-weight sweep: CNN_MLP_36H, Boston, seed 42, T0000_EP0100.
++# Loss-weight sweep: CNN_MLP_36H, Boston, seed 123, T0000_EP0100.
+ # Source: configs/architecture_avgrank_multiseed_LR5e-3_Clip0.25/CNN_MLP_36H/Boston/seed42/train_config_NCEP_Boston_CNN_MLP_36H_G0_T0000_EP0000_seed42.sh
+ # Architecture ablation: Boston, CNN x MLP, history=36h.
+ # Objective: GlobalMSE + 0.0 * TailMSE + 0.01 * EpisodeGTAlignedPeakMSE.
+@@ -40,7 +40,7 @@
+ SHUFFLE_YEARS=0
+ FUTURE_ONLY=0
+ FUTURE_YEAR_THRESHOLD=2030
+-SEED=42
++SEED=123
+ STATION_JSON_DIR="./station_json"
+ USE_SITE_ELEVATION=0
+ USE_BATHYMETRY=0
+@@ -91,7 +91,7 @@
+ 
+ CHECKPOINT_SELECTION="overall"
+ 
+-ALL_RESULTS_ROOT="/glade/u/home/zel/scratch/PACT_StormSurge_FormalRuns_1021_LR5e-3_Clip0.25/loss_weight_sweep/Boston"
++ALL_RESULTS_ROOT="/glade/u/home/zel/scratch/PACT_StormSurge_FormalRuns_1021_LR5e-3_Clip0.25/loss_weight_sweep_multiseed/Boston/seed123"
+ RUN_DIR_NAME_STYLE="runname_timestamp"
+-PACT_RUN_NAME="NCEP_Boston_CNN_MLP_36H_G0_T0000_EP0100_seed42"
+-PYTHON_RUN_TAG_BASE="NCEP_Boston_CNN_MLP_36H_G0_T0000_EP0100_seed42"
++PACT_RUN_NAME="NCEP_Boston_CNN_MLP_36H_G0_T0000_EP0100_seed123"
++PYTHON_RUN_TAG_BASE="NCEP_Boston_CNN_MLP_36H_G0_T0000_EP0100_seed123"
+--- /glade/u/home/zel/scratch/StormSurge/configs/loss_weight_sweep_5e-3_Clip0.25/Boston/train_config_NCEP_Boston_CNN_MLP_36H_G0_T0000_EP0100_seed42.sh
++++ /glade/u/home/zel/scratch/StormSurge/configs/loss_weight_sweep_5e-3_Clip0.25_multiseed/Boston/seed2026/train_config_NCEP_Boston_CNN_MLP_36H_G0_T0000_EP0100_seed2026.sh
+@@ -1,5 +1,5 @@
+ #!/usr/bin/env bash
+-# Loss-weight sweep: CNN_MLP_36H, Boston, seed 42, T0000_EP0100.
++# Loss-weight sweep: CNN_MLP_36H, Boston, seed 2026, T0000_EP0100.
+ # Source: configs/architecture_avgrank_multiseed_LR5e-3_Clip0.25/CNN_MLP_36H/Boston/seed42/train_config_NCEP_Boston_CNN_MLP_36H_G0_T0000_EP0000_seed42.sh
+ # Architecture ablation: Boston, CNN x MLP, history=36h.
+ # Objective: GlobalMSE + 0.0 * TailMSE + 0.01 * EpisodeGTAlignedPeakMSE.
+@@ -40,7 +40,7 @@
+ SHUFFLE_YEARS=0
+ FUTURE_ONLY=0
+ FUTURE_YEAR_THRESHOLD=2030
+-SEED=42
++SEED=2026
+ STATION_JSON_DIR="./station_json"
+ USE_SITE_ELEVATION=0
+ USE_BATHYMETRY=0
+@@ -91,7 +91,7 @@
+ 
+ CHECKPOINT_SELECTION="overall"
+ 
+-ALL_RESULTS_ROOT="/glade/u/home/zel/scratch/PACT_StormSurge_FormalRuns_1021_LR5e-3_Clip0.25/loss_weight_sweep/Boston"
++ALL_RESULTS_ROOT="/glade/u/home/zel/scratch/PACT_StormSurge_FormalRuns_1021_LR5e-3_Clip0.25/loss_weight_sweep_multiseed/Boston/seed2026"
+ RUN_DIR_NAME_STYLE="runname_timestamp"
+-PACT_RUN_NAME="NCEP_Boston_CNN_MLP_36H_G0_T0000_EP0100_seed42"
+-PYTHON_RUN_TAG_BASE="NCEP_Boston_CNN_MLP_36H_G0_T0000_EP0100_seed42"
++PACT_RUN_NAME="NCEP_Boston_CNN_MLP_36H_G0_T0000_EP0100_seed2026"
++PYTHON_RUN_TAG_BASE="NCEP_Boston_CNN_MLP_36H_G0_T0000_EP0100_seed2026"
+--- /glade/u/home/zel/scratch/StormSurge/configs/loss_weight_sweep_5e-3_Clip0.25/Boston/train_config_NCEP_Boston_CNN_MLP_36H_G0_T0250_EP0100_seed42.sh
++++ /glade/u/home/zel/scratch/StormSurge/configs/loss_weight_sweep_5e-3_Clip0.25_multiseed/Boston/seed123/train_config_NCEP_Boston_CNN_MLP_36H_G0_T0250_EP0100_seed123.sh
+@@ -1,5 +1,5 @@
+ #!/usr/bin/env bash
+-# Loss-weight sweep: CNN_MLP_36H, Boston, seed 42, T0250_EP0100.
++# Loss-weight sweep: CNN_MLP_36H, Boston, seed 123, T0250_EP0100.
+ # Source: configs/architecture_avgrank_multiseed_LR5e-3_Clip0.25/CNN_MLP_36H/Boston/seed42/train_config_NCEP_Boston_CNN_MLP_36H_G0_T0000_EP0000_seed42.sh
+ # Architecture ablation: Boston, CNN x MLP, history=36h.
+ # Objective: GlobalMSE + 0.025 * TailMSE + 0.01 * EpisodeGTAlignedPeakMSE.
+@@ -40,7 +40,7 @@
+ SHUFFLE_YEARS=0
+ FUTURE_ONLY=0
+ FUTURE_YEAR_THRESHOLD=2030
+-SEED=42
++SEED=123
+ STATION_JSON_DIR="./station_json"
+ USE_SITE_ELEVATION=0
+ USE_BATHYMETRY=0
+@@ -91,7 +91,7 @@
+ 
+ CHECKPOINT_SELECTION="overall"
+ 
+-ALL_RESULTS_ROOT="/glade/u/home/zel/scratch/PACT_StormSurge_FormalRuns_1021_LR5e-3_Clip0.25/loss_weight_sweep/Boston"
++ALL_RESULTS_ROOT="/glade/u/home/zel/scratch/PACT_StormSurge_FormalRuns_1021_LR5e-3_Clip0.25/loss_weight_sweep_multiseed/Boston/seed123"
+ RUN_DIR_NAME_STYLE="runname_timestamp"
+-PACT_RUN_NAME="NCEP_Boston_CNN_MLP_36H_G0_T0250_EP0100_seed42"
+-PYTHON_RUN_TAG_BASE="NCEP_Boston_CNN_MLP_36H_G0_T0250_EP0100_seed42"
++PACT_RUN_NAME="NCEP_Boston_CNN_MLP_36H_G0_T0250_EP0100_seed123"
++PYTHON_RUN_TAG_BASE="NCEP_Boston_CNN_MLP_36H_G0_T0250_EP0100_seed123"
+--- /glade/u/home/zel/scratch/StormSurge/configs/loss_weight_sweep_5e-3_Clip0.25/Boston/train_config_NCEP_Boston_CNN_MLP_36H_G0_T0250_EP0100_seed42.sh
++++ /glade/u/home/zel/scratch/StormSurge/configs/loss_weight_sweep_5e-3_Clip0.25_multiseed/Boston/seed2026/train_config_NCEP_Boston_CNN_MLP_36H_G0_T0250_EP0100_seed2026.sh
+@@ -1,5 +1,5 @@
+ #!/usr/bin/env bash
+-# Loss-weight sweep: CNN_MLP_36H, Boston, seed 42, T0250_EP0100.
++# Loss-weight sweep: CNN_MLP_36H, Boston, seed 2026, T0250_EP0100.
+ # Source: configs/architecture_avgrank_multiseed_LR5e-3_Clip0.25/CNN_MLP_36H/Boston/seed42/train_config_NCEP_Boston_CNN_MLP_36H_G0_T0000_EP0000_seed42.sh
+ # Architecture ablation: Boston, CNN x MLP, history=36h.
+ # Objective: GlobalMSE + 0.025 * TailMSE + 0.01 * EpisodeGTAlignedPeakMSE.
+@@ -40,7 +40,7 @@
+ SHUFFLE_YEARS=0
+ FUTURE_ONLY=0
+ FUTURE_YEAR_THRESHOLD=2030
+-SEED=42
++SEED=2026
+ STATION_JSON_DIR="./station_json"
+ USE_SITE_ELEVATION=0
+ USE_BATHYMETRY=0
+@@ -91,7 +91,7 @@
+ 
+ CHECKPOINT_SELECTION="overall"
+ 
+-ALL_RESULTS_ROOT="/glade/u/home/zel/scratch/PACT_StormSurge_FormalRuns_1021_LR5e-3_Clip0.25/loss_weight_sweep/Boston"
++ALL_RESULTS_ROOT="/glade/u/home/zel/scratch/PACT_StormSurge_FormalRuns_1021_LR5e-3_Clip0.25/loss_weight_sweep_multiseed/Boston/seed2026"
+ RUN_DIR_NAME_STYLE="runname_timestamp"
+-PACT_RUN_NAME="NCEP_Boston_CNN_MLP_36H_G0_T0250_EP0100_seed42"
+-PYTHON_RUN_TAG_BASE="NCEP_Boston_CNN_MLP_36H_G0_T0250_EP0100_seed42"
++PACT_RUN_NAME="NCEP_Boston_CNN_MLP_36H_G0_T0250_EP0100_seed2026"
++PYTHON_RUN_TAG_BASE="NCEP_Boston_CNN_MLP_36H_G0_T0250_EP0100_seed2026"
+--- /glade/u/home/zel/scratch/StormSurge/configs/loss_weight_sweep_5e-3_Clip0.25/Boston/train_config_NCEP_Boston_CNN_MLP_36H_G0_T0500_EP0100_seed42.sh
++++ /glade/u/home/zel/scratch/StormSurge/configs/loss_weight_sweep_5e-3_Clip0.25_multiseed/Boston/seed123/train_config_NCEP_Boston_CNN_MLP_36H_G0_T0500_EP0100_seed123.sh
+@@ -1,5 +1,5 @@
+ #!/usr/bin/env bash
+-# Loss-weight sweep: CNN_MLP_36H, Boston, seed 42, T0500_EP0100.
++# Loss-weight sweep: CNN_MLP_36H, Boston, seed 123, T0500_EP0100.
+ # Source: configs/architecture_avgrank_multiseed_LR5e-3_Clip0.25/CNN_MLP_36H/Boston/seed42/train_config_NCEP_Boston_CNN_MLP_36H_G0_T0000_EP0000_seed42.sh
+ # Architecture ablation: Boston, CNN x MLP, history=36h.
+ # Objective: GlobalMSE + 0.05 * TailMSE + 0.01 * EpisodeGTAlignedPeakMSE.
+@@ -40,7 +40,7 @@
+ SHUFFLE_YEARS=0
+ FUTURE_ONLY=0
+ FUTURE_YEAR_THRESHOLD=2030
+-SEED=42
++SEED=123
+ STATION_JSON_DIR="./station_json"
+ USE_SITE_ELEVATION=0
+ USE_BATHYMETRY=0
+@@ -91,7 +91,7 @@
+ 
+ CHECKPOINT_SELECTION="overall"
+ 
+-ALL_RESULTS_ROOT="/glade/u/home/zel/scratch/PACT_StormSurge_FormalRuns_1021_LR5e-3_Clip0.25/loss_weight_sweep/Boston"
++ALL_RESULTS_ROOT="/glade/u/home/zel/scratch/PACT_StormSurge_FormalRuns_1021_LR5e-3_Clip0.25/loss_weight_sweep_multiseed/Boston/seed123"
+ RUN_DIR_NAME_STYLE="runname_timestamp"
+-PACT_RUN_NAME="NCEP_Boston_CNN_MLP_36H_G0_T0500_EP0100_seed42"
+-PYTHON_RUN_TAG_BASE="NCEP_Boston_CNN_MLP_36H_G0_T0500_EP0100_seed42"
++PACT_RUN_NAME="NCEP_Boston_CNN_MLP_36H_G0_T0500_EP0100_seed123"
++PYTHON_RUN_TAG_BASE="NCEP_Boston_CNN_MLP_36H_G0_T0500_EP0100_seed123"
+--- /glade/u/home/zel/scratch/StormSurge/configs/loss_weight_sweep_5e-3_Clip0.25/Boston/train_config_NCEP_Boston_CNN_MLP_36H_G0_T0500_EP0100_seed42.sh
++++ /glade/u/home/zel/scratch/StormSurge/configs/loss_weight_sweep_5e-3_Clip0.25_multiseed/Boston/seed2026/train_config_NCEP_Boston_CNN_MLP_36H_G0_T0500_EP0100_seed2026.sh
+@@ -1,5 +1,5 @@
+ #!/usr/bin/env bash
+-# Loss-weight sweep: CNN_MLP_36H, Boston, seed 42, T0500_EP0100.
++# Loss-weight sweep: CNN_MLP_36H, Boston, seed 2026, T0500_EP0100.
+ # Source: configs/architecture_avgrank_multiseed_LR5e-3_Clip0.25/CNN_MLP_36H/Boston/seed42/train_config_NCEP_Boston_CNN_MLP_36H_G0_T0000_EP0000_seed42.sh
+ # Architecture ablation: Boston, CNN x MLP, history=36h.
+ # Objective: GlobalMSE + 0.05 * TailMSE + 0.01 * EpisodeGTAlignedPeakMSE.
+@@ -40,7 +40,7 @@
+ SHUFFLE_YEARS=0
+ FUTURE_ONLY=0
+ FUTURE_YEAR_THRESHOLD=2030
+-SEED=42
++SEED=2026
+ STATION_JSON_DIR="./station_json"
+ USE_SITE_ELEVATION=0
+ USE_BATHYMETRY=0
+@@ -91,7 +91,7 @@
+ 
+ CHECKPOINT_SELECTION="overall"
+ 
+-ALL_RESULTS_ROOT="/glade/u/home/zel/scratch/PACT_StormSurge_FormalRuns_1021_LR5e-3_Clip0.25/loss_weight_sweep/Boston"
++ALL_RESULTS_ROOT="/glade/u/home/zel/scratch/PACT_StormSurge_FormalRuns_1021_LR5e-3_Clip0.25/loss_weight_sweep_multiseed/Boston/seed2026"
+ RUN_DIR_NAME_STYLE="runname_timestamp"
+-PACT_RUN_NAME="NCEP_Boston_CNN_MLP_36H_G0_T0500_EP0100_seed42"
+-PYTHON_RUN_TAG_BASE="NCEP_Boston_CNN_MLP_36H_G0_T0500_EP0100_seed42"
++PACT_RUN_NAME="NCEP_Boston_CNN_MLP_36H_G0_T0500_EP0100_seed2026"
++PYTHON_RUN_TAG_BASE="NCEP_Boston_CNN_MLP_36H_G0_T0500_EP0100_seed2026"
+--- /glade/u/home/zel/scratch/StormSurge/configs/loss_weight_sweep_5e-3_Clip0.25/CBBT/train_config_NCEP_CBBT_CNN_MLP_36H_G0_T0250_EP0000_seed42.sh
++++ /glade/u/home/zel/scratch/StormSurge/configs/loss_weight_sweep_5e-3_Clip0.25_multiseed/CBBT/seed123/train_config_NCEP_CBBT_CNN_MLP_36H_G0_T0250_EP0000_seed123.sh
+@@ -1,5 +1,5 @@
+ #!/usr/bin/env bash
+-# Loss-weight sweep: CNN_MLP_36H, CBBT, seed 42, T0250_EP0000.
++# Loss-weight sweep: CNN_MLP_36H, CBBT, seed 123, T0250_EP0000.
+ # Source: configs/architecture_avgrank_multiseed_LR5e-3_Clip0.25/CNN_MLP_36H/CBBT/seed42/train_config_NCEP_CBBT_CNN_MLP_36H_G0_T0000_EP0000_seed42.sh
+ # Architecture ablation: CBBT, CNN x MLP, history=36h.
+ # Objective: GlobalMSE + 0.025 * TailMSE + 0.0 * EpisodeGTAlignedPeakMSE.
+@@ -40,7 +40,7 @@
+ SHUFFLE_YEARS=0
+ FUTURE_ONLY=0
+ FUTURE_YEAR_THRESHOLD=2030
+-SEED=42
++SEED=123
+ STATION_JSON_DIR="./station_json"
+ USE_SITE_ELEVATION=0
+ USE_BATHYMETRY=0
+@@ -91,7 +91,7 @@
+ 
+ CHECKPOINT_SELECTION="overall"
+ 
+-ALL_RESULTS_ROOT="/glade/u/home/zel/scratch/PACT_StormSurge_FormalRuns_1021_LR5e-3_Clip0.25/loss_weight_sweep/CBBT"
++ALL_RESULTS_ROOT="/glade/u/home/zel/scratch/PACT_StormSurge_FormalRuns_1021_LR5e-3_Clip0.25/loss_weight_sweep_multiseed/CBBT/seed123"
+ RUN_DIR_NAME_STYLE="runname_timestamp"
+-PACT_RUN_NAME="NCEP_CBBT_CNN_MLP_36H_G0_T0250_EP0000_seed42"
+-PYTHON_RUN_TAG_BASE="NCEP_CBBT_CNN_MLP_36H_G0_T0250_EP0000_seed42"
++PACT_RUN_NAME="NCEP_CBBT_CNN_MLP_36H_G0_T0250_EP0000_seed123"
++PYTHON_RUN_TAG_BASE="NCEP_CBBT_CNN_MLP_36H_G0_T0250_EP0000_seed123"
+--- /glade/u/home/zel/scratch/StormSurge/configs/loss_weight_sweep_5e-3_Clip0.25/CBBT/train_config_NCEP_CBBT_CNN_MLP_36H_G0_T0250_EP0000_seed42.sh
++++ /glade/u/home/zel/scratch/StormSurge/configs/loss_weight_sweep_5e-3_Clip0.25_multiseed/CBBT/seed2026/train_config_NCEP_CBBT_CNN_MLP_36H_G0_T0250_EP0000_seed2026.sh
+@@ -1,5 +1,5 @@
+ #!/usr/bin/env bash
+-# Loss-weight sweep: CNN_MLP_36H, CBBT, seed 42, T0250_EP0000.
++# Loss-weight sweep: CNN_MLP_36H, CBBT, seed 2026, T0250_EP0000.
+ # Source: configs/architecture_avgrank_multiseed_LR5e-3_Clip0.25/CNN_MLP_36H/CBBT/seed42/train_config_NCEP_CBBT_CNN_MLP_36H_G0_T0000_EP0000_seed42.sh
+ # Architecture ablation: CBBT, CNN x MLP, history=36h.
+ # Objective: GlobalMSE + 0.025 * TailMSE + 0.0 * EpisodeGTAlignedPeakMSE.
+@@ -40,7 +40,7 @@
+ SHUFFLE_YEARS=0
+ FUTURE_ONLY=0
+ FUTURE_YEAR_THRESHOLD=2030
+-SEED=42
++SEED=2026
+ STATION_JSON_DIR="./station_json"
+ USE_SITE_ELEVATION=0
+ USE_BATHYMETRY=0
+@@ -91,7 +91,7 @@
+ 
+ CHECKPOINT_SELECTION="overall"
+ 
+-ALL_RESULTS_ROOT="/glade/u/home/zel/scratch/PACT_StormSurge_FormalRuns_1021_LR5e-3_Clip0.25/loss_weight_sweep/CBBT"
++ALL_RESULTS_ROOT="/glade/u/home/zel/scratch/PACT_StormSurge_FormalRuns_1021_LR5e-3_Clip0.25/loss_weight_sweep_multiseed/CBBT/seed2026"
+ RUN_DIR_NAME_STYLE="runname_timestamp"
+-PACT_RUN_NAME="NCEP_CBBT_CNN_MLP_36H_G0_T0250_EP0000_seed42"
+-PYTHON_RUN_TAG_BASE="NCEP_CBBT_CNN_MLP_36H_G0_T0250_EP0000_seed42"
++PACT_RUN_NAME="NCEP_CBBT_CNN_MLP_36H_G0_T0250_EP0000_seed2026"
++PYTHON_RUN_TAG_BASE="NCEP_CBBT_CNN_MLP_36H_G0_T0250_EP0000_seed2026"
+--- /glade/u/home/zel/scratch/StormSurge/configs/loss_weight_sweep_5e-3_Clip0.25/CBBT/train_config_NCEP_CBBT_CNN_MLP_36H_G0_T0500_EP0000_seed42.sh
++++ /glade/u/home/zel/scratch/StormSurge/configs/loss_weight_sweep_5e-3_Clip0.25_multiseed/CBBT/seed123/train_config_NCEP_CBBT_CNN_MLP_36H_G0_T0500_EP0000_seed123.sh
+@@ -1,5 +1,5 @@
+ #!/usr/bin/env bash
+-# Loss-weight sweep: CNN_MLP_36H, CBBT, seed 42, T0500_EP0000.
++# Loss-weight sweep: CNN_MLP_36H, CBBT, seed 123, T0500_EP0000.
+ # Source: configs/architecture_avgrank_multiseed_LR5e-3_Clip0.25/CNN_MLP_36H/CBBT/seed42/train_config_NCEP_CBBT_CNN_MLP_36H_G0_T0000_EP0000_seed42.sh
+ # Architecture ablation: CBBT, CNN x MLP, history=36h.
+ # Objective: GlobalMSE + 0.05 * TailMSE + 0.0 * EpisodeGTAlignedPeakMSE.
+@@ -40,7 +40,7 @@
+ SHUFFLE_YEARS=0
+ FUTURE_ONLY=0
+ FUTURE_YEAR_THRESHOLD=2030
+-SEED=42
++SEED=123
+ STATION_JSON_DIR="./station_json"
+ USE_SITE_ELEVATION=0
+ USE_BATHYMETRY=0
+@@ -91,7 +91,7 @@
+ 
+ CHECKPOINT_SELECTION="overall"
+ 
+-ALL_RESULTS_ROOT="/glade/u/home/zel/scratch/PACT_StormSurge_FormalRuns_1021_LR5e-3_Clip0.25/loss_weight_sweep/CBBT"
++ALL_RESULTS_ROOT="/glade/u/home/zel/scratch/PACT_StormSurge_FormalRuns_1021_LR5e-3_Clip0.25/loss_weight_sweep_multiseed/CBBT/seed123"
+ RUN_DIR_NAME_STYLE="runname_timestamp"
+-PACT_RUN_NAME="NCEP_CBBT_CNN_MLP_36H_G0_T0500_EP0000_seed42"
+-PYTHON_RUN_TAG_BASE="NCEP_CBBT_CNN_MLP_36H_G0_T0500_EP0000_seed42"
++PACT_RUN_NAME="NCEP_CBBT_CNN_MLP_36H_G0_T0500_EP0000_seed123"
++PYTHON_RUN_TAG_BASE="NCEP_CBBT_CNN_MLP_36H_G0_T0500_EP0000_seed123"
+--- /glade/u/home/zel/scratch/StormSurge/configs/loss_weight_sweep_5e-3_Clip0.25/CBBT/train_config_NCEP_CBBT_CNN_MLP_36H_G0_T0500_EP0000_seed42.sh
++++ /glade/u/home/zel/scratch/StormSurge/configs/loss_weight_sweep_5e-3_Clip0.25_multiseed/CBBT/seed2026/train_config_NCEP_CBBT_CNN_MLP_36H_G0_T0500_EP0000_seed2026.sh
+@@ -1,5 +1,5 @@
+ #!/usr/bin/env bash
+-# Loss-weight sweep: CNN_MLP_36H, CBBT, seed 42, T0500_EP0000.
++# Loss-weight sweep: CNN_MLP_36H, CBBT, seed 2026, T0500_EP0000.
+ # Source: configs/architecture_avgrank_multiseed_LR5e-3_Clip0.25/CNN_MLP_36H/CBBT/seed42/train_config_NCEP_CBBT_CNN_MLP_36H_G0_T0000_EP0000_seed42.sh
+ # Architecture ablation: CBBT, CNN x MLP, history=36h.
+ # Objective: GlobalMSE + 0.05 * TailMSE + 0.0 * EpisodeGTAlignedPeakMSE.
+@@ -40,7 +40,7 @@
+ SHUFFLE_YEARS=0
+ FUTURE_ONLY=0
+ FUTURE_YEAR_THRESHOLD=2030
+-SEED=42
++SEED=2026
+ STATION_JSON_DIR="./station_json"
+ USE_SITE_ELEVATION=0
+ USE_BATHYMETRY=0
+@@ -91,7 +91,7 @@
+ 
+ CHECKPOINT_SELECTION="overall"
+ 
+-ALL_RESULTS_ROOT="/glade/u/home/zel/scratch/PACT_StormSurge_FormalRuns_1021_LR5e-3_Clip0.25/loss_weight_sweep/CBBT"
++ALL_RESULTS_ROOT="/glade/u/home/zel/scratch/PACT_StormSurge_FormalRuns_1021_LR5e-3_Clip0.25/loss_weight_sweep_multiseed/CBBT/seed2026"
+ RUN_DIR_NAME_STYLE="runname_timestamp"
+-PACT_RUN_NAME="NCEP_CBBT_CNN_MLP_36H_G0_T0500_EP0000_seed42"
+-PYTHON_RUN_TAG_BASE="NCEP_CBBT_CNN_MLP_36H_G0_T0500_EP0000_seed42"
++PACT_RUN_NAME="NCEP_CBBT_CNN_MLP_36H_G0_T0500_EP0000_seed2026"
++PYTHON_RUN_TAG_BASE="NCEP_CBBT_CNN_MLP_36H_G0_T0500_EP0000_seed2026"
+--- /glade/u/home/zel/scratch/StormSurge/configs/loss_weight_sweep_5e-3_Clip0.25/CBBT/train_config_NCEP_CBBT_CNN_MLP_36H_G0_T0000_EP0050_seed42.sh
++++ /glade/u/home/zel/scratch/StormSurge/configs/loss_weight_sweep_5e-3_Clip0.25_multiseed/CBBT/seed123/train_config_NCEP_CBBT_CNN_MLP_36H_G0_T0000_EP0050_seed123.sh
+@@ -1,5 +1,5 @@
+ #!/usr/bin/env bash
+-# Loss-weight sweep: CNN_MLP_36H, CBBT, seed 42, T0000_EP0050.
++# Loss-weight sweep: CNN_MLP_36H, CBBT, seed 123, T0000_EP0050.
+ # Source: configs/architecture_avgrank_multiseed_LR5e-3_Clip0.25/CNN_MLP_36H/CBBT/seed42/train_config_NCEP_CBBT_CNN_MLP_36H_G0_T0000_EP0000_seed42.sh
+ # Architecture ablation: CBBT, CNN x MLP, history=36h.
+ # Objective: GlobalMSE + 0.0 * TailMSE + 0.005 * EpisodeGTAlignedPeakMSE.
+@@ -40,7 +40,7 @@
+ SHUFFLE_YEARS=0
+ FUTURE_ONLY=0
+ FUTURE_YEAR_THRESHOLD=2030
+-SEED=42
++SEED=123
+ STATION_JSON_DIR="./station_json"
+ USE_SITE_ELEVATION=0
+ USE_BATHYMETRY=0
+@@ -91,7 +91,7 @@
+ 
+ CHECKPOINT_SELECTION="overall"
+ 
+-ALL_RESULTS_ROOT="/glade/u/home/zel/scratch/PACT_StormSurge_FormalRuns_1021_LR5e-3_Clip0.25/loss_weight_sweep/CBBT"
++ALL_RESULTS_ROOT="/glade/u/home/zel/scratch/PACT_StormSurge_FormalRuns_1021_LR5e-3_Clip0.25/loss_weight_sweep_multiseed/CBBT/seed123"
+ RUN_DIR_NAME_STYLE="runname_timestamp"
+-PACT_RUN_NAME="NCEP_CBBT_CNN_MLP_36H_G0_T0000_EP0050_seed42"
+-PYTHON_RUN_TAG_BASE="NCEP_CBBT_CNN_MLP_36H_G0_T0000_EP0050_seed42"
++PACT_RUN_NAME="NCEP_CBBT_CNN_MLP_36H_G0_T0000_EP0050_seed123"
++PYTHON_RUN_TAG_BASE="NCEP_CBBT_CNN_MLP_36H_G0_T0000_EP0050_seed123"
+--- /glade/u/home/zel/scratch/StormSurge/configs/loss_weight_sweep_5e-3_Clip0.25/CBBT/train_config_NCEP_CBBT_CNN_MLP_36H_G0_T0000_EP0050_seed42.sh
++++ /glade/u/home/zel/scratch/StormSurge/configs/loss_weight_sweep_5e-3_Clip0.25_multiseed/CBBT/seed2026/train_config_NCEP_CBBT_CNN_MLP_36H_G0_T0000_EP0050_seed2026.sh
+@@ -1,5 +1,5 @@
+ #!/usr/bin/env bash
+-# Loss-weight sweep: CNN_MLP_36H, CBBT, seed 42, T0000_EP0050.
++# Loss-weight sweep: CNN_MLP_36H, CBBT, seed 2026, T0000_EP0050.
+ # Source: configs/architecture_avgrank_multiseed_LR5e-3_Clip0.25/CNN_MLP_36H/CBBT/seed42/train_config_NCEP_CBBT_CNN_MLP_36H_G0_T0000_EP0000_seed42.sh
+ # Architecture ablation: CBBT, CNN x MLP, history=36h.
+ # Objective: GlobalMSE + 0.0 * TailMSE + 0.005 * EpisodeGTAlignedPeakMSE.
+@@ -40,7 +40,7 @@
+ SHUFFLE_YEARS=0
+ FUTURE_ONLY=0
+ FUTURE_YEAR_THRESHOLD=2030
+-SEED=42
++SEED=2026
+ STATION_JSON_DIR="./station_json"
+ USE_SITE_ELEVATION=0
+ USE_BATHYMETRY=0
+@@ -91,7 +91,7 @@
+ 
+ CHECKPOINT_SELECTION="overall"
+ 
+-ALL_RESULTS_ROOT="/glade/u/home/zel/scratch/PACT_StormSurge_FormalRuns_1021_LR5e-3_Clip0.25/loss_weight_sweep/CBBT"
++ALL_RESULTS_ROOT="/glade/u/home/zel/scratch/PACT_StormSurge_FormalRuns_1021_LR5e-3_Clip0.25/loss_weight_sweep_multiseed/CBBT/seed2026"
+ RUN_DIR_NAME_STYLE="runname_timestamp"
+-PACT_RUN_NAME="NCEP_CBBT_CNN_MLP_36H_G0_T0000_EP0050_seed42"
+-PYTHON_RUN_TAG_BASE="NCEP_CBBT_CNN_MLP_36H_G0_T0000_EP0050_seed42"
++PACT_RUN_NAME="NCEP_CBBT_CNN_MLP_36H_G0_T0000_EP0050_seed2026"
++PYTHON_RUN_TAG_BASE="NCEP_CBBT_CNN_MLP_36H_G0_T0000_EP0050_seed2026"
+--- /glade/u/home/zel/scratch/StormSurge/configs/loss_weight_sweep_5e-3_Clip0.25/CBBT/train_config_NCEP_CBBT_CNN_MLP_36H_G0_T0000_EP0100_seed42.sh
++++ /glade/u/home/zel/scratch/StormSurge/configs/loss_weight_sweep_5e-3_Clip0.25_multiseed/CBBT/seed123/train_config_NCEP_CBBT_CNN_MLP_36H_G0_T0000_EP0100_seed123.sh
+@@ -1,5 +1,5 @@
+ #!/usr/bin/env bash
+-# Loss-weight sweep: CNN_MLP_36H, CBBT, seed 42, T0000_EP0100.
++# Loss-weight sweep: CNN_MLP_36H, CBBT, seed 123, T0000_EP0100.
+ # Source: configs/architecture_avgrank_multiseed_LR5e-3_Clip0.25/CNN_MLP_36H/CBBT/seed42/train_config_NCEP_CBBT_CNN_MLP_36H_G0_T0000_EP0000_seed42.sh
+ # Architecture ablation: CBBT, CNN x MLP, history=36h.
+ # Objective: GlobalMSE + 0.0 * TailMSE + 0.01 * EpisodeGTAlignedPeakMSE.
+@@ -40,7 +40,7 @@
+ SHUFFLE_YEARS=0
+ FUTURE_ONLY=0
+ FUTURE_YEAR_THRESHOLD=2030
+-SEED=42
++SEED=123
+ STATION_JSON_DIR="./station_json"
+ USE_SITE_ELEVATION=0
+ USE_BATHYMETRY=0
+@@ -91,7 +91,7 @@
+ 
+ CHECKPOINT_SELECTION="overall"
+ 
+-ALL_RESULTS_ROOT="/glade/u/home/zel/scratch/PACT_StormSurge_FormalRuns_1021_LR5e-3_Clip0.25/loss_weight_sweep/CBBT"
++ALL_RESULTS_ROOT="/glade/u/home/zel/scratch/PACT_StormSurge_FormalRuns_1021_LR5e-3_Clip0.25/loss_weight_sweep_multiseed/CBBT/seed123"
+ RUN_DIR_NAME_STYLE="runname_timestamp"
+-PACT_RUN_NAME="NCEP_CBBT_CNN_MLP_36H_G0_T0000_EP0100_seed42"
+-PYTHON_RUN_TAG_BASE="NCEP_CBBT_CNN_MLP_36H_G0_T0000_EP0100_seed42"
++PACT_RUN_NAME="NCEP_CBBT_CNN_MLP_36H_G0_T0000_EP0100_seed123"
++PYTHON_RUN_TAG_BASE="NCEP_CBBT_CNN_MLP_36H_G0_T0000_EP0100_seed123"
+--- /glade/u/home/zel/scratch/StormSurge/configs/loss_weight_sweep_5e-3_Clip0.25/CBBT/train_config_NCEP_CBBT_CNN_MLP_36H_G0_T0000_EP0100_seed42.sh
++++ /glade/u/home/zel/scratch/StormSurge/configs/loss_weight_sweep_5e-3_Clip0.25_multiseed/CBBT/seed2026/train_config_NCEP_CBBT_CNN_MLP_36H_G0_T0000_EP0100_seed2026.sh
+@@ -1,5 +1,5 @@
+ #!/usr/bin/env bash
+-# Loss-weight sweep: CNN_MLP_36H, CBBT, seed 42, T0000_EP0100.
++# Loss-weight sweep: CNN_MLP_36H, CBBT, seed 2026, T0000_EP0100.
+ # Source: configs/architecture_avgrank_multiseed_LR5e-3_Clip0.25/CNN_MLP_36H/CBBT/seed42/train_config_NCEP_CBBT_CNN_MLP_36H_G0_T0000_EP0000_seed42.sh
+ # Architecture ablation: CBBT, CNN x MLP, history=36h.
+ # Objective: GlobalMSE + 0.0 * TailMSE + 0.01 * EpisodeGTAlignedPeakMSE.
+@@ -40,7 +40,7 @@
+ SHUFFLE_YEARS=0
+ FUTURE_ONLY=0
+ FUTURE_YEAR_THRESHOLD=2030
+-SEED=42
++SEED=2026
+ STATION_JSON_DIR="./station_json"
+ USE_SITE_ELEVATION=0
+ USE_BATHYMETRY=0
+@@ -91,7 +91,7 @@
+ 
+ CHECKPOINT_SELECTION="overall"
+ 
+-ALL_RESULTS_ROOT="/glade/u/home/zel/scratch/PACT_StormSurge_FormalRuns_1021_LR5e-3_Clip0.25/loss_weight_sweep/CBBT"
++ALL_RESULTS_ROOT="/glade/u/home/zel/scratch/PACT_StormSurge_FormalRuns_1021_LR5e-3_Clip0.25/loss_weight_sweep_multiseed/CBBT/seed2026"
+ RUN_DIR_NAME_STYLE="runname_timestamp"
+-PACT_RUN_NAME="NCEP_CBBT_CNN_MLP_36H_G0_T0000_EP0100_seed42"
+-PYTHON_RUN_TAG_BASE="NCEP_CBBT_CNN_MLP_36H_G0_T0000_EP0100_seed42"
++PACT_RUN_NAME="NCEP_CBBT_CNN_MLP_36H_G0_T0000_EP0100_seed2026"
++PYTHON_RUN_TAG_BASE="NCEP_CBBT_CNN_MLP_36H_G0_T0000_EP0100_seed2026"
+--- /glade/u/home/zel/scratch/StormSurge/configs/loss_weight_sweep_5e-3_Clip0.25/CBBT/train_config_NCEP_CBBT_CNN_MLP_36H_G0_T0250_EP0100_seed42.sh
++++ /glade/u/home/zel/scratch/StormSurge/configs/loss_weight_sweep_5e-3_Clip0.25_multiseed/CBBT/seed123/train_config_NCEP_CBBT_CNN_MLP_36H_G0_T0250_EP0100_seed123.sh
+@@ -1,5 +1,5 @@
+ #!/usr/bin/env bash
+-# Loss-weight sweep: CNN_MLP_36H, CBBT, seed 42, T0250_EP0100.
++# Loss-weight sweep: CNN_MLP_36H, CBBT, seed 123, T0250_EP0100.
+ # Source: configs/architecture_avgrank_multiseed_LR5e-3_Clip0.25/CNN_MLP_36H/CBBT/seed42/train_config_NCEP_CBBT_CNN_MLP_36H_G0_T0000_EP0000_seed42.sh
+ # Architecture ablation: CBBT, CNN x MLP, history=36h.
+ # Objective: GlobalMSE + 0.025 * TailMSE + 0.01 * EpisodeGTAlignedPeakMSE.
+@@ -40,7 +40,7 @@
+ SHUFFLE_YEARS=0
+ FUTURE_ONLY=0
+ FUTURE_YEAR_THRESHOLD=2030
+-SEED=42
++SEED=123
+ STATION_JSON_DIR="./station_json"
+ USE_SITE_ELEVATION=0
+ USE_BATHYMETRY=0
+@@ -91,7 +91,7 @@
+ 
+ CHECKPOINT_SELECTION="overall"
+ 
+-ALL_RESULTS_ROOT="/glade/u/home/zel/scratch/PACT_StormSurge_FormalRuns_1021_LR5e-3_Clip0.25/loss_weight_sweep/CBBT"
++ALL_RESULTS_ROOT="/glade/u/home/zel/scratch/PACT_StormSurge_FormalRuns_1021_LR5e-3_Clip0.25/loss_weight_sweep_multiseed/CBBT/seed123"
+ RUN_DIR_NAME_STYLE="runname_timestamp"
+-PACT_RUN_NAME="NCEP_CBBT_CNN_MLP_36H_G0_T0250_EP0100_seed42"
+-PYTHON_RUN_TAG_BASE="NCEP_CBBT_CNN_MLP_36H_G0_T0250_EP0100_seed42"
++PACT_RUN_NAME="NCEP_CBBT_CNN_MLP_36H_G0_T0250_EP0100_seed123"
++PYTHON_RUN_TAG_BASE="NCEP_CBBT_CNN_MLP_36H_G0_T0250_EP0100_seed123"
+--- /glade/u/home/zel/scratch/StormSurge/configs/loss_weight_sweep_5e-3_Clip0.25/CBBT/train_config_NCEP_CBBT_CNN_MLP_36H_G0_T0250_EP0100_seed42.sh
++++ /glade/u/home/zel/scratch/StormSurge/configs/loss_weight_sweep_5e-3_Clip0.25_multiseed/CBBT/seed2026/train_config_NCEP_CBBT_CNN_MLP_36H_G0_T0250_EP0100_seed2026.sh
+@@ -1,5 +1,5 @@
+ #!/usr/bin/env bash
+-# Loss-weight sweep: CNN_MLP_36H, CBBT, seed 42, T0250_EP0100.
++# Loss-weight sweep: CNN_MLP_36H, CBBT, seed 2026, T0250_EP0100.
+ # Source: configs/architecture_avgrank_multiseed_LR5e-3_Clip0.25/CNN_MLP_36H/CBBT/seed42/train_config_NCEP_CBBT_CNN_MLP_36H_G0_T0000_EP0000_seed42.sh
+ # Architecture ablation: CBBT, CNN x MLP, history=36h.
+ # Objective: GlobalMSE + 0.025 * TailMSE + 0.01 * EpisodeGTAlignedPeakMSE.
+@@ -40,7 +40,7 @@
+ SHUFFLE_YEARS=0
+ FUTURE_ONLY=0
+ FUTURE_YEAR_THRESHOLD=2030
+-SEED=42
++SEED=2026
+ STATION_JSON_DIR="./station_json"
+ USE_SITE_ELEVATION=0
+ USE_BATHYMETRY=0
+@@ -91,7 +91,7 @@
+ 
+ CHECKPOINT_SELECTION="overall"
+ 
+-ALL_RESULTS_ROOT="/glade/u/home/zel/scratch/PACT_StormSurge_FormalRuns_1021_LR5e-3_Clip0.25/loss_weight_sweep/CBBT"
++ALL_RESULTS_ROOT="/glade/u/home/zel/scratch/PACT_StormSurge_FormalRuns_1021_LR5e-3_Clip0.25/loss_weight_sweep_multiseed/CBBT/seed2026"
+ RUN_DIR_NAME_STYLE="runname_timestamp"
+-PACT_RUN_NAME="NCEP_CBBT_CNN_MLP_36H_G0_T0250_EP0100_seed42"
+-PYTHON_RUN_TAG_BASE="NCEP_CBBT_CNN_MLP_36H_G0_T0250_EP0100_seed42"
++PACT_RUN_NAME="NCEP_CBBT_CNN_MLP_36H_G0_T0250_EP0100_seed2026"
++PYTHON_RUN_TAG_BASE="NCEP_CBBT_CNN_MLP_36H_G0_T0250_EP0100_seed2026"
+--- /glade/u/home/zel/scratch/StormSurge/configs/loss_weight_sweep_5e-3_Clip0.25/CBBT/train_config_NCEP_CBBT_CNN_MLP_36H_G0_T0500_EP0100_seed42.sh
++++ /glade/u/home/zel/scratch/StormSurge/configs/loss_weight_sweep_5e-3_Clip0.25_multiseed/CBBT/seed123/train_config_NCEP_CBBT_CNN_MLP_36H_G0_T0500_EP0100_seed123.sh
+@@ -1,5 +1,5 @@
+ #!/usr/bin/env bash
+-# Loss-weight sweep: CNN_MLP_36H, CBBT, seed 42, T0500_EP0100.
++# Loss-weight sweep: CNN_MLP_36H, CBBT, seed 123, T0500_EP0100.
+ # Source: configs/architecture_avgrank_multiseed_LR5e-3_Clip0.25/CNN_MLP_36H/CBBT/seed42/train_config_NCEP_CBBT_CNN_MLP_36H_G0_T0000_EP0000_seed42.sh
+ # Architecture ablation: CBBT, CNN x MLP, history=36h.
+ # Objective: GlobalMSE + 0.05 * TailMSE + 0.01 * EpisodeGTAlignedPeakMSE.
+@@ -40,7 +40,7 @@
+ SHUFFLE_YEARS=0
+ FUTURE_ONLY=0
+ FUTURE_YEAR_THRESHOLD=2030
+-SEED=42
++SEED=123
+ STATION_JSON_DIR="./station_json"
+ USE_SITE_ELEVATION=0
+ USE_BATHYMETRY=0
+@@ -91,7 +91,7 @@
+ 
+ CHECKPOINT_SELECTION="overall"
+ 
+-ALL_RESULTS_ROOT="/glade/u/home/zel/scratch/PACT_StormSurge_FormalRuns_1021_LR5e-3_Clip0.25/loss_weight_sweep/CBBT"
++ALL_RESULTS_ROOT="/glade/u/home/zel/scratch/PACT_StormSurge_FormalRuns_1021_LR5e-3_Clip0.25/loss_weight_sweep_multiseed/CBBT/seed123"
+ RUN_DIR_NAME_STYLE="runname_timestamp"
+-PACT_RUN_NAME="NCEP_CBBT_CNN_MLP_36H_G0_T0500_EP0100_seed42"
+-PYTHON_RUN_TAG_BASE="NCEP_CBBT_CNN_MLP_36H_G0_T0500_EP0100_seed42"
++PACT_RUN_NAME="NCEP_CBBT_CNN_MLP_36H_G0_T0500_EP0100_seed123"
++PYTHON_RUN_TAG_BASE="NCEP_CBBT_CNN_MLP_36H_G0_T0500_EP0100_seed123"
+--- /glade/u/home/zel/scratch/StormSurge/configs/loss_weight_sweep_5e-3_Clip0.25/CBBT/train_config_NCEP_CBBT_CNN_MLP_36H_G0_T0500_EP0100_seed42.sh
++++ /glade/u/home/zel/scratch/StormSurge/configs/loss_weight_sweep_5e-3_Clip0.25_multiseed/CBBT/seed2026/train_config_NCEP_CBBT_CNN_MLP_36H_G0_T0500_EP0100_seed2026.sh
+@@ -1,5 +1,5 @@
+ #!/usr/bin/env bash
+-# Loss-weight sweep: CNN_MLP_36H, CBBT, seed 42, T0500_EP0100.
++# Loss-weight sweep: CNN_MLP_36H, CBBT, seed 2026, T0500_EP0100.
+ # Source: configs/architecture_avgrank_multiseed_LR5e-3_Clip0.25/CNN_MLP_36H/CBBT/seed42/train_config_NCEP_CBBT_CNN_MLP_36H_G0_T0000_EP0000_seed42.sh
+ # Architecture ablation: CBBT, CNN x MLP, history=36h.
+ # Objective: GlobalMSE + 0.05 * TailMSE + 0.01 * EpisodeGTAlignedPeakMSE.
+@@ -40,7 +40,7 @@
+ SHUFFLE_YEARS=0
+ FUTURE_ONLY=0
+ FUTURE_YEAR_THRESHOLD=2030
+-SEED=42
++SEED=2026
+ STATION_JSON_DIR="./station_json"
+ USE_SITE_ELEVATION=0
+ USE_BATHYMETRY=0
+@@ -91,7 +91,7 @@
+ 
+ CHECKPOINT_SELECTION="overall"
+ 
+-ALL_RESULTS_ROOT="/glade/u/home/zel/scratch/PACT_StormSurge_FormalRuns_1021_LR5e-3_Clip0.25/loss_weight_sweep/CBBT"
++ALL_RESULTS_ROOT="/glade/u/home/zel/scratch/PACT_StormSurge_FormalRuns_1021_LR5e-3_Clip0.25/loss_weight_sweep_multiseed/CBBT/seed2026"
+ RUN_DIR_NAME_STYLE="runname_timestamp"
+-PACT_RUN_NAME="NCEP_CBBT_CNN_MLP_36H_G0_T0500_EP0100_seed42"
+-PYTHON_RUN_TAG_BASE="NCEP_CBBT_CNN_MLP_36H_G0_T0500_EP0100_seed42"
++PACT_RUN_NAME="NCEP_CBBT_CNN_MLP_36H_G0_T0500_EP0100_seed2026"
++PYTHON_RUN_TAG_BASE="NCEP_CBBT_CNN_MLP_36H_G0_T0500_EP0100_seed2026"
+--- /glade/u/home/zel/scratch/StormSurge/configs/loss_weight_sweep_5e-3_Clip0.25/Lewes/train_config_NCEP_Lewes_CNN_MLP_36H_G0_T0250_EP0000_seed42.sh
++++ /glade/u/home/zel/scratch/StormSurge/configs/loss_weight_sweep_5e-3_Clip0.25_multiseed/Lewes/seed123/train_config_NCEP_Lewes_CNN_MLP_36H_G0_T0250_EP0000_seed123.sh
+@@ -1,5 +1,5 @@
+ #!/usr/bin/env bash
+-# Loss-weight sweep: CNN_MLP_36H, Lewes, seed 42, T0250_EP0000.
++# Loss-weight sweep: CNN_MLP_36H, Lewes, seed 123, T0250_EP0000.
+ # Source: configs/architecture_avgrank_multiseed_LR5e-3_Clip0.25/CNN_MLP_36H/Lewes/seed42/train_config_NCEP_Lewes_CNN_MLP_36H_G0_T0000_EP0000_seed42.sh
+ # Architecture ablation: Lewes, CNN x MLP, history=36h.
+ # Objective: GlobalMSE + 0.025 * TailMSE + 0.0 * EpisodeGTAlignedPeakMSE.
+@@ -40,7 +40,7 @@
+ SHUFFLE_YEARS=0
+ FUTURE_ONLY=0
+ FUTURE_YEAR_THRESHOLD=2030
+-SEED=42
++SEED=123
+ STATION_JSON_DIR="./station_json"
+ USE_SITE_ELEVATION=0
+ USE_BATHYMETRY=0
+@@ -91,7 +91,7 @@
+ 
+ CHECKPOINT_SELECTION="overall"
+ 
+-ALL_RESULTS_ROOT="/glade/u/home/zel/scratch/PACT_StormSurge_FormalRuns_1021_LR5e-3_Clip0.25/loss_weight_sweep/Lewes"
++ALL_RESULTS_ROOT="/glade/u/home/zel/scratch/PACT_StormSurge_FormalRuns_1021_LR5e-3_Clip0.25/loss_weight_sweep_multiseed/Lewes/seed123"
+ RUN_DIR_NAME_STYLE="runname_timestamp"
+-PACT_RUN_NAME="NCEP_Lewes_CNN_MLP_36H_G0_T0250_EP0000_seed42"
+-PYTHON_RUN_TAG_BASE="NCEP_Lewes_CNN_MLP_36H_G0_T0250_EP0000_seed42"
++PACT_RUN_NAME="NCEP_Lewes_CNN_MLP_36H_G0_T0250_EP0000_seed123"
++PYTHON_RUN_TAG_BASE="NCEP_Lewes_CNN_MLP_36H_G0_T0250_EP0000_seed123"
+--- /glade/u/home/zel/scratch/StormSurge/configs/loss_weight_sweep_5e-3_Clip0.25/Lewes/train_config_NCEP_Lewes_CNN_MLP_36H_G0_T0250_EP0000_seed42.sh
++++ /glade/u/home/zel/scratch/StormSurge/configs/loss_weight_sweep_5e-3_Clip0.25_multiseed/Lewes/seed2026/train_config_NCEP_Lewes_CNN_MLP_36H_G0_T0250_EP0000_seed2026.sh
+@@ -1,5 +1,5 @@
+ #!/usr/bin/env bash
+-# Loss-weight sweep: CNN_MLP_36H, Lewes, seed 42, T0250_EP0000.
++# Loss-weight sweep: CNN_MLP_36H, Lewes, seed 2026, T0250_EP0000.
+ # Source: configs/architecture_avgrank_multiseed_LR5e-3_Clip0.25/CNN_MLP_36H/Lewes/seed42/train_config_NCEP_Lewes_CNN_MLP_36H_G0_T0000_EP0000_seed42.sh
+ # Architecture ablation: Lewes, CNN x MLP, history=36h.
+ # Objective: GlobalMSE + 0.025 * TailMSE + 0.0 * EpisodeGTAlignedPeakMSE.
+@@ -40,7 +40,7 @@
+ SHUFFLE_YEARS=0
+ FUTURE_ONLY=0
+ FUTURE_YEAR_THRESHOLD=2030
+-SEED=42
++SEED=2026
+ STATION_JSON_DIR="./station_json"
+ USE_SITE_ELEVATION=0
+ USE_BATHYMETRY=0
+@@ -91,7 +91,7 @@
+ 
+ CHECKPOINT_SELECTION="overall"
+ 
+-ALL_RESULTS_ROOT="/glade/u/home/zel/scratch/PACT_StormSurge_FormalRuns_1021_LR5e-3_Clip0.25/loss_weight_sweep/Lewes"
++ALL_RESULTS_ROOT="/glade/u/home/zel/scratch/PACT_StormSurge_FormalRuns_1021_LR5e-3_Clip0.25/loss_weight_sweep_multiseed/Lewes/seed2026"
+ RUN_DIR_NAME_STYLE="runname_timestamp"
+-PACT_RUN_NAME="NCEP_Lewes_CNN_MLP_36H_G0_T0250_EP0000_seed42"
+-PYTHON_RUN_TAG_BASE="NCEP_Lewes_CNN_MLP_36H_G0_T0250_EP0000_seed42"
++PACT_RUN_NAME="NCEP_Lewes_CNN_MLP_36H_G0_T0250_EP0000_seed2026"
++PYTHON_RUN_TAG_BASE="NCEP_Lewes_CNN_MLP_36H_G0_T0250_EP0000_seed2026"
+--- /glade/u/home/zel/scratch/StormSurge/configs/loss_weight_sweep_5e-3_Clip0.25/Lewes/train_config_NCEP_Lewes_CNN_MLP_36H_G0_T0500_EP0000_seed42.sh
++++ /glade/u/home/zel/scratch/StormSurge/configs/loss_weight_sweep_5e-3_Clip0.25_multiseed/Lewes/seed123/train_config_NCEP_Lewes_CNN_MLP_36H_G0_T0500_EP0000_seed123.sh
+@@ -1,5 +1,5 @@
+ #!/usr/bin/env bash
+-# Loss-weight sweep: CNN_MLP_36H, Lewes, seed 42, T0500_EP0000.
++# Loss-weight sweep: CNN_MLP_36H, Lewes, seed 123, T0500_EP0000.
+ # Source: configs/architecture_avgrank_multiseed_LR5e-3_Clip0.25/CNN_MLP_36H/Lewes/seed42/train_config_NCEP_Lewes_CNN_MLP_36H_G0_T0000_EP0000_seed42.sh
+ # Architecture ablation: Lewes, CNN x MLP, history=36h.
+ # Objective: GlobalMSE + 0.05 * TailMSE + 0.0 * EpisodeGTAlignedPeakMSE.
+@@ -40,7 +40,7 @@
+ SHUFFLE_YEARS=0
+ FUTURE_ONLY=0
+ FUTURE_YEAR_THRESHOLD=2030
+-SEED=42
++SEED=123
+ STATION_JSON_DIR="./station_json"
+ USE_SITE_ELEVATION=0
+ USE_BATHYMETRY=0
+@@ -91,7 +91,7 @@
+ 
+ CHECKPOINT_SELECTION="overall"
+ 
+-ALL_RESULTS_ROOT="/glade/u/home/zel/scratch/PACT_StormSurge_FormalRuns_1021_LR5e-3_Clip0.25/loss_weight_sweep/Lewes"
++ALL_RESULTS_ROOT="/glade/u/home/zel/scratch/PACT_StormSurge_FormalRuns_1021_LR5e-3_Clip0.25/loss_weight_sweep_multiseed/Lewes/seed123"
+ RUN_DIR_NAME_STYLE="runname_timestamp"
+-PACT_RUN_NAME="NCEP_Lewes_CNN_MLP_36H_G0_T0500_EP0000_seed42"
+-PYTHON_RUN_TAG_BASE="NCEP_Lewes_CNN_MLP_36H_G0_T0500_EP0000_seed42"
++PACT_RUN_NAME="NCEP_Lewes_CNN_MLP_36H_G0_T0500_EP0000_seed123"
++PYTHON_RUN_TAG_BASE="NCEP_Lewes_CNN_MLP_36H_G0_T0500_EP0000_seed123"
+--- /glade/u/home/zel/scratch/StormSurge/configs/loss_weight_sweep_5e-3_Clip0.25/Lewes/train_config_NCEP_Lewes_CNN_MLP_36H_G0_T0500_EP0000_seed42.sh
++++ /glade/u/home/zel/scratch/StormSurge/configs/loss_weight_sweep_5e-3_Clip0.25_multiseed/Lewes/seed2026/train_config_NCEP_Lewes_CNN_MLP_36H_G0_T0500_EP0000_seed2026.sh
+@@ -1,5 +1,5 @@
+ #!/usr/bin/env bash
+-# Loss-weight sweep: CNN_MLP_36H, Lewes, seed 42, T0500_EP0000.
++# Loss-weight sweep: CNN_MLP_36H, Lewes, seed 2026, T0500_EP0000.
+ # Source: configs/architecture_avgrank_multiseed_LR5e-3_Clip0.25/CNN_MLP_36H/Lewes/seed42/train_config_NCEP_Lewes_CNN_MLP_36H_G0_T0000_EP0000_seed42.sh
+ # Architecture ablation: Lewes, CNN x MLP, history=36h.
+ # Objective: GlobalMSE + 0.05 * TailMSE + 0.0 * EpisodeGTAlignedPeakMSE.
+@@ -40,7 +40,7 @@
+ SHUFFLE_YEARS=0
+ FUTURE_ONLY=0
+ FUTURE_YEAR_THRESHOLD=2030
+-SEED=42
++SEED=2026
+ STATION_JSON_DIR="./station_json"
+ USE_SITE_ELEVATION=0
+ USE_BATHYMETRY=0
+@@ -91,7 +91,7 @@
+ 
+ CHECKPOINT_SELECTION="overall"
+ 
+-ALL_RESULTS_ROOT="/glade/u/home/zel/scratch/PACT_StormSurge_FormalRuns_1021_LR5e-3_Clip0.25/loss_weight_sweep/Lewes"
++ALL_RESULTS_ROOT="/glade/u/home/zel/scratch/PACT_StormSurge_FormalRuns_1021_LR5e-3_Clip0.25/loss_weight_sweep_multiseed/Lewes/seed2026"
+ RUN_DIR_NAME_STYLE="runname_timestamp"
+-PACT_RUN_NAME="NCEP_Lewes_CNN_MLP_36H_G0_T0500_EP0000_seed42"
+-PYTHON_RUN_TAG_BASE="NCEP_Lewes_CNN_MLP_36H_G0_T0500_EP0000_seed42"
++PACT_RUN_NAME="NCEP_Lewes_CNN_MLP_36H_G0_T0500_EP0000_seed2026"
++PYTHON_RUN_TAG_BASE="NCEP_Lewes_CNN_MLP_36H_G0_T0500_EP0000_seed2026"
+--- /glade/u/home/zel/scratch/StormSurge/configs/loss_weight_sweep_5e-3_Clip0.25/Lewes/train_config_NCEP_Lewes_CNN_MLP_36H_G0_T0000_EP0050_seed42.sh
++++ /glade/u/home/zel/scratch/StormSurge/configs/loss_weight_sweep_5e-3_Clip0.25_multiseed/Lewes/seed123/train_config_NCEP_Lewes_CNN_MLP_36H_G0_T0000_EP0050_seed123.sh
+@@ -1,5 +1,5 @@
+ #!/usr/bin/env bash
+-# Loss-weight sweep: CNN_MLP_36H, Lewes, seed 42, T0000_EP0050.
++# Loss-weight sweep: CNN_MLP_36H, Lewes, seed 123, T0000_EP0050.
+ # Source: configs/architecture_avgrank_multiseed_LR5e-3_Clip0.25/CNN_MLP_36H/Lewes/seed42/train_config_NCEP_Lewes_CNN_MLP_36H_G0_T0000_EP0000_seed42.sh
+ # Architecture ablation: Lewes, CNN x MLP, history=36h.
+ # Objective: GlobalMSE + 0.0 * TailMSE + 0.005 * EpisodeGTAlignedPeakMSE.
+@@ -40,7 +40,7 @@
+ SHUFFLE_YEARS=0
+ FUTURE_ONLY=0
+ FUTURE_YEAR_THRESHOLD=2030
+-SEED=42
++SEED=123
+ STATION_JSON_DIR="./station_json"
+ USE_SITE_ELEVATION=0
+ USE_BATHYMETRY=0
+@@ -91,7 +91,7 @@
+ 
+ CHECKPOINT_SELECTION="overall"
+ 
+-ALL_RESULTS_ROOT="/glade/u/home/zel/scratch/PACT_StormSurge_FormalRuns_1021_LR5e-3_Clip0.25/loss_weight_sweep/Lewes"
++ALL_RESULTS_ROOT="/glade/u/home/zel/scratch/PACT_StormSurge_FormalRuns_1021_LR5e-3_Clip0.25/loss_weight_sweep_multiseed/Lewes/seed123"
+ RUN_DIR_NAME_STYLE="runname_timestamp"
+-PACT_RUN_NAME="NCEP_Lewes_CNN_MLP_36H_G0_T0000_EP0050_seed42"
+-PYTHON_RUN_TAG_BASE="NCEP_Lewes_CNN_MLP_36H_G0_T0000_EP0050_seed42"
++PACT_RUN_NAME="NCEP_Lewes_CNN_MLP_36H_G0_T0000_EP0050_seed123"
++PYTHON_RUN_TAG_BASE="NCEP_Lewes_CNN_MLP_36H_G0_T0000_EP0050_seed123"
+--- /glade/u/home/zel/scratch/StormSurge/configs/loss_weight_sweep_5e-3_Clip0.25/Lewes/train_config_NCEP_Lewes_CNN_MLP_36H_G0_T0000_EP0050_seed42.sh
++++ /glade/u/home/zel/scratch/StormSurge/configs/loss_weight_sweep_5e-3_Clip0.25_multiseed/Lewes/seed2026/train_config_NCEP_Lewes_CNN_MLP_36H_G0_T0000_EP0050_seed2026.sh
+@@ -1,5 +1,5 @@
+ #!/usr/bin/env bash
+-# Loss-weight sweep: CNN_MLP_36H, Lewes, seed 42, T0000_EP0050.
++# Loss-weight sweep: CNN_MLP_36H, Lewes, seed 2026, T0000_EP0050.
+ # Source: configs/architecture_avgrank_multiseed_LR5e-3_Clip0.25/CNN_MLP_36H/Lewes/seed42/train_config_NCEP_Lewes_CNN_MLP_36H_G0_T0000_EP0000_seed42.sh
+ # Architecture ablation: Lewes, CNN x MLP, history=36h.
+ # Objective: GlobalMSE + 0.0 * TailMSE + 0.005 * EpisodeGTAlignedPeakMSE.
+@@ -40,7 +40,7 @@
+ SHUFFLE_YEARS=0
+ FUTURE_ONLY=0
+ FUTURE_YEAR_THRESHOLD=2030
+-SEED=42
++SEED=2026
+ STATION_JSON_DIR="./station_json"
+ USE_SITE_ELEVATION=0
+ USE_BATHYMETRY=0
+@@ -91,7 +91,7 @@
+ 
+ CHECKPOINT_SELECTION="overall"
+ 
+-ALL_RESULTS_ROOT="/glade/u/home/zel/scratch/PACT_StormSurge_FormalRuns_1021_LR5e-3_Clip0.25/loss_weight_sweep/Lewes"
++ALL_RESULTS_ROOT="/glade/u/home/zel/scratch/PACT_StormSurge_FormalRuns_1021_LR5e-3_Clip0.25/loss_weight_sweep_multiseed/Lewes/seed2026"
+ RUN_DIR_NAME_STYLE="runname_timestamp"
+-PACT_RUN_NAME="NCEP_Lewes_CNN_MLP_36H_G0_T0000_EP0050_seed42"
+-PYTHON_RUN_TAG_BASE="NCEP_Lewes_CNN_MLP_36H_G0_T0000_EP0050_seed42"
++PACT_RUN_NAME="NCEP_Lewes_CNN_MLP_36H_G0_T0000_EP0050_seed2026"
++PYTHON_RUN_TAG_BASE="NCEP_Lewes_CNN_MLP_36H_G0_T0000_EP0050_seed2026"
+--- /glade/u/home/zel/scratch/StormSurge/configs/loss_weight_sweep_5e-3_Clip0.25/Lewes/train_config_NCEP_Lewes_CNN_MLP_36H_G0_T0000_EP0100_seed42.sh
++++ /glade/u/home/zel/scratch/StormSurge/configs/loss_weight_sweep_5e-3_Clip0.25_multiseed/Lewes/seed123/train_config_NCEP_Lewes_CNN_MLP_36H_G0_T0000_EP0100_seed123.sh
+@@ -1,5 +1,5 @@
+ #!/usr/bin/env bash
+-# Loss-weight sweep: CNN_MLP_36H, Lewes, seed 42, T0000_EP0100.
++# Loss-weight sweep: CNN_MLP_36H, Lewes, seed 123, T0000_EP0100.
+ # Source: configs/architecture_avgrank_multiseed_LR5e-3_Clip0.25/CNN_MLP_36H/Lewes/seed42/train_config_NCEP_Lewes_CNN_MLP_36H_G0_T0000_EP0000_seed42.sh
+ # Architecture ablation: Lewes, CNN x MLP, history=36h.
+ # Objective: GlobalMSE + 0.0 * TailMSE + 0.01 * EpisodeGTAlignedPeakMSE.
+@@ -40,7 +40,7 @@
+ SHUFFLE_YEARS=0
+ FUTURE_ONLY=0
+ FUTURE_YEAR_THRESHOLD=2030
+-SEED=42
++SEED=123
+ STATION_JSON_DIR="./station_json"
+ USE_SITE_ELEVATION=0
+ USE_BATHYMETRY=0
+@@ -91,7 +91,7 @@
+ 
+ CHECKPOINT_SELECTION="overall"
+ 
+-ALL_RESULTS_ROOT="/glade/u/home/zel/scratch/PACT_StormSurge_FormalRuns_1021_LR5e-3_Clip0.25/loss_weight_sweep/Lewes"
++ALL_RESULTS_ROOT="/glade/u/home/zel/scratch/PACT_StormSurge_FormalRuns_1021_LR5e-3_Clip0.25/loss_weight_sweep_multiseed/Lewes/seed123"
+ RUN_DIR_NAME_STYLE="runname_timestamp"
+-PACT_RUN_NAME="NCEP_Lewes_CNN_MLP_36H_G0_T0000_EP0100_seed42"
+-PYTHON_RUN_TAG_BASE="NCEP_Lewes_CNN_MLP_36H_G0_T0000_EP0100_seed42"
++PACT_RUN_NAME="NCEP_Lewes_CNN_MLP_36H_G0_T0000_EP0100_seed123"
++PYTHON_RUN_TAG_BASE="NCEP_Lewes_CNN_MLP_36H_G0_T0000_EP0100_seed123"
+--- /glade/u/home/zel/scratch/StormSurge/configs/loss_weight_sweep_5e-3_Clip0.25/Lewes/train_config_NCEP_Lewes_CNN_MLP_36H_G0_T0000_EP0100_seed42.sh
++++ /glade/u/home/zel/scratch/StormSurge/configs/loss_weight_sweep_5e-3_Clip0.25_multiseed/Lewes/seed2026/train_config_NCEP_Lewes_CNN_MLP_36H_G0_T0000_EP0100_seed2026.sh
+@@ -1,5 +1,5 @@
+ #!/usr/bin/env bash
+-# Loss-weight sweep: CNN_MLP_36H, Lewes, seed 42, T0000_EP0100.
++# Loss-weight sweep: CNN_MLP_36H, Lewes, seed 2026, T0000_EP0100.
+ # Source: configs/architecture_avgrank_multiseed_LR5e-3_Clip0.25/CNN_MLP_36H/Lewes/seed42/train_config_NCEP_Lewes_CNN_MLP_36H_G0_T0000_EP0000_seed42.sh
+ # Architecture ablation: Lewes, CNN x MLP, history=36h.
+ # Objective: GlobalMSE + 0.0 * TailMSE + 0.01 * EpisodeGTAlignedPeakMSE.
+@@ -40,7 +40,7 @@
+ SHUFFLE_YEARS=0
+ FUTURE_ONLY=0
+ FUTURE_YEAR_THRESHOLD=2030
+-SEED=42
++SEED=2026
+ STATION_JSON_DIR="./station_json"
+ USE_SITE_ELEVATION=0
+ USE_BATHYMETRY=0
+@@ -91,7 +91,7 @@
+ 
+ CHECKPOINT_SELECTION="overall"
+ 
+-ALL_RESULTS_ROOT="/glade/u/home/zel/scratch/PACT_StormSurge_FormalRuns_1021_LR5e-3_Clip0.25/loss_weight_sweep/Lewes"
++ALL_RESULTS_ROOT="/glade/u/home/zel/scratch/PACT_StormSurge_FormalRuns_1021_LR5e-3_Clip0.25/loss_weight_sweep_multiseed/Lewes/seed2026"
+ RUN_DIR_NAME_STYLE="runname_timestamp"
+-PACT_RUN_NAME="NCEP_Lewes_CNN_MLP_36H_G0_T0000_EP0100_seed42"
+-PYTHON_RUN_TAG_BASE="NCEP_Lewes_CNN_MLP_36H_G0_T0000_EP0100_seed42"
++PACT_RUN_NAME="NCEP_Lewes_CNN_MLP_36H_G0_T0000_EP0100_seed2026"
++PYTHON_RUN_TAG_BASE="NCEP_Lewes_CNN_MLP_36H_G0_T0000_EP0100_seed2026"
+--- /glade/u/home/zel/scratch/StormSurge/configs/loss_weight_sweep_5e-3_Clip0.25/Lewes/train_config_NCEP_Lewes_CNN_MLP_36H_G0_T0250_EP0100_seed42.sh
++++ /glade/u/home/zel/scratch/StormSurge/configs/loss_weight_sweep_5e-3_Clip0.25_multiseed/Lewes/seed123/train_config_NCEP_Lewes_CNN_MLP_36H_G0_T0250_EP0100_seed123.sh
+@@ -1,5 +1,5 @@
+ #!/usr/bin/env bash
+-# Loss-weight sweep: CNN_MLP_36H, Lewes, seed 42, T0250_EP0100.
++# Loss-weight sweep: CNN_MLP_36H, Lewes, seed 123, T0250_EP0100.
+ # Source: configs/architecture_avgrank_multiseed_LR5e-3_Clip0.25/CNN_MLP_36H/Lewes/seed42/train_config_NCEP_Lewes_CNN_MLP_36H_G0_T0000_EP0000_seed42.sh
+ # Architecture ablation: Lewes, CNN x MLP, history=36h.
+ # Objective: GlobalMSE + 0.025 * TailMSE + 0.01 * EpisodeGTAlignedPeakMSE.
+@@ -40,7 +40,7 @@
+ SHUFFLE_YEARS=0
+ FUTURE_ONLY=0
+ FUTURE_YEAR_THRESHOLD=2030
+-SEED=42
++SEED=123
+ STATION_JSON_DIR="./station_json"
+ USE_SITE_ELEVATION=0
+ USE_BATHYMETRY=0
+@@ -91,7 +91,7 @@
+ 
+ CHECKPOINT_SELECTION="overall"
+ 
+-ALL_RESULTS_ROOT="/glade/u/home/zel/scratch/PACT_StormSurge_FormalRuns_1021_LR5e-3_Clip0.25/loss_weight_sweep/Lewes"
++ALL_RESULTS_ROOT="/glade/u/home/zel/scratch/PACT_StormSurge_FormalRuns_1021_LR5e-3_Clip0.25/loss_weight_sweep_multiseed/Lewes/seed123"
+ RUN_DIR_NAME_STYLE="runname_timestamp"
+-PACT_RUN_NAME="NCEP_Lewes_CNN_MLP_36H_G0_T0250_EP0100_seed42"
+-PYTHON_RUN_TAG_BASE="NCEP_Lewes_CNN_MLP_36H_G0_T0250_EP0100_seed42"
++PACT_RUN_NAME="NCEP_Lewes_CNN_MLP_36H_G0_T0250_EP0100_seed123"
++PYTHON_RUN_TAG_BASE="NCEP_Lewes_CNN_MLP_36H_G0_T0250_EP0100_seed123"
+--- /glade/u/home/zel/scratch/StormSurge/configs/loss_weight_sweep_5e-3_Clip0.25/Lewes/train_config_NCEP_Lewes_CNN_MLP_36H_G0_T0250_EP0100_seed42.sh
++++ /glade/u/home/zel/scratch/StormSurge/configs/loss_weight_sweep_5e-3_Clip0.25_multiseed/Lewes/seed2026/train_config_NCEP_Lewes_CNN_MLP_36H_G0_T0250_EP0100_seed2026.sh
+@@ -1,5 +1,5 @@
+ #!/usr/bin/env bash
+-# Loss-weight sweep: CNN_MLP_36H, Lewes, seed 42, T0250_EP0100.
++# Loss-weight sweep: CNN_MLP_36H, Lewes, seed 2026, T0250_EP0100.
+ # Source: configs/architecture_avgrank_multiseed_LR5e-3_Clip0.25/CNN_MLP_36H/Lewes/seed42/train_config_NCEP_Lewes_CNN_MLP_36H_G0_T0000_EP0000_seed42.sh
+ # Architecture ablation: Lewes, CNN x MLP, history=36h.
+ # Objective: GlobalMSE + 0.025 * TailMSE + 0.01 * EpisodeGTAlignedPeakMSE.
+@@ -40,7 +40,7 @@
+ SHUFFLE_YEARS=0
+ FUTURE_ONLY=0
+ FUTURE_YEAR_THRESHOLD=2030
+-SEED=42
++SEED=2026
+ STATION_JSON_DIR="./station_json"
+ USE_SITE_ELEVATION=0
+ USE_BATHYMETRY=0
+@@ -91,7 +91,7 @@
+ 
+ CHECKPOINT_SELECTION="overall"
+ 
+-ALL_RESULTS_ROOT="/glade/u/home/zel/scratch/PACT_StormSurge_FormalRuns_1021_LR5e-3_Clip0.25/loss_weight_sweep/Lewes"
++ALL_RESULTS_ROOT="/glade/u/home/zel/scratch/PACT_StormSurge_FormalRuns_1021_LR5e-3_Clip0.25/loss_weight_sweep_multiseed/Lewes/seed2026"
+ RUN_DIR_NAME_STYLE="runname_timestamp"
+-PACT_RUN_NAME="NCEP_Lewes_CNN_MLP_36H_G0_T0250_EP0100_seed42"
+-PYTHON_RUN_TAG_BASE="NCEP_Lewes_CNN_MLP_36H_G0_T0250_EP0100_seed42"
++PACT_RUN_NAME="NCEP_Lewes_CNN_MLP_36H_G0_T0250_EP0100_seed2026"
++PYTHON_RUN_TAG_BASE="NCEP_Lewes_CNN_MLP_36H_G0_T0250_EP0100_seed2026"
+--- /glade/u/home/zel/scratch/StormSurge/configs/loss_weight_sweep_5e-3_Clip0.25/Lewes/train_config_NCEP_Lewes_CNN_MLP_36H_G0_T0500_EP0100_seed42.sh
++++ /glade/u/home/zel/scratch/StormSurge/configs/loss_weight_sweep_5e-3_Clip0.25_multiseed/Lewes/seed123/train_config_NCEP_Lewes_CNN_MLP_36H_G0_T0500_EP0100_seed123.sh
+@@ -1,5 +1,5 @@
+ #!/usr/bin/env bash
+-# Loss-weight sweep: CNN_MLP_36H, Lewes, seed 42, T0500_EP0100.
++# Loss-weight sweep: CNN_MLP_36H, Lewes, seed 123, T0500_EP0100.
+ # Source: configs/architecture_avgrank_multiseed_LR5e-3_Clip0.25/CNN_MLP_36H/Lewes/seed42/train_config_NCEP_Lewes_CNN_MLP_36H_G0_T0000_EP0000_seed42.sh
+ # Architecture ablation: Lewes, CNN x MLP, history=36h.
+ # Objective: GlobalMSE + 0.05 * TailMSE + 0.01 * EpisodeGTAlignedPeakMSE.
+@@ -40,7 +40,7 @@
+ SHUFFLE_YEARS=0
+ FUTURE_ONLY=0
+ FUTURE_YEAR_THRESHOLD=2030
+-SEED=42
++SEED=123
+ STATION_JSON_DIR="./station_json"
+ USE_SITE_ELEVATION=0
+ USE_BATHYMETRY=0
+@@ -91,7 +91,7 @@
+ 
+ CHECKPOINT_SELECTION="overall"
+ 
+-ALL_RESULTS_ROOT="/glade/u/home/zel/scratch/PACT_StormSurge_FormalRuns_1021_LR5e-3_Clip0.25/loss_weight_sweep/Lewes"
++ALL_RESULTS_ROOT="/glade/u/home/zel/scratch/PACT_StormSurge_FormalRuns_1021_LR5e-3_Clip0.25/loss_weight_sweep_multiseed/Lewes/seed123"
+ RUN_DIR_NAME_STYLE="runname_timestamp"
+-PACT_RUN_NAME="NCEP_Lewes_CNN_MLP_36H_G0_T0500_EP0100_seed42"
+-PYTHON_RUN_TAG_BASE="NCEP_Lewes_CNN_MLP_36H_G0_T0500_EP0100_seed42"
++PACT_RUN_NAME="NCEP_Lewes_CNN_MLP_36H_G0_T0500_EP0100_seed123"
++PYTHON_RUN_TAG_BASE="NCEP_Lewes_CNN_MLP_36H_G0_T0500_EP0100_seed123"
+--- /glade/u/home/zel/scratch/StormSurge/configs/loss_weight_sweep_5e-3_Clip0.25/Lewes/train_config_NCEP_Lewes_CNN_MLP_36H_G0_T0500_EP0100_seed42.sh
++++ /glade/u/home/zel/scratch/StormSurge/configs/loss_weight_sweep_5e-3_Clip0.25_multiseed/Lewes/seed2026/train_config_NCEP_Lewes_CNN_MLP_36H_G0_T0500_EP0100_seed2026.sh
+@@ -1,5 +1,5 @@
+ #!/usr/bin/env bash
+-# Loss-weight sweep: CNN_MLP_36H, Lewes, seed 42, T0500_EP0100.
++# Loss-weight sweep: CNN_MLP_36H, Lewes, seed 2026, T0500_EP0100.
+ # Source: configs/architecture_avgrank_multiseed_LR5e-3_Clip0.25/CNN_MLP_36H/Lewes/seed42/train_config_NCEP_Lewes_CNN_MLP_36H_G0_T0000_EP0000_seed42.sh
+ # Architecture ablation: Lewes, CNN x MLP, history=36h.
+ # Objective: GlobalMSE + 0.05 * TailMSE + 0.01 * EpisodeGTAlignedPeakMSE.
+@@ -40,7 +40,7 @@
+ SHUFFLE_YEARS=0
+ FUTURE_ONLY=0
+ FUTURE_YEAR_THRESHOLD=2030
+-SEED=42
++SEED=2026
+ STATION_JSON_DIR="./station_json"
+ USE_SITE_ELEVATION=0
+ USE_BATHYMETRY=0
+@@ -91,7 +91,7 @@
+ 
+ CHECKPOINT_SELECTION="overall"
+ 
+-ALL_RESULTS_ROOT="/glade/u/home/zel/scratch/PACT_StormSurge_FormalRuns_1021_LR5e-3_Clip0.25/loss_weight_sweep/Lewes"
++ALL_RESULTS_ROOT="/glade/u/home/zel/scratch/PACT_StormSurge_FormalRuns_1021_LR5e-3_Clip0.25/loss_weight_sweep_multiseed/Lewes/seed2026"
+ RUN_DIR_NAME_STYLE="runname_timestamp"
+-PACT_RUN_NAME="NCEP_Lewes_CNN_MLP_36H_G0_T0500_EP0100_seed42"
+-PYTHON_RUN_TAG_BASE="NCEP_Lewes_CNN_MLP_36H_G0_T0500_EP0100_seed42"
++PACT_RUN_NAME="NCEP_Lewes_CNN_MLP_36H_G0_T0500_EP0100_seed2026"
++PYTHON_RUN_TAG_BASE="NCEP_Lewes_CNN_MLP_36H_G0_T0500_EP0100_seed2026"
