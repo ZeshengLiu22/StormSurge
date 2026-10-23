@@ -1,0 +1,3457 @@
+{
+  "status": "PASS_WITH_WORKSPACE_CAVEAT",
+  "ablation_validation": "PASS",
+  "workspace_preservation_check": "64 unrelated concurrent account changes observed; none made by this preparation.",
+  "validated_at": "2026-10-23T06:56:13-04:00",
+  "timezone": "America/New_York",
+  "git_head": "cfddc8774786fb959c9147f05a528cf2ab635d7b",
+  "new_configs": 108,
+  "new_pbs_scripts": 108,
+  "unique_combinations": 108,
+  "source_configs": 36,
+  "source_pbs_templates": 36,
+  "syntax_checks_passed": 216,
+  "new_pbs_cpu_dry_runs_passed": 108,
+  "source_pbs_cpu_dry_runs_passed": 36,
+  "gpu_preflight_python_syntax_checks": 108,
+  "cpu_dry_run_environment": {
+    "CUDA_VISIBLE_DEVICES": "",
+    "DRY_RUN": "1"
+  },
+  "distribution": {
+    "model": {
+      "baseline_cnn_lstm": 36,
+      "baseline_cnn_gru": 36,
+      "baseline_convlstm": 36
+    },
+    "station": {
+      "Battery": 27,
+      "Boston": 27,
+      "CBBT": 27,
+      "Lewes": 27
+    },
+    "seed": {
+      "42": 36,
+      "123": 36,
+      "2026": 36
+    },
+    "loss_tag": {
+      "T0250_EP0000": 36,
+      "T0000_EP0100": 36,
+      "T0250_EP0100": 36
+    }
+  },
+  "distribution_by_model_station": {
+    "baseline_cnn_lstm": {
+      "Battery": 9,
+      "Boston": 9,
+      "CBBT": 9,
+      "Lewes": 9
+    },
+    "baseline_cnn_gru": {
+      "Battery": 9,
+      "Boston": 9,
+      "CBBT": 9,
+      "Lewes": 9
+    },
+    "baseline_convlstm": {
+      "Battery": 9,
+      "Boston": 9,
+      "CBBT": 9,
+      "Lewes": 9
+    }
+  },
+  "resources": {
+    "project": "ULHI0005",
+    "queue": "preempt@desched1",
+    "select": "select=1:ncpus=64:mem=487GB:mpiprocs=4:ompthreads=1:ngpus=4",
+    "walltime": "00:20:00",
+    "rerunnable": "n",
+    "join_output": "oe",
+    "python": "/glade/work/zel/conda-envs/derecho-ml/bin/python",
+    "cuda_module": "cuda/12.9.0",
+    "ddp_ranks": 4
+  },
+  "distinct_log_directories": 108,
+  "station_log_directories": 12,
+  "max_pbs_job_name_length": 14,
+  "unchanged_preexisting_repository_files": 7564,
+  "unchanged_formal_result_files_metadata": 6419,
+  "changed_preexisting_files_by_this_preparation": [],
+  "observed_concurrent_changes": [
+    {
+      "path": "PBS-launcher/loss_weight_sweep_3e-3/Battery/run_T0000_EP0000.pbs",
+      "change": "#PBS -A ULHI0005 -> #PBS -A ULHI0006",
+      "initial": {
+        "mode": 420,
+        "size": 2026,
+        "mtime_ns": 1792709423000000000,
+        "sha256": "d3aae0f53667363f6737fca0d0a0508156f4fb9bfec3eeb54f812781580de17c"
+      },
+      "observed": {
+        "mode": 420,
+        "size": 2026,
+        "mtime_ns": 1792752844000000000,
+        "sha256": "bc8404d50c3a934ee3b4a3d47f7fbca06474f8380adf6eeb2597793abe75bf21"
+      },
+      "action_by_this_preparation": "None; left untouched."
+    },
+    {
+      "path": "PBS-launcher/loss_weight_sweep_3e-3/Battery/run_T0000_EP0025.pbs",
+      "change": "#PBS -A ULHI0005 -> #PBS -A ULHI0006",
+      "initial": {
+        "mode": 420,
+        "size": 2026,
+        "mtime_ns": 1792709423000000000,
+        "sha256": "0ba2d20539248b8d5b294a6e5dac0bca863189247cf00bf8796b360c305f2a61"
+      },
+      "observed": {
+        "mode": 420,
+        "size": 2026,
+        "mtime_ns": 1792752844000000000,
+        "sha256": "9edbd2b9d2aaa772a9e781849faf3d4ad65b2f103efbbae05db83c55a90a09e3"
+      },
+      "action_by_this_preparation": "None; left untouched."
+    },
+    {
+      "path": "PBS-launcher/loss_weight_sweep_3e-3/Battery/run_T0000_EP0050.pbs",
+      "change": "#PBS -A ULHI0005 -> #PBS -A ULHI0006",
+      "initial": {
+        "mode": 420,
+        "size": 2026,
+        "mtime_ns": 1792709423000000000,
+        "sha256": "51c10d7453a454ddbb3bd7d1d54847c5b577af1676425318ecac8c8bae373290"
+      },
+      "observed": {
+        "mode": 420,
+        "size": 2026,
+        "mtime_ns": 1792752844000000000,
+        "sha256": "20ab7d82516513794da48863110b041c21b3fc8124399a166a0152606b928a30"
+      },
+      "action_by_this_preparation": "None; left untouched."
+    },
+    {
+      "path": "PBS-launcher/loss_weight_sweep_3e-3/Battery/run_T0000_EP0100.pbs",
+      "change": "#PBS -A ULHI0005 -> #PBS -A ULHI0006",
+      "initial": {
+        "mode": 420,
+        "size": 2026,
+        "mtime_ns": 1792709423000000000,
+        "sha256": "24d966deafa25d1c58702063525c599e76b87702854144be3a5be266f791fc23"
+      },
+      "observed": {
+        "mode": 420,
+        "size": 2026,
+        "mtime_ns": 1792752844000000000,
+        "sha256": "e29acbe3e66cf100930fac390e7cd7ca4819bf159eb1be07def5ff7bddd61d16"
+      },
+      "action_by_this_preparation": "None; left untouched."
+    },
+    {
+      "path": "PBS-launcher/loss_weight_sweep_3e-3/Battery/run_T0125_EP0000.pbs",
+      "change": "#PBS -A ULHI0005 -> #PBS -A ULHI0006",
+      "initial": {
+        "mode": 420,
+        "size": 2026,
+        "mtime_ns": 1792709423000000000,
+        "sha256": "934377d64d59257066b9ccaf4b4a6587fc3ea51ffb140a71287fe741055da13d"
+      },
+      "observed": {
+        "mode": 420,
+        "size": 2026,
+        "mtime_ns": 1792752844000000000,
+        "sha256": "4f612d2df2864ffcb3e2f0c6da45236ba72c119d2d1c39c4ae6c92d14d6db6be"
+      },
+      "action_by_this_preparation": "None; left untouched."
+    },
+    {
+      "path": "PBS-launcher/loss_weight_sweep_3e-3/Battery/run_T0125_EP0025.pbs",
+      "change": "#PBS -A ULHI0005 -> #PBS -A ULHI0006",
+      "initial": {
+        "mode": 420,
+        "size": 2026,
+        "mtime_ns": 1792709423000000000,
+        "sha256": "8a14f3cd23493b1067ded6a8d957879ebab53ed0e19af93a39bf6cdb76338e67"
+      },
+      "observed": {
+        "mode": 420,
+        "size": 2026,
+        "mtime_ns": 1792752844000000000,
+        "sha256": "a05bdd0c763f25bb10324cbc856bb4e92ffbc7a4f65d2810a0b1c2cb84ca3e02"
+      },
+      "action_by_this_preparation": "None; left untouched."
+    },
+    {
+      "path": "PBS-launcher/loss_weight_sweep_3e-3/Battery/run_T0125_EP0050.pbs",
+      "change": "#PBS -A ULHI0005 -> #PBS -A ULHI0006",
+      "initial": {
+        "mode": 420,
+        "size": 2026,
+        "mtime_ns": 1792709423000000000,
+        "sha256": "63b172de2470464d8ed84047a434457bec9e5cebca7e82a425ee1e59029d2256"
+      },
+      "observed": {
+        "mode": 420,
+        "size": 2026,
+        "mtime_ns": 1792752844000000000,
+        "sha256": "303c8fecf66046516d0acea39eb849bfaddb10acc02dba7a70bc638def1b244a"
+      },
+      "action_by_this_preparation": "None; left untouched."
+    },
+    {
+      "path": "PBS-launcher/loss_weight_sweep_3e-3/Battery/run_T0125_EP0100.pbs",
+      "change": "#PBS -A ULHI0005 -> #PBS -A ULHI0006",
+      "initial": {
+        "mode": 420,
+        "size": 2026,
+        "mtime_ns": 1792709423000000000,
+        "sha256": "d290ab7ea0e2a4ef85ab25357cf8b93e228c2b292b9a4375945abd9dd370c9ec"
+      },
+      "observed": {
+        "mode": 420,
+        "size": 2026,
+        "mtime_ns": 1792752844000000000,
+        "sha256": "66299d84a059b10f224a62ba2f6449c194d6bbfc8156f0d0c6760736d086f4cd"
+      },
+      "action_by_this_preparation": "None; left untouched."
+    },
+    {
+      "path": "PBS-launcher/loss_weight_sweep_3e-3/Battery/run_T0250_EP0000.pbs",
+      "change": "#PBS -A ULHI0005 -> #PBS -A ULHI0006",
+      "initial": {
+        "mode": 420,
+        "size": 2026,
+        "mtime_ns": 1792709423000000000,
+        "sha256": "1f89d13c2d266cd35c45ce6a4603112e5b597b6eb6cd46af4c682a7bfa198bac"
+      },
+      "observed": {
+        "mode": 420,
+        "size": 2026,
+        "mtime_ns": 1792752844000000000,
+        "sha256": "678bcfd2a35a8d317dc127ce48b3888d63039267701252de3385567a9cc86f48"
+      },
+      "action_by_this_preparation": "None; left untouched."
+    },
+    {
+      "path": "PBS-launcher/loss_weight_sweep_3e-3/Battery/run_T0250_EP0025.pbs",
+      "change": "#PBS -A ULHI0005 -> #PBS -A ULHI0006",
+      "initial": {
+        "mode": 420,
+        "size": 2026,
+        "mtime_ns": 1792709423000000000,
+        "sha256": "5cde3eca6e60f310408c00fdad9e96cc2ec51b49f53cf84ec16ef62262a0f62c"
+      },
+      "observed": {
+        "mode": 420,
+        "size": 2026,
+        "mtime_ns": 1792752844000000000,
+        "sha256": "6fab630b7ff53b18925ae3dbe8be09fd86d458228504e6773b30bc3b825292ad"
+      },
+      "action_by_this_preparation": "None; left untouched."
+    },
+    {
+      "path": "PBS-launcher/loss_weight_sweep_3e-3/Battery/run_T0250_EP0050.pbs",
+      "change": "#PBS -A ULHI0005 -> #PBS -A ULHI0006",
+      "initial": {
+        "mode": 420,
+        "size": 2026,
+        "mtime_ns": 1792709423000000000,
+        "sha256": "6d0b0ce4315c95ab4297ae1164bd72d16db37fbf17551f4c31930e6e4128a785"
+      },
+      "observed": {
+        "mode": 420,
+        "size": 2026,
+        "mtime_ns": 1792752844000000000,
+        "sha256": "852eefd596d8677031897a5337a1760325f1471941036ce036b46d7ea0c1e1f8"
+      },
+      "action_by_this_preparation": "None; left untouched."
+    },
+    {
+      "path": "PBS-launcher/loss_weight_sweep_3e-3/Battery/run_T0250_EP0100.pbs",
+      "change": "#PBS -A ULHI0005 -> #PBS -A ULHI0006",
+      "initial": {
+        "mode": 420,
+        "size": 2026,
+        "mtime_ns": 1792709423000000000,
+        "sha256": "d664c97999327af57b3b7719a7f0a270cd6b76fe1320cd37a06e4c23deae646e"
+      },
+      "observed": {
+        "mode": 420,
+        "size": 2026,
+        "mtime_ns": 1792752844000000000,
+        "sha256": "7e2e09d1904acafa3c4df7a3aec307150b9fd66637816211971443c4e1e35527"
+      },
+      "action_by_this_preparation": "None; left untouched."
+    },
+    {
+      "path": "PBS-launcher/loss_weight_sweep_3e-3/Battery/run_T0500_EP0000.pbs",
+      "change": "#PBS -A ULHI0005 -> #PBS -A ULHI0006",
+      "initial": {
+        "mode": 420,
+        "size": 2026,
+        "mtime_ns": 1792709423000000000,
+        "sha256": "8be7298003f16ff508eb89b58e1639c63566d089cda9f2251402d6cd6bb8f6a4"
+      },
+      "observed": {
+        "mode": 420,
+        "size": 2026,
+        "mtime_ns": 1792752844000000000,
+        "sha256": "3a95fc6fc154b53a77cefa4de6f18f45e848f4d4dec99baff5cdc6c38e36901d"
+      },
+      "action_by_this_preparation": "None; left untouched."
+    },
+    {
+      "path": "PBS-launcher/loss_weight_sweep_3e-3/Battery/run_T0500_EP0025.pbs",
+      "change": "#PBS -A ULHI0005 -> #PBS -A ULHI0006",
+      "initial": {
+        "mode": 420,
+        "size": 2026,
+        "mtime_ns": 1792709423000000000,
+        "sha256": "fa5466236ec0380841e016c8d58cca10f3e291af13129c40fa24f41ae4c9c828"
+      },
+      "observed": {
+        "mode": 420,
+        "size": 2026,
+        "mtime_ns": 1792752844000000000,
+        "sha256": "a186c05314443ab423a1b41468ac245297d8a2575637e17944ba785e6add8ad8"
+      },
+      "action_by_this_preparation": "None; left untouched."
+    },
+    {
+      "path": "PBS-launcher/loss_weight_sweep_3e-3/Battery/run_T0500_EP0050.pbs",
+      "change": "#PBS -A ULHI0005 -> #PBS -A ULHI0006",
+      "initial": {
+        "mode": 420,
+        "size": 2026,
+        "mtime_ns": 1792709423000000000,
+        "sha256": "5c4fc68c4fd607d6b039b2bc61af85d1e3da8a1aa1478afdde9e36ab63233e73"
+      },
+      "observed": {
+        "mode": 420,
+        "size": 2026,
+        "mtime_ns": 1792752844000000000,
+        "sha256": "e884785de728e1927748ab7e4d8c350c5f011046e64aa37d19bca5e5b628ea79"
+      },
+      "action_by_this_preparation": "None; left untouched."
+    },
+    {
+      "path": "PBS-launcher/loss_weight_sweep_3e-3/Battery/run_T0500_EP0100.pbs",
+      "change": "#PBS -A ULHI0005 -> #PBS -A ULHI0006",
+      "initial": {
+        "mode": 420,
+        "size": 2026,
+        "mtime_ns": 1792709423000000000,
+        "sha256": "bd3113d9aeac037e35d48c42cd8682ca4f51dba70f08dccacbcb8e1eeda8820b"
+      },
+      "observed": {
+        "mode": 420,
+        "size": 2026,
+        "mtime_ns": 1792752844000000000,
+        "sha256": "74b40c5c8e8f60c0fa401f219420114b54384ff51abb1168c8802d9d8389cc4a"
+      },
+      "action_by_this_preparation": "None; left untouched."
+    },
+    {
+      "path": "PBS-launcher/loss_weight_sweep_3e-3/Boston/run_T0000_EP0000.pbs",
+      "change": "#PBS -A ULHI0005 -> #PBS -A ULHI0006",
+      "initial": {
+        "mode": 420,
+        "size": 2020,
+        "mtime_ns": 1792709423000000000,
+        "sha256": "0237fe5776eba85bc0a36f15cff9e1f48a332e0041ebf76c767ab4ac8980adbb"
+      },
+      "observed": {
+        "mode": 420,
+        "size": 2020,
+        "mtime_ns": 1792752844000000000,
+        "sha256": "f810e17c0bade9c7cd17d209aa584d936bacab63921d4610873300e6a9e8fe4c"
+      },
+      "action_by_this_preparation": "None; left untouched."
+    },
+    {
+      "path": "PBS-launcher/loss_weight_sweep_3e-3/Boston/run_T0000_EP0025.pbs",
+      "change": "#PBS -A ULHI0005 -> #PBS -A ULHI0006",
+      "initial": {
+        "mode": 420,
+        "size": 2020,
+        "mtime_ns": 1792709423000000000,
+        "sha256": "a4bdb9f8374a196df07cc9d39365a6e735395bc287ecc06d3ba3e620bccbf7b2"
+      },
+      "observed": {
+        "mode": 420,
+        "size": 2020,
+        "mtime_ns": 1792752844000000000,
+        "sha256": "8f6b2a3aff55fbcd763be845b5a62cf3725db79025052b27ba5b7148d26dd7e3"
+      },
+      "action_by_this_preparation": "None; left untouched."
+    },
+    {
+      "path": "PBS-launcher/loss_weight_sweep_3e-3/Boston/run_T0000_EP0050.pbs",
+      "change": "#PBS -A ULHI0005 -> #PBS -A ULHI0006",
+      "initial": {
+        "mode": 420,
+        "size": 2020,
+        "mtime_ns": 1792709423000000000,
+        "sha256": "bcfda8dc9607509a93c0f6bed3debb80865075d365e9882a39240473a8001e2f"
+      },
+      "observed": {
+        "mode": 420,
+        "size": 2020,
+        "mtime_ns": 1792752844000000000,
+        "sha256": "26cfe64dd8c9f4ae7904ade61c916e83e6ae253709ee9723567e8d9251b4a10c"
+      },
+      "action_by_this_preparation": "None; left untouched."
+    },
+    {
+      "path": "PBS-launcher/loss_weight_sweep_3e-3/Boston/run_T0000_EP0100.pbs",
+      "change": "#PBS -A ULHI0005 -> #PBS -A ULHI0006",
+      "initial": {
+        "mode": 420,
+        "size": 2020,
+        "mtime_ns": 1792709423000000000,
+        "sha256": "da4a5c7772d6e8272c6a17a367d943bdc4632604cd5cb12b21bed9cda7f5ed92"
+      },
+      "observed": {
+        "mode": 420,
+        "size": 2020,
+        "mtime_ns": 1792752844000000000,
+        "sha256": "e7eed8e70d5113b98e9852b0f062adad70e065974566fb40ed8e0e83f23e61f1"
+      },
+      "action_by_this_preparation": "None; left untouched."
+    },
+    {
+      "path": "PBS-launcher/loss_weight_sweep_3e-3/Boston/run_T0125_EP0000.pbs",
+      "change": "#PBS -A ULHI0005 -> #PBS -A ULHI0006",
+      "initial": {
+        "mode": 420,
+        "size": 2020,
+        "mtime_ns": 1792709423000000000,
+        "sha256": "34015dd55cfd3c6d9299c0d59779e9b8dd4b4787e0eda0d33ef7ad9f8b10d107"
+      },
+      "observed": {
+        "mode": 420,
+        "size": 2020,
+        "mtime_ns": 1792752844000000000,
+        "sha256": "34d9357e1c3723cc6190a20c65179c1633d591ceb0b2fbfecfc9c1d9da7eb79c"
+      },
+      "action_by_this_preparation": "None; left untouched."
+    },
+    {
+      "path": "PBS-launcher/loss_weight_sweep_3e-3/Boston/run_T0125_EP0025.pbs",
+      "change": "#PBS -A ULHI0005 -> #PBS -A ULHI0006",
+      "initial": {
+        "mode": 420,
+        "size": 2020,
+        "mtime_ns": 1792709423000000000,
+        "sha256": "2ba520d6da20bab71b10ee8e426cc7b5139cb4d1f2d1e8cdf85a30f9555e07d8"
+      },
+      "observed": {
+        "mode": 420,
+        "size": 2020,
+        "mtime_ns": 1792752844000000000,
+        "sha256": "3c63b5fb68d4a9f567a9eb110c3706ab97ac1740f7a59e91818299dbcd949470"
+      },
+      "action_by_this_preparation": "None; left untouched."
+    },
+    {
+      "path": "PBS-launcher/loss_weight_sweep_3e-3/Boston/run_T0125_EP0050.pbs",
+      "change": "#PBS -A ULHI0005 -> #PBS -A ULHI0006",
+      "initial": {
+        "mode": 420,
+        "size": 2020,
+        "mtime_ns": 1792709423000000000,
+        "sha256": "3fe4566cb8160494ca9171868d18d9e15eea66aa762b96fe83a5f3bac08bf87a"
+      },
+      "observed": {
+        "mode": 420,
+        "size": 2020,
+        "mtime_ns": 1792752844000000000,
+        "sha256": "7e4c385791946c2cb6376d0572fbab008602f07aef4036b2d86a5525a7e7a25c"
+      },
+      "action_by_this_preparation": "None; left untouched."
+    },
+    {
+      "path": "PBS-launcher/loss_weight_sweep_3e-3/Boston/run_T0125_EP0100.pbs",
+      "change": "#PBS -A ULHI0005 -> #PBS -A ULHI0006",
+      "initial": {
+        "mode": 420,
+        "size": 2020,
+        "mtime_ns": 1792709423000000000,
+        "sha256": "35602d23fb729c8d7f5d85698d78bfa8728bb65ddabc887310e89ae75cb71b78"
+      },
+      "observed": {
+        "mode": 420,
+        "size": 2020,
+        "mtime_ns": 1792752844000000000,
+        "sha256": "ab25a5e6b3ac0008f955038c89d486b7c36840b36046c50dc94c4443cc2914ef"
+      },
+      "action_by_this_preparation": "None; left untouched."
+    },
+    {
+      "path": "PBS-launcher/loss_weight_sweep_3e-3/Boston/run_T0250_EP0000.pbs",
+      "change": "#PBS -A ULHI0005 -> #PBS -A ULHI0006",
+      "initial": {
+        "mode": 420,
+        "size": 2020,
+        "mtime_ns": 1792709423000000000,
+        "sha256": "e531875f0bfbdadaf26005d4fc4421eb5dd10d167bab9a17e4aef75cdc659c68"
+      },
+      "observed": {
+        "mode": 420,
+        "size": 2020,
+        "mtime_ns": 1792752844000000000,
+        "sha256": "62a799a936237f61739a70a3c6a718515fb67252f9ff1938b9a6b32c8da93b90"
+      },
+      "action_by_this_preparation": "None; left untouched."
+    },
+    {
+      "path": "PBS-launcher/loss_weight_sweep_3e-3/Boston/run_T0250_EP0025.pbs",
+      "change": "#PBS -A ULHI0005 -> #PBS -A ULHI0006",
+      "initial": {
+        "mode": 420,
+        "size": 2020,
+        "mtime_ns": 1792709423000000000,
+        "sha256": "bc5a327db4b8559e57629cbd5cb9f865dfec01cd9b6b88ff264c4aedb54f7298"
+      },
+      "observed": {
+        "mode": 420,
+        "size": 2020,
+        "mtime_ns": 1792752844000000000,
+        "sha256": "14288b41b25099a60167bc5480019e37bc2b45841fdd03007eecb262b8e665e4"
+      },
+      "action_by_this_preparation": "None; left untouched."
+    },
+    {
+      "path": "PBS-launcher/loss_weight_sweep_3e-3/Boston/run_T0250_EP0050.pbs",
+      "change": "#PBS -A ULHI0005 -> #PBS -A ULHI0006",
+      "initial": {
+        "mode": 420,
+        "size": 2020,
+        "mtime_ns": 1792709423000000000,
+        "sha256": "969962b5661b918bbf9d6221274d2b6ea010d9f65e4f3ec39720eb855575883b"
+      },
+      "observed": {
+        "mode": 420,
+        "size": 2020,
+        "mtime_ns": 1792752844000000000,
+        "sha256": "595554db12a147d9461ddb053e6b9295bc2f60d795a626bcda46a4bb1b1accc9"
+      },
+      "action_by_this_preparation": "None; left untouched."
+    },
+    {
+      "path": "PBS-launcher/loss_weight_sweep_3e-3/Boston/run_T0250_EP0100.pbs",
+      "change": "#PBS -A ULHI0005 -> #PBS -A ULHI0006",
+      "initial": {
+        "mode": 420,
+        "size": 2020,
+        "mtime_ns": 1792709423000000000,
+        "sha256": "27fc4f0269237844a7d3d69fc60d73ba2342aa8b57e08316076905f96f145ae9"
+      },
+      "observed": {
+        "mode": 420,
+        "size": 2020,
+        "mtime_ns": 1792752844000000000,
+        "sha256": "260643b98550877f80703d86efa0459252fc08dce7ebdda86938a5fed9f3425c"
+      },
+      "action_by_this_preparation": "None; left untouched."
+    },
+    {
+      "path": "PBS-launcher/loss_weight_sweep_3e-3/Boston/run_T0500_EP0000.pbs",
+      "change": "#PBS -A ULHI0005 -> #PBS -A ULHI0006",
+      "initial": {
+        "mode": 420,
+        "size": 2020,
+        "mtime_ns": 1792709423000000000,
+        "sha256": "e115b86ccd334ce66f0fa7fc85d34bb7b5810eabec8e60d6a766bbefc2dea31b"
+      },
+      "observed": {
+        "mode": 420,
+        "size": 2020,
+        "mtime_ns": 1792752844000000000,
+        "sha256": "75dd9dbca66469ab555faee774a96043aa798571fe05d581f32bbc4c1e11e766"
+      },
+      "action_by_this_preparation": "None; left untouched."
+    },
+    {
+      "path": "PBS-launcher/loss_weight_sweep_3e-3/Boston/run_T0500_EP0025.pbs",
+      "change": "#PBS -A ULHI0005 -> #PBS -A ULHI0006",
+      "initial": {
+        "mode": 420,
+        "size": 2020,
+        "mtime_ns": 1792709423000000000,
+        "sha256": "5751594591529d9cebeb1e0a8f03b2e384f1c93ab2a2e15af235e2fc110914ef"
+      },
+      "observed": {
+        "mode": 420,
+        "size": 2020,
+        "mtime_ns": 1792752844000000000,
+        "sha256": "78b750b02aa468b2735c35a21a2b0ccfeb33c0e84b69cafd7a19e5da956d683c"
+      },
+      "action_by_this_preparation": "None; left untouched."
+    },
+    {
+      "path": "PBS-launcher/loss_weight_sweep_3e-3/Boston/run_T0500_EP0050.pbs",
+      "change": "#PBS -A ULHI0005 -> #PBS -A ULHI0006",
+      "initial": {
+        "mode": 420,
+        "size": 2020,
+        "mtime_ns": 1792709423000000000,
+        "sha256": "bbe5b2cfeeb789ab83ed540e3cb49583764e6924023f40e19f5380c8f72dd7f1"
+      },
+      "observed": {
+        "mode": 420,
+        "size": 2020,
+        "mtime_ns": 1792752844000000000,
+        "sha256": "ce6f3c10081413e997fa67a5d18240e62f4bc9078cf4182acd78d3dcb3b8cad1"
+      },
+      "action_by_this_preparation": "None; left untouched."
+    },
+    {
+      "path": "PBS-launcher/loss_weight_sweep_3e-3/Boston/run_T0500_EP0100.pbs",
+      "change": "#PBS -A ULHI0005 -> #PBS -A ULHI0006",
+      "initial": {
+        "mode": 420,
+        "size": 2020,
+        "mtime_ns": 1792709423000000000,
+        "sha256": "7c35dfa69927f768e72d582c5a7b7732b09af3dcc7c55e88c437aa313258f2f8"
+      },
+      "observed": {
+        "mode": 420,
+        "size": 2020,
+        "mtime_ns": 1792752844000000000,
+        "sha256": "3fa6200bf8be9f5b7122625c7ee2d09452bdf011a9c79f203aa71496f3c7ce5a"
+      },
+      "action_by_this_preparation": "None; left untouched."
+    },
+    {
+      "path": "PBS-launcher/loss_weight_sweep_3e-3/CBBT/run_T0000_EP0000.pbs",
+      "change": "#PBS -A ULHI0005 -> #PBS -A ULHI0006",
+      "initial": {
+        "mode": 420,
+        "size": 2008,
+        "mtime_ns": 1792709423000000000,
+        "sha256": "fea87f606766c5e37e4052125be3c6fdc9e596ae713872611faf61cec96db25d"
+      },
+      "observed": {
+        "mode": 420,
+        "size": 2008,
+        "mtime_ns": 1792752844000000000,
+        "sha256": "5914eea6ac4531bb2da18d0bed0cdc7b200a7539a545005849f737dcadad1615"
+      },
+      "action_by_this_preparation": "None; left untouched."
+    },
+    {
+      "path": "PBS-launcher/loss_weight_sweep_3e-3/CBBT/run_T0000_EP0025.pbs",
+      "change": "#PBS -A ULHI0005 -> #PBS -A ULHI0006",
+      "initial": {
+        "mode": 420,
+        "size": 2008,
+        "mtime_ns": 1792709423000000000,
+        "sha256": "1422fff0fcfa3d36301c81bbb284bec920f516f05dbc6d17e61e3622fe307a3b"
+      },
+      "observed": {
+        "mode": 420,
+        "size": 2008,
+        "mtime_ns": 1792752844000000000,
+        "sha256": "1decbb7773336575352f2b9368b722dfc933bc59e2b3c8c4f0a93318dcad095f"
+      },
+      "action_by_this_preparation": "None; left untouched."
+    },
+    {
+      "path": "PBS-launcher/loss_weight_sweep_3e-3/CBBT/run_T0000_EP0050.pbs",
+      "change": "#PBS -A ULHI0005 -> #PBS -A ULHI0006",
+      "initial": {
+        "mode": 420,
+        "size": 2008,
+        "mtime_ns": 1792709423000000000,
+        "sha256": "78b1a4ed80675088d1206c60468d0d400dbe207d8011bf0eb4f7191d82ebc79b"
+      },
+      "observed": {
+        "mode": 420,
+        "size": 2008,
+        "mtime_ns": 1792752844000000000,
+        "sha256": "8c84feb216c4d6646d4b95b68648081f0087f5b992fedf0ed867b97e21d94973"
+      },
+      "action_by_this_preparation": "None; left untouched."
+    },
+    {
+      "path": "PBS-launcher/loss_weight_sweep_3e-3/CBBT/run_T0000_EP0100.pbs",
+      "change": "#PBS -A ULHI0005 -> #PBS -A ULHI0006",
+      "initial": {
+        "mode": 420,
+        "size": 2008,
+        "mtime_ns": 1792709423000000000,
+        "sha256": "bf5eefcce1ade13b8b847c117490cf5d7fc024fdecf7bea216ab1db2e70f1c5d"
+      },
+      "observed": {
+        "mode": 420,
+        "size": 2008,
+        "mtime_ns": 1792752844000000000,
+        "sha256": "f20874d2b5dd14ed84226c3ee29e7e3c60d0889cb3b8d61d9cc4fda1644acb9c"
+      },
+      "action_by_this_preparation": "None; left untouched."
+    },
+    {
+      "path": "PBS-launcher/loss_weight_sweep_3e-3/CBBT/run_T0125_EP0000.pbs",
+      "change": "#PBS -A ULHI0005 -> #PBS -A ULHI0006",
+      "initial": {
+        "mode": 420,
+        "size": 2008,
+        "mtime_ns": 1792709423000000000,
+        "sha256": "133bf9c8eca9db6e98214b6155f4ca71b18cb54a0aa8c7616495b619a2a2008d"
+      },
+      "observed": {
+        "mode": 420,
+        "size": 2008,
+        "mtime_ns": 1792752844000000000,
+        "sha256": "deaa69e94257d089dc9783c074a47ae17f3a08550047d731ab77a562dc71ff5f"
+      },
+      "action_by_this_preparation": "None; left untouched."
+    },
+    {
+      "path": "PBS-launcher/loss_weight_sweep_3e-3/CBBT/run_T0125_EP0025.pbs",
+      "change": "#PBS -A ULHI0005 -> #PBS -A ULHI0006",
+      "initial": {
+        "mode": 420,
+        "size": 2008,
+        "mtime_ns": 1792709423000000000,
+        "sha256": "18038e59e54dc33afabe96e75fa069d28e85ad77c3ae302c48ab895519fd4ce9"
+      },
+      "observed": {
+        "mode": 420,
+        "size": 2008,
+        "mtime_ns": 1792752844000000000,
+        "sha256": "646a55948c008cd1a8e08eb2d4bcc22f3b2bdc62fcb60606a08b7d9774fb864e"
+      },
+      "action_by_this_preparation": "None; left untouched."
+    },
+    {
+      "path": "PBS-launcher/loss_weight_sweep_3e-3/CBBT/run_T0125_EP0050.pbs",
+      "change": "#PBS -A ULHI0005 -> #PBS -A ULHI0006",
+      "initial": {
+        "mode": 420,
+        "size": 2008,
+        "mtime_ns": 1792709423000000000,
+        "sha256": "789ca616de5c30f97cbe1a96b1ef459f8ba525189983c29a433e7325ef589ea3"
+      },
+      "observed": {
+        "mode": 420,
+        "size": 2008,
+        "mtime_ns": 1792752844000000000,
+        "sha256": "7d06d44a12e314426e30a3a8e7cb1212ec652e0648b10c60597b7aa9e3bef98e"
+      },
+      "action_by_this_preparation": "None; left untouched."
+    },
+    {
+      "path": "PBS-launcher/loss_weight_sweep_3e-3/CBBT/run_T0125_EP0100.pbs",
+      "change": "#PBS -A ULHI0005 -> #PBS -A ULHI0006",
+      "initial": {
+        "mode": 420,
+        "size": 2008,
+        "mtime_ns": 1792709423000000000,
+        "sha256": "615d39bf2345851fee61711acaf5732446c94113a7aee5720f8c8ff698ac506e"
+      },
+      "observed": {
+        "mode": 420,
+        "size": 2008,
+        "mtime_ns": 1792752844000000000,
+        "sha256": "d5b859e9b8c659d20ad23caf56e6c1dca83e4cb896496d8ee3b957222d6cfb46"
+      },
+      "action_by_this_preparation": "None; left untouched."
+    },
+    {
+      "path": "PBS-launcher/loss_weight_sweep_3e-3/CBBT/run_T0250_EP0000.pbs",
+      "change": "#PBS -A ULHI0005 -> #PBS -A ULHI0006",
+      "initial": {
+        "mode": 420,
+        "size": 2008,
+        "mtime_ns": 1792709423000000000,
+        "sha256": "d509dfe8439029a5c5a895d0a8a102f6607c23799a06d909b21ddec398afbae5"
+      },
+      "observed": {
+        "mode": 420,
+        "size": 2008,
+        "mtime_ns": 1792752844000000000,
+        "sha256": "f03b3a13bc799e0e2f0abe9862c1548b9ba3556374f33682725c6ed2b2e72d22"
+      },
+      "action_by_this_preparation": "None; left untouched."
+    },
+    {
+      "path": "PBS-launcher/loss_weight_sweep_3e-3/CBBT/run_T0250_EP0025.pbs",
+      "change": "#PBS -A ULHI0005 -> #PBS -A ULHI0006",
+      "initial": {
+        "mode": 420,
+        "size": 2008,
+        "mtime_ns": 1792709423000000000,
+        "sha256": "8315c708cbc0adf3b9bf524c7c1e3a5073c3ae6d3b0cd180077c057ce7cd9791"
+      },
+      "observed": {
+        "mode": 420,
+        "size": 2008,
+        "mtime_ns": 1792752844000000000,
+        "sha256": "b8fc4f31987c441e6c406628974c28672011e39c69724be01f922f2d2dec5745"
+      },
+      "action_by_this_preparation": "None; left untouched."
+    },
+    {
+      "path": "PBS-launcher/loss_weight_sweep_3e-3/CBBT/run_T0250_EP0050.pbs",
+      "change": "#PBS -A ULHI0005 -> #PBS -A ULHI0006",
+      "initial": {
+        "mode": 420,
+        "size": 2008,
+        "mtime_ns": 1792709423000000000,
+        "sha256": "e9c7adc3c7969f3ae285332520b16a012153b549d3d34a4a13623be9a6b1da16"
+      },
+      "observed": {
+        "mode": 420,
+        "size": 2008,
+        "mtime_ns": 1792752844000000000,
+        "sha256": "8c5096c2380638f4375b55787fa308cdedb831abdd41a2c11e5bd801d9f5269a"
+      },
+      "action_by_this_preparation": "None; left untouched."
+    },
+    {
+      "path": "PBS-launcher/loss_weight_sweep_3e-3/CBBT/run_T0250_EP0100.pbs",
+      "change": "#PBS -A ULHI0005 -> #PBS -A ULHI0006",
+      "initial": {
+        "mode": 420,
+        "size": 2008,
+        "mtime_ns": 1792709423000000000,
+        "sha256": "322406a791ae7cefa6977a816d8108bdf06d34df59dc90b2c5519a0acd3cd78b"
+      },
+      "observed": {
+        "mode": 420,
+        "size": 2008,
+        "mtime_ns": 1792752844000000000,
+        "sha256": "7a8d2d44a35e487d6283c065d305fe448e92cc9547ce1500ab9ff2a0a9b52db1"
+      },
+      "action_by_this_preparation": "None; left untouched."
+    },
+    {
+      "path": "PBS-launcher/loss_weight_sweep_3e-3/CBBT/run_T0500_EP0000.pbs",
+      "change": "#PBS -A ULHI0005 -> #PBS -A ULHI0006",
+      "initial": {
+        "mode": 420,
+        "size": 2008,
+        "mtime_ns": 1792709423000000000,
+        "sha256": "158176f331389f9ecfca8ff95f22b9cd3daeefcbffc44842dd65cbe08ce25dfb"
+      },
+      "observed": {
+        "mode": 420,
+        "size": 2008,
+        "mtime_ns": 1792752844000000000,
+        "sha256": "968eb9b0257632aa84fc958ea82c32ee0e582a33ff2735402588137fd05485d7"
+      },
+      "action_by_this_preparation": "None; left untouched."
+    },
+    {
+      "path": "PBS-launcher/loss_weight_sweep_3e-3/CBBT/run_T0500_EP0025.pbs",
+      "change": "#PBS -A ULHI0005 -> #PBS -A ULHI0006",
+      "initial": {
+        "mode": 420,
+        "size": 2008,
+        "mtime_ns": 1792709423000000000,
+        "sha256": "8b248d724fdf7228eb553426a317c4e57ad98a084a77ef6ad771a5c59acee200"
+      },
+      "observed": {
+        "mode": 420,
+        "size": 2008,
+        "mtime_ns": 1792752844000000000,
+        "sha256": "32ffec6c77f7371157e5298b5971d187b3d2884c3415bdc8e32a288abdfb61ad"
+      },
+      "action_by_this_preparation": "None; left untouched."
+    },
+    {
+      "path": "PBS-launcher/loss_weight_sweep_3e-3/CBBT/run_T0500_EP0050.pbs",
+      "change": "#PBS -A ULHI0005 -> #PBS -A ULHI0006",
+      "initial": {
+        "mode": 420,
+        "size": 2008,
+        "mtime_ns": 1792709423000000000,
+        "sha256": "4b9140c3e71402cdd1f97a7107ce6713d6fd67fa342b96fb1df26583cbe643fe"
+      },
+      "observed": {
+        "mode": 420,
+        "size": 2008,
+        "mtime_ns": 1792752844000000000,
+        "sha256": "0727affcd76a5c1f485f82f351ef5bc018d3328c744e3bea6eefcbd2a6d53776"
+      },
+      "action_by_this_preparation": "None; left untouched."
+    },
+    {
+      "path": "PBS-launcher/loss_weight_sweep_3e-3/CBBT/run_T0500_EP0100.pbs",
+      "change": "#PBS -A ULHI0005 -> #PBS -A ULHI0006",
+      "initial": {
+        "mode": 420,
+        "size": 2008,
+        "mtime_ns": 1792709423000000000,
+        "sha256": "e6beccfd69cea670a69774702090804ea534ee47656750c2dcd8208fb8779080"
+      },
+      "observed": {
+        "mode": 420,
+        "size": 2008,
+        "mtime_ns": 1792752844000000000,
+        "sha256": "c4c7e04167007e49cf556b4713c6aadb66a7e91314337c723d76cc4166c0a56b"
+      },
+      "action_by_this_preparation": "None; left untouched."
+    },
+    {
+      "path": "PBS-launcher/loss_weight_sweep_3e-3/Lewes/run_T0000_EP0000.pbs",
+      "change": "#PBS -A ULHI0005 -> #PBS -A ULHI0006",
+      "initial": {
+        "mode": 420,
+        "size": 2014,
+        "mtime_ns": 1792709423000000000,
+        "sha256": "41cb752711b8d7d46fbb319f4bba97e9472e7b30924f0e6209a6412d7bd8bf87"
+      },
+      "observed": {
+        "mode": 420,
+        "size": 2014,
+        "mtime_ns": 1792752844000000000,
+        "sha256": "b9363ac1fecb65598b0bccf75b5385b05a0d0da7ed689c0c6cf6cdb8bb14e249"
+      },
+      "action_by_this_preparation": "None; left untouched."
+    },
+    {
+      "path": "PBS-launcher/loss_weight_sweep_3e-3/Lewes/run_T0000_EP0025.pbs",
+      "change": "#PBS -A ULHI0005 -> #PBS -A ULHI0006",
+      "initial": {
+        "mode": 420,
+        "size": 2014,
+        "mtime_ns": 1792709423000000000,
+        "sha256": "b794116953b534be2ffb47165c7e3230b98b2c8599acca294dcbcb9750709814"
+      },
+      "observed": {
+        "mode": 420,
+        "size": 2014,
+        "mtime_ns": 1792752844000000000,
+        "sha256": "4b87817398210daf68e95e02dffcb9c73d1eb3e1b90d3f5a60911f843e962840"
+      },
+      "action_by_this_preparation": "None; left untouched."
+    },
+    {
+      "path": "PBS-launcher/loss_weight_sweep_3e-3/Lewes/run_T0000_EP0050.pbs",
+      "change": "#PBS -A ULHI0005 -> #PBS -A ULHI0006",
+      "initial": {
+        "mode": 420,
+        "size": 2014,
+        "mtime_ns": 1792709423000000000,
+        "sha256": "5c3c367d103aec4bd6f1ef7aab2dac7a1ddaff537b80f8d9554b1edb41f680ab"
+      },
+      "observed": {
+        "mode": 420,
+        "size": 2014,
+        "mtime_ns": 1792752844000000000,
+        "sha256": "47b91dfb2b5f14ffadf378fb7c501745dc253fb734aa144297dbfebd8830e259"
+      },
+      "action_by_this_preparation": "None; left untouched."
+    },
+    {
+      "path": "PBS-launcher/loss_weight_sweep_3e-3/Lewes/run_T0000_EP0100.pbs",
+      "change": "#PBS -A ULHI0005 -> #PBS -A ULHI0006",
+      "initial": {
+        "mode": 420,
+        "size": 2014,
+        "mtime_ns": 1792709423000000000,
+        "sha256": "a435c4b4a84d52825a2a4d09de36abfdcb7e772b315b2751ffa63475c360791e"
+      },
+      "observed": {
+        "mode": 420,
+        "size": 2014,
+        "mtime_ns": 1792752844000000000,
+        "sha256": "13dbd0829cfcf8b6d11e1662e91b8eb9ef1c161b352fb659a98254224b85e179"
+      },
+      "action_by_this_preparation": "None; left untouched."
+    },
+    {
+      "path": "PBS-launcher/loss_weight_sweep_3e-3/Lewes/run_T0125_EP0000.pbs",
+      "change": "#PBS -A ULHI0005 -> #PBS -A ULHI0006",
+      "initial": {
+        "mode": 420,
+        "size": 2014,
+        "mtime_ns": 1792709423000000000,
+        "sha256": "b47588e9f02de254f2d2e84571323789b6e48db864da79d6966b722ef3a5ad28"
+      },
+      "observed": {
+        "mode": 420,
+        "size": 2014,
+        "mtime_ns": 1792752844000000000,
+        "sha256": "7678f72d7352a9f0160381d370874995130f3de7bba3824dbecd3121c0ab8278"
+      },
+      "action_by_this_preparation": "None; left untouched."
+    },
+    {
+      "path": "PBS-launcher/loss_weight_sweep_3e-3/Lewes/run_T0125_EP0025.pbs",
+      "change": "#PBS -A ULHI0005 -> #PBS -A ULHI0006",
+      "initial": {
+        "mode": 420,
+        "size": 2014,
+        "mtime_ns": 1792709423000000000,
+        "sha256": "2d24bc4b9d4cfc698f4b88b7da8b15f9625f73b42f26860f1e8764f81a2a2070"
+      },
+      "observed": {
+        "mode": 420,
+        "size": 2014,
+        "mtime_ns": 1792752844000000000,
+        "sha256": "131afb683b6f558e8cd0d8f3c8f11552521f89fb2b55a5b84924312236b87a94"
+      },
+      "action_by_this_preparation": "None; left untouched."
+    },
+    {
+      "path": "PBS-launcher/loss_weight_sweep_3e-3/Lewes/run_T0125_EP0050.pbs",
+      "change": "#PBS -A ULHI0005 -> #PBS -A ULHI0006",
+      "initial": {
+        "mode": 420,
+        "size": 2014,
+        "mtime_ns": 1792709423000000000,
+        "sha256": "ac6a7a0213f4ad8c0d9199eee989cdc07e815e4085ad626fe5123a58ed9fa72e"
+      },
+      "observed": {
+        "mode": 420,
+        "size": 2014,
+        "mtime_ns": 1792752844000000000,
+        "sha256": "554adbd12a4dacd1e5104550724f85f5d32f9aac3637cfb23653d586c0e034b8"
+      },
+      "action_by_this_preparation": "None; left untouched."
+    },
+    {
+      "path": "PBS-launcher/loss_weight_sweep_3e-3/Lewes/run_T0125_EP0100.pbs",
+      "change": "#PBS -A ULHI0005 -> #PBS -A ULHI0006",
+      "initial": {
+        "mode": 420,
+        "size": 2014,
+        "mtime_ns": 1792709423000000000,
+        "sha256": "2210b841eb5d968469caa9e2747601c92eb9f983bd4c8442f4294d17662b6333"
+      },
+      "observed": {
+        "mode": 420,
+        "size": 2014,
+        "mtime_ns": 1792752844000000000,
+        "sha256": "2930750e9b116b7425006855d1a070a175c5a42b604bc4ce8bc30bb71ca09695"
+      },
+      "action_by_this_preparation": "None; left untouched."
+    },
+    {
+      "path": "PBS-launcher/loss_weight_sweep_3e-3/Lewes/run_T0250_EP0000.pbs",
+      "change": "#PBS -A ULHI0005 -> #PBS -A ULHI0006",
+      "initial": {
+        "mode": 420,
+        "size": 2014,
+        "mtime_ns": 1792709423000000000,
+        "sha256": "90c1922edcc88096be2e89f6afbb026af41436d9cf1fd5aee6b5bbe57649f238"
+      },
+      "observed": {
+        "mode": 420,
+        "size": 2014,
+        "mtime_ns": 1792752844000000000,
+        "sha256": "d15fd2256e820fc4242fbffc38d59f21d69a318355248af4a90610f0b6be638b"
+      },
+      "action_by_this_preparation": "None; left untouched."
+    },
+    {
+      "path": "PBS-launcher/loss_weight_sweep_3e-3/Lewes/run_T0250_EP0025.pbs",
+      "change": "#PBS -A ULHI0005 -> #PBS -A ULHI0006",
+      "initial": {
+        "mode": 420,
+        "size": 2014,
+        "mtime_ns": 1792709423000000000,
+        "sha256": "f70053a7ce0cea131ec9216e77aaf2ae4a183b48b33ed6a0e8d4ba05101e1420"
+      },
+      "observed": {
+        "mode": 420,
+        "size": 2014,
+        "mtime_ns": 1792752844000000000,
+        "sha256": "81e2f927e91b8581a631a0d52fe9863eb0f90db3519a537820f13db496c59efe"
+      },
+      "action_by_this_preparation": "None; left untouched."
+    },
+    {
+      "path": "PBS-launcher/loss_weight_sweep_3e-3/Lewes/run_T0250_EP0050.pbs",
+      "change": "#PBS -A ULHI0005 -> #PBS -A ULHI0006",
+      "initial": {
+        "mode": 420,
+        "size": 2014,
+        "mtime_ns": 1792709423000000000,
+        "sha256": "9ef63bcbe2cdcd102f911b5de8ade2bb280fed477d58e224c06b48cdb0af58ab"
+      },
+      "observed": {
+        "mode": 420,
+        "size": 2014,
+        "mtime_ns": 1792752844000000000,
+        "sha256": "c0aeab359cadbdb6d391316829d14f43c6e87ce7d449f3dbea3e9120d3ea846d"
+      },
+      "action_by_this_preparation": "None; left untouched."
+    },
+    {
+      "path": "PBS-launcher/loss_weight_sweep_3e-3/Lewes/run_T0250_EP0100.pbs",
+      "change": "#PBS -A ULHI0005 -> #PBS -A ULHI0006",
+      "initial": {
+        "mode": 420,
+        "size": 2014,
+        "mtime_ns": 1792709423000000000,
+        "sha256": "7a7283df8e09d7b545a4304495f5677b688d6b2d2a5deff520fdc137c737b92c"
+      },
+      "observed": {
+        "mode": 420,
+        "size": 2014,
+        "mtime_ns": 1792752844000000000,
+        "sha256": "2c8d0b4afd0aa2406200a9db19c8ec6c1755f14f6a1dc53f168a4338d03b5aec"
+      },
+      "action_by_this_preparation": "None; left untouched."
+    },
+    {
+      "path": "PBS-launcher/loss_weight_sweep_3e-3/Lewes/run_T0500_EP0000.pbs",
+      "change": "#PBS -A ULHI0005 -> #PBS -A ULHI0006",
+      "initial": {
+        "mode": 420,
+        "size": 2014,
+        "mtime_ns": 1792709423000000000,
+        "sha256": "9157938ebf04ec5bfe43ac1f8a540ac922d713b9e9c3c6803eb0e0906c43375e"
+      },
+      "observed": {
+        "mode": 420,
+        "size": 2014,
+        "mtime_ns": 1792752844000000000,
+        "sha256": "ff49a8878c8997c63e512f8009605f1c9a1fb6c95f65b82c8bd47ada4d63dcfa"
+      },
+      "action_by_this_preparation": "None; left untouched."
+    },
+    {
+      "path": "PBS-launcher/loss_weight_sweep_3e-3/Lewes/run_T0500_EP0025.pbs",
+      "change": "#PBS -A ULHI0005 -> #PBS -A ULHI0006",
+      "initial": {
+        "mode": 420,
+        "size": 2014,
+        "mtime_ns": 1792709423000000000,
+        "sha256": "4984dd7eefc825eeec1259f37b75a5a023ec706f7f9ad6075aaec915a6d63b1f"
+      },
+      "observed": {
+        "mode": 420,
+        "size": 2014,
+        "mtime_ns": 1792752844000000000,
+        "sha256": "2a288f7114df3292ead9f2759b9c61e1e6e79a64e6d24930b523eb786f07470c"
+      },
+      "action_by_this_preparation": "None; left untouched."
+    },
+    {
+      "path": "PBS-launcher/loss_weight_sweep_3e-3/Lewes/run_T0500_EP0050.pbs",
+      "change": "#PBS -A ULHI0005 -> #PBS -A ULHI0006",
+      "initial": {
+        "mode": 420,
+        "size": 2014,
+        "mtime_ns": 1792709423000000000,
+        "sha256": "bed9c33fa619d0cd7a91c0102510a02b580fd5780ce7e737362d1907339cdba9"
+      },
+      "observed": {
+        "mode": 420,
+        "size": 2014,
+        "mtime_ns": 1792752844000000000,
+        "sha256": "518b264c881217deae8c8dc08d1620a91eefb4de286074acd89ceafaa14d8ac3"
+      },
+      "action_by_this_preparation": "None; left untouched."
+    },
+    {
+      "path": "PBS-launcher/loss_weight_sweep_3e-3/Lewes/run_T0500_EP0100.pbs",
+      "change": "#PBS -A ULHI0005 -> #PBS -A ULHI0006",
+      "initial": {
+        "mode": 420,
+        "size": 2014,
+        "mtime_ns": 1792709423000000000,
+        "sha256": "f1eeeb7f8abcea64bf9c21cf8413cc32a97a9b64ec9d4cc65f4ae13e924b6ff2"
+      },
+      "observed": {
+        "mode": 420,
+        "size": 2014,
+        "mtime_ns": 1792752844000000000,
+        "sha256": "7d84fc0ef217ccfc1e422a9a12fd94185b9fceb9d29cccdb6522094c6faa3ea4"
+      },
+      "action_by_this_preparation": "None; left untouched."
+    }
+  ],
+  "scientific_changes": [
+    "EXCEEDANCE_LOSS_WEIGHT",
+    "EPISODE_GT_ALIGNED_PEAK_WEIGHT"
+  ],
+  "training_pipeline_modified": false,
+  "jobs_submitted": 0,
+  "training_runs_launched": 0,
+  "training_result_directories_created": 0,
+  "issues": [
+    "The complete workspace did not remain unchanged: 64 unrelated loss_weight_sweep_3e-3 PBS account directives changed concurrently from ULHI0005 to ULHI0006. These files were not written by this task and were left untouched."
+  ],
+  "limitations": [
+    "CPU previews skip CUDA/module/NCCL runtime probes and do not measure runtime or queue behavior."
+  ],
+  "config_comparisons": [
+    {
+      "config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_PeakAware/baseline_cnn_lstm/Battery/seed42/train_config_T0250_EP0000.sh",
+      "source_config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_cnn_lstm/Battery/seed42/train_config.sh",
+      "changed_assignments": [
+        "ALL_RESULTS_ROOT",
+        "EPISODE_GT_ALIGNED_PEAK_WEIGHT",
+        "EXCEEDANCE_LOSS_WEIGHT",
+        "PACT_RUN_NAME",
+        "PYTHON_RUN_TAG_BASE"
+      ],
+      "other_assignments_identical": true
+    },
+    {
+      "config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_PeakAware/baseline_cnn_lstm/Battery/seed42/train_config_T0000_EP0100.sh",
+      "source_config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_cnn_lstm/Battery/seed42/train_config.sh",
+      "changed_assignments": [
+        "ALL_RESULTS_ROOT",
+        "EPISODE_GT_ALIGNED_PEAK_WEIGHT",
+        "EXCEEDANCE_LOSS_WEIGHT",
+        "PACT_RUN_NAME",
+        "PYTHON_RUN_TAG_BASE"
+      ],
+      "other_assignments_identical": true
+    },
+    {
+      "config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_PeakAware/baseline_cnn_lstm/Battery/seed42/train_config_T0250_EP0100.sh",
+      "source_config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_cnn_lstm/Battery/seed42/train_config.sh",
+      "changed_assignments": [
+        "ALL_RESULTS_ROOT",
+        "EPISODE_GT_ALIGNED_PEAK_WEIGHT",
+        "EXCEEDANCE_LOSS_WEIGHT",
+        "PACT_RUN_NAME",
+        "PYTHON_RUN_TAG_BASE"
+      ],
+      "other_assignments_identical": true
+    },
+    {
+      "config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_PeakAware/baseline_cnn_lstm/Battery/seed123/train_config_T0250_EP0000.sh",
+      "source_config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_cnn_lstm/Battery/seed123/train_config.sh",
+      "changed_assignments": [
+        "ALL_RESULTS_ROOT",
+        "EPISODE_GT_ALIGNED_PEAK_WEIGHT",
+        "EXCEEDANCE_LOSS_WEIGHT",
+        "PACT_RUN_NAME",
+        "PYTHON_RUN_TAG_BASE"
+      ],
+      "other_assignments_identical": true
+    },
+    {
+      "config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_PeakAware/baseline_cnn_lstm/Battery/seed123/train_config_T0000_EP0100.sh",
+      "source_config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_cnn_lstm/Battery/seed123/train_config.sh",
+      "changed_assignments": [
+        "ALL_RESULTS_ROOT",
+        "EPISODE_GT_ALIGNED_PEAK_WEIGHT",
+        "EXCEEDANCE_LOSS_WEIGHT",
+        "PACT_RUN_NAME",
+        "PYTHON_RUN_TAG_BASE"
+      ],
+      "other_assignments_identical": true
+    },
+    {
+      "config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_PeakAware/baseline_cnn_lstm/Battery/seed123/train_config_T0250_EP0100.sh",
+      "source_config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_cnn_lstm/Battery/seed123/train_config.sh",
+      "changed_assignments": [
+        "ALL_RESULTS_ROOT",
+        "EPISODE_GT_ALIGNED_PEAK_WEIGHT",
+        "EXCEEDANCE_LOSS_WEIGHT",
+        "PACT_RUN_NAME",
+        "PYTHON_RUN_TAG_BASE"
+      ],
+      "other_assignments_identical": true
+    },
+    {
+      "config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_PeakAware/baseline_cnn_lstm/Battery/seed2026/train_config_T0250_EP0000.sh",
+      "source_config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_cnn_lstm/Battery/seed2026/train_config.sh",
+      "changed_assignments": [
+        "ALL_RESULTS_ROOT",
+        "EPISODE_GT_ALIGNED_PEAK_WEIGHT",
+        "EXCEEDANCE_LOSS_WEIGHT",
+        "PACT_RUN_NAME",
+        "PYTHON_RUN_TAG_BASE"
+      ],
+      "other_assignments_identical": true
+    },
+    {
+      "config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_PeakAware/baseline_cnn_lstm/Battery/seed2026/train_config_T0000_EP0100.sh",
+      "source_config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_cnn_lstm/Battery/seed2026/train_config.sh",
+      "changed_assignments": [
+        "ALL_RESULTS_ROOT",
+        "EPISODE_GT_ALIGNED_PEAK_WEIGHT",
+        "EXCEEDANCE_LOSS_WEIGHT",
+        "PACT_RUN_NAME",
+        "PYTHON_RUN_TAG_BASE"
+      ],
+      "other_assignments_identical": true
+    },
+    {
+      "config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_PeakAware/baseline_cnn_lstm/Battery/seed2026/train_config_T0250_EP0100.sh",
+      "source_config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_cnn_lstm/Battery/seed2026/train_config.sh",
+      "changed_assignments": [
+        "ALL_RESULTS_ROOT",
+        "EPISODE_GT_ALIGNED_PEAK_WEIGHT",
+        "EXCEEDANCE_LOSS_WEIGHT",
+        "PACT_RUN_NAME",
+        "PYTHON_RUN_TAG_BASE"
+      ],
+      "other_assignments_identical": true
+    },
+    {
+      "config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_PeakAware/baseline_cnn_lstm/Boston/seed42/train_config_T0250_EP0000.sh",
+      "source_config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_cnn_lstm/Boston/seed42/train_config.sh",
+      "changed_assignments": [
+        "ALL_RESULTS_ROOT",
+        "EPISODE_GT_ALIGNED_PEAK_WEIGHT",
+        "EXCEEDANCE_LOSS_WEIGHT",
+        "PACT_RUN_NAME",
+        "PYTHON_RUN_TAG_BASE"
+      ],
+      "other_assignments_identical": true
+    },
+    {
+      "config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_PeakAware/baseline_cnn_lstm/Boston/seed42/train_config_T0000_EP0100.sh",
+      "source_config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_cnn_lstm/Boston/seed42/train_config.sh",
+      "changed_assignments": [
+        "ALL_RESULTS_ROOT",
+        "EPISODE_GT_ALIGNED_PEAK_WEIGHT",
+        "EXCEEDANCE_LOSS_WEIGHT",
+        "PACT_RUN_NAME",
+        "PYTHON_RUN_TAG_BASE"
+      ],
+      "other_assignments_identical": true
+    },
+    {
+      "config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_PeakAware/baseline_cnn_lstm/Boston/seed42/train_config_T0250_EP0100.sh",
+      "source_config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_cnn_lstm/Boston/seed42/train_config.sh",
+      "changed_assignments": [
+        "ALL_RESULTS_ROOT",
+        "EPISODE_GT_ALIGNED_PEAK_WEIGHT",
+        "EXCEEDANCE_LOSS_WEIGHT",
+        "PACT_RUN_NAME",
+        "PYTHON_RUN_TAG_BASE"
+      ],
+      "other_assignments_identical": true
+    },
+    {
+      "config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_PeakAware/baseline_cnn_lstm/Boston/seed123/train_config_T0250_EP0000.sh",
+      "source_config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_cnn_lstm/Boston/seed123/train_config.sh",
+      "changed_assignments": [
+        "ALL_RESULTS_ROOT",
+        "EPISODE_GT_ALIGNED_PEAK_WEIGHT",
+        "EXCEEDANCE_LOSS_WEIGHT",
+        "PACT_RUN_NAME",
+        "PYTHON_RUN_TAG_BASE"
+      ],
+      "other_assignments_identical": true
+    },
+    {
+      "config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_PeakAware/baseline_cnn_lstm/Boston/seed123/train_config_T0000_EP0100.sh",
+      "source_config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_cnn_lstm/Boston/seed123/train_config.sh",
+      "changed_assignments": [
+        "ALL_RESULTS_ROOT",
+        "EPISODE_GT_ALIGNED_PEAK_WEIGHT",
+        "EXCEEDANCE_LOSS_WEIGHT",
+        "PACT_RUN_NAME",
+        "PYTHON_RUN_TAG_BASE"
+      ],
+      "other_assignments_identical": true
+    },
+    {
+      "config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_PeakAware/baseline_cnn_lstm/Boston/seed123/train_config_T0250_EP0100.sh",
+      "source_config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_cnn_lstm/Boston/seed123/train_config.sh",
+      "changed_assignments": [
+        "ALL_RESULTS_ROOT",
+        "EPISODE_GT_ALIGNED_PEAK_WEIGHT",
+        "EXCEEDANCE_LOSS_WEIGHT",
+        "PACT_RUN_NAME",
+        "PYTHON_RUN_TAG_BASE"
+      ],
+      "other_assignments_identical": true
+    },
+    {
+      "config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_PeakAware/baseline_cnn_lstm/Boston/seed2026/train_config_T0250_EP0000.sh",
+      "source_config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_cnn_lstm/Boston/seed2026/train_config.sh",
+      "changed_assignments": [
+        "ALL_RESULTS_ROOT",
+        "EPISODE_GT_ALIGNED_PEAK_WEIGHT",
+        "EXCEEDANCE_LOSS_WEIGHT",
+        "PACT_RUN_NAME",
+        "PYTHON_RUN_TAG_BASE"
+      ],
+      "other_assignments_identical": true
+    },
+    {
+      "config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_PeakAware/baseline_cnn_lstm/Boston/seed2026/train_config_T0000_EP0100.sh",
+      "source_config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_cnn_lstm/Boston/seed2026/train_config.sh",
+      "changed_assignments": [
+        "ALL_RESULTS_ROOT",
+        "EPISODE_GT_ALIGNED_PEAK_WEIGHT",
+        "EXCEEDANCE_LOSS_WEIGHT",
+        "PACT_RUN_NAME",
+        "PYTHON_RUN_TAG_BASE"
+      ],
+      "other_assignments_identical": true
+    },
+    {
+      "config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_PeakAware/baseline_cnn_lstm/Boston/seed2026/train_config_T0250_EP0100.sh",
+      "source_config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_cnn_lstm/Boston/seed2026/train_config.sh",
+      "changed_assignments": [
+        "ALL_RESULTS_ROOT",
+        "EPISODE_GT_ALIGNED_PEAK_WEIGHT",
+        "EXCEEDANCE_LOSS_WEIGHT",
+        "PACT_RUN_NAME",
+        "PYTHON_RUN_TAG_BASE"
+      ],
+      "other_assignments_identical": true
+    },
+    {
+      "config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_PeakAware/baseline_cnn_lstm/CBBT/seed42/train_config_T0250_EP0000.sh",
+      "source_config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_cnn_lstm/CBBT/seed42/train_config.sh",
+      "changed_assignments": [
+        "ALL_RESULTS_ROOT",
+        "EPISODE_GT_ALIGNED_PEAK_WEIGHT",
+        "EXCEEDANCE_LOSS_WEIGHT",
+        "PACT_RUN_NAME",
+        "PYTHON_RUN_TAG_BASE"
+      ],
+      "other_assignments_identical": true
+    },
+    {
+      "config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_PeakAware/baseline_cnn_lstm/CBBT/seed42/train_config_T0000_EP0100.sh",
+      "source_config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_cnn_lstm/CBBT/seed42/train_config.sh",
+      "changed_assignments": [
+        "ALL_RESULTS_ROOT",
+        "EPISODE_GT_ALIGNED_PEAK_WEIGHT",
+        "EXCEEDANCE_LOSS_WEIGHT",
+        "PACT_RUN_NAME",
+        "PYTHON_RUN_TAG_BASE"
+      ],
+      "other_assignments_identical": true
+    },
+    {
+      "config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_PeakAware/baseline_cnn_lstm/CBBT/seed42/train_config_T0250_EP0100.sh",
+      "source_config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_cnn_lstm/CBBT/seed42/train_config.sh",
+      "changed_assignments": [
+        "ALL_RESULTS_ROOT",
+        "EPISODE_GT_ALIGNED_PEAK_WEIGHT",
+        "EXCEEDANCE_LOSS_WEIGHT",
+        "PACT_RUN_NAME",
+        "PYTHON_RUN_TAG_BASE"
+      ],
+      "other_assignments_identical": true
+    },
+    {
+      "config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_PeakAware/baseline_cnn_lstm/CBBT/seed123/train_config_T0250_EP0000.sh",
+      "source_config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_cnn_lstm/CBBT/seed123/train_config.sh",
+      "changed_assignments": [
+        "ALL_RESULTS_ROOT",
+        "EPISODE_GT_ALIGNED_PEAK_WEIGHT",
+        "EXCEEDANCE_LOSS_WEIGHT",
+        "PACT_RUN_NAME",
+        "PYTHON_RUN_TAG_BASE"
+      ],
+      "other_assignments_identical": true
+    },
+    {
+      "config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_PeakAware/baseline_cnn_lstm/CBBT/seed123/train_config_T0000_EP0100.sh",
+      "source_config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_cnn_lstm/CBBT/seed123/train_config.sh",
+      "changed_assignments": [
+        "ALL_RESULTS_ROOT",
+        "EPISODE_GT_ALIGNED_PEAK_WEIGHT",
+        "EXCEEDANCE_LOSS_WEIGHT",
+        "PACT_RUN_NAME",
+        "PYTHON_RUN_TAG_BASE"
+      ],
+      "other_assignments_identical": true
+    },
+    {
+      "config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_PeakAware/baseline_cnn_lstm/CBBT/seed123/train_config_T0250_EP0100.sh",
+      "source_config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_cnn_lstm/CBBT/seed123/train_config.sh",
+      "changed_assignments": [
+        "ALL_RESULTS_ROOT",
+        "EPISODE_GT_ALIGNED_PEAK_WEIGHT",
+        "EXCEEDANCE_LOSS_WEIGHT",
+        "PACT_RUN_NAME",
+        "PYTHON_RUN_TAG_BASE"
+      ],
+      "other_assignments_identical": true
+    },
+    {
+      "config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_PeakAware/baseline_cnn_lstm/CBBT/seed2026/train_config_T0250_EP0000.sh",
+      "source_config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_cnn_lstm/CBBT/seed2026/train_config.sh",
+      "changed_assignments": [
+        "ALL_RESULTS_ROOT",
+        "EPISODE_GT_ALIGNED_PEAK_WEIGHT",
+        "EXCEEDANCE_LOSS_WEIGHT",
+        "PACT_RUN_NAME",
+        "PYTHON_RUN_TAG_BASE"
+      ],
+      "other_assignments_identical": true
+    },
+    {
+      "config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_PeakAware/baseline_cnn_lstm/CBBT/seed2026/train_config_T0000_EP0100.sh",
+      "source_config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_cnn_lstm/CBBT/seed2026/train_config.sh",
+      "changed_assignments": [
+        "ALL_RESULTS_ROOT",
+        "EPISODE_GT_ALIGNED_PEAK_WEIGHT",
+        "EXCEEDANCE_LOSS_WEIGHT",
+        "PACT_RUN_NAME",
+        "PYTHON_RUN_TAG_BASE"
+      ],
+      "other_assignments_identical": true
+    },
+    {
+      "config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_PeakAware/baseline_cnn_lstm/CBBT/seed2026/train_config_T0250_EP0100.sh",
+      "source_config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_cnn_lstm/CBBT/seed2026/train_config.sh",
+      "changed_assignments": [
+        "ALL_RESULTS_ROOT",
+        "EPISODE_GT_ALIGNED_PEAK_WEIGHT",
+        "EXCEEDANCE_LOSS_WEIGHT",
+        "PACT_RUN_NAME",
+        "PYTHON_RUN_TAG_BASE"
+      ],
+      "other_assignments_identical": true
+    },
+    {
+      "config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_PeakAware/baseline_cnn_lstm/Lewes/seed42/train_config_T0250_EP0000.sh",
+      "source_config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_cnn_lstm/Lewes/seed42/train_config.sh",
+      "changed_assignments": [
+        "ALL_RESULTS_ROOT",
+        "EPISODE_GT_ALIGNED_PEAK_WEIGHT",
+        "EXCEEDANCE_LOSS_WEIGHT",
+        "PACT_RUN_NAME",
+        "PYTHON_RUN_TAG_BASE"
+      ],
+      "other_assignments_identical": true
+    },
+    {
+      "config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_PeakAware/baseline_cnn_lstm/Lewes/seed42/train_config_T0000_EP0100.sh",
+      "source_config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_cnn_lstm/Lewes/seed42/train_config.sh",
+      "changed_assignments": [
+        "ALL_RESULTS_ROOT",
+        "EPISODE_GT_ALIGNED_PEAK_WEIGHT",
+        "EXCEEDANCE_LOSS_WEIGHT",
+        "PACT_RUN_NAME",
+        "PYTHON_RUN_TAG_BASE"
+      ],
+      "other_assignments_identical": true
+    },
+    {
+      "config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_PeakAware/baseline_cnn_lstm/Lewes/seed42/train_config_T0250_EP0100.sh",
+      "source_config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_cnn_lstm/Lewes/seed42/train_config.sh",
+      "changed_assignments": [
+        "ALL_RESULTS_ROOT",
+        "EPISODE_GT_ALIGNED_PEAK_WEIGHT",
+        "EXCEEDANCE_LOSS_WEIGHT",
+        "PACT_RUN_NAME",
+        "PYTHON_RUN_TAG_BASE"
+      ],
+      "other_assignments_identical": true
+    },
+    {
+      "config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_PeakAware/baseline_cnn_lstm/Lewes/seed123/train_config_T0250_EP0000.sh",
+      "source_config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_cnn_lstm/Lewes/seed123/train_config.sh",
+      "changed_assignments": [
+        "ALL_RESULTS_ROOT",
+        "EPISODE_GT_ALIGNED_PEAK_WEIGHT",
+        "EXCEEDANCE_LOSS_WEIGHT",
+        "PACT_RUN_NAME",
+        "PYTHON_RUN_TAG_BASE"
+      ],
+      "other_assignments_identical": true
+    },
+    {
+      "config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_PeakAware/baseline_cnn_lstm/Lewes/seed123/train_config_T0000_EP0100.sh",
+      "source_config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_cnn_lstm/Lewes/seed123/train_config.sh",
+      "changed_assignments": [
+        "ALL_RESULTS_ROOT",
+        "EPISODE_GT_ALIGNED_PEAK_WEIGHT",
+        "EXCEEDANCE_LOSS_WEIGHT",
+        "PACT_RUN_NAME",
+        "PYTHON_RUN_TAG_BASE"
+      ],
+      "other_assignments_identical": true
+    },
+    {
+      "config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_PeakAware/baseline_cnn_lstm/Lewes/seed123/train_config_T0250_EP0100.sh",
+      "source_config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_cnn_lstm/Lewes/seed123/train_config.sh",
+      "changed_assignments": [
+        "ALL_RESULTS_ROOT",
+        "EPISODE_GT_ALIGNED_PEAK_WEIGHT",
+        "EXCEEDANCE_LOSS_WEIGHT",
+        "PACT_RUN_NAME",
+        "PYTHON_RUN_TAG_BASE"
+      ],
+      "other_assignments_identical": true
+    },
+    {
+      "config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_PeakAware/baseline_cnn_lstm/Lewes/seed2026/train_config_T0250_EP0000.sh",
+      "source_config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_cnn_lstm/Lewes/seed2026/train_config.sh",
+      "changed_assignments": [
+        "ALL_RESULTS_ROOT",
+        "EPISODE_GT_ALIGNED_PEAK_WEIGHT",
+        "EXCEEDANCE_LOSS_WEIGHT",
+        "PACT_RUN_NAME",
+        "PYTHON_RUN_TAG_BASE"
+      ],
+      "other_assignments_identical": true
+    },
+    {
+      "config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_PeakAware/baseline_cnn_lstm/Lewes/seed2026/train_config_T0000_EP0100.sh",
+      "source_config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_cnn_lstm/Lewes/seed2026/train_config.sh",
+      "changed_assignments": [
+        "ALL_RESULTS_ROOT",
+        "EPISODE_GT_ALIGNED_PEAK_WEIGHT",
+        "EXCEEDANCE_LOSS_WEIGHT",
+        "PACT_RUN_NAME",
+        "PYTHON_RUN_TAG_BASE"
+      ],
+      "other_assignments_identical": true
+    },
+    {
+      "config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_PeakAware/baseline_cnn_lstm/Lewes/seed2026/train_config_T0250_EP0100.sh",
+      "source_config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_cnn_lstm/Lewes/seed2026/train_config.sh",
+      "changed_assignments": [
+        "ALL_RESULTS_ROOT",
+        "EPISODE_GT_ALIGNED_PEAK_WEIGHT",
+        "EXCEEDANCE_LOSS_WEIGHT",
+        "PACT_RUN_NAME",
+        "PYTHON_RUN_TAG_BASE"
+      ],
+      "other_assignments_identical": true
+    },
+    {
+      "config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_PeakAware/baseline_cnn_gru/Battery/seed42/train_config_T0250_EP0000.sh",
+      "source_config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_cnn_gru/Battery/seed42/train_config.sh",
+      "changed_assignments": [
+        "ALL_RESULTS_ROOT",
+        "EPISODE_GT_ALIGNED_PEAK_WEIGHT",
+        "EXCEEDANCE_LOSS_WEIGHT",
+        "PACT_RUN_NAME",
+        "PYTHON_RUN_TAG_BASE"
+      ],
+      "other_assignments_identical": true
+    },
+    {
+      "config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_PeakAware/baseline_cnn_gru/Battery/seed42/train_config_T0000_EP0100.sh",
+      "source_config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_cnn_gru/Battery/seed42/train_config.sh",
+      "changed_assignments": [
+        "ALL_RESULTS_ROOT",
+        "EPISODE_GT_ALIGNED_PEAK_WEIGHT",
+        "EXCEEDANCE_LOSS_WEIGHT",
+        "PACT_RUN_NAME",
+        "PYTHON_RUN_TAG_BASE"
+      ],
+      "other_assignments_identical": true
+    },
+    {
+      "config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_PeakAware/baseline_cnn_gru/Battery/seed42/train_config_T0250_EP0100.sh",
+      "source_config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_cnn_gru/Battery/seed42/train_config.sh",
+      "changed_assignments": [
+        "ALL_RESULTS_ROOT",
+        "EPISODE_GT_ALIGNED_PEAK_WEIGHT",
+        "EXCEEDANCE_LOSS_WEIGHT",
+        "PACT_RUN_NAME",
+        "PYTHON_RUN_TAG_BASE"
+      ],
+      "other_assignments_identical": true
+    },
+    {
+      "config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_PeakAware/baseline_cnn_gru/Battery/seed123/train_config_T0250_EP0000.sh",
+      "source_config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_cnn_gru/Battery/seed123/train_config.sh",
+      "changed_assignments": [
+        "ALL_RESULTS_ROOT",
+        "EPISODE_GT_ALIGNED_PEAK_WEIGHT",
+        "EXCEEDANCE_LOSS_WEIGHT",
+        "PACT_RUN_NAME",
+        "PYTHON_RUN_TAG_BASE"
+      ],
+      "other_assignments_identical": true
+    },
+    {
+      "config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_PeakAware/baseline_cnn_gru/Battery/seed123/train_config_T0000_EP0100.sh",
+      "source_config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_cnn_gru/Battery/seed123/train_config.sh",
+      "changed_assignments": [
+        "ALL_RESULTS_ROOT",
+        "EPISODE_GT_ALIGNED_PEAK_WEIGHT",
+        "EXCEEDANCE_LOSS_WEIGHT",
+        "PACT_RUN_NAME",
+        "PYTHON_RUN_TAG_BASE"
+      ],
+      "other_assignments_identical": true
+    },
+    {
+      "config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_PeakAware/baseline_cnn_gru/Battery/seed123/train_config_T0250_EP0100.sh",
+      "source_config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_cnn_gru/Battery/seed123/train_config.sh",
+      "changed_assignments": [
+        "ALL_RESULTS_ROOT",
+        "EPISODE_GT_ALIGNED_PEAK_WEIGHT",
+        "EXCEEDANCE_LOSS_WEIGHT",
+        "PACT_RUN_NAME",
+        "PYTHON_RUN_TAG_BASE"
+      ],
+      "other_assignments_identical": true
+    },
+    {
+      "config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_PeakAware/baseline_cnn_gru/Battery/seed2026/train_config_T0250_EP0000.sh",
+      "source_config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_cnn_gru/Battery/seed2026/train_config.sh",
+      "changed_assignments": [
+        "ALL_RESULTS_ROOT",
+        "EPISODE_GT_ALIGNED_PEAK_WEIGHT",
+        "EXCEEDANCE_LOSS_WEIGHT",
+        "PACT_RUN_NAME",
+        "PYTHON_RUN_TAG_BASE"
+      ],
+      "other_assignments_identical": true
+    },
+    {
+      "config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_PeakAware/baseline_cnn_gru/Battery/seed2026/train_config_T0000_EP0100.sh",
+      "source_config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_cnn_gru/Battery/seed2026/train_config.sh",
+      "changed_assignments": [
+        "ALL_RESULTS_ROOT",
+        "EPISODE_GT_ALIGNED_PEAK_WEIGHT",
+        "EXCEEDANCE_LOSS_WEIGHT",
+        "PACT_RUN_NAME",
+        "PYTHON_RUN_TAG_BASE"
+      ],
+      "other_assignments_identical": true
+    },
+    {
+      "config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_PeakAware/baseline_cnn_gru/Battery/seed2026/train_config_T0250_EP0100.sh",
+      "source_config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_cnn_gru/Battery/seed2026/train_config.sh",
+      "changed_assignments": [
+        "ALL_RESULTS_ROOT",
+        "EPISODE_GT_ALIGNED_PEAK_WEIGHT",
+        "EXCEEDANCE_LOSS_WEIGHT",
+        "PACT_RUN_NAME",
+        "PYTHON_RUN_TAG_BASE"
+      ],
+      "other_assignments_identical": true
+    },
+    {
+      "config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_PeakAware/baseline_cnn_gru/Boston/seed42/train_config_T0250_EP0000.sh",
+      "source_config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_cnn_gru/Boston/seed42/train_config.sh",
+      "changed_assignments": [
+        "ALL_RESULTS_ROOT",
+        "EPISODE_GT_ALIGNED_PEAK_WEIGHT",
+        "EXCEEDANCE_LOSS_WEIGHT",
+        "PACT_RUN_NAME",
+        "PYTHON_RUN_TAG_BASE"
+      ],
+      "other_assignments_identical": true
+    },
+    {
+      "config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_PeakAware/baseline_cnn_gru/Boston/seed42/train_config_T0000_EP0100.sh",
+      "source_config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_cnn_gru/Boston/seed42/train_config.sh",
+      "changed_assignments": [
+        "ALL_RESULTS_ROOT",
+        "EPISODE_GT_ALIGNED_PEAK_WEIGHT",
+        "EXCEEDANCE_LOSS_WEIGHT",
+        "PACT_RUN_NAME",
+        "PYTHON_RUN_TAG_BASE"
+      ],
+      "other_assignments_identical": true
+    },
+    {
+      "config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_PeakAware/baseline_cnn_gru/Boston/seed42/train_config_T0250_EP0100.sh",
+      "source_config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_cnn_gru/Boston/seed42/train_config.sh",
+      "changed_assignments": [
+        "ALL_RESULTS_ROOT",
+        "EPISODE_GT_ALIGNED_PEAK_WEIGHT",
+        "EXCEEDANCE_LOSS_WEIGHT",
+        "PACT_RUN_NAME",
+        "PYTHON_RUN_TAG_BASE"
+      ],
+      "other_assignments_identical": true
+    },
+    {
+      "config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_PeakAware/baseline_cnn_gru/Boston/seed123/train_config_T0250_EP0000.sh",
+      "source_config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_cnn_gru/Boston/seed123/train_config.sh",
+      "changed_assignments": [
+        "ALL_RESULTS_ROOT",
+        "EPISODE_GT_ALIGNED_PEAK_WEIGHT",
+        "EXCEEDANCE_LOSS_WEIGHT",
+        "PACT_RUN_NAME",
+        "PYTHON_RUN_TAG_BASE"
+      ],
+      "other_assignments_identical": true
+    },
+    {
+      "config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_PeakAware/baseline_cnn_gru/Boston/seed123/train_config_T0000_EP0100.sh",
+      "source_config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_cnn_gru/Boston/seed123/train_config.sh",
+      "changed_assignments": [
+        "ALL_RESULTS_ROOT",
+        "EPISODE_GT_ALIGNED_PEAK_WEIGHT",
+        "EXCEEDANCE_LOSS_WEIGHT",
+        "PACT_RUN_NAME",
+        "PYTHON_RUN_TAG_BASE"
+      ],
+      "other_assignments_identical": true
+    },
+    {
+      "config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_PeakAware/baseline_cnn_gru/Boston/seed123/train_config_T0250_EP0100.sh",
+      "source_config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_cnn_gru/Boston/seed123/train_config.sh",
+      "changed_assignments": [
+        "ALL_RESULTS_ROOT",
+        "EPISODE_GT_ALIGNED_PEAK_WEIGHT",
+        "EXCEEDANCE_LOSS_WEIGHT",
+        "PACT_RUN_NAME",
+        "PYTHON_RUN_TAG_BASE"
+      ],
+      "other_assignments_identical": true
+    },
+    {
+      "config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_PeakAware/baseline_cnn_gru/Boston/seed2026/train_config_T0250_EP0000.sh",
+      "source_config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_cnn_gru/Boston/seed2026/train_config.sh",
+      "changed_assignments": [
+        "ALL_RESULTS_ROOT",
+        "EPISODE_GT_ALIGNED_PEAK_WEIGHT",
+        "EXCEEDANCE_LOSS_WEIGHT",
+        "PACT_RUN_NAME",
+        "PYTHON_RUN_TAG_BASE"
+      ],
+      "other_assignments_identical": true
+    },
+    {
+      "config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_PeakAware/baseline_cnn_gru/Boston/seed2026/train_config_T0000_EP0100.sh",
+      "source_config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_cnn_gru/Boston/seed2026/train_config.sh",
+      "changed_assignments": [
+        "ALL_RESULTS_ROOT",
+        "EPISODE_GT_ALIGNED_PEAK_WEIGHT",
+        "EXCEEDANCE_LOSS_WEIGHT",
+        "PACT_RUN_NAME",
+        "PYTHON_RUN_TAG_BASE"
+      ],
+      "other_assignments_identical": true
+    },
+    {
+      "config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_PeakAware/baseline_cnn_gru/Boston/seed2026/train_config_T0250_EP0100.sh",
+      "source_config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_cnn_gru/Boston/seed2026/train_config.sh",
+      "changed_assignments": [
+        "ALL_RESULTS_ROOT",
+        "EPISODE_GT_ALIGNED_PEAK_WEIGHT",
+        "EXCEEDANCE_LOSS_WEIGHT",
+        "PACT_RUN_NAME",
+        "PYTHON_RUN_TAG_BASE"
+      ],
+      "other_assignments_identical": true
+    },
+    {
+      "config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_PeakAware/baseline_cnn_gru/CBBT/seed42/train_config_T0250_EP0000.sh",
+      "source_config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_cnn_gru/CBBT/seed42/train_config.sh",
+      "changed_assignments": [
+        "ALL_RESULTS_ROOT",
+        "EPISODE_GT_ALIGNED_PEAK_WEIGHT",
+        "EXCEEDANCE_LOSS_WEIGHT",
+        "PACT_RUN_NAME",
+        "PYTHON_RUN_TAG_BASE"
+      ],
+      "other_assignments_identical": true
+    },
+    {
+      "config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_PeakAware/baseline_cnn_gru/CBBT/seed42/train_config_T0000_EP0100.sh",
+      "source_config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_cnn_gru/CBBT/seed42/train_config.sh",
+      "changed_assignments": [
+        "ALL_RESULTS_ROOT",
+        "EPISODE_GT_ALIGNED_PEAK_WEIGHT",
+        "EXCEEDANCE_LOSS_WEIGHT",
+        "PACT_RUN_NAME",
+        "PYTHON_RUN_TAG_BASE"
+      ],
+      "other_assignments_identical": true
+    },
+    {
+      "config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_PeakAware/baseline_cnn_gru/CBBT/seed42/train_config_T0250_EP0100.sh",
+      "source_config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_cnn_gru/CBBT/seed42/train_config.sh",
+      "changed_assignments": [
+        "ALL_RESULTS_ROOT",
+        "EPISODE_GT_ALIGNED_PEAK_WEIGHT",
+        "EXCEEDANCE_LOSS_WEIGHT",
+        "PACT_RUN_NAME",
+        "PYTHON_RUN_TAG_BASE"
+      ],
+      "other_assignments_identical": true
+    },
+    {
+      "config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_PeakAware/baseline_cnn_gru/CBBT/seed123/train_config_T0250_EP0000.sh",
+      "source_config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_cnn_gru/CBBT/seed123/train_config.sh",
+      "changed_assignments": [
+        "ALL_RESULTS_ROOT",
+        "EPISODE_GT_ALIGNED_PEAK_WEIGHT",
+        "EXCEEDANCE_LOSS_WEIGHT",
+        "PACT_RUN_NAME",
+        "PYTHON_RUN_TAG_BASE"
+      ],
+      "other_assignments_identical": true
+    },
+    {
+      "config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_PeakAware/baseline_cnn_gru/CBBT/seed123/train_config_T0000_EP0100.sh",
+      "source_config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_cnn_gru/CBBT/seed123/train_config.sh",
+      "changed_assignments": [
+        "ALL_RESULTS_ROOT",
+        "EPISODE_GT_ALIGNED_PEAK_WEIGHT",
+        "EXCEEDANCE_LOSS_WEIGHT",
+        "PACT_RUN_NAME",
+        "PYTHON_RUN_TAG_BASE"
+      ],
+      "other_assignments_identical": true
+    },
+    {
+      "config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_PeakAware/baseline_cnn_gru/CBBT/seed123/train_config_T0250_EP0100.sh",
+      "source_config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_cnn_gru/CBBT/seed123/train_config.sh",
+      "changed_assignments": [
+        "ALL_RESULTS_ROOT",
+        "EPISODE_GT_ALIGNED_PEAK_WEIGHT",
+        "EXCEEDANCE_LOSS_WEIGHT",
+        "PACT_RUN_NAME",
+        "PYTHON_RUN_TAG_BASE"
+      ],
+      "other_assignments_identical": true
+    },
+    {
+      "config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_PeakAware/baseline_cnn_gru/CBBT/seed2026/train_config_T0250_EP0000.sh",
+      "source_config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_cnn_gru/CBBT/seed2026/train_config.sh",
+      "changed_assignments": [
+        "ALL_RESULTS_ROOT",
+        "EPISODE_GT_ALIGNED_PEAK_WEIGHT",
+        "EXCEEDANCE_LOSS_WEIGHT",
+        "PACT_RUN_NAME",
+        "PYTHON_RUN_TAG_BASE"
+      ],
+      "other_assignments_identical": true
+    },
+    {
+      "config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_PeakAware/baseline_cnn_gru/CBBT/seed2026/train_config_T0000_EP0100.sh",
+      "source_config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_cnn_gru/CBBT/seed2026/train_config.sh",
+      "changed_assignments": [
+        "ALL_RESULTS_ROOT",
+        "EPISODE_GT_ALIGNED_PEAK_WEIGHT",
+        "EXCEEDANCE_LOSS_WEIGHT",
+        "PACT_RUN_NAME",
+        "PYTHON_RUN_TAG_BASE"
+      ],
+      "other_assignments_identical": true
+    },
+    {
+      "config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_PeakAware/baseline_cnn_gru/CBBT/seed2026/train_config_T0250_EP0100.sh",
+      "source_config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_cnn_gru/CBBT/seed2026/train_config.sh",
+      "changed_assignments": [
+        "ALL_RESULTS_ROOT",
+        "EPISODE_GT_ALIGNED_PEAK_WEIGHT",
+        "EXCEEDANCE_LOSS_WEIGHT",
+        "PACT_RUN_NAME",
+        "PYTHON_RUN_TAG_BASE"
+      ],
+      "other_assignments_identical": true
+    },
+    {
+      "config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_PeakAware/baseline_cnn_gru/Lewes/seed42/train_config_T0250_EP0000.sh",
+      "source_config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_cnn_gru/Lewes/seed42/train_config.sh",
+      "changed_assignments": [
+        "ALL_RESULTS_ROOT",
+        "EPISODE_GT_ALIGNED_PEAK_WEIGHT",
+        "EXCEEDANCE_LOSS_WEIGHT",
+        "PACT_RUN_NAME",
+        "PYTHON_RUN_TAG_BASE"
+      ],
+      "other_assignments_identical": true
+    },
+    {
+      "config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_PeakAware/baseline_cnn_gru/Lewes/seed42/train_config_T0000_EP0100.sh",
+      "source_config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_cnn_gru/Lewes/seed42/train_config.sh",
+      "changed_assignments": [
+        "ALL_RESULTS_ROOT",
+        "EPISODE_GT_ALIGNED_PEAK_WEIGHT",
+        "EXCEEDANCE_LOSS_WEIGHT",
+        "PACT_RUN_NAME",
+        "PYTHON_RUN_TAG_BASE"
+      ],
+      "other_assignments_identical": true
+    },
+    {
+      "config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_PeakAware/baseline_cnn_gru/Lewes/seed42/train_config_T0250_EP0100.sh",
+      "source_config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_cnn_gru/Lewes/seed42/train_config.sh",
+      "changed_assignments": [
+        "ALL_RESULTS_ROOT",
+        "EPISODE_GT_ALIGNED_PEAK_WEIGHT",
+        "EXCEEDANCE_LOSS_WEIGHT",
+        "PACT_RUN_NAME",
+        "PYTHON_RUN_TAG_BASE"
+      ],
+      "other_assignments_identical": true
+    },
+    {
+      "config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_PeakAware/baseline_cnn_gru/Lewes/seed123/train_config_T0250_EP0000.sh",
+      "source_config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_cnn_gru/Lewes/seed123/train_config.sh",
+      "changed_assignments": [
+        "ALL_RESULTS_ROOT",
+        "EPISODE_GT_ALIGNED_PEAK_WEIGHT",
+        "EXCEEDANCE_LOSS_WEIGHT",
+        "PACT_RUN_NAME",
+        "PYTHON_RUN_TAG_BASE"
+      ],
+      "other_assignments_identical": true
+    },
+    {
+      "config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_PeakAware/baseline_cnn_gru/Lewes/seed123/train_config_T0000_EP0100.sh",
+      "source_config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_cnn_gru/Lewes/seed123/train_config.sh",
+      "changed_assignments": [
+        "ALL_RESULTS_ROOT",
+        "EPISODE_GT_ALIGNED_PEAK_WEIGHT",
+        "EXCEEDANCE_LOSS_WEIGHT",
+        "PACT_RUN_NAME",
+        "PYTHON_RUN_TAG_BASE"
+      ],
+      "other_assignments_identical": true
+    },
+    {
+      "config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_PeakAware/baseline_cnn_gru/Lewes/seed123/train_config_T0250_EP0100.sh",
+      "source_config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_cnn_gru/Lewes/seed123/train_config.sh",
+      "changed_assignments": [
+        "ALL_RESULTS_ROOT",
+        "EPISODE_GT_ALIGNED_PEAK_WEIGHT",
+        "EXCEEDANCE_LOSS_WEIGHT",
+        "PACT_RUN_NAME",
+        "PYTHON_RUN_TAG_BASE"
+      ],
+      "other_assignments_identical": true
+    },
+    {
+      "config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_PeakAware/baseline_cnn_gru/Lewes/seed2026/train_config_T0250_EP0000.sh",
+      "source_config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_cnn_gru/Lewes/seed2026/train_config.sh",
+      "changed_assignments": [
+        "ALL_RESULTS_ROOT",
+        "EPISODE_GT_ALIGNED_PEAK_WEIGHT",
+        "EXCEEDANCE_LOSS_WEIGHT",
+        "PACT_RUN_NAME",
+        "PYTHON_RUN_TAG_BASE"
+      ],
+      "other_assignments_identical": true
+    },
+    {
+      "config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_PeakAware/baseline_cnn_gru/Lewes/seed2026/train_config_T0000_EP0100.sh",
+      "source_config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_cnn_gru/Lewes/seed2026/train_config.sh",
+      "changed_assignments": [
+        "ALL_RESULTS_ROOT",
+        "EPISODE_GT_ALIGNED_PEAK_WEIGHT",
+        "EXCEEDANCE_LOSS_WEIGHT",
+        "PACT_RUN_NAME",
+        "PYTHON_RUN_TAG_BASE"
+      ],
+      "other_assignments_identical": true
+    },
+    {
+      "config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_PeakAware/baseline_cnn_gru/Lewes/seed2026/train_config_T0250_EP0100.sh",
+      "source_config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_cnn_gru/Lewes/seed2026/train_config.sh",
+      "changed_assignments": [
+        "ALL_RESULTS_ROOT",
+        "EPISODE_GT_ALIGNED_PEAK_WEIGHT",
+        "EXCEEDANCE_LOSS_WEIGHT",
+        "PACT_RUN_NAME",
+        "PYTHON_RUN_TAG_BASE"
+      ],
+      "other_assignments_identical": true
+    },
+    {
+      "config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_PeakAware/baseline_convlstm/Battery/seed42/train_config_T0250_EP0000.sh",
+      "source_config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_convlstm/Battery/seed42/train_config.sh",
+      "changed_assignments": [
+        "ALL_RESULTS_ROOT",
+        "EPISODE_GT_ALIGNED_PEAK_WEIGHT",
+        "EXCEEDANCE_LOSS_WEIGHT",
+        "PACT_RUN_NAME",
+        "PYTHON_RUN_TAG_BASE"
+      ],
+      "other_assignments_identical": true
+    },
+    {
+      "config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_PeakAware/baseline_convlstm/Battery/seed42/train_config_T0000_EP0100.sh",
+      "source_config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_convlstm/Battery/seed42/train_config.sh",
+      "changed_assignments": [
+        "ALL_RESULTS_ROOT",
+        "EPISODE_GT_ALIGNED_PEAK_WEIGHT",
+        "EXCEEDANCE_LOSS_WEIGHT",
+        "PACT_RUN_NAME",
+        "PYTHON_RUN_TAG_BASE"
+      ],
+      "other_assignments_identical": true
+    },
+    {
+      "config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_PeakAware/baseline_convlstm/Battery/seed42/train_config_T0250_EP0100.sh",
+      "source_config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_convlstm/Battery/seed42/train_config.sh",
+      "changed_assignments": [
+        "ALL_RESULTS_ROOT",
+        "EPISODE_GT_ALIGNED_PEAK_WEIGHT",
+        "EXCEEDANCE_LOSS_WEIGHT",
+        "PACT_RUN_NAME",
+        "PYTHON_RUN_TAG_BASE"
+      ],
+      "other_assignments_identical": true
+    },
+    {
+      "config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_PeakAware/baseline_convlstm/Battery/seed123/train_config_T0250_EP0000.sh",
+      "source_config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_convlstm/Battery/seed123/train_config.sh",
+      "changed_assignments": [
+        "ALL_RESULTS_ROOT",
+        "EPISODE_GT_ALIGNED_PEAK_WEIGHT",
+        "EXCEEDANCE_LOSS_WEIGHT",
+        "PACT_RUN_NAME",
+        "PYTHON_RUN_TAG_BASE"
+      ],
+      "other_assignments_identical": true
+    },
+    {
+      "config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_PeakAware/baseline_convlstm/Battery/seed123/train_config_T0000_EP0100.sh",
+      "source_config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_convlstm/Battery/seed123/train_config.sh",
+      "changed_assignments": [
+        "ALL_RESULTS_ROOT",
+        "EPISODE_GT_ALIGNED_PEAK_WEIGHT",
+        "EXCEEDANCE_LOSS_WEIGHT",
+        "PACT_RUN_NAME",
+        "PYTHON_RUN_TAG_BASE"
+      ],
+      "other_assignments_identical": true
+    },
+    {
+      "config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_PeakAware/baseline_convlstm/Battery/seed123/train_config_T0250_EP0100.sh",
+      "source_config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_convlstm/Battery/seed123/train_config.sh",
+      "changed_assignments": [
+        "ALL_RESULTS_ROOT",
+        "EPISODE_GT_ALIGNED_PEAK_WEIGHT",
+        "EXCEEDANCE_LOSS_WEIGHT",
+        "PACT_RUN_NAME",
+        "PYTHON_RUN_TAG_BASE"
+      ],
+      "other_assignments_identical": true
+    },
+    {
+      "config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_PeakAware/baseline_convlstm/Battery/seed2026/train_config_T0250_EP0000.sh",
+      "source_config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_convlstm/Battery/seed2026/train_config.sh",
+      "changed_assignments": [
+        "ALL_RESULTS_ROOT",
+        "EPISODE_GT_ALIGNED_PEAK_WEIGHT",
+        "EXCEEDANCE_LOSS_WEIGHT",
+        "PACT_RUN_NAME",
+        "PYTHON_RUN_TAG_BASE"
+      ],
+      "other_assignments_identical": true
+    },
+    {
+      "config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_PeakAware/baseline_convlstm/Battery/seed2026/train_config_T0000_EP0100.sh",
+      "source_config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_convlstm/Battery/seed2026/train_config.sh",
+      "changed_assignments": [
+        "ALL_RESULTS_ROOT",
+        "EPISODE_GT_ALIGNED_PEAK_WEIGHT",
+        "EXCEEDANCE_LOSS_WEIGHT",
+        "PACT_RUN_NAME",
+        "PYTHON_RUN_TAG_BASE"
+      ],
+      "other_assignments_identical": true
+    },
+    {
+      "config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_PeakAware/baseline_convlstm/Battery/seed2026/train_config_T0250_EP0100.sh",
+      "source_config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_convlstm/Battery/seed2026/train_config.sh",
+      "changed_assignments": [
+        "ALL_RESULTS_ROOT",
+        "EPISODE_GT_ALIGNED_PEAK_WEIGHT",
+        "EXCEEDANCE_LOSS_WEIGHT",
+        "PACT_RUN_NAME",
+        "PYTHON_RUN_TAG_BASE"
+      ],
+      "other_assignments_identical": true
+    },
+    {
+      "config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_PeakAware/baseline_convlstm/Boston/seed42/train_config_T0250_EP0000.sh",
+      "source_config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_convlstm/Boston/seed42/train_config.sh",
+      "changed_assignments": [
+        "ALL_RESULTS_ROOT",
+        "EPISODE_GT_ALIGNED_PEAK_WEIGHT",
+        "EXCEEDANCE_LOSS_WEIGHT",
+        "PACT_RUN_NAME",
+        "PYTHON_RUN_TAG_BASE"
+      ],
+      "other_assignments_identical": true
+    },
+    {
+      "config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_PeakAware/baseline_convlstm/Boston/seed42/train_config_T0000_EP0100.sh",
+      "source_config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_convlstm/Boston/seed42/train_config.sh",
+      "changed_assignments": [
+        "ALL_RESULTS_ROOT",
+        "EPISODE_GT_ALIGNED_PEAK_WEIGHT",
+        "EXCEEDANCE_LOSS_WEIGHT",
+        "PACT_RUN_NAME",
+        "PYTHON_RUN_TAG_BASE"
+      ],
+      "other_assignments_identical": true
+    },
+    {
+      "config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_PeakAware/baseline_convlstm/Boston/seed42/train_config_T0250_EP0100.sh",
+      "source_config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_convlstm/Boston/seed42/train_config.sh",
+      "changed_assignments": [
+        "ALL_RESULTS_ROOT",
+        "EPISODE_GT_ALIGNED_PEAK_WEIGHT",
+        "EXCEEDANCE_LOSS_WEIGHT",
+        "PACT_RUN_NAME",
+        "PYTHON_RUN_TAG_BASE"
+      ],
+      "other_assignments_identical": true
+    },
+    {
+      "config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_PeakAware/baseline_convlstm/Boston/seed123/train_config_T0250_EP0000.sh",
+      "source_config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_convlstm/Boston/seed123/train_config.sh",
+      "changed_assignments": [
+        "ALL_RESULTS_ROOT",
+        "EPISODE_GT_ALIGNED_PEAK_WEIGHT",
+        "EXCEEDANCE_LOSS_WEIGHT",
+        "PACT_RUN_NAME",
+        "PYTHON_RUN_TAG_BASE"
+      ],
+      "other_assignments_identical": true
+    },
+    {
+      "config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_PeakAware/baseline_convlstm/Boston/seed123/train_config_T0000_EP0100.sh",
+      "source_config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_convlstm/Boston/seed123/train_config.sh",
+      "changed_assignments": [
+        "ALL_RESULTS_ROOT",
+        "EPISODE_GT_ALIGNED_PEAK_WEIGHT",
+        "EXCEEDANCE_LOSS_WEIGHT",
+        "PACT_RUN_NAME",
+        "PYTHON_RUN_TAG_BASE"
+      ],
+      "other_assignments_identical": true
+    },
+    {
+      "config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_PeakAware/baseline_convlstm/Boston/seed123/train_config_T0250_EP0100.sh",
+      "source_config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_convlstm/Boston/seed123/train_config.sh",
+      "changed_assignments": [
+        "ALL_RESULTS_ROOT",
+        "EPISODE_GT_ALIGNED_PEAK_WEIGHT",
+        "EXCEEDANCE_LOSS_WEIGHT",
+        "PACT_RUN_NAME",
+        "PYTHON_RUN_TAG_BASE"
+      ],
+      "other_assignments_identical": true
+    },
+    {
+      "config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_PeakAware/baseline_convlstm/Boston/seed2026/train_config_T0250_EP0000.sh",
+      "source_config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_convlstm/Boston/seed2026/train_config.sh",
+      "changed_assignments": [
+        "ALL_RESULTS_ROOT",
+        "EPISODE_GT_ALIGNED_PEAK_WEIGHT",
+        "EXCEEDANCE_LOSS_WEIGHT",
+        "PACT_RUN_NAME",
+        "PYTHON_RUN_TAG_BASE"
+      ],
+      "other_assignments_identical": true
+    },
+    {
+      "config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_PeakAware/baseline_convlstm/Boston/seed2026/train_config_T0000_EP0100.sh",
+      "source_config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_convlstm/Boston/seed2026/train_config.sh",
+      "changed_assignments": [
+        "ALL_RESULTS_ROOT",
+        "EPISODE_GT_ALIGNED_PEAK_WEIGHT",
+        "EXCEEDANCE_LOSS_WEIGHT",
+        "PACT_RUN_NAME",
+        "PYTHON_RUN_TAG_BASE"
+      ],
+      "other_assignments_identical": true
+    },
+    {
+      "config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_PeakAware/baseline_convlstm/Boston/seed2026/train_config_T0250_EP0100.sh",
+      "source_config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_convlstm/Boston/seed2026/train_config.sh",
+      "changed_assignments": [
+        "ALL_RESULTS_ROOT",
+        "EPISODE_GT_ALIGNED_PEAK_WEIGHT",
+        "EXCEEDANCE_LOSS_WEIGHT",
+        "PACT_RUN_NAME",
+        "PYTHON_RUN_TAG_BASE"
+      ],
+      "other_assignments_identical": true
+    },
+    {
+      "config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_PeakAware/baseline_convlstm/CBBT/seed42/train_config_T0250_EP0000.sh",
+      "source_config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_convlstm/CBBT/seed42/train_config.sh",
+      "changed_assignments": [
+        "ALL_RESULTS_ROOT",
+        "EPISODE_GT_ALIGNED_PEAK_WEIGHT",
+        "EXCEEDANCE_LOSS_WEIGHT",
+        "PACT_RUN_NAME",
+        "PYTHON_RUN_TAG_BASE"
+      ],
+      "other_assignments_identical": true
+    },
+    {
+      "config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_PeakAware/baseline_convlstm/CBBT/seed42/train_config_T0000_EP0100.sh",
+      "source_config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_convlstm/CBBT/seed42/train_config.sh",
+      "changed_assignments": [
+        "ALL_RESULTS_ROOT",
+        "EPISODE_GT_ALIGNED_PEAK_WEIGHT",
+        "EXCEEDANCE_LOSS_WEIGHT",
+        "PACT_RUN_NAME",
+        "PYTHON_RUN_TAG_BASE"
+      ],
+      "other_assignments_identical": true
+    },
+    {
+      "config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_PeakAware/baseline_convlstm/CBBT/seed42/train_config_T0250_EP0100.sh",
+      "source_config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_convlstm/CBBT/seed42/train_config.sh",
+      "changed_assignments": [
+        "ALL_RESULTS_ROOT",
+        "EPISODE_GT_ALIGNED_PEAK_WEIGHT",
+        "EXCEEDANCE_LOSS_WEIGHT",
+        "PACT_RUN_NAME",
+        "PYTHON_RUN_TAG_BASE"
+      ],
+      "other_assignments_identical": true
+    },
+    {
+      "config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_PeakAware/baseline_convlstm/CBBT/seed123/train_config_T0250_EP0000.sh",
+      "source_config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_convlstm/CBBT/seed123/train_config.sh",
+      "changed_assignments": [
+        "ALL_RESULTS_ROOT",
+        "EPISODE_GT_ALIGNED_PEAK_WEIGHT",
+        "EXCEEDANCE_LOSS_WEIGHT",
+        "PACT_RUN_NAME",
+        "PYTHON_RUN_TAG_BASE"
+      ],
+      "other_assignments_identical": true
+    },
+    {
+      "config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_PeakAware/baseline_convlstm/CBBT/seed123/train_config_T0000_EP0100.sh",
+      "source_config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_convlstm/CBBT/seed123/train_config.sh",
+      "changed_assignments": [
+        "ALL_RESULTS_ROOT",
+        "EPISODE_GT_ALIGNED_PEAK_WEIGHT",
+        "EXCEEDANCE_LOSS_WEIGHT",
+        "PACT_RUN_NAME",
+        "PYTHON_RUN_TAG_BASE"
+      ],
+      "other_assignments_identical": true
+    },
+    {
+      "config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_PeakAware/baseline_convlstm/CBBT/seed123/train_config_T0250_EP0100.sh",
+      "source_config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_convlstm/CBBT/seed123/train_config.sh",
+      "changed_assignments": [
+        "ALL_RESULTS_ROOT",
+        "EPISODE_GT_ALIGNED_PEAK_WEIGHT",
+        "EXCEEDANCE_LOSS_WEIGHT",
+        "PACT_RUN_NAME",
+        "PYTHON_RUN_TAG_BASE"
+      ],
+      "other_assignments_identical": true
+    },
+    {
+      "config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_PeakAware/baseline_convlstm/CBBT/seed2026/train_config_T0250_EP0000.sh",
+      "source_config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_convlstm/CBBT/seed2026/train_config.sh",
+      "changed_assignments": [
+        "ALL_RESULTS_ROOT",
+        "EPISODE_GT_ALIGNED_PEAK_WEIGHT",
+        "EXCEEDANCE_LOSS_WEIGHT",
+        "PACT_RUN_NAME",
+        "PYTHON_RUN_TAG_BASE"
+      ],
+      "other_assignments_identical": true
+    },
+    {
+      "config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_PeakAware/baseline_convlstm/CBBT/seed2026/train_config_T0000_EP0100.sh",
+      "source_config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_convlstm/CBBT/seed2026/train_config.sh",
+      "changed_assignments": [
+        "ALL_RESULTS_ROOT",
+        "EPISODE_GT_ALIGNED_PEAK_WEIGHT",
+        "EXCEEDANCE_LOSS_WEIGHT",
+        "PACT_RUN_NAME",
+        "PYTHON_RUN_TAG_BASE"
+      ],
+      "other_assignments_identical": true
+    },
+    {
+      "config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_PeakAware/baseline_convlstm/CBBT/seed2026/train_config_T0250_EP0100.sh",
+      "source_config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_convlstm/CBBT/seed2026/train_config.sh",
+      "changed_assignments": [
+        "ALL_RESULTS_ROOT",
+        "EPISODE_GT_ALIGNED_PEAK_WEIGHT",
+        "EXCEEDANCE_LOSS_WEIGHT",
+        "PACT_RUN_NAME",
+        "PYTHON_RUN_TAG_BASE"
+      ],
+      "other_assignments_identical": true
+    },
+    {
+      "config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_PeakAware/baseline_convlstm/Lewes/seed42/train_config_T0250_EP0000.sh",
+      "source_config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_convlstm/Lewes/seed42/train_config.sh",
+      "changed_assignments": [
+        "ALL_RESULTS_ROOT",
+        "EPISODE_GT_ALIGNED_PEAK_WEIGHT",
+        "EXCEEDANCE_LOSS_WEIGHT",
+        "PACT_RUN_NAME",
+        "PYTHON_RUN_TAG_BASE"
+      ],
+      "other_assignments_identical": true
+    },
+    {
+      "config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_PeakAware/baseline_convlstm/Lewes/seed42/train_config_T0000_EP0100.sh",
+      "source_config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_convlstm/Lewes/seed42/train_config.sh",
+      "changed_assignments": [
+        "ALL_RESULTS_ROOT",
+        "EPISODE_GT_ALIGNED_PEAK_WEIGHT",
+        "EXCEEDANCE_LOSS_WEIGHT",
+        "PACT_RUN_NAME",
+        "PYTHON_RUN_TAG_BASE"
+      ],
+      "other_assignments_identical": true
+    },
+    {
+      "config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_PeakAware/baseline_convlstm/Lewes/seed42/train_config_T0250_EP0100.sh",
+      "source_config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_convlstm/Lewes/seed42/train_config.sh",
+      "changed_assignments": [
+        "ALL_RESULTS_ROOT",
+        "EPISODE_GT_ALIGNED_PEAK_WEIGHT",
+        "EXCEEDANCE_LOSS_WEIGHT",
+        "PACT_RUN_NAME",
+        "PYTHON_RUN_TAG_BASE"
+      ],
+      "other_assignments_identical": true
+    },
+    {
+      "config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_PeakAware/baseline_convlstm/Lewes/seed123/train_config_T0250_EP0000.sh",
+      "source_config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_convlstm/Lewes/seed123/train_config.sh",
+      "changed_assignments": [
+        "ALL_RESULTS_ROOT",
+        "EPISODE_GT_ALIGNED_PEAK_WEIGHT",
+        "EXCEEDANCE_LOSS_WEIGHT",
+        "PACT_RUN_NAME",
+        "PYTHON_RUN_TAG_BASE"
+      ],
+      "other_assignments_identical": true
+    },
+    {
+      "config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_PeakAware/baseline_convlstm/Lewes/seed123/train_config_T0000_EP0100.sh",
+      "source_config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_convlstm/Lewes/seed123/train_config.sh",
+      "changed_assignments": [
+        "ALL_RESULTS_ROOT",
+        "EPISODE_GT_ALIGNED_PEAK_WEIGHT",
+        "EXCEEDANCE_LOSS_WEIGHT",
+        "PACT_RUN_NAME",
+        "PYTHON_RUN_TAG_BASE"
+      ],
+      "other_assignments_identical": true
+    },
+    {
+      "config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_PeakAware/baseline_convlstm/Lewes/seed123/train_config_T0250_EP0100.sh",
+      "source_config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_convlstm/Lewes/seed123/train_config.sh",
+      "changed_assignments": [
+        "ALL_RESULTS_ROOT",
+        "EPISODE_GT_ALIGNED_PEAK_WEIGHT",
+        "EXCEEDANCE_LOSS_WEIGHT",
+        "PACT_RUN_NAME",
+        "PYTHON_RUN_TAG_BASE"
+      ],
+      "other_assignments_identical": true
+    },
+    {
+      "config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_PeakAware/baseline_convlstm/Lewes/seed2026/train_config_T0250_EP0000.sh",
+      "source_config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_convlstm/Lewes/seed2026/train_config.sh",
+      "changed_assignments": [
+        "ALL_RESULTS_ROOT",
+        "EPISODE_GT_ALIGNED_PEAK_WEIGHT",
+        "EXCEEDANCE_LOSS_WEIGHT",
+        "PACT_RUN_NAME",
+        "PYTHON_RUN_TAG_BASE"
+      ],
+      "other_assignments_identical": true
+    },
+    {
+      "config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_PeakAware/baseline_convlstm/Lewes/seed2026/train_config_T0000_EP0100.sh",
+      "source_config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_convlstm/Lewes/seed2026/train_config.sh",
+      "changed_assignments": [
+        "ALL_RESULTS_ROOT",
+        "EPISODE_GT_ALIGNED_PEAK_WEIGHT",
+        "EXCEEDANCE_LOSS_WEIGHT",
+        "PACT_RUN_NAME",
+        "PYTHON_RUN_TAG_BASE"
+      ],
+      "other_assignments_identical": true
+    },
+    {
+      "config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_PeakAware/baseline_convlstm/Lewes/seed2026/train_config_T0250_EP0100.sh",
+      "source_config": "/glade/u/home/zel/scratch/StormSurge/configs/baselines_MSEOnly/Derecho/baseline_convlstm/Lewes/seed2026/train_config.sh",
+      "changed_assignments": [
+        "ALL_RESULTS_ROOT",
+        "EPISODE_GT_ALIGNED_PEAK_WEIGHT",
+        "EXCEEDANCE_LOSS_WEIGHT",
+        "PACT_RUN_NAME",
+        "PYTHON_RUN_TAG_BASE"
+      ],
+      "other_assignments_identical": true
+    }
+  ],
+  "pbs_dry_runs": [
+    {
+      "pbs": "/glade/u/home/zel/scratch/StormSurge/PBS-launcher/baselines_PeakAware/baseline_cnn_lstm/Battery/seed42/run_T0250_EP0000.pbs",
+      "returncode": 0,
+      "training_command_count": 1,
+      "ddp_ranks_printed": 4,
+      "source_training_flags_preserved": true,
+      "printed_output_directory": "/glade/u/home/zel/scratch/PACT_StormSurge_FormalRuns_1021_LR5e-3_Clip0.25/baselines_PeakAware/baseline_cnn_lstm/Battery/seed42/T0250_EP0000/20261023_045437_Derecho_formal_bf16_PeakAware_baseline_cnn_lstm_Battery_NCEP_36H_seed42_T0250_EP0000_lr5e-3_clip0.25",
+      "printed_run_tag": "Derecho_formal_bf16_PeakAware_baseline_cnn_lstm_Battery_NCEP_36H_seed42_T0250_EP0000_lr5e-3_clip0.25_20261023_045437"
+    },
+    {
+      "pbs": "/glade/u/home/zel/scratch/StormSurge/PBS-launcher/baselines_PeakAware/baseline_cnn_lstm/Battery/seed42/run_T0000_EP0100.pbs",
+      "returncode": 0,
+      "training_command_count": 1,
+      "ddp_ranks_printed": 4,
+      "source_training_flags_preserved": true,
+      "printed_output_directory": "/glade/u/home/zel/scratch/PACT_StormSurge_FormalRuns_1021_LR5e-3_Clip0.25/baselines_PeakAware/baseline_cnn_lstm/Battery/seed42/T0000_EP0100/20261023_045437_Derecho_formal_bf16_PeakAware_baseline_cnn_lstm_Battery_NCEP_36H_seed42_T0000_EP0100_lr5e-3_clip0.25",
+      "printed_run_tag": "Derecho_formal_bf16_PeakAware_baseline_cnn_lstm_Battery_NCEP_36H_seed42_T0000_EP0100_lr5e-3_clip0.25_20261023_045437"
+    },
+    {
+      "pbs": "/glade/u/home/zel/scratch/StormSurge/PBS-launcher/baselines_PeakAware/baseline_cnn_lstm/Battery/seed42/run_T0250_EP0100.pbs",
+      "returncode": 0,
+      "training_command_count": 1,
+      "ddp_ranks_printed": 4,
+      "source_training_flags_preserved": true,
+      "printed_output_directory": "/glade/u/home/zel/scratch/PACT_StormSurge_FormalRuns_1021_LR5e-3_Clip0.25/baselines_PeakAware/baseline_cnn_lstm/Battery/seed42/T0250_EP0100/20261023_045437_Derecho_formal_bf16_PeakAware_baseline_cnn_lstm_Battery_NCEP_36H_seed42_T0250_EP0100_lr5e-3_clip0.25",
+      "printed_run_tag": "Derecho_formal_bf16_PeakAware_baseline_cnn_lstm_Battery_NCEP_36H_seed42_T0250_EP0100_lr5e-3_clip0.25_20261023_045437"
+    },
+    {
+      "pbs": "/glade/u/home/zel/scratch/StormSurge/PBS-launcher/baselines_PeakAware/baseline_cnn_lstm/Battery/seed123/run_T0250_EP0000.pbs",
+      "returncode": 0,
+      "training_command_count": 1,
+      "ddp_ranks_printed": 4,
+      "source_training_flags_preserved": true,
+      "printed_output_directory": "/glade/u/home/zel/scratch/PACT_StormSurge_FormalRuns_1021_LR5e-3_Clip0.25/baselines_PeakAware/baseline_cnn_lstm/Battery/seed123/T0250_EP0000/20261023_045437_Derecho_formal_bf16_PeakAware_baseline_cnn_lstm_Battery_NCEP_36H_seed123_T0250_EP0000_lr5e-3_clip0.25",
+      "printed_run_tag": "Derecho_formal_bf16_PeakAware_baseline_cnn_lstm_Battery_NCEP_36H_seed123_T0250_EP0000_lr5e-3_clip0.25_20261023_045437"
+    },
+    {
+      "pbs": "/glade/u/home/zel/scratch/StormSurge/PBS-launcher/baselines_PeakAware/baseline_cnn_lstm/Battery/seed123/run_T0000_EP0100.pbs",
+      "returncode": 0,
+      "training_command_count": 1,
+      "ddp_ranks_printed": 4,
+      "source_training_flags_preserved": true,
+      "printed_output_directory": "/glade/u/home/zel/scratch/PACT_StormSurge_FormalRuns_1021_LR5e-3_Clip0.25/baselines_PeakAware/baseline_cnn_lstm/Battery/seed123/T0000_EP0100/20261023_045437_Derecho_formal_bf16_PeakAware_baseline_cnn_lstm_Battery_NCEP_36H_seed123_T0000_EP0100_lr5e-3_clip0.25",
+      "printed_run_tag": "Derecho_formal_bf16_PeakAware_baseline_cnn_lstm_Battery_NCEP_36H_seed123_T0000_EP0100_lr5e-3_clip0.25_20261023_045437"
+    },
+    {
+      "pbs": "/glade/u/home/zel/scratch/StormSurge/PBS-launcher/baselines_PeakAware/baseline_cnn_lstm/Battery/seed123/run_T0250_EP0100.pbs",
+      "returncode": 0,
+      "training_command_count": 1,
+      "ddp_ranks_printed": 4,
+      "source_training_flags_preserved": true,
+      "printed_output_directory": "/glade/u/home/zel/scratch/PACT_StormSurge_FormalRuns_1021_LR5e-3_Clip0.25/baselines_PeakAware/baseline_cnn_lstm/Battery/seed123/T0250_EP0100/20261023_045437_Derecho_formal_bf16_PeakAware_baseline_cnn_lstm_Battery_NCEP_36H_seed123_T0250_EP0100_lr5e-3_clip0.25",
+      "printed_run_tag": "Derecho_formal_bf16_PeakAware_baseline_cnn_lstm_Battery_NCEP_36H_seed123_T0250_EP0100_lr5e-3_clip0.25_20261023_045437"
+    },
+    {
+      "pbs": "/glade/u/home/zel/scratch/StormSurge/PBS-launcher/baselines_PeakAware/baseline_cnn_lstm/Battery/seed2026/run_T0250_EP0000.pbs",
+      "returncode": 0,
+      "training_command_count": 1,
+      "ddp_ranks_printed": 4,
+      "source_training_flags_preserved": true,
+      "printed_output_directory": "/glade/u/home/zel/scratch/PACT_StormSurge_FormalRuns_1021_LR5e-3_Clip0.25/baselines_PeakAware/baseline_cnn_lstm/Battery/seed2026/T0250_EP0000/20261023_045437_Derecho_formal_bf16_PeakAware_baseline_cnn_lstm_Battery_NCEP_36H_seed2026_T0250_EP0000_lr5e-3_clip0.25",
+      "printed_run_tag": "Derecho_formal_bf16_PeakAware_baseline_cnn_lstm_Battery_NCEP_36H_seed2026_T0250_EP0000_lr5e-3_clip0.25_20261023_045437"
+    },
+    {
+      "pbs": "/glade/u/home/zel/scratch/StormSurge/PBS-launcher/baselines_PeakAware/baseline_cnn_lstm/Battery/seed2026/run_T0000_EP0100.pbs",
+      "returncode": 0,
+      "training_command_count": 1,
+      "ddp_ranks_printed": 4,
+      "source_training_flags_preserved": true,
+      "printed_output_directory": "/glade/u/home/zel/scratch/PACT_StormSurge_FormalRuns_1021_LR5e-3_Clip0.25/baselines_PeakAware/baseline_cnn_lstm/Battery/seed2026/T0000_EP0100/20261023_045437_Derecho_formal_bf16_PeakAware_baseline_cnn_lstm_Battery_NCEP_36H_seed2026_T0000_EP0100_lr5e-3_clip0.25",
+      "printed_run_tag": "Derecho_formal_bf16_PeakAware_baseline_cnn_lstm_Battery_NCEP_36H_seed2026_T0000_EP0100_lr5e-3_clip0.25_20261023_045437"
+    },
+    {
+      "pbs": "/glade/u/home/zel/scratch/StormSurge/PBS-launcher/baselines_PeakAware/baseline_cnn_lstm/Battery/seed2026/run_T0250_EP0100.pbs",
+      "returncode": 0,
+      "training_command_count": 1,
+      "ddp_ranks_printed": 4,
+      "source_training_flags_preserved": true,
+      "printed_output_directory": "/glade/u/home/zel/scratch/PACT_StormSurge_FormalRuns_1021_LR5e-3_Clip0.25/baselines_PeakAware/baseline_cnn_lstm/Battery/seed2026/T0250_EP0100/20261023_045437_Derecho_formal_bf16_PeakAware_baseline_cnn_lstm_Battery_NCEP_36H_seed2026_T0250_EP0100_lr5e-3_clip0.25",
+      "printed_run_tag": "Derecho_formal_bf16_PeakAware_baseline_cnn_lstm_Battery_NCEP_36H_seed2026_T0250_EP0100_lr5e-3_clip0.25_20261023_045437"
+    },
+    {
+      "pbs": "/glade/u/home/zel/scratch/StormSurge/PBS-launcher/baselines_PeakAware/baseline_cnn_lstm/Boston/seed42/run_T0250_EP0000.pbs",
+      "returncode": 0,
+      "training_command_count": 1,
+      "ddp_ranks_printed": 4,
+      "source_training_flags_preserved": true,
+      "printed_output_directory": "/glade/u/home/zel/scratch/PACT_StormSurge_FormalRuns_1021_LR5e-3_Clip0.25/baselines_PeakAware/baseline_cnn_lstm/Boston/seed42/T0250_EP0000/20261023_045437_Derecho_formal_bf16_PeakAware_baseline_cnn_lstm_Boston_NCEP_36H_seed42_T0250_EP0000_lr5e-3_clip0.25",
+      "printed_run_tag": "Derecho_formal_bf16_PeakAware_baseline_cnn_lstm_Boston_NCEP_36H_seed42_T0250_EP0000_lr5e-3_clip0.25_20261023_045437"
+    },
+    {
+      "pbs": "/glade/u/home/zel/scratch/StormSurge/PBS-launcher/baselines_PeakAware/baseline_cnn_lstm/Boston/seed42/run_T0000_EP0100.pbs",
+      "returncode": 0,
+      "training_command_count": 1,
+      "ddp_ranks_printed": 4,
+      "source_training_flags_preserved": true,
+      "printed_output_directory": "/glade/u/home/zel/scratch/PACT_StormSurge_FormalRuns_1021_LR5e-3_Clip0.25/baselines_PeakAware/baseline_cnn_lstm/Boston/seed42/T0000_EP0100/20261023_045437_Derecho_formal_bf16_PeakAware_baseline_cnn_lstm_Boston_NCEP_36H_seed42_T0000_EP0100_lr5e-3_clip0.25",
+      "printed_run_tag": "Derecho_formal_bf16_PeakAware_baseline_cnn_lstm_Boston_NCEP_36H_seed42_T0000_EP0100_lr5e-3_clip0.25_20261023_045437"
+    },
+    {
+      "pbs": "/glade/u/home/zel/scratch/StormSurge/PBS-launcher/baselines_PeakAware/baseline_cnn_lstm/Boston/seed42/run_T0250_EP0100.pbs",
+      "returncode": 0,
+      "training_command_count": 1,
+      "ddp_ranks_printed": 4,
+      "source_training_flags_preserved": true,
+      "printed_output_directory": "/glade/u/home/zel/scratch/PACT_StormSurge_FormalRuns_1021_LR5e-3_Clip0.25/baselines_PeakAware/baseline_cnn_lstm/Boston/seed42/T0250_EP0100/20261023_045437_Derecho_formal_bf16_PeakAware_baseline_cnn_lstm_Boston_NCEP_36H_seed42_T0250_EP0100_lr5e-3_clip0.25",
+      "printed_run_tag": "Derecho_formal_bf16_PeakAware_baseline_cnn_lstm_Boston_NCEP_36H_seed42_T0250_EP0100_lr5e-3_clip0.25_20261023_045437"
+    },
+    {
+      "pbs": "/glade/u/home/zel/scratch/StormSurge/PBS-launcher/baselines_PeakAware/baseline_cnn_lstm/Boston/seed123/run_T0250_EP0000.pbs",
+      "returncode": 0,
+      "training_command_count": 1,
+      "ddp_ranks_printed": 4,
+      "source_training_flags_preserved": true,
+      "printed_output_directory": "/glade/u/home/zel/scratch/PACT_StormSurge_FormalRuns_1021_LR5e-3_Clip0.25/baselines_PeakAware/baseline_cnn_lstm/Boston/seed123/T0250_EP0000/20261023_045437_Derecho_formal_bf16_PeakAware_baseline_cnn_lstm_Boston_NCEP_36H_seed123_T0250_EP0000_lr5e-3_clip0.25",
+      "printed_run_tag": "Derecho_formal_bf16_PeakAware_baseline_cnn_lstm_Boston_NCEP_36H_seed123_T0250_EP0000_lr5e-3_clip0.25_20261023_045437"
+    },
+    {
+      "pbs": "/glade/u/home/zel/scratch/StormSurge/PBS-launcher/baselines_PeakAware/baseline_cnn_lstm/Boston/seed123/run_T0000_EP0100.pbs",
+      "returncode": 0,
+      "training_command_count": 1,
+      "ddp_ranks_printed": 4,
+      "source_training_flags_preserved": true,
+      "printed_output_directory": "/glade/u/home/zel/scratch/PACT_StormSurge_FormalRuns_1021_LR5e-3_Clip0.25/baselines_PeakAware/baseline_cnn_lstm/Boston/seed123/T0000_EP0100/20261023_045437_Derecho_formal_bf16_PeakAware_baseline_cnn_lstm_Boston_NCEP_36H_seed123_T0000_EP0100_lr5e-3_clip0.25",
+      "printed_run_tag": "Derecho_formal_bf16_PeakAware_baseline_cnn_lstm_Boston_NCEP_36H_seed123_T0000_EP0100_lr5e-3_clip0.25_20261023_045437"
+    },
+    {
+      "pbs": "/glade/u/home/zel/scratch/StormSurge/PBS-launcher/baselines_PeakAware/baseline_cnn_lstm/Boston/seed123/run_T0250_EP0100.pbs",
+      "returncode": 0,
+      "training_command_count": 1,
+      "ddp_ranks_printed": 4,
+      "source_training_flags_preserved": true,
+      "printed_output_directory": "/glade/u/home/zel/scratch/PACT_StormSurge_FormalRuns_1021_LR5e-3_Clip0.25/baselines_PeakAware/baseline_cnn_lstm/Boston/seed123/T0250_EP0100/20261023_045437_Derecho_formal_bf16_PeakAware_baseline_cnn_lstm_Boston_NCEP_36H_seed123_T0250_EP0100_lr5e-3_clip0.25",
+      "printed_run_tag": "Derecho_formal_bf16_PeakAware_baseline_cnn_lstm_Boston_NCEP_36H_seed123_T0250_EP0100_lr5e-3_clip0.25_20261023_045437"
+    },
+    {
+      "pbs": "/glade/u/home/zel/scratch/StormSurge/PBS-launcher/baselines_PeakAware/baseline_cnn_lstm/Boston/seed2026/run_T0250_EP0000.pbs",
+      "returncode": 0,
+      "training_command_count": 1,
+      "ddp_ranks_printed": 4,
+      "source_training_flags_preserved": true,
+      "printed_output_directory": "/glade/u/home/zel/scratch/PACT_StormSurge_FormalRuns_1021_LR5e-3_Clip0.25/baselines_PeakAware/baseline_cnn_lstm/Boston/seed2026/T0250_EP0000/20261023_045437_Derecho_formal_bf16_PeakAware_baseline_cnn_lstm_Boston_NCEP_36H_seed2026_T0250_EP0000_lr5e-3_clip0.25",
+      "printed_run_tag": "Derecho_formal_bf16_PeakAware_baseline_cnn_lstm_Boston_NCEP_36H_seed2026_T0250_EP0000_lr5e-3_clip0.25_20261023_045437"
+    },
+    {
+      "pbs": "/glade/u/home/zel/scratch/StormSurge/PBS-launcher/baselines_PeakAware/baseline_cnn_lstm/Boston/seed2026/run_T0000_EP0100.pbs",
+      "returncode": 0,
+      "training_command_count": 1,
+      "ddp_ranks_printed": 4,
+      "source_training_flags_preserved": true,
+      "printed_output_directory": "/glade/u/home/zel/scratch/PACT_StormSurge_FormalRuns_1021_LR5e-3_Clip0.25/baselines_PeakAware/baseline_cnn_lstm/Boston/seed2026/T0000_EP0100/20261023_045437_Derecho_formal_bf16_PeakAware_baseline_cnn_lstm_Boston_NCEP_36H_seed2026_T0000_EP0100_lr5e-3_clip0.25",
+      "printed_run_tag": "Derecho_formal_bf16_PeakAware_baseline_cnn_lstm_Boston_NCEP_36H_seed2026_T0000_EP0100_lr5e-3_clip0.25_20261023_045437"
+    },
+    {
+      "pbs": "/glade/u/home/zel/scratch/StormSurge/PBS-launcher/baselines_PeakAware/baseline_cnn_lstm/Boston/seed2026/run_T0250_EP0100.pbs",
+      "returncode": 0,
+      "training_command_count": 1,
+      "ddp_ranks_printed": 4,
+      "source_training_flags_preserved": true,
+      "printed_output_directory": "/glade/u/home/zel/scratch/PACT_StormSurge_FormalRuns_1021_LR5e-3_Clip0.25/baselines_PeakAware/baseline_cnn_lstm/Boston/seed2026/T0250_EP0100/20261023_045437_Derecho_formal_bf16_PeakAware_baseline_cnn_lstm_Boston_NCEP_36H_seed2026_T0250_EP0100_lr5e-3_clip0.25",
+      "printed_run_tag": "Derecho_formal_bf16_PeakAware_baseline_cnn_lstm_Boston_NCEP_36H_seed2026_T0250_EP0100_lr5e-3_clip0.25_20261023_045437"
+    },
+    {
+      "pbs": "/glade/u/home/zel/scratch/StormSurge/PBS-launcher/baselines_PeakAware/baseline_cnn_lstm/CBBT/seed42/run_T0250_EP0000.pbs",
+      "returncode": 0,
+      "training_command_count": 1,
+      "ddp_ranks_printed": 4,
+      "source_training_flags_preserved": true,
+      "printed_output_directory": "/glade/u/home/zel/scratch/PACT_StormSurge_FormalRuns_1021_LR5e-3_Clip0.25/baselines_PeakAware/baseline_cnn_lstm/CBBT/seed42/T0250_EP0000/20261023_045437_Derecho_formal_bf16_PeakAware_baseline_cnn_lstm_CBBT_NCEP_36H_seed42_T0250_EP0000_lr5e-3_clip0.25",
+      "printed_run_tag": "Derecho_formal_bf16_PeakAware_baseline_cnn_lstm_CBBT_NCEP_36H_seed42_T0250_EP0000_lr5e-3_clip0.25_20261023_045437"
+    },
+    {
+      "pbs": "/glade/u/home/zel/scratch/StormSurge/PBS-launcher/baselines_PeakAware/baseline_cnn_lstm/CBBT/seed42/run_T0000_EP0100.pbs",
+      "returncode": 0,
+      "training_command_count": 1,
+      "ddp_ranks_printed": 4,
+      "source_training_flags_preserved": true,
+      "printed_output_directory": "/glade/u/home/zel/scratch/PACT_StormSurge_FormalRuns_1021_LR5e-3_Clip0.25/baselines_PeakAware/baseline_cnn_lstm/CBBT/seed42/T0000_EP0100/20261023_045437_Derecho_formal_bf16_PeakAware_baseline_cnn_lstm_CBBT_NCEP_36H_seed42_T0000_EP0100_lr5e-3_clip0.25",
+      "printed_run_tag": "Derecho_formal_bf16_PeakAware_baseline_cnn_lstm_CBBT_NCEP_36H_seed42_T0000_EP0100_lr5e-3_clip0.25_20261023_045437"
+    },
+    {
+      "pbs": "/glade/u/home/zel/scratch/StormSurge/PBS-launcher/baselines_PeakAware/baseline_cnn_lstm/CBBT/seed42/run_T0250_EP0100.pbs",
+      "returncode": 0,
+      "training_command_count": 1,
+      "ddp_ranks_printed": 4,
+      "source_training_flags_preserved": true,
+      "printed_output_directory": "/glade/u/home/zel/scratch/PACT_StormSurge_FormalRuns_1021_LR5e-3_Clip0.25/baselines_PeakAware/baseline_cnn_lstm/CBBT/seed42/T0250_EP0100/20261023_045437_Derecho_formal_bf16_PeakAware_baseline_cnn_lstm_CBBT_NCEP_36H_seed42_T0250_EP0100_lr5e-3_clip0.25",
+      "printed_run_tag": "Derecho_formal_bf16_PeakAware_baseline_cnn_lstm_CBBT_NCEP_36H_seed42_T0250_EP0100_lr5e-3_clip0.25_20261023_045437"
+    },
+    {
+      "pbs": "/glade/u/home/zel/scratch/StormSurge/PBS-launcher/baselines_PeakAware/baseline_cnn_lstm/CBBT/seed123/run_T0250_EP0000.pbs",
+      "returncode": 0,
+      "training_command_count": 1,
+      "ddp_ranks_printed": 4,
+      "source_training_flags_preserved": true,
+      "printed_output_directory": "/glade/u/home/zel/scratch/PACT_StormSurge_FormalRuns_1021_LR5e-3_Clip0.25/baselines_PeakAware/baseline_cnn_lstm/CBBT/seed123/T0250_EP0000/20261023_045437_Derecho_formal_bf16_PeakAware_baseline_cnn_lstm_CBBT_NCEP_36H_seed123_T0250_EP0000_lr5e-3_clip0.25",
+      "printed_run_tag": "Derecho_formal_bf16_PeakAware_baseline_cnn_lstm_CBBT_NCEP_36H_seed123_T0250_EP0000_lr5e-3_clip0.25_20261023_045437"
+    },
+    {
+      "pbs": "/glade/u/home/zel/scratch/StormSurge/PBS-launcher/baselines_PeakAware/baseline_cnn_lstm/CBBT/seed123/run_T0000_EP0100.pbs",
+      "returncode": 0,
+      "training_command_count": 1,
+      "ddp_ranks_printed": 4,
+      "source_training_flags_preserved": true,
+      "printed_output_directory": "/glade/u/home/zel/scratch/PACT_StormSurge_FormalRuns_1021_LR5e-3_Clip0.25/baselines_PeakAware/baseline_cnn_lstm/CBBT/seed123/T0000_EP0100/20261023_045437_Derecho_formal_bf16_PeakAware_baseline_cnn_lstm_CBBT_NCEP_36H_seed123_T0000_EP0100_lr5e-3_clip0.25",
+      "printed_run_tag": "Derecho_formal_bf16_PeakAware_baseline_cnn_lstm_CBBT_NCEP_36H_seed123_T0000_EP0100_lr5e-3_clip0.25_20261023_045437"
+    },
+    {
+      "pbs": "/glade/u/home/zel/scratch/StormSurge/PBS-launcher/baselines_PeakAware/baseline_cnn_lstm/CBBT/seed123/run_T0250_EP0100.pbs",
+      "returncode": 0,
+      "training_command_count": 1,
+      "ddp_ranks_printed": 4,
+      "source_training_flags_preserved": true,
+      "printed_output_directory": "/glade/u/home/zel/scratch/PACT_StormSurge_FormalRuns_1021_LR5e-3_Clip0.25/baselines_PeakAware/baseline_cnn_lstm/CBBT/seed123/T0250_EP0100/20261023_045437_Derecho_formal_bf16_PeakAware_baseline_cnn_lstm_CBBT_NCEP_36H_seed123_T0250_EP0100_lr5e-3_clip0.25",
+      "printed_run_tag": "Derecho_formal_bf16_PeakAware_baseline_cnn_lstm_CBBT_NCEP_36H_seed123_T0250_EP0100_lr5e-3_clip0.25_20261023_045437"
+    },
+    {
+      "pbs": "/glade/u/home/zel/scratch/StormSurge/PBS-launcher/baselines_PeakAware/baseline_cnn_lstm/CBBT/seed2026/run_T0250_EP0000.pbs",
+      "returncode": 0,
+      "training_command_count": 1,
+      "ddp_ranks_printed": 4,
+      "source_training_flags_preserved": true,
+      "printed_output_directory": "/glade/u/home/zel/scratch/PACT_StormSurge_FormalRuns_1021_LR5e-3_Clip0.25/baselines_PeakAware/baseline_cnn_lstm/CBBT/seed2026/T0250_EP0000/20261023_045437_Derecho_formal_bf16_PeakAware_baseline_cnn_lstm_CBBT_NCEP_36H_seed2026_T0250_EP0000_lr5e-3_clip0.25",
+      "printed_run_tag": "Derecho_formal_bf16_PeakAware_baseline_cnn_lstm_CBBT_NCEP_36H_seed2026_T0250_EP0000_lr5e-3_clip0.25_20261023_045437"
+    },
+    {
+      "pbs": "/glade/u/home/zel/scratch/StormSurge/PBS-launcher/baselines_PeakAware/baseline_cnn_lstm/CBBT/seed2026/run_T0000_EP0100.pbs",
+      "returncode": 0,
+      "training_command_count": 1,
+      "ddp_ranks_printed": 4,
+      "source_training_flags_preserved": true,
+      "printed_output_directory": "/glade/u/home/zel/scratch/PACT_StormSurge_FormalRuns_1021_LR5e-3_Clip0.25/baselines_PeakAware/baseline_cnn_lstm/CBBT/seed2026/T0000_EP0100/20261023_045437_Derecho_formal_bf16_PeakAware_baseline_cnn_lstm_CBBT_NCEP_36H_seed2026_T0000_EP0100_lr5e-3_clip0.25",
+      "printed_run_tag": "Derecho_formal_bf16_PeakAware_baseline_cnn_lstm_CBBT_NCEP_36H_seed2026_T0000_EP0100_lr5e-3_clip0.25_20261023_045437"
+    },
+    {
+      "pbs": "/glade/u/home/zel/scratch/StormSurge/PBS-launcher/baselines_PeakAware/baseline_cnn_lstm/CBBT/seed2026/run_T0250_EP0100.pbs",
+      "returncode": 0,
+      "training_command_count": 1,
+      "ddp_ranks_printed": 4,
+      "source_training_flags_preserved": true,
+      "printed_output_directory": "/glade/u/home/zel/scratch/PACT_StormSurge_FormalRuns_1021_LR5e-3_Clip0.25/baselines_PeakAware/baseline_cnn_lstm/CBBT/seed2026/T0250_EP0100/20261023_045437_Derecho_formal_bf16_PeakAware_baseline_cnn_lstm_CBBT_NCEP_36H_seed2026_T0250_EP0100_lr5e-3_clip0.25",
+      "printed_run_tag": "Derecho_formal_bf16_PeakAware_baseline_cnn_lstm_CBBT_NCEP_36H_seed2026_T0250_EP0100_lr5e-3_clip0.25_20261023_045437"
+    },
+    {
+      "pbs": "/glade/u/home/zel/scratch/StormSurge/PBS-launcher/baselines_PeakAware/baseline_cnn_lstm/Lewes/seed42/run_T0250_EP0000.pbs",
+      "returncode": 0,
+      "training_command_count": 1,
+      "ddp_ranks_printed": 4,
+      "source_training_flags_preserved": true,
+      "printed_output_directory": "/glade/u/home/zel/scratch/PACT_StormSurge_FormalRuns_1021_LR5e-3_Clip0.25/baselines_PeakAware/baseline_cnn_lstm/Lewes/seed42/T0250_EP0000/20261023_045437_Derecho_formal_bf16_PeakAware_baseline_cnn_lstm_Lewes_NCEP_36H_seed42_T0250_EP0000_lr5e-3_clip0.25",
+      "printed_run_tag": "Derecho_formal_bf16_PeakAware_baseline_cnn_lstm_Lewes_NCEP_36H_seed42_T0250_EP0000_lr5e-3_clip0.25_20261023_045437"
+    },
+    {
+      "pbs": "/glade/u/home/zel/scratch/StormSurge/PBS-launcher/baselines_PeakAware/baseline_cnn_lstm/Lewes/seed42/run_T0000_EP0100.pbs",
+      "returncode": 0,
+      "training_command_count": 1,
+      "ddp_ranks_printed": 4,
+      "source_training_flags_preserved": true,
+      "printed_output_directory": "/glade/u/home/zel/scratch/PACT_StormSurge_FormalRuns_1021_LR5e-3_Clip0.25/baselines_PeakAware/baseline_cnn_lstm/Lewes/seed42/T0000_EP0100/20261023_045437_Derecho_formal_bf16_PeakAware_baseline_cnn_lstm_Lewes_NCEP_36H_seed42_T0000_EP0100_lr5e-3_clip0.25",
+      "printed_run_tag": "Derecho_formal_bf16_PeakAware_baseline_cnn_lstm_Lewes_NCEP_36H_seed42_T0000_EP0100_lr5e-3_clip0.25_20261023_045437"
+    },
+    {
+      "pbs": "/glade/u/home/zel/scratch/StormSurge/PBS-launcher/baselines_PeakAware/baseline_cnn_lstm/Lewes/seed42/run_T0250_EP0100.pbs",
+      "returncode": 0,
+      "training_command_count": 1,
+      "ddp_ranks_printed": 4,
+      "source_training_flags_preserved": true,
+      "printed_output_directory": "/glade/u/home/zel/scratch/PACT_StormSurge_FormalRuns_1021_LR5e-3_Clip0.25/baselines_PeakAware/baseline_cnn_lstm/Lewes/seed42/T0250_EP0100/20261023_045437_Derecho_formal_bf16_PeakAware_baseline_cnn_lstm_Lewes_NCEP_36H_seed42_T0250_EP0100_lr5e-3_clip0.25",
+      "printed_run_tag": "Derecho_formal_bf16_PeakAware_baseline_cnn_lstm_Lewes_NCEP_36H_seed42_T0250_EP0100_lr5e-3_clip0.25_20261023_045437"
+    },
+    {
+      "pbs": "/glade/u/home/zel/scratch/StormSurge/PBS-launcher/baselines_PeakAware/baseline_cnn_lstm/Lewes/seed123/run_T0250_EP0000.pbs",
+      "returncode": 0,
+      "training_command_count": 1,
+      "ddp_ranks_printed": 4,
+      "source_training_flags_preserved": true,
+      "printed_output_directory": "/glade/u/home/zel/scratch/PACT_StormSurge_FormalRuns_1021_LR5e-3_Clip0.25/baselines_PeakAware/baseline_cnn_lstm/Lewes/seed123/T0250_EP0000/20261023_045437_Derecho_formal_bf16_PeakAware_baseline_cnn_lstm_Lewes_NCEP_36H_seed123_T0250_EP0000_lr5e-3_clip0.25",
+      "printed_run_tag": "Derecho_formal_bf16_PeakAware_baseline_cnn_lstm_Lewes_NCEP_36H_seed123_T0250_EP0000_lr5e-3_clip0.25_20261023_045437"
+    },
+    {
+      "pbs": "/glade/u/home/zel/scratch/StormSurge/PBS-launcher/baselines_PeakAware/baseline_cnn_lstm/Lewes/seed123/run_T0000_EP0100.pbs",
+      "returncode": 0,
+      "training_command_count": 1,
+      "ddp_ranks_printed": 4,
+      "source_training_flags_preserved": true,
+      "printed_output_directory": "/glade/u/home/zel/scratch/PACT_StormSurge_FormalRuns_1021_LR5e-3_Clip0.25/baselines_PeakAware/baseline_cnn_lstm/Lewes/seed123/T0000_EP0100/20261023_045437_Derecho_formal_bf16_PeakAware_baseline_cnn_lstm_Lewes_NCEP_36H_seed123_T0000_EP0100_lr5e-3_clip0.25",
+      "printed_run_tag": "Derecho_formal_bf16_PeakAware_baseline_cnn_lstm_Lewes_NCEP_36H_seed123_T0000_EP0100_lr5e-3_clip0.25_20261023_045437"
+    },
+    {
+      "pbs": "/glade/u/home/zel/scratch/StormSurge/PBS-launcher/baselines_PeakAware/baseline_cnn_lstm/Lewes/seed123/run_T0250_EP0100.pbs",
+      "returncode": 0,
+      "training_command_count": 1,
+      "ddp_ranks_printed": 4,
+      "source_training_flags_preserved": true,
+      "printed_output_directory": "/glade/u/home/zel/scratch/PACT_StormSurge_FormalRuns_1021_LR5e-3_Clip0.25/baselines_PeakAware/baseline_cnn_lstm/Lewes/seed123/T0250_EP0100/20261023_045437_Derecho_formal_bf16_PeakAware_baseline_cnn_lstm_Lewes_NCEP_36H_seed123_T0250_EP0100_lr5e-3_clip0.25",
+      "printed_run_tag": "Derecho_formal_bf16_PeakAware_baseline_cnn_lstm_Lewes_NCEP_36H_seed123_T0250_EP0100_lr5e-3_clip0.25_20261023_045437"
+    },
+    {
+      "pbs": "/glade/u/home/zel/scratch/StormSurge/PBS-launcher/baselines_PeakAware/baseline_cnn_lstm/Lewes/seed2026/run_T0250_EP0000.pbs",
+      "returncode": 0,
+      "training_command_count": 1,
+      "ddp_ranks_printed": 4,
+      "source_training_flags_preserved": true,
+      "printed_output_directory": "/glade/u/home/zel/scratch/PACT_StormSurge_FormalRuns_1021_LR5e-3_Clip0.25/baselines_PeakAware/baseline_cnn_lstm/Lewes/seed2026/T0250_EP0000/20261023_045437_Derecho_formal_bf16_PeakAware_baseline_cnn_lstm_Lewes_NCEP_36H_seed2026_T0250_EP0000_lr5e-3_clip0.25",
+      "printed_run_tag": "Derecho_formal_bf16_PeakAware_baseline_cnn_lstm_Lewes_NCEP_36H_seed2026_T0250_EP0000_lr5e-3_clip0.25_20261023_045437"
+    },
+    {
+      "pbs": "/glade/u/home/zel/scratch/StormSurge/PBS-launcher/baselines_PeakAware/baseline_cnn_lstm/Lewes/seed2026/run_T0000_EP0100.pbs",
+      "returncode": 0,
+      "training_command_count": 1,
+      "ddp_ranks_printed": 4,
+      "source_training_flags_preserved": true,
+      "printed_output_directory": "/glade/u/home/zel/scratch/PACT_StormSurge_FormalRuns_1021_LR5e-3_Clip0.25/baselines_PeakAware/baseline_cnn_lstm/Lewes/seed2026/T0000_EP0100/20261023_045437_Derecho_formal_bf16_PeakAware_baseline_cnn_lstm_Lewes_NCEP_36H_seed2026_T0000_EP0100_lr5e-3_clip0.25",
+      "printed_run_tag": "Derecho_formal_bf16_PeakAware_baseline_cnn_lstm_Lewes_NCEP_36H_seed2026_T0000_EP0100_lr5e-3_clip0.25_20261023_045437"
+    },
+    {
+      "pbs": "/glade/u/home/zel/scratch/StormSurge/PBS-launcher/baselines_PeakAware/baseline_cnn_lstm/Lewes/seed2026/run_T0250_EP0100.pbs",
+      "returncode": 0,
+      "training_command_count": 1,
+      "ddp_ranks_printed": 4,
+      "source_training_flags_preserved": true,
+      "printed_output_directory": "/glade/u/home/zel/scratch/PACT_StormSurge_FormalRuns_1021_LR5e-3_Clip0.25/baselines_PeakAware/baseline_cnn_lstm/Lewes/seed2026/T0250_EP0100/20261023_045437_Derecho_formal_bf16_PeakAware_baseline_cnn_lstm_Lewes_NCEP_36H_seed2026_T0250_EP0100_lr5e-3_clip0.25",
+      "printed_run_tag": "Derecho_formal_bf16_PeakAware_baseline_cnn_lstm_Lewes_NCEP_36H_seed2026_T0250_EP0100_lr5e-3_clip0.25_20261023_045437"
+    },
+    {
+      "pbs": "/glade/u/home/zel/scratch/StormSurge/PBS-launcher/baselines_PeakAware/baseline_cnn_gru/Battery/seed42/run_T0250_EP0000.pbs",
+      "returncode": 0,
+      "training_command_count": 1,
+      "ddp_ranks_printed": 4,
+      "source_training_flags_preserved": true,
+      "printed_output_directory": "/glade/u/home/zel/scratch/PACT_StormSurge_FormalRuns_1021_LR5e-3_Clip0.25/baselines_PeakAware/baseline_cnn_gru/Battery/seed42/T0250_EP0000/20261023_045436_Derecho_formal_bf16_PeakAware_baseline_cnn_gru_Battery_NCEP_36H_seed42_T0250_EP0000_lr5e-3_clip0.25",
+      "printed_run_tag": "Derecho_formal_bf16_PeakAware_baseline_cnn_gru_Battery_NCEP_36H_seed42_T0250_EP0000_lr5e-3_clip0.25_20261023_045436"
+    },
+    {
+      "pbs": "/glade/u/home/zel/scratch/StormSurge/PBS-launcher/baselines_PeakAware/baseline_cnn_gru/Battery/seed42/run_T0000_EP0100.pbs",
+      "returncode": 0,
+      "training_command_count": 1,
+      "ddp_ranks_printed": 4,
+      "source_training_flags_preserved": true,
+      "printed_output_directory": "/glade/u/home/zel/scratch/PACT_StormSurge_FormalRuns_1021_LR5e-3_Clip0.25/baselines_PeakAware/baseline_cnn_gru/Battery/seed42/T0000_EP0100/20261023_045436_Derecho_formal_bf16_PeakAware_baseline_cnn_gru_Battery_NCEP_36H_seed42_T0000_EP0100_lr5e-3_clip0.25",
+      "printed_run_tag": "Derecho_formal_bf16_PeakAware_baseline_cnn_gru_Battery_NCEP_36H_seed42_T0000_EP0100_lr5e-3_clip0.25_20261023_045436"
+    },
+    {
+      "pbs": "/glade/u/home/zel/scratch/StormSurge/PBS-launcher/baselines_PeakAware/baseline_cnn_gru/Battery/seed42/run_T0250_EP0100.pbs",
+      "returncode": 0,
+      "training_command_count": 1,
+      "ddp_ranks_printed": 4,
+      "source_training_flags_preserved": true,
+      "printed_output_directory": "/glade/u/home/zel/scratch/PACT_StormSurge_FormalRuns_1021_LR5e-3_Clip0.25/baselines_PeakAware/baseline_cnn_gru/Battery/seed42/T0250_EP0100/20261023_045436_Derecho_formal_bf16_PeakAware_baseline_cnn_gru_Battery_NCEP_36H_seed42_T0250_EP0100_lr5e-3_clip0.25",
+      "printed_run_tag": "Derecho_formal_bf16_PeakAware_baseline_cnn_gru_Battery_NCEP_36H_seed42_T0250_EP0100_lr5e-3_clip0.25_20261023_045436"
+    },
+    {
+      "pbs": "/glade/u/home/zel/scratch/StormSurge/PBS-launcher/baselines_PeakAware/baseline_cnn_gru/Battery/seed123/run_T0250_EP0000.pbs",
+      "returncode": 0,
+      "training_command_count": 1,
+      "ddp_ranks_printed": 4,
+      "source_training_flags_preserved": true,
+      "printed_output_directory": "/glade/u/home/zel/scratch/PACT_StormSurge_FormalRuns_1021_LR5e-3_Clip0.25/baselines_PeakAware/baseline_cnn_gru/Battery/seed123/T0250_EP0000/20261023_045436_Derecho_formal_bf16_PeakAware_baseline_cnn_gru_Battery_NCEP_36H_seed123_T0250_EP0000_lr5e-3_clip0.25",
+      "printed_run_tag": "Derecho_formal_bf16_PeakAware_baseline_cnn_gru_Battery_NCEP_36H_seed123_T0250_EP0000_lr5e-3_clip0.25_20261023_045436"
+    },
+    {
+      "pbs": "/glade/u/home/zel/scratch/StormSurge/PBS-launcher/baselines_PeakAware/baseline_cnn_gru/Battery/seed123/run_T0000_EP0100.pbs",
+      "returncode": 0,
+      "training_command_count": 1,
+      "ddp_ranks_printed": 4,
+      "source_training_flags_preserved": true,
+      "printed_output_directory": "/glade/u/home/zel/scratch/PACT_StormSurge_FormalRuns_1021_LR5e-3_Clip0.25/baselines_PeakAware/baseline_cnn_gru/Battery/seed123/T0000_EP0100/20261023_045436_Derecho_formal_bf16_PeakAware_baseline_cnn_gru_Battery_NCEP_36H_seed123_T0000_EP0100_lr5e-3_clip0.25",
+      "printed_run_tag": "Derecho_formal_bf16_PeakAware_baseline_cnn_gru_Battery_NCEP_36H_seed123_T0000_EP0100_lr5e-3_clip0.25_20261023_045436"
+    },
+    {
+      "pbs": "/glade/u/home/zel/scratch/StormSurge/PBS-launcher/baselines_PeakAware/baseline_cnn_gru/Battery/seed123/run_T0250_EP0100.pbs",
+      "returncode": 0,
+      "training_command_count": 1,
+      "ddp_ranks_printed": 4,
+      "source_training_flags_preserved": true,
+      "printed_output_directory": "/glade/u/home/zel/scratch/PACT_StormSurge_FormalRuns_1021_LR5e-3_Clip0.25/baselines_PeakAware/baseline_cnn_gru/Battery/seed123/T0250_EP0100/20261023_045436_Derecho_formal_bf16_PeakAware_baseline_cnn_gru_Battery_NCEP_36H_seed123_T0250_EP0100_lr5e-3_clip0.25",
+      "printed_run_tag": "Derecho_formal_bf16_PeakAware_baseline_cnn_gru_Battery_NCEP_36H_seed123_T0250_EP0100_lr5e-3_clip0.25_20261023_045436"
+    },
+    {
+      "pbs": "/glade/u/home/zel/scratch/StormSurge/PBS-launcher/baselines_PeakAware/baseline_cnn_gru/Battery/seed2026/run_T0250_EP0000.pbs",
+      "returncode": 0,
+      "training_command_count": 1,
+      "ddp_ranks_printed": 4,
+      "source_training_flags_preserved": true,
+      "printed_output_directory": "/glade/u/home/zel/scratch/PACT_StormSurge_FormalRuns_1021_LR5e-3_Clip0.25/baselines_PeakAware/baseline_cnn_gru/Battery/seed2026/T0250_EP0000/20261023_045436_Derecho_formal_bf16_PeakAware_baseline_cnn_gru_Battery_NCEP_36H_seed2026_T0250_EP0000_lr5e-3_clip0.25",
+      "printed_run_tag": "Derecho_formal_bf16_PeakAware_baseline_cnn_gru_Battery_NCEP_36H_seed2026_T0250_EP0000_lr5e-3_clip0.25_20261023_045436"
+    },
+    {
+      "pbs": "/glade/u/home/zel/scratch/StormSurge/PBS-launcher/baselines_PeakAware/baseline_cnn_gru/Battery/seed2026/run_T0000_EP0100.pbs",
+      "returncode": 0,
+      "training_command_count": 1,
+      "ddp_ranks_printed": 4,
+      "source_training_flags_preserved": true,
+      "printed_output_directory": "/glade/u/home/zel/scratch/PACT_StormSurge_FormalRuns_1021_LR5e-3_Clip0.25/baselines_PeakAware/baseline_cnn_gru/Battery/seed2026/T0000_EP0100/20261023_045436_Derecho_formal_bf16_PeakAware_baseline_cnn_gru_Battery_NCEP_36H_seed2026_T0000_EP0100_lr5e-3_clip0.25",
+      "printed_run_tag": "Derecho_formal_bf16_PeakAware_baseline_cnn_gru_Battery_NCEP_36H_seed2026_T0000_EP0100_lr5e-3_clip0.25_20261023_045436"
+    },
+    {
+      "pbs": "/glade/u/home/zel/scratch/StormSurge/PBS-launcher/baselines_PeakAware/baseline_cnn_gru/Battery/seed2026/run_T0250_EP0100.pbs",
+      "returncode": 0,
+      "training_command_count": 1,
+      "ddp_ranks_printed": 4,
+      "source_training_flags_preserved": true,
+      "printed_output_directory": "/glade/u/home/zel/scratch/PACT_StormSurge_FormalRuns_1021_LR5e-3_Clip0.25/baselines_PeakAware/baseline_cnn_gru/Battery/seed2026/T0250_EP0100/20261023_045436_Derecho_formal_bf16_PeakAware_baseline_cnn_gru_Battery_NCEP_36H_seed2026_T0250_EP0100_lr5e-3_clip0.25",
+      "printed_run_tag": "Derecho_formal_bf16_PeakAware_baseline_cnn_gru_Battery_NCEP_36H_seed2026_T0250_EP0100_lr5e-3_clip0.25_20261023_045436"
+    },
+    {
+      "pbs": "/glade/u/home/zel/scratch/StormSurge/PBS-launcher/baselines_PeakAware/baseline_cnn_gru/Boston/seed42/run_T0250_EP0000.pbs",
+      "returncode": 0,
+      "training_command_count": 1,
+      "ddp_ranks_printed": 4,
+      "source_training_flags_preserved": true,
+      "printed_output_directory": "/glade/u/home/zel/scratch/PACT_StormSurge_FormalRuns_1021_LR5e-3_Clip0.25/baselines_PeakAware/baseline_cnn_gru/Boston/seed42/T0250_EP0000/20261023_045436_Derecho_formal_bf16_PeakAware_baseline_cnn_gru_Boston_NCEP_36H_seed42_T0250_EP0000_lr5e-3_clip0.25",
+      "printed_run_tag": "Derecho_formal_bf16_PeakAware_baseline_cnn_gru_Boston_NCEP_36H_seed42_T0250_EP0000_lr5e-3_clip0.25_20261023_045436"
+    },
+    {
+      "pbs": "/glade/u/home/zel/scratch/StormSurge/PBS-launcher/baselines_PeakAware/baseline_cnn_gru/Boston/seed42/run_T0000_EP0100.pbs",
+      "returncode": 0,
+      "training_command_count": 1,
+      "ddp_ranks_printed": 4,
+      "source_training_flags_preserved": true,
+      "printed_output_directory": "/glade/u/home/zel/scratch/PACT_StormSurge_FormalRuns_1021_LR5e-3_Clip0.25/baselines_PeakAware/baseline_cnn_gru/Boston/seed42/T0000_EP0100/20261023_045436_Derecho_formal_bf16_PeakAware_baseline_cnn_gru_Boston_NCEP_36H_seed42_T0000_EP0100_lr5e-3_clip0.25",
+      "printed_run_tag": "Derecho_formal_bf16_PeakAware_baseline_cnn_gru_Boston_NCEP_36H_seed42_T0000_EP0100_lr5e-3_clip0.25_20261023_045436"
+    },
+    {
+      "pbs": "/glade/u/home/zel/scratch/StormSurge/PBS-launcher/baselines_PeakAware/baseline_cnn_gru/Boston/seed42/run_T0250_EP0100.pbs",
+      "returncode": 0,
+      "training_command_count": 1,
+      "ddp_ranks_printed": 4,
+      "source_training_flags_preserved": true,
+      "printed_output_directory": "/glade/u/home/zel/scratch/PACT_StormSurge_FormalRuns_1021_LR5e-3_Clip0.25/baselines_PeakAware/baseline_cnn_gru/Boston/seed42/T0250_EP0100/20261023_045436_Derecho_formal_bf16_PeakAware_baseline_cnn_gru_Boston_NCEP_36H_seed42_T0250_EP0100_lr5e-3_clip0.25",
+      "printed_run_tag": "Derecho_formal_bf16_PeakAware_baseline_cnn_gru_Boston_NCEP_36H_seed42_T0250_EP0100_lr5e-3_clip0.25_20261023_045436"
+    },
+    {
+      "pbs": "/glade/u/home/zel/scratch/StormSurge/PBS-launcher/baselines_PeakAware/baseline_cnn_gru/Boston/seed123/run_T0250_EP0000.pbs",
+      "returncode": 0,
+      "training_command_count": 1,
+      "ddp_ranks_printed": 4,
+      "source_training_flags_preserved": true,
+      "printed_output_directory": "/glade/u/home/zel/scratch/PACT_StormSurge_FormalRuns_1021_LR5e-3_Clip0.25/baselines_PeakAware/baseline_cnn_gru/Boston/seed123/T0250_EP0000/20261023_045436_Derecho_formal_bf16_PeakAware_baseline_cnn_gru_Boston_NCEP_36H_seed123_T0250_EP0000_lr5e-3_clip0.25",
+      "printed_run_tag": "Derecho_formal_bf16_PeakAware_baseline_cnn_gru_Boston_NCEP_36H_seed123_T0250_EP0000_lr5e-3_clip0.25_20261023_045436"
+    },
+    {
+      "pbs": "/glade/u/home/zel/scratch/StormSurge/PBS-launcher/baselines_PeakAware/baseline_cnn_gru/Boston/seed123/run_T0000_EP0100.pbs",
+      "returncode": 0,
+      "training_command_count": 1,
+      "ddp_ranks_printed": 4,
+      "source_training_flags_preserved": true,
+      "printed_output_directory": "/glade/u/home/zel/scratch/PACT_StormSurge_FormalRuns_1021_LR5e-3_Clip0.25/baselines_PeakAware/baseline_cnn_gru/Boston/seed123/T0000_EP0100/20261023_045436_Derecho_formal_bf16_PeakAware_baseline_cnn_gru_Boston_NCEP_36H_seed123_T0000_EP0100_lr5e-3_clip0.25",
+      "printed_run_tag": "Derecho_formal_bf16_PeakAware_baseline_cnn_gru_Boston_NCEP_36H_seed123_T0000_EP0100_lr5e-3_clip0.25_20261023_045436"
+    },
+    {
+      "pbs": "/glade/u/home/zel/scratch/StormSurge/PBS-launcher/baselines_PeakAware/baseline_cnn_gru/Boston/seed123/run_T0250_EP0100.pbs",
+      "returncode": 0,
+      "training_command_count": 1,
+      "ddp_ranks_printed": 4,
+      "source_training_flags_preserved": true,
+      "printed_output_directory": "/glade/u/home/zel/scratch/PACT_StormSurge_FormalRuns_1021_LR5e-3_Clip0.25/baselines_PeakAware/baseline_cnn_gru/Boston/seed123/T0250_EP0100/20261023_045436_Derecho_formal_bf16_PeakAware_baseline_cnn_gru_Boston_NCEP_36H_seed123_T0250_EP0100_lr5e-3_clip0.25",
+      "printed_run_tag": "Derecho_formal_bf16_PeakAware_baseline_cnn_gru_Boston_NCEP_36H_seed123_T0250_EP0100_lr5e-3_clip0.25_20261023_045436"
+    },
+    {
+      "pbs": "/glade/u/home/zel/scratch/StormSurge/PBS-launcher/baselines_PeakAware/baseline_cnn_gru/Boston/seed2026/run_T0250_EP0000.pbs",
+      "returncode": 0,
+      "training_command_count": 1,
+      "ddp_ranks_printed": 4,
+      "source_training_flags_preserved": true,
+      "printed_output_directory": "/glade/u/home/zel/scratch/PACT_StormSurge_FormalRuns_1021_LR5e-3_Clip0.25/baselines_PeakAware/baseline_cnn_gru/Boston/seed2026/T0250_EP0000/20261023_045436_Derecho_formal_bf16_PeakAware_baseline_cnn_gru_Boston_NCEP_36H_seed2026_T0250_EP0000_lr5e-3_clip0.25",
+      "printed_run_tag": "Derecho_formal_bf16_PeakAware_baseline_cnn_gru_Boston_NCEP_36H_seed2026_T0250_EP0000_lr5e-3_clip0.25_20261023_045436"
+    },
+    {
+      "pbs": "/glade/u/home/zel/scratch/StormSurge/PBS-launcher/baselines_PeakAware/baseline_cnn_gru/Boston/seed2026/run_T0000_EP0100.pbs",
+      "returncode": 0,
+      "training_command_count": 1,
+      "ddp_ranks_printed": 4,
+      "source_training_flags_preserved": true,
+      "printed_output_directory": "/glade/u/home/zel/scratch/PACT_StormSurge_FormalRuns_1021_LR5e-3_Clip0.25/baselines_PeakAware/baseline_cnn_gru/Boston/seed2026/T0000_EP0100/20261023_045436_Derecho_formal_bf16_PeakAware_baseline_cnn_gru_Boston_NCEP_36H_seed2026_T0000_EP0100_lr5e-3_clip0.25",
+      "printed_run_tag": "Derecho_formal_bf16_PeakAware_baseline_cnn_gru_Boston_NCEP_36H_seed2026_T0000_EP0100_lr5e-3_clip0.25_20261023_045436"
+    },
+    {
+      "pbs": "/glade/u/home/zel/scratch/StormSurge/PBS-launcher/baselines_PeakAware/baseline_cnn_gru/Boston/seed2026/run_T0250_EP0100.pbs",
+      "returncode": 0,
+      "training_command_count": 1,
+      "ddp_ranks_printed": 4,
+      "source_training_flags_preserved": true,
+      "printed_output_directory": "/glade/u/home/zel/scratch/PACT_StormSurge_FormalRuns_1021_LR5e-3_Clip0.25/baselines_PeakAware/baseline_cnn_gru/Boston/seed2026/T0250_EP0100/20261023_045436_Derecho_formal_bf16_PeakAware_baseline_cnn_gru_Boston_NCEP_36H_seed2026_T0250_EP0100_lr5e-3_clip0.25",
+      "printed_run_tag": "Derecho_formal_bf16_PeakAware_baseline_cnn_gru_Boston_NCEP_36H_seed2026_T0250_EP0100_lr5e-3_clip0.25_20261023_045436"
+    },
+    {
+      "pbs": "/glade/u/home/zel/scratch/StormSurge/PBS-launcher/baselines_PeakAware/baseline_cnn_gru/CBBT/seed42/run_T0250_EP0000.pbs",
+      "returncode": 0,
+      "training_command_count": 1,
+      "ddp_ranks_printed": 4,
+      "source_training_flags_preserved": true,
+      "printed_output_directory": "/glade/u/home/zel/scratch/PACT_StormSurge_FormalRuns_1021_LR5e-3_Clip0.25/baselines_PeakAware/baseline_cnn_gru/CBBT/seed42/T0250_EP0000/20261023_045436_Derecho_formal_bf16_PeakAware_baseline_cnn_gru_CBBT_NCEP_36H_seed42_T0250_EP0000_lr5e-3_clip0.25",
+      "printed_run_tag": "Derecho_formal_bf16_PeakAware_baseline_cnn_gru_CBBT_NCEP_36H_seed42_T0250_EP0000_lr5e-3_clip0.25_20261023_045436"
+    },
+    {
+      "pbs": "/glade/u/home/zel/scratch/StormSurge/PBS-launcher/baselines_PeakAware/baseline_cnn_gru/CBBT/seed42/run_T0000_EP0100.pbs",
+      "returncode": 0,
+      "training_command_count": 1,
+      "ddp_ranks_printed": 4,
+      "source_training_flags_preserved": true,
+      "printed_output_directory": "/glade/u/home/zel/scratch/PACT_StormSurge_FormalRuns_1021_LR5e-3_Clip0.25/baselines_PeakAware/baseline_cnn_gru/CBBT/seed42/T0000_EP0100/20261023_045436_Derecho_formal_bf16_PeakAware_baseline_cnn_gru_CBBT_NCEP_36H_seed42_T0000_EP0100_lr5e-3_clip0.25",
+      "printed_run_tag": "Derecho_formal_bf16_PeakAware_baseline_cnn_gru_CBBT_NCEP_36H_seed42_T0000_EP0100_lr5e-3_clip0.25_20261023_045436"
+    },
+    {
+      "pbs": "/glade/u/home/zel/scratch/StormSurge/PBS-launcher/baselines_PeakAware/baseline_cnn_gru/CBBT/seed42/run_T0250_EP0100.pbs",
+      "returncode": 0,
+      "training_command_count": 1,
+      "ddp_ranks_printed": 4,
+      "source_training_flags_preserved": true,
+      "printed_output_directory": "/glade/u/home/zel/scratch/PACT_StormSurge_FormalRuns_1021_LR5e-3_Clip0.25/baselines_PeakAware/baseline_cnn_gru/CBBT/seed42/T0250_EP0100/20261023_045436_Derecho_formal_bf16_PeakAware_baseline_cnn_gru_CBBT_NCEP_36H_seed42_T0250_EP0100_lr5e-3_clip0.25",
+      "printed_run_tag": "Derecho_formal_bf16_PeakAware_baseline_cnn_gru_CBBT_NCEP_36H_seed42_T0250_EP0100_lr5e-3_clip0.25_20261023_045436"
+    },
+    {
+      "pbs": "/glade/u/home/zel/scratch/StormSurge/PBS-launcher/baselines_PeakAware/baseline_cnn_gru/CBBT/seed123/run_T0250_EP0000.pbs",
+      "returncode": 0,
+      "training_command_count": 1,
+      "ddp_ranks_printed": 4,
+      "source_training_flags_preserved": true,
+      "printed_output_directory": "/glade/u/home/zel/scratch/PACT_StormSurge_FormalRuns_1021_LR5e-3_Clip0.25/baselines_PeakAware/baseline_cnn_gru/CBBT/seed123/T0250_EP0000/20261023_045436_Derecho_formal_bf16_PeakAware_baseline_cnn_gru_CBBT_NCEP_36H_seed123_T0250_EP0000_lr5e-3_clip0.25",
+      "printed_run_tag": "Derecho_formal_bf16_PeakAware_baseline_cnn_gru_CBBT_NCEP_36H_seed123_T0250_EP0000_lr5e-3_clip0.25_20261023_045436"
+    },
+    {
+      "pbs": "/glade/u/home/zel/scratch/StormSurge/PBS-launcher/baselines_PeakAware/baseline_cnn_gru/CBBT/seed123/run_T0000_EP0100.pbs",
+      "returncode": 0,
+      "training_command_count": 1,
+      "ddp_ranks_printed": 4,
+      "source_training_flags_preserved": true,
+      "printed_output_directory": "/glade/u/home/zel/scratch/PACT_StormSurge_FormalRuns_1021_LR5e-3_Clip0.25/baselines_PeakAware/baseline_cnn_gru/CBBT/seed123/T0000_EP0100/20261023_045436_Derecho_formal_bf16_PeakAware_baseline_cnn_gru_CBBT_NCEP_36H_seed123_T0000_EP0100_lr5e-3_clip0.25",
+      "printed_run_tag": "Derecho_formal_bf16_PeakAware_baseline_cnn_gru_CBBT_NCEP_36H_seed123_T0000_EP0100_lr5e-3_clip0.25_20261023_045436"
+    },
+    {
+      "pbs": "/glade/u/home/zel/scratch/StormSurge/PBS-launcher/baselines_PeakAware/baseline_cnn_gru/CBBT/seed123/run_T0250_EP0100.pbs",
+      "returncode": 0,
+      "training_command_count": 1,
+      "ddp_ranks_printed": 4,
+      "source_training_flags_preserved": true,
+      "printed_output_directory": "/glade/u/home/zel/scratch/PACT_StormSurge_FormalRuns_1021_LR5e-3_Clip0.25/baselines_PeakAware/baseline_cnn_gru/CBBT/seed123/T0250_EP0100/20261023_045436_Derecho_formal_bf16_PeakAware_baseline_cnn_gru_CBBT_NCEP_36H_seed123_T0250_EP0100_lr5e-3_clip0.25",
+      "printed_run_tag": "Derecho_formal_bf16_PeakAware_baseline_cnn_gru_CBBT_NCEP_36H_seed123_T0250_EP0100_lr5e-3_clip0.25_20261023_045436"
+    },
+    {
+      "pbs": "/glade/u/home/zel/scratch/StormSurge/PBS-launcher/baselines_PeakAware/baseline_cnn_gru/CBBT/seed2026/run_T0250_EP0000.pbs",
+      "returncode": 0,
+      "training_command_count": 1,
+      "ddp_ranks_printed": 4,
+      "source_training_flags_preserved": true,
+      "printed_output_directory": "/glade/u/home/zel/scratch/PACT_StormSurge_FormalRuns_1021_LR5e-3_Clip0.25/baselines_PeakAware/baseline_cnn_gru/CBBT/seed2026/T0250_EP0000/20261023_045436_Derecho_formal_bf16_PeakAware_baseline_cnn_gru_CBBT_NCEP_36H_seed2026_T0250_EP0000_lr5e-3_clip0.25",
+      "printed_run_tag": "Derecho_formal_bf16_PeakAware_baseline_cnn_gru_CBBT_NCEP_36H_seed2026_T0250_EP0000_lr5e-3_clip0.25_20261023_045436"
+    },
+    {
+      "pbs": "/glade/u/home/zel/scratch/StormSurge/PBS-launcher/baselines_PeakAware/baseline_cnn_gru/CBBT/seed2026/run_T0000_EP0100.pbs",
+      "returncode": 0,
+      "training_command_count": 1,
+      "ddp_ranks_printed": 4,
+      "source_training_flags_preserved": true,
+      "printed_output_directory": "/glade/u/home/zel/scratch/PACT_StormSurge_FormalRuns_1021_LR5e-3_Clip0.25/baselines_PeakAware/baseline_cnn_gru/CBBT/seed2026/T0000_EP0100/20261023_045436_Derecho_formal_bf16_PeakAware_baseline_cnn_gru_CBBT_NCEP_36H_seed2026_T0000_EP0100_lr5e-3_clip0.25",
+      "printed_run_tag": "Derecho_formal_bf16_PeakAware_baseline_cnn_gru_CBBT_NCEP_36H_seed2026_T0000_EP0100_lr5e-3_clip0.25_20261023_045436"
+    },
+    {
+      "pbs": "/glade/u/home/zel/scratch/StormSurge/PBS-launcher/baselines_PeakAware/baseline_cnn_gru/CBBT/seed2026/run_T0250_EP0100.pbs",
+      "returncode": 0,
+      "training_command_count": 1,
+      "ddp_ranks_printed": 4,
+      "source_training_flags_preserved": true,
+      "printed_output_directory": "/glade/u/home/zel/scratch/PACT_StormSurge_FormalRuns_1021_LR5e-3_Clip0.25/baselines_PeakAware/baseline_cnn_gru/CBBT/seed2026/T0250_EP0100/20261023_045436_Derecho_formal_bf16_PeakAware_baseline_cnn_gru_CBBT_NCEP_36H_seed2026_T0250_EP0100_lr5e-3_clip0.25",
+      "printed_run_tag": "Derecho_formal_bf16_PeakAware_baseline_cnn_gru_CBBT_NCEP_36H_seed2026_T0250_EP0100_lr5e-3_clip0.25_20261023_045436"
+    },
+    {
+      "pbs": "/glade/u/home/zel/scratch/StormSurge/PBS-launcher/baselines_PeakAware/baseline_cnn_gru/Lewes/seed42/run_T0250_EP0000.pbs",
+      "returncode": 0,
+      "training_command_count": 1,
+      "ddp_ranks_printed": 4,
+      "source_training_flags_preserved": true,
+      "printed_output_directory": "/glade/u/home/zel/scratch/PACT_StormSurge_FormalRuns_1021_LR5e-3_Clip0.25/baselines_PeakAware/baseline_cnn_gru/Lewes/seed42/T0250_EP0000/20261023_045436_Derecho_formal_bf16_PeakAware_baseline_cnn_gru_Lewes_NCEP_36H_seed42_T0250_EP0000_lr5e-3_clip0.25",
+      "printed_run_tag": "Derecho_formal_bf16_PeakAware_baseline_cnn_gru_Lewes_NCEP_36H_seed42_T0250_EP0000_lr5e-3_clip0.25_20261023_045436"
+    },
+    {
+      "pbs": "/glade/u/home/zel/scratch/StormSurge/PBS-launcher/baselines_PeakAware/baseline_cnn_gru/Lewes/seed42/run_T0000_EP0100.pbs",
+      "returncode": 0,
+      "training_command_count": 1,
+      "ddp_ranks_printed": 4,
+      "source_training_flags_preserved": true,
+      "printed_output_directory": "/glade/u/home/zel/scratch/PACT_StormSurge_FormalRuns_1021_LR5e-3_Clip0.25/baselines_PeakAware/baseline_cnn_gru/Lewes/seed42/T0000_EP0100/20261023_045436_Derecho_formal_bf16_PeakAware_baseline_cnn_gru_Lewes_NCEP_36H_seed42_T0000_EP0100_lr5e-3_clip0.25",
+      "printed_run_tag": "Derecho_formal_bf16_PeakAware_baseline_cnn_gru_Lewes_NCEP_36H_seed42_T0000_EP0100_lr5e-3_clip0.25_20261023_045436"
+    },
+    {
+      "pbs": "/glade/u/home/zel/scratch/StormSurge/PBS-launcher/baselines_PeakAware/baseline_cnn_gru/Lewes/seed42/run_T0250_EP0100.pbs",
+      "returncode": 0,
+      "training_command_count": 1,
+      "ddp_ranks_printed": 4,
+      "source_training_flags_preserved": true,
+      "printed_output_directory": "/glade/u/home/zel/scratch/PACT_StormSurge_FormalRuns_1021_LR5e-3_Clip0.25/baselines_PeakAware/baseline_cnn_gru/Lewes/seed42/T0250_EP0100/20261023_045436_Derecho_formal_bf16_PeakAware_baseline_cnn_gru_Lewes_NCEP_36H_seed42_T0250_EP0100_lr5e-3_clip0.25",
+      "printed_run_tag": "Derecho_formal_bf16_PeakAware_baseline_cnn_gru_Lewes_NCEP_36H_seed42_T0250_EP0100_lr5e-3_clip0.25_20261023_045436"
+    },
+    {
+      "pbs": "/glade/u/home/zel/scratch/StormSurge/PBS-launcher/baselines_PeakAware/baseline_cnn_gru/Lewes/seed123/run_T0250_EP0000.pbs",
+      "returncode": 0,
+      "training_command_count": 1,
+      "ddp_ranks_printed": 4,
+      "source_training_flags_preserved": true,
+      "printed_output_directory": "/glade/u/home/zel/scratch/PACT_StormSurge_FormalRuns_1021_LR5e-3_Clip0.25/baselines_PeakAware/baseline_cnn_gru/Lewes/seed123/T0250_EP0000/20261023_045436_Derecho_formal_bf16_PeakAware_baseline_cnn_gru_Lewes_NCEP_36H_seed123_T0250_EP0000_lr5e-3_clip0.25",
+      "printed_run_tag": "Derecho_formal_bf16_PeakAware_baseline_cnn_gru_Lewes_NCEP_36H_seed123_T0250_EP0000_lr5e-3_clip0.25_20261023_045436"
+    },
+    {
+      "pbs": "/glade/u/home/zel/scratch/StormSurge/PBS-launcher/baselines_PeakAware/baseline_cnn_gru/Lewes/seed123/run_T0000_EP0100.pbs",
+      "returncode": 0,
+      "training_command_count": 1,
+      "ddp_ranks_printed": 4,
+      "source_training_flags_preserved": true,
+      "printed_output_directory": "/glade/u/home/zel/scratch/PACT_StormSurge_FormalRuns_1021_LR5e-3_Clip0.25/baselines_PeakAware/baseline_cnn_gru/Lewes/seed123/T0000_EP0100/20261023_045436_Derecho_formal_bf16_PeakAware_baseline_cnn_gru_Lewes_NCEP_36H_seed123_T0000_EP0100_lr5e-3_clip0.25",
+      "printed_run_tag": "Derecho_formal_bf16_PeakAware_baseline_cnn_gru_Lewes_NCEP_36H_seed123_T0000_EP0100_lr5e-3_clip0.25_20261023_045436"
+    },
+    {
+      "pbs": "/glade/u/home/zel/scratch/StormSurge/PBS-launcher/baselines_PeakAware/baseline_cnn_gru/Lewes/seed123/run_T0250_EP0100.pbs",
+      "returncode": 0,
+      "training_command_count": 1,
+      "ddp_ranks_printed": 4,
+      "source_training_flags_preserved": true,
+      "printed_output_directory": "/glade/u/home/zel/scratch/PACT_StormSurge_FormalRuns_1021_LR5e-3_Clip0.25/baselines_PeakAware/baseline_cnn_gru/Lewes/seed123/T0250_EP0100/20261023_045436_Derecho_formal_bf16_PeakAware_baseline_cnn_gru_Lewes_NCEP_36H_seed123_T0250_EP0100_lr5e-3_clip0.25",
+      "printed_run_tag": "Derecho_formal_bf16_PeakAware_baseline_cnn_gru_Lewes_NCEP_36H_seed123_T0250_EP0100_lr5e-3_clip0.25_20261023_045436"
+    },
+    {
+      "pbs": "/glade/u/home/zel/scratch/StormSurge/PBS-launcher/baselines_PeakAware/baseline_cnn_gru/Lewes/seed2026/run_T0250_EP0000.pbs",
+      "returncode": 0,
+      "training_command_count": 1,
+      "ddp_ranks_printed": 4,
+      "source_training_flags_preserved": true,
+      "printed_output_directory": "/glade/u/home/zel/scratch/PACT_StormSurge_FormalRuns_1021_LR5e-3_Clip0.25/baselines_PeakAware/baseline_cnn_gru/Lewes/seed2026/T0250_EP0000/20261023_045436_Derecho_formal_bf16_PeakAware_baseline_cnn_gru_Lewes_NCEP_36H_seed2026_T0250_EP0000_lr5e-3_clip0.25",
+      "printed_run_tag": "Derecho_formal_bf16_PeakAware_baseline_cnn_gru_Lewes_NCEP_36H_seed2026_T0250_EP0000_lr5e-3_clip0.25_20261023_045436"
+    },
+    {
+      "pbs": "/glade/u/home/zel/scratch/StormSurge/PBS-launcher/baselines_PeakAware/baseline_cnn_gru/Lewes/seed2026/run_T0000_EP0100.pbs",
+      "returncode": 0,
+      "training_command_count": 1,
+      "ddp_ranks_printed": 4,
+      "source_training_flags_preserved": true,
+      "printed_output_directory": "/glade/u/home/zel/scratch/PACT_StormSurge_FormalRuns_1021_LR5e-3_Clip0.25/baselines_PeakAware/baseline_cnn_gru/Lewes/seed2026/T0000_EP0100/20261023_045436_Derecho_formal_bf16_PeakAware_baseline_cnn_gru_Lewes_NCEP_36H_seed2026_T0000_EP0100_lr5e-3_clip0.25",
+      "printed_run_tag": "Derecho_formal_bf16_PeakAware_baseline_cnn_gru_Lewes_NCEP_36H_seed2026_T0000_EP0100_lr5e-3_clip0.25_20261023_045436"
+    },
+    {
+      "pbs": "/glade/u/home/zel/scratch/StormSurge/PBS-launcher/baselines_PeakAware/baseline_cnn_gru/Lewes/seed2026/run_T0250_EP0100.pbs",
+      "returncode": 0,
+      "training_command_count": 1,
+      "ddp_ranks_printed": 4,
+      "source_training_flags_preserved": true,
+      "printed_output_directory": "/glade/u/home/zel/scratch/PACT_StormSurge_FormalRuns_1021_LR5e-3_Clip0.25/baselines_PeakAware/baseline_cnn_gru/Lewes/seed2026/T0250_EP0100/20261023_045436_Derecho_formal_bf16_PeakAware_baseline_cnn_gru_Lewes_NCEP_36H_seed2026_T0250_EP0100_lr5e-3_clip0.25",
+      "printed_run_tag": "Derecho_formal_bf16_PeakAware_baseline_cnn_gru_Lewes_NCEP_36H_seed2026_T0250_EP0100_lr5e-3_clip0.25_20261023_045436"
+    },
+    {
+      "pbs": "/glade/u/home/zel/scratch/StormSurge/PBS-launcher/baselines_PeakAware/baseline_convlstm/Battery/seed42/run_T0250_EP0000.pbs",
+      "returncode": 0,
+      "training_command_count": 1,
+      "ddp_ranks_printed": 4,
+      "source_training_flags_preserved": true,
+      "printed_output_directory": "/glade/u/home/zel/scratch/PACT_StormSurge_FormalRuns_1021_LR5e-3_Clip0.25/baselines_PeakAware/baseline_convlstm/Battery/seed42/T0250_EP0000/20261023_045437_Derecho_formal_bf16_PeakAware_baseline_convlstm_Battery_NCEP_36H_seed42_T0250_EP0000_lr5e-3_clip0.25",
+      "printed_run_tag": "Derecho_formal_bf16_PeakAware_baseline_convlstm_Battery_NCEP_36H_seed42_T0250_EP0000_lr5e-3_clip0.25_20261023_045437"
+    },
+    {
+      "pbs": "/glade/u/home/zel/scratch/StormSurge/PBS-launcher/baselines_PeakAware/baseline_convlstm/Battery/seed42/run_T0000_EP0100.pbs",
+      "returncode": 0,
+      "training_command_count": 1,
+      "ddp_ranks_printed": 4,
+      "source_training_flags_preserved": true,
+      "printed_output_directory": "/glade/u/home/zel/scratch/PACT_StormSurge_FormalRuns_1021_LR5e-3_Clip0.25/baselines_PeakAware/baseline_convlstm/Battery/seed42/T0000_EP0100/20261023_045437_Derecho_formal_bf16_PeakAware_baseline_convlstm_Battery_NCEP_36H_seed42_T0000_EP0100_lr5e-3_clip0.25",
+      "printed_run_tag": "Derecho_formal_bf16_PeakAware_baseline_convlstm_Battery_NCEP_36H_seed42_T0000_EP0100_lr5e-3_clip0.25_20261023_045437"
+    },
+    {
+      "pbs": "/glade/u/home/zel/scratch/StormSurge/PBS-launcher/baselines_PeakAware/baseline_convlstm/Battery/seed42/run_T0250_EP0100.pbs",
+      "returncode": 0,
+      "training_command_count": 1,
+      "ddp_ranks_printed": 4,
+      "source_training_flags_preserved": true,
+      "printed_output_directory": "/glade/u/home/zel/scratch/PACT_StormSurge_FormalRuns_1021_LR5e-3_Clip0.25/baselines_PeakAware/baseline_convlstm/Battery/seed42/T0250_EP0100/20261023_045437_Derecho_formal_bf16_PeakAware_baseline_convlstm_Battery_NCEP_36H_seed42_T0250_EP0100_lr5e-3_clip0.25",
+      "printed_run_tag": "Derecho_formal_bf16_PeakAware_baseline_convlstm_Battery_NCEP_36H_seed42_T0250_EP0100_lr5e-3_clip0.25_20261023_045437"
+    },
+    {
+      "pbs": "/glade/u/home/zel/scratch/StormSurge/PBS-launcher/baselines_PeakAware/baseline_convlstm/Battery/seed123/run_T0250_EP0000.pbs",
+      "returncode": 0,
+      "training_command_count": 1,
+      "ddp_ranks_printed": 4,
+      "source_training_flags_preserved": true,
+      "printed_output_directory": "/glade/u/home/zel/scratch/PACT_StormSurge_FormalRuns_1021_LR5e-3_Clip0.25/baselines_PeakAware/baseline_convlstm/Battery/seed123/T0250_EP0000/20261023_045437_Derecho_formal_bf16_PeakAware_baseline_convlstm_Battery_NCEP_36H_seed123_T0250_EP0000_lr5e-3_clip0.25",
+      "printed_run_tag": "Derecho_formal_bf16_PeakAware_baseline_convlstm_Battery_NCEP_36H_seed123_T0250_EP0000_lr5e-3_clip0.25_20261023_045437"
+    },
+    {
+      "pbs": "/glade/u/home/zel/scratch/StormSurge/PBS-launcher/baselines_PeakAware/baseline_convlstm/Battery/seed123/run_T0000_EP0100.pbs",
+      "returncode": 0,
+      "training_command_count": 1,
+      "ddp_ranks_printed": 4,
+      "source_training_flags_preserved": true,
+      "printed_output_directory": "/glade/u/home/zel/scratch/PACT_StormSurge_FormalRuns_1021_LR5e-3_Clip0.25/baselines_PeakAware/baseline_convlstm/Battery/seed123/T0000_EP0100/20261023_045437_Derecho_formal_bf16_PeakAware_baseline_convlstm_Battery_NCEP_36H_seed123_T0000_EP0100_lr5e-3_clip0.25",
+      "printed_run_tag": "Derecho_formal_bf16_PeakAware_baseline_convlstm_Battery_NCEP_36H_seed123_T0000_EP0100_lr5e-3_clip0.25_20261023_045437"
+    },
+    {
+      "pbs": "/glade/u/home/zel/scratch/StormSurge/PBS-launcher/baselines_PeakAware/baseline_convlstm/Battery/seed123/run_T0250_EP0100.pbs",
+      "returncode": 0,
+      "training_command_count": 1,
+      "ddp_ranks_printed": 4,
+      "source_training_flags_preserved": true,
+      "printed_output_directory": "/glade/u/home/zel/scratch/PACT_StormSurge_FormalRuns_1021_LR5e-3_Clip0.25/baselines_PeakAware/baseline_convlstm/Battery/seed123/T0250_EP0100/20261023_045437_Derecho_formal_bf16_PeakAware_baseline_convlstm_Battery_NCEP_36H_seed123_T0250_EP0100_lr5e-3_clip0.25",
+      "printed_run_tag": "Derecho_formal_bf16_PeakAware_baseline_convlstm_Battery_NCEP_36H_seed123_T0250_EP0100_lr5e-3_clip0.25_20261023_045437"
+    },
+    {
+      "pbs": "/glade/u/home/zel/scratch/StormSurge/PBS-launcher/baselines_PeakAware/baseline_convlstm/Battery/seed2026/run_T0250_EP0000.pbs",
+      "returncode": 0,
+      "training_command_count": 1,
+      "ddp_ranks_printed": 4,
+      "source_training_flags_preserved": true,
+      "printed_output_directory": "/glade/u/home/zel/scratch/PACT_StormSurge_FormalRuns_1021_LR5e-3_Clip0.25/baselines_PeakAware/baseline_convlstm/Battery/seed2026/T0250_EP0000/20261023_045437_Derecho_formal_bf16_PeakAware_baseline_convlstm_Battery_NCEP_36H_seed2026_T0250_EP0000_lr5e-3_clip0.25",
+      "printed_run_tag": "Derecho_formal_bf16_PeakAware_baseline_convlstm_Battery_NCEP_36H_seed2026_T0250_EP0000_lr5e-3_clip0.25_20261023_045437"
+    },
+    {
+      "pbs": "/glade/u/home/zel/scratch/StormSurge/PBS-launcher/baselines_PeakAware/baseline_convlstm/Battery/seed2026/run_T0000_EP0100.pbs",
+      "returncode": 0,
+      "training_command_count": 1,
+      "ddp_ranks_printed": 4,
+      "source_training_flags_preserved": true,
+      "printed_output_directory": "/glade/u/home/zel/scratch/PACT_StormSurge_FormalRuns_1021_LR5e-3_Clip0.25/baselines_PeakAware/baseline_convlstm/Battery/seed2026/T0000_EP0100/20261023_045437_Derecho_formal_bf16_PeakAware_baseline_convlstm_Battery_NCEP_36H_seed2026_T0000_EP0100_lr5e-3_clip0.25",
+      "printed_run_tag": "Derecho_formal_bf16_PeakAware_baseline_convlstm_Battery_NCEP_36H_seed2026_T0000_EP0100_lr5e-3_clip0.25_20261023_045437"
+    },
+    {
+      "pbs": "/glade/u/home/zel/scratch/StormSurge/PBS-launcher/baselines_PeakAware/baseline_convlstm/Battery/seed2026/run_T0250_EP0100.pbs",
+      "returncode": 0,
+      "training_command_count": 1,
+      "ddp_ranks_printed": 4,
+      "source_training_flags_preserved": true,
+      "printed_output_directory": "/glade/u/home/zel/scratch/PACT_StormSurge_FormalRuns_1021_LR5e-3_Clip0.25/baselines_PeakAware/baseline_convlstm/Battery/seed2026/T0250_EP0100/20261023_045437_Derecho_formal_bf16_PeakAware_baseline_convlstm_Battery_NCEP_36H_seed2026_T0250_EP0100_lr5e-3_clip0.25",
+      "printed_run_tag": "Derecho_formal_bf16_PeakAware_baseline_convlstm_Battery_NCEP_36H_seed2026_T0250_EP0100_lr5e-3_clip0.25_20261023_045437"
+    },
+    {
+      "pbs": "/glade/u/home/zel/scratch/StormSurge/PBS-launcher/baselines_PeakAware/baseline_convlstm/Boston/seed42/run_T0250_EP0000.pbs",
+      "returncode": 0,
+      "training_command_count": 1,
+      "ddp_ranks_printed": 4,
+      "source_training_flags_preserved": true,
+      "printed_output_directory": "/glade/u/home/zel/scratch/PACT_StormSurge_FormalRuns_1021_LR5e-3_Clip0.25/baselines_PeakAware/baseline_convlstm/Boston/seed42/T0250_EP0000/20261023_045437_Derecho_formal_bf16_PeakAware_baseline_convlstm_Boston_NCEP_36H_seed42_T0250_EP0000_lr5e-3_clip0.25",
+      "printed_run_tag": "Derecho_formal_bf16_PeakAware_baseline_convlstm_Boston_NCEP_36H_seed42_T0250_EP0000_lr5e-3_clip0.25_20261023_045437"
+    },
+    {
+      "pbs": "/glade/u/home/zel/scratch/StormSurge/PBS-launcher/baselines_PeakAware/baseline_convlstm/Boston/seed42/run_T0000_EP0100.pbs",
+      "returncode": 0,
+      "training_command_count": 1,
+      "ddp_ranks_printed": 4,
+      "source_training_flags_preserved": true,
+      "printed_output_directory": "/glade/u/home/zel/scratch/PACT_StormSurge_FormalRuns_1021_LR5e-3_Clip0.25/baselines_PeakAware/baseline_convlstm/Boston/seed42/T0000_EP0100/20261023_045437_Derecho_formal_bf16_PeakAware_baseline_convlstm_Boston_NCEP_36H_seed42_T0000_EP0100_lr5e-3_clip0.25",
+      "printed_run_tag": "Derecho_formal_bf16_PeakAware_baseline_convlstm_Boston_NCEP_36H_seed42_T0000_EP0100_lr5e-3_clip0.25_20261023_045437"
+    },
+    {
+      "pbs": "/glade/u/home/zel/scratch/StormSurge/PBS-launcher/baselines_PeakAware/baseline_convlstm/Boston/seed42/run_T0250_EP0100.pbs",
+      "returncode": 0,
+      "training_command_count": 1,
+      "ddp_ranks_printed": 4,
+      "source_training_flags_preserved": true,
+      "printed_output_directory": "/glade/u/home/zel/scratch/PACT_StormSurge_FormalRuns_1021_LR5e-3_Clip0.25/baselines_PeakAware/baseline_convlstm/Boston/seed42/T0250_EP0100/20261023_045437_Derecho_formal_bf16_PeakAware_baseline_convlstm_Boston_NCEP_36H_seed42_T0250_EP0100_lr5e-3_clip0.25",
+      "printed_run_tag": "Derecho_formal_bf16_PeakAware_baseline_convlstm_Boston_NCEP_36H_seed42_T0250_EP0100_lr5e-3_clip0.25_20261023_045437"
+    },
+    {
+      "pbs": "/glade/u/home/zel/scratch/StormSurge/PBS-launcher/baselines_PeakAware/baseline_convlstm/Boston/seed123/run_T0250_EP0000.pbs",
+      "returncode": 0,
+      "training_command_count": 1,
+      "ddp_ranks_printed": 4,
+      "source_training_flags_preserved": true,
+      "printed_output_directory": "/glade/u/home/zel/scratch/PACT_StormSurge_FormalRuns_1021_LR5e-3_Clip0.25/baselines_PeakAware/baseline_convlstm/Boston/seed123/T0250_EP0000/20261023_045437_Derecho_formal_bf16_PeakAware_baseline_convlstm_Boston_NCEP_36H_seed123_T0250_EP0000_lr5e-3_clip0.25",
+      "printed_run_tag": "Derecho_formal_bf16_PeakAware_baseline_convlstm_Boston_NCEP_36H_seed123_T0250_EP0000_lr5e-3_clip0.25_20261023_045437"
+    },
+    {
+      "pbs": "/glade/u/home/zel/scratch/StormSurge/PBS-launcher/baselines_PeakAware/baseline_convlstm/Boston/seed123/run_T0000_EP0100.pbs",
+      "returncode": 0,
+      "training_command_count": 1,
+      "ddp_ranks_printed": 4,
+      "source_training_flags_preserved": true,
+      "printed_output_directory": "/glade/u/home/zel/scratch/PACT_StormSurge_FormalRuns_1021_LR5e-3_Clip0.25/baselines_PeakAware/baseline_convlstm/Boston/seed123/T0000_EP0100/20261023_045437_Derecho_formal_bf16_PeakAware_baseline_convlstm_Boston_NCEP_36H_seed123_T0000_EP0100_lr5e-3_clip0.25",
+      "printed_run_tag": "Derecho_formal_bf16_PeakAware_baseline_convlstm_Boston_NCEP_36H_seed123_T0000_EP0100_lr5e-3_clip0.25_20261023_045437"
+    },
+    {
+      "pbs": "/glade/u/home/zel/scratch/StormSurge/PBS-launcher/baselines_PeakAware/baseline_convlstm/Boston/seed123/run_T0250_EP0100.pbs",
+      "returncode": 0,
+      "training_command_count": 1,
+      "ddp_ranks_printed": 4,
+      "source_training_flags_preserved": true,
+      "printed_output_directory": "/glade/u/home/zel/scratch/PACT_StormSurge_FormalRuns_1021_LR5e-3_Clip0.25/baselines_PeakAware/baseline_convlstm/Boston/seed123/T0250_EP0100/20261023_045437_Derecho_formal_bf16_PeakAware_baseline_convlstm_Boston_NCEP_36H_seed123_T0250_EP0100_lr5e-3_clip0.25",
+      "printed_run_tag": "Derecho_formal_bf16_PeakAware_baseline_convlstm_Boston_NCEP_36H_seed123_T0250_EP0100_lr5e-3_clip0.25_20261023_045437"
+    },
+    {
+      "pbs": "/glade/u/home/zel/scratch/StormSurge/PBS-launcher/baselines_PeakAware/baseline_convlstm/Boston/seed2026/run_T0250_EP0000.pbs",
+      "returncode": 0,
+      "training_command_count": 1,
+      "ddp_ranks_printed": 4,
+      "source_training_flags_preserved": true,
+      "printed_output_directory": "/glade/u/home/zel/scratch/PACT_StormSurge_FormalRuns_1021_LR5e-3_Clip0.25/baselines_PeakAware/baseline_convlstm/Boston/seed2026/T0250_EP0000/20261023_045437_Derecho_formal_bf16_PeakAware_baseline_convlstm_Boston_NCEP_36H_seed2026_T0250_EP0000_lr5e-3_clip0.25",
+      "printed_run_tag": "Derecho_formal_bf16_PeakAware_baseline_convlstm_Boston_NCEP_36H_seed2026_T0250_EP0000_lr5e-3_clip0.25_20261023_045437"
+    },
+    {
+      "pbs": "/glade/u/home/zel/scratch/StormSurge/PBS-launcher/baselines_PeakAware/baseline_convlstm/Boston/seed2026/run_T0000_EP0100.pbs",
+      "returncode": 0,
+      "training_command_count": 1,
+      "ddp_ranks_printed": 4,
+      "source_training_flags_preserved": true,
+      "printed_output_directory": "/glade/u/home/zel/scratch/PACT_StormSurge_FormalRuns_1021_LR5e-3_Clip0.25/baselines_PeakAware/baseline_convlstm/Boston/seed2026/T0000_EP0100/20261023_045437_Derecho_formal_bf16_PeakAware_baseline_convlstm_Boston_NCEP_36H_seed2026_T0000_EP0100_lr5e-3_clip0.25",
+      "printed_run_tag": "Derecho_formal_bf16_PeakAware_baseline_convlstm_Boston_NCEP_36H_seed2026_T0000_EP0100_lr5e-3_clip0.25_20261023_045437"
+    },
+    {
+      "pbs": "/glade/u/home/zel/scratch/StormSurge/PBS-launcher/baselines_PeakAware/baseline_convlstm/Boston/seed2026/run_T0250_EP0100.pbs",
+      "returncode": 0,
+      "training_command_count": 1,
+      "ddp_ranks_printed": 4,
+      "source_training_flags_preserved": true,
+      "printed_output_directory": "/glade/u/home/zel/scratch/PACT_StormSurge_FormalRuns_1021_LR5e-3_Clip0.25/baselines_PeakAware/baseline_convlstm/Boston/seed2026/T0250_EP0100/20261023_045437_Derecho_formal_bf16_PeakAware_baseline_convlstm_Boston_NCEP_36H_seed2026_T0250_EP0100_lr5e-3_clip0.25",
+      "printed_run_tag": "Derecho_formal_bf16_PeakAware_baseline_convlstm_Boston_NCEP_36H_seed2026_T0250_EP0100_lr5e-3_clip0.25_20261023_045437"
+    },
+    {
+      "pbs": "/glade/u/home/zel/scratch/StormSurge/PBS-launcher/baselines_PeakAware/baseline_convlstm/CBBT/seed42/run_T0250_EP0000.pbs",
+      "returncode": 0,
+      "training_command_count": 1,
+      "ddp_ranks_printed": 4,
+      "source_training_flags_preserved": true,
+      "printed_output_directory": "/glade/u/home/zel/scratch/PACT_StormSurge_FormalRuns_1021_LR5e-3_Clip0.25/baselines_PeakAware/baseline_convlstm/CBBT/seed42/T0250_EP0000/20261023_045437_Derecho_formal_bf16_PeakAware_baseline_convlstm_CBBT_NCEP_36H_seed42_T0250_EP0000_lr5e-3_clip0.25",
+      "printed_run_tag": "Derecho_formal_bf16_PeakAware_baseline_convlstm_CBBT_NCEP_36H_seed42_T0250_EP0000_lr5e-3_clip0.25_20261023_045437"
+    },
+    {
+      "pbs": "/glade/u/home/zel/scratch/StormSurge/PBS-launcher/baselines_PeakAware/baseline_convlstm/CBBT/seed42/run_T0000_EP0100.pbs",
+      "returncode": 0,
+      "training_command_count": 1,
+      "ddp_ranks_printed": 4,
+      "source_training_flags_preserved": true,
+      "printed_output_directory": "/glade/u/home/zel/scratch/PACT_StormSurge_FormalRuns_1021_LR5e-3_Clip0.25/baselines_PeakAware/baseline_convlstm/CBBT/seed42/T0000_EP0100/20261023_045437_Derecho_formal_bf16_PeakAware_baseline_convlstm_CBBT_NCEP_36H_seed42_T0000_EP0100_lr5e-3_clip0.25",
+      "printed_run_tag": "Derecho_formal_bf16_PeakAware_baseline_convlstm_CBBT_NCEP_36H_seed42_T0000_EP0100_lr5e-3_clip0.25_20261023_045437"
+    },
+    {
+      "pbs": "/glade/u/home/zel/scratch/StormSurge/PBS-launcher/baselines_PeakAware/baseline_convlstm/CBBT/seed42/run_T0250_EP0100.pbs",
+      "returncode": 0,
+      "training_command_count": 1,
+      "ddp_ranks_printed": 4,
+      "source_training_flags_preserved": true,
+      "printed_output_directory": "/glade/u/home/zel/scratch/PACT_StormSurge_FormalRuns_1021_LR5e-3_Clip0.25/baselines_PeakAware/baseline_convlstm/CBBT/seed42/T0250_EP0100/20261023_045437_Derecho_formal_bf16_PeakAware_baseline_convlstm_CBBT_NCEP_36H_seed42_T0250_EP0100_lr5e-3_clip0.25",
+      "printed_run_tag": "Derecho_formal_bf16_PeakAware_baseline_convlstm_CBBT_NCEP_36H_seed42_T0250_EP0100_lr5e-3_clip0.25_20261023_045437"
+    },
+    {
+      "pbs": "/glade/u/home/zel/scratch/StormSurge/PBS-launcher/baselines_PeakAware/baseline_convlstm/CBBT/seed123/run_T0250_EP0000.pbs",
+      "returncode": 0,
+      "training_command_count": 1,
+      "ddp_ranks_printed": 4,
+      "source_training_flags_preserved": true,
+      "printed_output_directory": "/glade/u/home/zel/scratch/PACT_StormSurge_FormalRuns_1021_LR5e-3_Clip0.25/baselines_PeakAware/baseline_convlstm/CBBT/seed123/T0250_EP0000/20261023_045437_Derecho_formal_bf16_PeakAware_baseline_convlstm_CBBT_NCEP_36H_seed123_T0250_EP0000_lr5e-3_clip0.25",
+      "printed_run_tag": "Derecho_formal_bf16_PeakAware_baseline_convlstm_CBBT_NCEP_36H_seed123_T0250_EP0000_lr5e-3_clip0.25_20261023_045437"
+    },
+    {
+      "pbs": "/glade/u/home/zel/scratch/StormSurge/PBS-launcher/baselines_PeakAware/baseline_convlstm/CBBT/seed123/run_T0000_EP0100.pbs",
+      "returncode": 0,
+      "training_command_count": 1,
+      "ddp_ranks_printed": 4,
+      "source_training_flags_preserved": true,
+      "printed_output_directory": "/glade/u/home/zel/scratch/PACT_StormSurge_FormalRuns_1021_LR5e-3_Clip0.25/baselines_PeakAware/baseline_convlstm/CBBT/seed123/T0000_EP0100/20261023_045437_Derecho_formal_bf16_PeakAware_baseline_convlstm_CBBT_NCEP_36H_seed123_T0000_EP0100_lr5e-3_clip0.25",
+      "printed_run_tag": "Derecho_formal_bf16_PeakAware_baseline_convlstm_CBBT_NCEP_36H_seed123_T0000_EP0100_lr5e-3_clip0.25_20261023_045437"
+    },
+    {
+      "pbs": "/glade/u/home/zel/scratch/StormSurge/PBS-launcher/baselines_PeakAware/baseline_convlstm/CBBT/seed123/run_T0250_EP0100.pbs",
+      "returncode": 0,
+      "training_command_count": 1,
+      "ddp_ranks_printed": 4,
+      "source_training_flags_preserved": true,
+      "printed_output_directory": "/glade/u/home/zel/scratch/PACT_StormSurge_FormalRuns_1021_LR5e-3_Clip0.25/baselines_PeakAware/baseline_convlstm/CBBT/seed123/T0250_EP0100/20261023_045437_Derecho_formal_bf16_PeakAware_baseline_convlstm_CBBT_NCEP_36H_seed123_T0250_EP0100_lr5e-3_clip0.25",
+      "printed_run_tag": "Derecho_formal_bf16_PeakAware_baseline_convlstm_CBBT_NCEP_36H_seed123_T0250_EP0100_lr5e-3_clip0.25_20261023_045437"
+    },
+    {
+      "pbs": "/glade/u/home/zel/scratch/StormSurge/PBS-launcher/baselines_PeakAware/baseline_convlstm/CBBT/seed2026/run_T0250_EP0000.pbs",
+      "returncode": 0,
+      "training_command_count": 1,
+      "ddp_ranks_printed": 4,
+      "source_training_flags_preserved": true,
+      "printed_output_directory": "/glade/u/home/zel/scratch/PACT_StormSurge_FormalRuns_1021_LR5e-3_Clip0.25/baselines_PeakAware/baseline_convlstm/CBBT/seed2026/T0250_EP0000/20261023_045437_Derecho_formal_bf16_PeakAware_baseline_convlstm_CBBT_NCEP_36H_seed2026_T0250_EP0000_lr5e-3_clip0.25",
+      "printed_run_tag": "Derecho_formal_bf16_PeakAware_baseline_convlstm_CBBT_NCEP_36H_seed2026_T0250_EP0000_lr5e-3_clip0.25_20261023_045437"
+    },
+    {
+      "pbs": "/glade/u/home/zel/scratch/StormSurge/PBS-launcher/baselines_PeakAware/baseline_convlstm/CBBT/seed2026/run_T0000_EP0100.pbs",
+      "returncode": 0,
+      "training_command_count": 1,
+      "ddp_ranks_printed": 4,
+      "source_training_flags_preserved": true,
+      "printed_output_directory": "/glade/u/home/zel/scratch/PACT_StormSurge_FormalRuns_1021_LR5e-3_Clip0.25/baselines_PeakAware/baseline_convlstm/CBBT/seed2026/T0000_EP0100/20261023_045437_Derecho_formal_bf16_PeakAware_baseline_convlstm_CBBT_NCEP_36H_seed2026_T0000_EP0100_lr5e-3_clip0.25",
+      "printed_run_tag": "Derecho_formal_bf16_PeakAware_baseline_convlstm_CBBT_NCEP_36H_seed2026_T0000_EP0100_lr5e-3_clip0.25_20261023_045437"
+    },
+    {
+      "pbs": "/glade/u/home/zel/scratch/StormSurge/PBS-launcher/baselines_PeakAware/baseline_convlstm/CBBT/seed2026/run_T0250_EP0100.pbs",
+      "returncode": 0,
+      "training_command_count": 1,
+      "ddp_ranks_printed": 4,
+      "source_training_flags_preserved": true,
+      "printed_output_directory": "/glade/u/home/zel/scratch/PACT_StormSurge_FormalRuns_1021_LR5e-3_Clip0.25/baselines_PeakAware/baseline_convlstm/CBBT/seed2026/T0250_EP0100/20261023_045437_Derecho_formal_bf16_PeakAware_baseline_convlstm_CBBT_NCEP_36H_seed2026_T0250_EP0100_lr5e-3_clip0.25",
+      "printed_run_tag": "Derecho_formal_bf16_PeakAware_baseline_convlstm_CBBT_NCEP_36H_seed2026_T0250_EP0100_lr5e-3_clip0.25_20261023_045437"
+    },
+    {
+      "pbs": "/glade/u/home/zel/scratch/StormSurge/PBS-launcher/baselines_PeakAware/baseline_convlstm/Lewes/seed42/run_T0250_EP0000.pbs",
+      "returncode": 0,
+      "training_command_count": 1,
+      "ddp_ranks_printed": 4,
+      "source_training_flags_preserved": true,
+      "printed_output_directory": "/glade/u/home/zel/scratch/PACT_StormSurge_FormalRuns_1021_LR5e-3_Clip0.25/baselines_PeakAware/baseline_convlstm/Lewes/seed42/T0250_EP0000/20261023_045438_Derecho_formal_bf16_PeakAware_baseline_convlstm_Lewes_NCEP_36H_seed42_T0250_EP0000_lr5e-3_clip0.25",
+      "printed_run_tag": "Derecho_formal_bf16_PeakAware_baseline_convlstm_Lewes_NCEP_36H_seed42_T0250_EP0000_lr5e-3_clip0.25_20261023_045438"
+    },
+    {
+      "pbs": "/glade/u/home/zel/scratch/StormSurge/PBS-launcher/baselines_PeakAware/baseline_convlstm/Lewes/seed42/run_T0000_EP0100.pbs",
+      "returncode": 0,
+      "training_command_count": 1,
+      "ddp_ranks_printed": 4,
+      "source_training_flags_preserved": true,
+      "printed_output_directory": "/glade/u/home/zel/scratch/PACT_StormSurge_FormalRuns_1021_LR5e-3_Clip0.25/baselines_PeakAware/baseline_convlstm/Lewes/seed42/T0000_EP0100/20261023_045438_Derecho_formal_bf16_PeakAware_baseline_convlstm_Lewes_NCEP_36H_seed42_T0000_EP0100_lr5e-3_clip0.25",
+      "printed_run_tag": "Derecho_formal_bf16_PeakAware_baseline_convlstm_Lewes_NCEP_36H_seed42_T0000_EP0100_lr5e-3_clip0.25_20261023_045438"
+    },
+    {
+      "pbs": "/glade/u/home/zel/scratch/StormSurge/PBS-launcher/baselines_PeakAware/baseline_convlstm/Lewes/seed42/run_T0250_EP0100.pbs",
+      "returncode": 0,
+      "training_command_count": 1,
+      "ddp_ranks_printed": 4,
+      "source_training_flags_preserved": true,
+      "printed_output_directory": "/glade/u/home/zel/scratch/PACT_StormSurge_FormalRuns_1021_LR5e-3_Clip0.25/baselines_PeakAware/baseline_convlstm/Lewes/seed42/T0250_EP0100/20261023_045438_Derecho_formal_bf16_PeakAware_baseline_convlstm_Lewes_NCEP_36H_seed42_T0250_EP0100_lr5e-3_clip0.25",
+      "printed_run_tag": "Derecho_formal_bf16_PeakAware_baseline_convlstm_Lewes_NCEP_36H_seed42_T0250_EP0100_lr5e-3_clip0.25_20261023_045438"
+    },
+    {
+      "pbs": "/glade/u/home/zel/scratch/StormSurge/PBS-launcher/baselines_PeakAware/baseline_convlstm/Lewes/seed123/run_T0250_EP0000.pbs",
+      "returncode": 0,
+      "training_command_count": 1,
+      "ddp_ranks_printed": 4,
+      "source_training_flags_preserved": true,
+      "printed_output_directory": "/glade/u/home/zel/scratch/PACT_StormSurge_FormalRuns_1021_LR5e-3_Clip0.25/baselines_PeakAware/baseline_convlstm/Lewes/seed123/T0250_EP0000/20261023_045437_Derecho_formal_bf16_PeakAware_baseline_convlstm_Lewes_NCEP_36H_seed123_T0250_EP0000_lr5e-3_clip0.25",
+      "printed_run_tag": "Derecho_formal_bf16_PeakAware_baseline_convlstm_Lewes_NCEP_36H_seed123_T0250_EP0000_lr5e-3_clip0.25_20261023_045437"
+    },
+    {
+      "pbs": "/glade/u/home/zel/scratch/StormSurge/PBS-launcher/baselines_PeakAware/baseline_convlstm/Lewes/seed123/run_T0000_EP0100.pbs",
+      "returncode": 0,
+      "training_command_count": 1,
+      "ddp_ranks_printed": 4,
+      "source_training_flags_preserved": true,
+      "printed_output_directory": "/glade/u/home/zel/scratch/PACT_StormSurge_FormalRuns_1021_LR5e-3_Clip0.25/baselines_PeakAware/baseline_convlstm/Lewes/seed123/T0000_EP0100/20261023_045437_Derecho_formal_bf16_PeakAware_baseline_convlstm_Lewes_NCEP_36H_seed123_T0000_EP0100_lr5e-3_clip0.25",
+      "printed_run_tag": "Derecho_formal_bf16_PeakAware_baseline_convlstm_Lewes_NCEP_36H_seed123_T0000_EP0100_lr5e-3_clip0.25_20261023_045437"
+    },
+    {
+      "pbs": "/glade/u/home/zel/scratch/StormSurge/PBS-launcher/baselines_PeakAware/baseline_convlstm/Lewes/seed123/run_T0250_EP0100.pbs",
+      "returncode": 0,
+      "training_command_count": 1,
+      "ddp_ranks_printed": 4,
+      "source_training_flags_preserved": true,
+      "printed_output_directory": "/glade/u/home/zel/scratch/PACT_StormSurge_FormalRuns_1021_LR5e-3_Clip0.25/baselines_PeakAware/baseline_convlstm/Lewes/seed123/T0250_EP0100/20261023_045437_Derecho_formal_bf16_PeakAware_baseline_convlstm_Lewes_NCEP_36H_seed123_T0250_EP0100_lr5e-3_clip0.25",
+      "printed_run_tag": "Derecho_formal_bf16_PeakAware_baseline_convlstm_Lewes_NCEP_36H_seed123_T0250_EP0100_lr5e-3_clip0.25_20261023_045437"
+    },
+    {
+      "pbs": "/glade/u/home/zel/scratch/StormSurge/PBS-launcher/baselines_PeakAware/baseline_convlstm/Lewes/seed2026/run_T0250_EP0000.pbs",
+      "returncode": 0,
+      "training_command_count": 1,
+      "ddp_ranks_printed": 4,
+      "source_training_flags_preserved": true,
+      "printed_output_directory": "/glade/u/home/zel/scratch/PACT_StormSurge_FormalRuns_1021_LR5e-3_Clip0.25/baselines_PeakAware/baseline_convlstm/Lewes/seed2026/T0250_EP0000/20261023_045437_Derecho_formal_bf16_PeakAware_baseline_convlstm_Lewes_NCEP_36H_seed2026_T0250_EP0000_lr5e-3_clip0.25",
+      "printed_run_tag": "Derecho_formal_bf16_PeakAware_baseline_convlstm_Lewes_NCEP_36H_seed2026_T0250_EP0000_lr5e-3_clip0.25_20261023_045437"
+    },
+    {
+      "pbs": "/glade/u/home/zel/scratch/StormSurge/PBS-launcher/baselines_PeakAware/baseline_convlstm/Lewes/seed2026/run_T0000_EP0100.pbs",
+      "returncode": 0,
+      "training_command_count": 1,
+      "ddp_ranks_printed": 4,
+      "source_training_flags_preserved": true,
+      "printed_output_directory": "/glade/u/home/zel/scratch/PACT_StormSurge_FormalRuns_1021_LR5e-3_Clip0.25/baselines_PeakAware/baseline_convlstm/Lewes/seed2026/T0000_EP0100/20261023_045437_Derecho_formal_bf16_PeakAware_baseline_convlstm_Lewes_NCEP_36H_seed2026_T0000_EP0100_lr5e-3_clip0.25",
+      "printed_run_tag": "Derecho_formal_bf16_PeakAware_baseline_convlstm_Lewes_NCEP_36H_seed2026_T0000_EP0100_lr5e-3_clip0.25_20261023_045437"
+    },
+    {
+      "pbs": "/glade/u/home/zel/scratch/StormSurge/PBS-launcher/baselines_PeakAware/baseline_convlstm/Lewes/seed2026/run_T0250_EP0100.pbs",
+      "returncode": 0,
+      "training_command_count": 1,
+      "ddp_ranks_printed": 4,
+      "source_training_flags_preserved": true,
+      "printed_output_directory": "/glade/u/home/zel/scratch/PACT_StormSurge_FormalRuns_1021_LR5e-3_Clip0.25/baselines_PeakAware/baseline_convlstm/Lewes/seed2026/T0250_EP0100/20261023_045438_Derecho_formal_bf16_PeakAware_baseline_convlstm_Lewes_NCEP_36H_seed2026_T0250_EP0100_lr5e-3_clip0.25",
+      "printed_run_tag": "Derecho_formal_bf16_PeakAware_baseline_convlstm_Lewes_NCEP_36H_seed2026_T0250_EP0100_lr5e-3_clip0.25_20261023_045438"
+    }
+  ]
+}

@@ -1,0 +1,77 @@
+StormSurge formal Extreme-Aware Loss ablation — preparation validation
+Validated: 2026-10-23T06:56:13-04:00 (America/New_York)
+Repository HEAD: cfddc8774786fb959c9147f05a528cf2ab635d7b
+
+PASS: 108 unique combinations; exactly 108 new configs and 108 independent PBS scripts.
+Models: baseline_cnn_lstm=36; baseline_cnn_gru=36; baseline_convlstm=36.
+Stations: Battery=27; Boston=27; CBBT=27; Lewes=27.
+Seeds: 42=36; 123=36; 2026=36.
+Losses: T0250_EP0000=36 (Tail=0.025, Peak=0.0);
+        T0000_EP0100=36 (Tail=0.0, Peak=0.01);
+        T0250_EP0100=36 (Tail=0.025, Peak=0.01).
+Each model/station has 9 runs; each model/station/seed has all 3 losses.
+No new MSE-only configurations or runs were created.
+
+Configs: configs/baselines_PeakAware/<model>/<station>/seed<seed>/train_config_<tag>.sh
+PBS: PBS-launcher/baselines_PeakAware/<model>/<station>/seed<seed>/run_<tag>.pbs
+Source: 36 matching configs/baselines_MSEOnly/Derecho configs and their 36 formal PBS launchers.
+Only five assignments differ from each source: the two loss weights,
+ALL_RESULTS_ROOT, PACT_RUN_NAME and PYTHON_RUN_TAG_BASE; descriptive comments also change.
+Every other assignment and printed scientific training flag is preserved exactly.
+Architecture/pooling/hidden dimensions/dropout, NCEP chronological splits, 36H history,
+raw pressure, LR=5e-3, clip=0.25, 300 epochs, batch=256, accumulation=1, cosine,
+warmup=5, Q95, BF16 AMP, TF32, module weight decay and four GPUs are unchanged.
+ForecastLoss is reused. CHECKPOINT_SELECTION=overall selects validation AllRMSE,
+with primary checkpoint best_overall.pt; the existing secondary checkpoint is retained.
+
+PBS: project ULHI0005; queue preempt@desched1; walltime 00:20:00.
+Resources: select=1:ncpus=64:mem=487GB:mpiprocs=4:ompthreads=1:ngpus=4
+#PBS -r n; #PBS -j oe. Exactly one config and four DDP ranks per script.
+108 unique job names; longest 14 characters (limit 15).
+Python: /glade/work/zel/conda-envs/derecho-ml/bin/python
+CUDA module cuda/12.9.0, GPU/NCCL/BF16 checks, environment and thread counts retained.
+USE_TMUX=0. TMPDIR uses stormsurge-peakaware-${PBS_JOBID}.
+No arrays, automatic submission, automatic resume or retry scheduler.
+
+Results: /glade/u/home/zel/scratch/PACT_StormSurge_FormalRuns_1021_LR5e-3_Clip0.25/baselines_PeakAware/<model>/<station>/seed<seed>/<tag>/
+Run directories retain <YYYYMMDD_HHMMSS>_<run_name> beneath each combination.
+Run names/tags encode model, station, seed, loss weights, NCEP/36H, LR and clipping.
+The unchanged train.sh uses exclusive mkdir and aborts on same-second collisions;
+fresh reruns cannot overwrite previous results and do not resume checkpoints.
+Logs: PBS-launcher/baselines_PeakAware/<model>/<station>/pbs_logs/seed<seed>_<tag>/
+All 12 station log parents and 108 distinct run log directories exist, with .gitkeep.
+PBS assigns a job-ID-based output filename inside each directory, preserving rerun logs.
+
+Validation: 216/216 bash -n checks passed; 108/108 embedded preflight Python parses passed.
+108/108 full new PBS scripts passed CUDA_VISIBLE_DEVICES='' DRY_RUN=1 bash <pbs>.
+36/36 source PBS CPU previews also passed for direct command comparison.
+Each new preview printed exactly one training command and a four-rank launcher.
+All config/PBS mappings, weight flags, result roots, run names, tags and logs verified;
+no duplicate names or output paths. No run-result directories were created.
+All 7564 other pre-existing repository files/symlinks match their initial
+hashes/metadata; all 6419 existing formal-result files retain their
+initial size/mtime/mode metadata. No staged diff; HEAD is unchanged.
+All source MSE-only configs/PBS, train.sh, train.py and model/loss code are unchanged.
+This preparation wrote only new files under the two requested PeakAware trees.
+
+Workspace caveat: the global no-existing-files-changed check cannot be marked PASS.
+During preparation, 64 unrelated PBS-launcher/loss_weight_sweep_3e-3 scripts changed
+only their account directive from ULHI0005 to ULHI0006. This task did not write
+those files and left them untouched. They account for the entire tracked diff.
+See concurrent_workspace_changes.json for each path, before/after hash and mtime.
+The new PeakAware scripts retain the explicitly requested account ULHI0005.
+No ablation compatibility issues were found. GPU execution and 20-minute runtime were not tested;
+CPU previews deliberately skip module loading and live CUDA/NCCL probes.
+
+Evidence: manifest.json (108 runs, source/generated hashes); matrix.tsv (108 rows);
+validation.json; bash_n.txt; pbs_dry_runs/ (108 previews);
+source_pbs_dry_runs/ (36 reference previews); protected_files.json (initial file snapshot);
+concurrent_workspace_changes.json (64 unrelated changes observed during the task).
+
+Manual submission command for all 108 scripts (NOT EXECUTED):
+cd /glade/u/home/zel/scratch/StormSurge
+for pbs in PBS-launcher/baselines_PeakAware/{baseline_cnn_lstm,baseline_cnn_gru,baseline_convlstm}/{Battery,Boston,CBBT,Lewes}/seed{42,123,2026}/run_{T0250_EP0000,T0000_EP0100,T0250_EP0100}.pbs; do
+    qsub "$pbs" || break
+done
+
+Zero jobs submitted. Zero training runs launched. Preparation and CPU validation only.

@@ -1,0 +1,44 @@
+[START] /glade/u/home/zel/scratch/StormSurge/configs/baselines_PeakAware/baseline_cnn_gru/CBBT/seed123/train_config_T0250_EP0000.sh
+=========================================
+Config file:   /glade/u/home/zel/scratch/StormSurge/configs/baselines_PeakAware/baseline_cnn_gru/CBBT/seed123/train_config_T0250_EP0000.sh
+Host:          crlogin1
+Workdir:       /glade/u/home/zel/scratch/StormSurge
+Run name:      Derecho_formal_bf16_PeakAware_baseline_cnn_gru_CBBT_NCEP_36H_seed123_T0250_EP0000_lr5e-3_clip0.25
+Run dir:       /glade/u/home/zel/scratch/PACT_StormSurge_FormalRuns_1021_LR5e-3_Clip0.25/baselines_PeakAware/baseline_cnn_gru/CBBT/seed123/T0250_EP0000/20261023_045436_Derecho_formal_bf16_PeakAware_baseline_cnn_gru_CBBT_NCEP_36H_seed123_T0250_EP0000_lr5e-3_clip0.25
+Run dir style: timestamp_runname
+Results root:  /glade/u/home/zel/scratch/PACT_StormSurge_FormalRuns_1021_LR5e-3_Clip0.25/baselines_PeakAware/baseline_cnn_gru/CBBT/seed123/T0250_EP0000
+Python:        /glade/work/zel/conda-envs/derecho-ml/bin/python
+tmux:          USE_TMUX=0 SESSION_NAME=<unset> DRY_RUN=1
+LAUNCHER:      /glade/work/zel/conda-envs/derecho-ml/bin/python -m torch.distributed.run --nproc_per_node=4 --master_addr=127.0.0.1 --master_port=30126
+Train script:  train.py
+Model:         baseline_cnn_gru
+Node SDPA:     math (PACT only)
+Adam WD:       module
+Encoder:       CNN
+Temporal:      GRU
+Pooling:       adaptive4x4
+Stem channels: 32
+Station feats: site_elevation=0 bathymetry=0 (PACT)
+ROOT_DIR:      ./dataset/NCEP/graphs
+TEST_ROOT_DIR: <none>
+Pressure mode: raw
+TRAIN_DATA_TAG:NCEP
+TEST_DATA_TAG: NCEP
+LR_LIST:       5e-3
+Global prediction loss: MSE (physical units)
+Tail MSE weight: 0.025 (strict GT > TRAIN Q95)
+Episode GT-aligned peak MSE weight: 0.0
+Checkpoint roles (VAL-only): overall, exceedance; primary=overall
+H_LIST:        36
+Split:         train=0.6 val=0.2 shuffle_years=0 future_only=0 future_year_threshold=2030 seed=123
+MASTER_ADDR:   127.0.0.1
+MASTER_PORT:   30126
+SLURM_JOB_ID:  <none>
+CUDA_VISIBLE_DEVICES:  <unset>
+num_gpus:      4
+Scheduler:     cosine (ROP_METRIC=val_all_rmse)
+DISABLE_OOD:   1 (x_norm=zscore, x_clip=0, x_aug=0)
+DL:            workers=0 pin=0 pers=0 prefetch=0 mp=fork
+Precision:     AMP=1 AMP_DTYPE=bf16 TF32=1
+=========================================
+CMD: train.py --root_dir ./dataset/NCEP/graphs --pressure_mode raw --model baseline_cnn_gru --node_attention_backend math --weight_decay_policy module --exceedance_percentile 95 --checkpoint_selection overall --batch_size 256 --lr 5e-3 --epochs 300 --hidden_channels 128 --num_layers 2 --dropout 0.05 --head_dropout 0.0 --max_grad_norm 0.25 --deterministic 0 --history_hours 36 --seed 123 --train_ratio 0.6 --val_ratio 0.2 --shuffle_years 0 --future_only 0 --future_year_threshold 2030 --run_tag Derecho_formal_bf16_PeakAware_baseline_cnn_gru_CBBT_NCEP_36H_seed123_T0250_EP0000_lr5e-3_clip0.25_20261023_045436 --output_dir /glade/u/home/zel/scratch/PACT_StormSurge_FormalRuns_1021_LR5e-3_Clip0.25/baselines_PeakAware/baseline_cnn_gru/CBBT/seed123/T0250_EP0000/20261023_045436_Derecho_formal_bf16_PeakAware_baseline_cnn_gru_CBBT_NCEP_36H_seed123_T0250_EP0000_lr5e-3_clip0.25 --torch_threads 1 --num_workers 0 --prefetch_factor 0 --mp_context fork --x_norm zscore --x_p_lo 1.0 --x_p_hi 99.0 --x_nodes_per_graph 0 --x_clip 0 --x_aug 0 --x_aug_prob 0 --x_aug_scale 0 --x_aug_bias 0 --station_json_dir ./station_json --use_site_elevation 0 --use_bathymetry 0 --baseline_pooling adaptive --baseline_pool_grid 4 --baseline_stem_channels 32 --station CBBT --amp --amp_dtype bf16 --tf32 --scheduler cosine --warmup_epochs 5 --warmup_start_factor 0.1 --min_lr 1e-6 --exceedance_loss_weight 0.025 --episode_gt_aligned_peak_weight 0.0 

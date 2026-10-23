@@ -2,7 +2,7 @@
 # One independent four-GPU run: Battery, CNN_GRU_48H, T0500_EP0050, seed 42; LR=3e-3, no gradient clipping.
 # A PBS rerun starts a fresh timestamped run; it does not resume a checkpoint.
 #PBS -N lw3BaT0500P0050
-#PBS -A ULHI0005
+#PBS -A ULHI0006
 #PBS -q preempt@desched1
 #PBS -l select=1:ncpus=64:mem=487GB:mpiprocs=4:ompthreads=1:ngpus=4
 #PBS -l walltime=00:30:00
