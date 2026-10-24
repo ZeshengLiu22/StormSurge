@@ -1,0 +1,106 @@
+{
+  "status": "PASS",
+  "validated_at_utc": "2026-10-23T15:48:31.841470+00:00",
+  "repository_revision_before_update": "5f6c493f01bbb9d3797c28f2b3892148965d9f41",
+  "recipient": "zel220@lehigh.edu",
+  "scheduler_mail_events": "a",
+  "normal_completion_mail": false,
+  "runtime_failure_notification": "EXIT handler for nonzero status, using mail -S sendwait with a 30-second timeout and 5-second kill grace.",
+  "runtime_mail_fields": [
+    "PBS job ID",
+    "PBS job name",
+    "hostname",
+    "exit status",
+    "config path",
+    "PBS log directory"
+  ],
+  "applies_to": "New submissions using the updated scripts; existing queued/running jobs are not changed.",
+  "matrix": {
+    "status": "PASS",
+    "total": 540,
+    "passed": 540,
+    "failed": 0,
+    "no_training_results_created": true,
+    "results_contents_before": [],
+    "results_contents_after": [],
+    "reference_count": 60,
+    "max_pbs_name_length": 12,
+    "seconds": 12.281266666948795
+  },
+  "behavior": {
+    "status": "PASS",
+    "recipient": "zel220@lehigh.edu",
+    "actual_emails_sent": 0,
+    "actual_training_launches": 0,
+    "pbs_submissions": 0,
+    "cases": [
+      {
+        "case": "success",
+        "status": "PASS",
+        "exit_status": 0,
+        "mock_mail_called": false
+      },
+      {
+        "case": "training_failure",
+        "status": "PASS",
+        "exit_status": 17,
+        "mock_mail_called": true
+      },
+      {
+        "case": "preflight_failure",
+        "status": "PASS",
+        "exit_status": 23,
+        "mock_mail_called": true
+      },
+      {
+        "case": "early_cd_failure",
+        "status": "PASS",
+        "exit_status": 1,
+        "mock_mail_called": true
+      },
+      {
+        "case": "cpu_preview_failure",
+        "status": "PASS",
+        "exit_status": 17,
+        "mock_mail_called": false
+      },
+      {
+        "case": "outside_pbs",
+        "status": "PASS",
+        "exit_status": 2,
+        "mock_mail_called": false
+      },
+      {
+        "case": "mail_transport_failure",
+        "status": "PASS",
+        "exit_status": 17,
+        "mock_mail_called": true
+      },
+      {
+        "case": "missing_mail",
+        "status": "PASS",
+        "exit_status": 17,
+        "mock_mail_called": false
+      },
+      {
+        "case": "invalid_dry_run",
+        "status": "PASS",
+        "exit_status": 2,
+        "mock_mail_called": true
+      }
+    ]
+  },
+  "protected_files_unchanged": 605,
+  "manual_submission_commands_unchanged": 540,
+  "manifest_sha256": "6ce7b1d65a2f67a2983eafa7d58e4242e1a89b4bf5e5310f1328af23b5a76a3d",
+  "limitations": [
+    "No live mail delivery or scheduler abort was triggered during validation.",
+    "Ordinary nonzero-exit mail requires a working mail client and mail transport on the compute node.",
+    "SIGKILL cannot run the EXIT handler; scheduler abort notification is requested through PBS -m a.",
+    "A scheduler abort may also trigger the shell handler, so two failure messages are possible."
+  ],
+  "pbs_submissions": 0,
+  "training_launches": 0,
+  "actual_emails_sent": 0,
+  "pbs_mail_documentation": "https://ncar-hpc-docs.readthedocs.io/en/latest/pbs/job-scripts/"
+}

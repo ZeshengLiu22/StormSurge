@@ -11,7 +11,9 @@
     "C_formal_NCEP_scientific_comparability": "PASS",
     "D_PBS_syntax_and_540_CPU_dry_runs": "PASS",
     "E_preservation_and_no_results_created": "PASS",
-    "F_future_inference_interface": "PASS"
+    "F_future_inference_interface": "PASS",
+    "G_failure_mail_notifications": "PASS",
+    "H_first_batch_walltimes": "PASS"
   },
   "missing_files_or_invalid_data": [],
   "scientific_deviations": [],
@@ -23,7 +25,7 @@
   ],
   "risks_and_limits": [
     "CUDA/NCCL/BF16 device preflight is retained but intentionally not executed on GPUs. CPU validation cannot establish GPU memory fit or the actual time required for 300 epochs.",
-    "EC_EARTH requests exactly 02:00:00; other GCMs request exactly 01:00:00. These are user-specified limits, not measured CMIP6 completion estimates.",
+    "First-batch PBS walltimes: Cane5 00:20:00; IPSL 00:25:00; CNRM/MIROC 00:40:00; BCC/MRI 00:45:00; AWI/MPI 01:00:00; EC_EARTH 02:00:00. These are user-specified limits, not measured CMIP6 completion estimates.",
     "The preempt queue can interrupt runs. #PBS -r n prevents automatic reruns; no automatic resume mechanism was added.",
     "Historical checkpoints do not exist until training completes. End-to-end inference with trained weights is deferred; source and interface checks passed.",
     "Numerical payload checks are sampled at file boundaries as detailed in the dataset audit; all graph shapes and target timestamps were checked."
@@ -33,5 +35,54 @@
   "future_inference_launches": 0,
   "manifest": "/glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/validation/manifest.tsv",
   "year_summary": "/glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/validation/year_groups.tsv",
-  "manual_commands": "/glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/validation/manual_qsub_commands.txt"
+  "manual_commands": "/glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/validation/manual_qsub_commands.txt",
+  "mail_update": {
+    "validated_at_utc": "2026-10-23T15:48:31.841470+00:00",
+    "recipient": "zel220@lehigh.edu",
+    "pbs_scripts": 540,
+    "scheduler_mail_events": "a",
+    "runtime_nonzero_exit_mail": true,
+    "normal_completion_mail": false,
+    "cpu_dry_runs_passed": 540,
+    "simulated_mail_cases_passed": 9,
+    "report": "/glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/validation/mail_validation.json",
+    "live_delivery_tested": false
+  },
+  "walltime_update": {
+    "status": "PASS",
+    "checked_pbs": 540,
+    "changed_pbs": 360,
+    "already_matching_pbs": 180,
+    "pbs_changes_limited_to_walltime": true,
+    "protected_files_unchanged": 607,
+    "walltimes": {
+      "CMIP6_AWI": "01:00:00",
+      "CMIP6_BCC": "00:45:00",
+      "CMIP6_Cane5": "00:20:00",
+      "CMIP6_CNRM": "00:40:00",
+      "CMIP6_EC_EARTH": "02:00:00",
+      "CMIP6_IPSL": "00:25:00",
+      "CMIP6_MIROC": "00:40:00",
+      "CMIP6_MPI": "01:00:00",
+      "CMIP6_MRI": "00:45:00"
+    },
+    "counts": {
+      "CMIP6_AWI": 60,
+      "CMIP6_BCC": 60,
+      "CMIP6_Cane5": 60,
+      "CMIP6_CNRM": 60,
+      "CMIP6_EC_EARTH": 60,
+      "CMIP6_IPSL": 60,
+      "CMIP6_MIROC": 60,
+      "CMIP6_MPI": 60,
+      "CMIP6_MRI": 60
+    },
+    "validated_at_utc": "2026-10-23T21:50:20.740265+00:00",
+    "validated_at_client_time": "2026-10-23T17:50:20.740265-04:00",
+    "cpu_dry_runs_passed": 540,
+    "no_training_results_created": true,
+    "manifest_sha256": "70bcff0b491a6297f3953b12074defa07277d622515e062fa0d56801754e926a",
+    "pbs_submissions": 0,
+    "applies_to": "New submissions using the updated scripts."
+  }
 }

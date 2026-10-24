@@ -105,7 +105,7 @@ def main():
     ]
     risks = [
         'CUDA/NCCL/BF16 device preflight is retained but intentionally not executed on GPUs. CPU validation cannot establish GPU memory fit or the actual time required for 300 epochs.',
-        'EC_EARTH requests exactly 02:00:00; other GCMs request exactly 01:00:00. These are user-specified limits, not measured CMIP6 completion estimates.',
+        'First-batch PBS walltimes: Cane5 00:20:00; IPSL 00:25:00; CNRM/MIROC 00:40:00; BCC/MRI 00:45:00; AWI/MPI 01:00:00; EC_EARTH 02:00:00. These are user-specified limits, not measured CMIP6 completion estimates.',
         'The preempt queue can interrupt runs. #PBS -r n prevents automatic reruns; no automatic resume mechanism was added.',
         'Historical checkpoints do not exist until training completes. End-to-end inference with trained weights is deferred; source and interface checks passed.',
         'Numerical payload checks are sampled at file boundaries as detailed in the dataset audit; all graph shapes and target timestamps were checked.',

@@ -11,12 +11,24 @@ import shutil
 import sys
 
 from audit_data import discover, GCMS, STATIONS, REPO
+from pbs_failure_mail import add_failure_mail
 
 STAGE = Path('/tmp/stormsurge_cmip6_prepare/package')
 RESULTS = Path('/glade/u/home/zel/scratch/PACT_StormSurge_FormalRuns_1021_LR5e-3_Clip0.25/cmip6')
 PYTHON = '/glade/work/zel/conda-envs/derecho-ml/bin/python'
 SEEDS = [42, 123, 2026]
 VARIANTS = ['PACT_MSE', 'PACT_Peak', 'PACT_Both', 'CNN_GRU_MSE', 'CNN_GRU_Tail']
+WALLTIMES = {
+    'CMIP6_AWI': '01:00:00',
+    'CMIP6_BCC': '00:45:00',
+    'CMIP6_Cane5': '00:20:00',
+    'CMIP6_CNRM': '00:40:00',
+    'CMIP6_EC_EARTH': '02:00:00',
+    'CMIP6_IPSL': '00:25:00',
+    'CMIP6_MIROC': '00:40:00',
+    'CMIP6_MPI': '01:00:00',
+    'CMIP6_MRI': '00:45:00',
+}
 PBS_SOURCE = REPO/'PBS-launcher/baselines_PeakAware/baseline_cnn_gru/Battery/seed42/run_T0250_EP0000.pbs'
 GCODES = dict(zip(GCMS, ['AW', 'BC', 'CA', 'CN', 'EC', 'IP', 'MI', 'MP', 'MR']))
 SCODES = dict(zip(STATIONS, ['Bt', 'Bo', 'Cb', 'Le']))
@@ -69,7 +81,7 @@ def main():
         output = RESULTS/gcm/station/f'seed{seed}'/variant
         run_name = f'{gcm}_{station}_seed{seed}_{variant}_36H_lr5e-3_clip0.25'
         pbs_name = f'c6{GCODES[gcm]}{SCODES[station]}{seed}{VCODES[variant]}'
-        walltime = '02:00:00' if gcm == 'CMIP6_EC_EARTH' else '01:00:00'
+        walltime = WALLTIMES[gcm]
         overrides = dict(ROOT_DIR=data[gcm, station]['past_root'], TEST_ROOT_DIR='',
                          PYTHON_BIN=PYTHON, USE_TMUX=0, DO_CONDA=0,
                          ALL_RESULTS_ROOT=str(output), RUN_DIR_NAME_STYLE='timestamp_runname',
@@ -91,6 +103,7 @@ def main():
         pbs = re.sub(r'^#PBS -o .*$', '#PBS -o ' + str(REPO/log_rel) + '/', pbs, flags=re.M)
         pbs = re.sub(r'^config=.*$', 'config=' + shlex.quote(str(REPO/config_rel)), pbs, flags=re.M)
         pbs = pbs.replace('stormsurge-peakaware-${PBS_JOBID}', 'stormsurge-cmip6-${PBS_JOBID}')
+        pbs = add_failure_mail(pbs, REPO/log_rel)
         for relative, contents in [(config_rel, config), (pbs_rel, pbs)]:
             path = STAGE/relative
             path.parent.mkdir(parents=True, exist_ok=True)
@@ -123,7 +136,7 @@ def main():
         + ''.join('qsub '+r['pbs']+'\n' for r in rows))
     (artifacts/'pbs_name_codes.json').write_text(json.dumps(dict(prefix='c6', format='c6<GCM2><station2><seed><variant2>',
         gcm=GCODES, station=SCODES, variant=VCODES), indent=2)+'\n')
-    for name in ['generate.py', 'audit_data.py', 'preservation_before.json']:
+    for name in ['generate.py', 'audit_data.py', 'pbs_failure_mail.py', 'preservation_before.json']:
         shutil.copy2(Path(__file__).parent/name, artifacts/name)
     print(f'Generated {len(rows)} configs, {len(rows)} independent PBS scripts, and {len(rows)} log parents under {STAGE}.')
 

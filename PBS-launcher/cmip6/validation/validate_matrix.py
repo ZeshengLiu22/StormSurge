@@ -13,6 +13,8 @@ import shlex
 import subprocess
 import time
 
+from pbs_failure_mail import MAIL_TO, add_failure_mail
+
 REPO = Path('/glade/u/home/zel/scratch/StormSurge')
 VALIDATION = REPO/'PBS-launcher/cmip6/validation'
 RESULTS = Path('/glade/u/home/zel/scratch/PACT_StormSurge_FormalRuns_1021_LR5e-3_Clip0.25/cmip6')
@@ -21,6 +23,17 @@ GCMS = ['CMIP6_'+x for x in ['AWI','BCC','Cane5','CNRM','EC_EARTH','IPSL','MIROC
 STATIONS = ['Battery','Boston','CBBT','Lewes']
 SEEDS = [42,123,2026]
 VARIANTS = ['PACT_MSE','PACT_Peak','PACT_Both','CNN_GRU_MSE','CNN_GRU_Tail']
+WALLTIMES = {
+    'CMIP6_AWI': '01:00:00',
+    'CMIP6_BCC': '00:45:00',
+    'CMIP6_Cane5': '00:20:00',
+    'CMIP6_CNRM': '00:40:00',
+    'CMIP6_EC_EARTH': '02:00:00',
+    'CMIP6_IPSL': '00:25:00',
+    'CMIP6_MIROC': '00:40:00',
+    'CMIP6_MPI': '01:00:00',
+    'CMIP6_MRI': '00:45:00',
+}
 CHANGED = {'ROOT_DIR','TEST_ROOT_DIR','PYTHON_BIN','USE_TMUX','DO_CONDA','ALL_RESULTS_ROOT',
            'RUN_DIR_NAME_STYLE','PACT_RUN_NAME','PYTHON_RUN_TAG_BASE'}
 
@@ -140,17 +153,18 @@ def main():
             for key, value in architecture.items():
                 assert vals[key] == value, f'Architecture {key}'
             checks['scientific_config'] = 'PASS'
+            assert row['walltime'] == WALLTIMES[row['gcm']], 'Manifest walltime'
             text = pbs.read_text()
             directives = [l for l in text.splitlines() if l.startswith('#PBS ')]
             required = ['#PBS -A ULHI0005','#PBS -q preempt@desched1',
                         '#PBS -l select=1:ncpus=64:mem=487GB:mpiprocs=4:ompthreads=1:ngpus=4',
-                        '#PBS -r n','#PBS -j oe','#PBS -N '+row['pbs_name'],
+                        '#PBS -r n','#PBS -j oe','#PBS -m a','#PBS -M '+MAIL_TO,'#PBS -N '+row['pbs_name'],
                         '#PBS -o '+row['log_dir']+'/',
-                        '#PBS -l walltime='+('02:00:00' if row['gcm']=='CMIP6_EC_EARTH' else '01:00:00')]
+                        '#PBS -l walltime='+WALLTIMES[row['gcm']]]
             assert sorted(directives) == sorted(required), 'PBS directives'
             assert re.fullmatch(r'[A-Za-z][A-Za-z0-9]{0,14}', row['pbs_name'])
             assert Path(row['log_dir']).is_dir()
-            assert len(re.findall(r'^exec bash train\.sh "\$\{config\}"$',text,re.M)) == 1
+            assert len(re.findall(r'^bash train\.sh "\$\{config\}"$',text,re.M)) == 1
             assert not re.search(r'\b(qsub|qdel|sbatch|srun)\b|^#PBS -[Jt]\b',text,re.M), 'Hidden job operations/arrays'
             for required_text in ['module load cuda/12.9.0', 'torch.cuda.device_count() != 4',
                                   'dist.is_nccl_available()', 'get_device_capability(i)[0] < 8',
@@ -158,8 +172,8 @@ def main():
                                   'PYTHONUNBUFFERED=1','export USE_TMUX=0','export TMPDIR=', 'export MPLCONFIGDIR=',
                                   'if [[ "${DRY_RUN}" != 1 ]]; then', '[[ -n "${PBS_JOBID:-}" ]]']:
                 assert required_text in text, f'Missing PBS runtime feature: {required_text}'
-            # Apart from documented metadata/path changes, use the exact formal PBS implementation.
-            template = Path(row['source_pbs']).read_text()
+            # Only documented paths and failure notification differ from the formal PBS.
+            template = add_failure_mail(Path(row['source_pbs']).read_text(), row['log_dir'])
             def normalize_pbs(t):
                 t = '\n'.join(l for l in t.splitlines() if not l.startswith('#') or l.startswith('#!'))
                 t = re.sub(r'^config=.*$', 'config=CONFIG', t, flags=re.M)

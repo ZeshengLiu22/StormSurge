@@ -37,12 +37,12 @@ All 1,296 PastOnly files and 1,080 future files were deserialized one file per C
 
 Runtime and PBS limits:
 - CUDA/NCCL/BF16 device preflight is retained but intentionally not executed on GPUs. CPU validation cannot establish GPU memory fit or the actual time required for 300 epochs.
-- EC_EARTH requests exactly 02:00:00; other GCMs request exactly 01:00:00. These are user-specified limits, not measured CMIP6 completion estimates.
+- First-batch PBS walltimes: Cane5 00:20:00; IPSL 00:25:00; CNRM/MIROC 00:40:00; BCC/MRI 00:45:00; AWI/MPI 01:00:00; EC_EARTH 02:00:00. These are user-specified limits, not measured CMIP6 completion estimates.
 - The preempt queue can interrupt runs. #PBS -r n prevents automatic reruns; no automatic resume mechanism was added.
 - Historical checkpoints do not exist until training completes. End-to-end inference with trained weights is deferred; source and interface checks passed.
 - Numerical payload checks are sampled at file boundaries as detailed in the dataset audit; all graph shapes and target timestamps were checked.
 
-Preservation:
+Preservation at initial preparation (before the mail update):
 All 2835 pre-existing tracked files retain their SHA256 hashes.
 No tracked files changed. New repository files are confined to configs/cmip6 and PBS-launcher/cmip6.
 The existing cmip6 results parent remains empty. Results are created only by actual training.
@@ -54,3 +54,31 @@ dataset_audit.json, data_details/, graph_file_audit.tsv: exact graph/time/shape 
 year_groups.tsv / year_groups.json: every GCM/station split and future year group.
 future_inference_compatibility.txt and interface_validation.json: deferred evaluation procedure and checks.
 manual_qsub_commands.txt / pbs_paths.txt: manual staged/full submission commands.
+
+Failure email update: PASS
+Validated at 2026-10-23T15:48:31.841470+00:00.
+All 540 PBS scripts now request scheduler abort mail (-m a) to zel220@lehigh.edu.
+A shell EXIT handler also emails ordinary nonzero exits and preserves the original exit status.
+Success and DRY_RUN do not send mail; runtime mail includes job ID/name, host, exit status, config, and PBS log directory.
+The generator, validator, and manifest SHA256 hashes include this change.
+All 540 installed CPU previews, shell syntax checks, and formal scientific comparisons pass; 9 stubbed mail scenarios pass.
+All 605 protected files (configs, formal references, training entry points, ordered/grouped submission lists) retain their hashes.
+This update applies to new submissions. No PBS jobs were submitted, no training was launched, and no actual email was sent.
+Live delivery is untested and depends on compute-node mail transport; scheduler abort delivery is handled by PBS.
+See mail_validation.json and validate_failure_mail.py for details and reproducible stub tests.
+
+First-batch walltime update: PASS
+Validated at 2026-10-23T17:50:20.740265-04:00 (America/New_York).
+540/540 PBS walltime values match the requested table; 360 changed and 180 already matched.
+CMIP6_AWI: 01:00:00 (60 scripts).
+CMIP6_BCC: 00:45:00 (60 scripts).
+CMIP6_Cane5: 00:20:00 (60 scripts).
+CMIP6_CNRM: 00:40:00 (60 scripts).
+CMIP6_EC_EARTH: 02:00:00 (60 scripts).
+CMIP6_IPSL: 00:25:00 (60 scripts).
+CMIP6_MIROC: 00:40:00 (60 scripts).
+CMIP6_MPI: 01:00:00 (60 scripts).
+CMIP6_MRI: 00:45:00 (60 scripts).
+All 540 PBS syntax checks and CPU DRY_RUNs pass; all scientific command lines still match their formal reference.
+Only walltime changed within the PBS scripts. All 607 protected files retain their hashes, including training configs, sources, mail helpers, and manual qsub lists.
+Generator, validator, manifest hashes, and report text reflect the first-batch walltimes. No jobs were submitted.

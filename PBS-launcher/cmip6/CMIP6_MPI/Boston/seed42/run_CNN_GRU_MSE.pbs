@@ -9,9 +9,43 @@
 #PBS -l walltime=01:00:00
 #PBS -r n
 #PBS -j oe
+#PBS -m a
+#PBS -M zel220@lehigh.edu
 #PBS -o /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_MPI/Boston/seed42/pbs_logs/CNN_GRU_MSE/
 
 set -euo pipefail
+
+# BEGIN CMIP6 failure notification
+CMIP6_MAIL_TO=zel220@lehigh.edu
+CMIP6_PBS_LOG_DIR=/glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_MPI/Boston/seed42/pbs_logs/CNN_GRU_MSE
+# PBS -m a covers scheduler aborts; this catches ordinary nonzero exits.
+# Send only inside a real PBS job, never from a CPU DRY_RUN.
+cmip6_notify_failure() {
+  local status="$1"
+  trap - EXIT
+  if (( status != 0 )) && [[ "${DRY_RUN:-0}" != 1 && -n "${PBS_JOBID:-}" ]]; then
+    if command -v mail >/dev/null 2>&1 && command -v timeout >/dev/null 2>&1; then
+      if ! {
+        printf 'StormSurge CMIP6 job failed.\n\n'
+        printf 'Job ID: %s\n' "${PBS_JOBID}"
+        printf 'Job name: %s\n' "${PBS_JOBNAME:-unknown}"
+        printf 'Host: %s\n' "${HOSTNAME:-unknown}"
+        printf 'Exit status: %s\n' "${status}"
+        printf 'Config: %s\n' "${config:-not reached}"
+        printf 'PBS log directory: %s\n' "${CMIP6_PBS_LOG_DIR}"
+      } | timeout --kill-after=5s 30s mail -S sendwait \
+          -s "[StormSurge FAILED] ${PBS_JOBNAME:-CMIP6} ${PBS_JOBID} exit=${status}" "${CMIP6_MAIL_TO}"; then
+        printf '[WARN] Failure email could not be sent to %s; original exit status=%s.\n' "${CMIP6_MAIL_TO}" "${status}" >&2
+      fi
+    else
+      printf '[WARN] Failure email requires mail and timeout on the execution node; original exit status=%s.\n' "${status}" >&2
+    fi
+  fi
+  exit "${status}"
+}
+trap 'cmip6_notify_failure "$?"' EXIT
+# END CMIP6 failure notification
+
 cd -- /glade/u/home/zel/scratch/StormSurge
 export PYTHON_BIN="/glade/work/zel/conda-envs/derecho-ml/bin/python"
 export S0_PYTHON_BIN="${PYTHON_BIN}"
@@ -53,4 +87,5 @@ fi
 
 # One configuration; train.sh launches exactly four DDP ranks.
 printf '[START] %s\n' "${config}"
-exec bash train.sh "${config}"
+# Keep this shell alive so its EXIT handler observes the training status.
+bash train.sh "${config}"
