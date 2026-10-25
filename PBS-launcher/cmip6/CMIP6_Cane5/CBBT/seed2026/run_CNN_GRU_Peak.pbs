@@ -1,0 +1,91 @@
+#!/bin/bash -l
+# Formal CMIP6 historical PastOnly: CMIP6_Cane5, CBBT, seed 2026, CNN_GRU_Peak.
+# One independent configuration; four DDP ranks; no automatic rerun after preemption.
+# Preview on CPU: CUDA_VISIBLE_DEVICES='' DRY_RUN=1 bash <this-file>
+#PBS -N c6CACb2026GP
+#PBS -A ULHI0005
+#PBS -q preempt@desched1
+#PBS -l select=1:ncpus=64:mem=487GB:mpiprocs=4:ompthreads=1:ngpus=4
+#PBS -l walltime=00:20:00
+#PBS -r n
+#PBS -j oe
+#PBS -m a
+#PBS -M zel220@lehigh.edu
+#PBS -o /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_Cane5/CBBT/seed2026/pbs_logs/CNN_GRU_Peak/
+
+set -euo pipefail
+
+# BEGIN CMIP6 failure notification
+CMIP6_MAIL_TO=zel220@lehigh.edu
+CMIP6_PBS_LOG_DIR=/glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_Cane5/CBBT/seed2026/pbs_logs/CNN_GRU_Peak
+# PBS -m a covers scheduler aborts; this catches ordinary nonzero exits.
+# Send only inside a real PBS job, never from a CPU DRY_RUN.
+cmip6_notify_failure() {
+  local status="$1"
+  trap - EXIT
+  if (( status != 0 )) && [[ "${DRY_RUN:-0}" != 1 && -n "${PBS_JOBID:-}" ]]; then
+    if command -v mail >/dev/null 2>&1 && command -v timeout >/dev/null 2>&1; then
+      if ! {
+        printf 'StormSurge CMIP6 job failed.\n\n'
+        printf 'Job ID: %s\n' "${PBS_JOBID}"
+        printf 'Job name: %s\n' "${PBS_JOBNAME:-unknown}"
+        printf 'Host: %s\n' "${HOSTNAME:-unknown}"
+        printf 'Exit status: %s\n' "${status}"
+        printf 'Config: %s\n' "${config:-not reached}"
+        printf 'PBS log directory: %s\n' "${CMIP6_PBS_LOG_DIR}"
+      } | timeout --kill-after=5s 30s mail -S sendwait \
+          -s "[StormSurge FAILED] ${PBS_JOBNAME:-CMIP6} ${PBS_JOBID} exit=${status}" "${CMIP6_MAIL_TO}"; then
+        printf '[WARN] Failure email could not be sent to %s; original exit status=%s.\n' "${CMIP6_MAIL_TO}" "${status}" >&2
+      fi
+    else
+      printf '[WARN] Failure email requires mail and timeout on the execution node; original exit status=%s.\n' "${status}" >&2
+    fi
+  fi
+  exit "${status}"
+}
+trap 'cmip6_notify_failure "$?"' EXIT
+# END CMIP6 failure notification
+
+cd -- /glade/u/home/zel/scratch/StormSurge
+export PYTHON_BIN="/glade/work/zel/conda-envs/derecho-ml/bin/python"
+export S0_PYTHON_BIN="${PYTHON_BIN}"
+export USE_TMUX=0
+export OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1
+export PYTHONUNBUFFERED=1 PYTHONDONTWRITEBYTECODE=1
+export DRY_RUN="${DRY_RUN:-0}"
+case "${DRY_RUN}" in 0|1) ;; *) echo '[FATAL] DRY_RUN must be 0 or 1.' >&2; exit 2 ;; esac
+unset SLURM_NTASKS_PER_NODE SLURM_JOB_ID PACT_RUNSTAMP PACT_RUN_NAME SESSION_NAME PYTHON_RUN_TAG_BASE
+
+config=/glade/u/home/zel/scratch/StormSurge/configs/cmip6/CMIP6_Cane5/CBBT/seed2026/train_config_CNN_GRU_Peak.sh
+[[ -x "${PYTHON_BIN}" && -r train.sh && -r train.py ]] || { echo '[FATAL] Missing Python or training entry point.' >&2; exit 2; }
+[[ -r "${config}" ]] || { echo "[FATAL] Missing config: ${config}" >&2; exit 2; }
+
+# DRY_RUN skips modules, CUDA probes and all output-directory creation.
+if [[ "${DRY_RUN}" != 1 ]]; then
+  [[ -n "${PBS_JOBID:-}" ]] || { echo '[FATAL] A PBS allocation is required; use DRY_RUN=1 for CPU previews.' >&2; exit 2; }
+  module load cuda/12.9.0
+  export TMPDIR="/glade/derecho/scratch/zel/tmp/stormsurge-cmip6-${PBS_JOBID}"
+  export MPLCONFIGDIR="${TMPDIR}/matplotlib"
+  mkdir -p -- "${MPLCONFIGDIR}"
+  "${PYTHON_BIN}" - <<'PYTHON'
+import sys
+import torch
+import torch.distributed as dist
+import torch_geometric
+
+if not torch.cuda.is_available() or torch.cuda.device_count() != 4:
+    raise SystemExit("[FATAL] Exactly four visible CUDA GPUs are required.")
+if not dist.is_available() or not dist.is_nccl_available():
+    raise SystemExit("[FATAL] PyTorch distributed/NCCL support is required.")
+if any(torch.cuda.get_device_capability(i)[0] < 8 for i in range(4)):
+    raise SystemExit("[FATAL] Derecho BF16/TF32 requires Ampere or newer GPUs.")
+for index in range(4):
+    print(f"[GPU {index}] {torch.cuda.get_device_name(index)}")
+print(f"[RUNTIME] {sys.executable}; torch={torch.__version__}; CUDA={torch.version.cuda}; PyG={torch_geometric.__version__}")
+PYTHON
+fi
+
+# One configuration; train.sh launches exactly four DDP ranks.
+printf '[START] %s\n' "${config}"
+# Keep this shell alive so its EXIT handler observes the training status.
+bash train.sh "${config}"

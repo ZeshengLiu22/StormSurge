@@ -7,6 +7,8 @@ from pathlib import Path
 import shutil
 from zoneinfo import ZoneInfo
 
+from generate import write_submission_lists
+
 WORK = Path('/tmp/stormsurge_cmip6_prepare')
 OUT = WORK/'validation'
 REPO = Path('/glade/u/home/zel/scratch/StormSurge')
@@ -21,6 +23,7 @@ def main():
     inventory = json.loads((WORK/'audit/dataset_inventory.json').read_text())
     manifest = json.loads((DEST/'manifest.json').read_text())
     matrix = json.loads((OUT/'matrix_validation.json').read_text())
+    assert len(manifest) == matrix['total'] == 648, 'Run the current matrix validator before assembling reports'
     interfaces = json.loads((OUT/'interface_validation.json').read_text())
     preservation = json.loads((OUT/'preservation_validation.json').read_text())
     details = []
@@ -92,13 +95,13 @@ def main():
         'A_dataset_audit':audit['status'],
         'B_exact_matrix_and_uniqueness':matrix['status'],
         'C_formal_NCEP_scientific_comparability':matrix['status'],
-        'D_PBS_syntax_and_540_CPU_dry_runs':matrix['status'],
+        'D_PBS_syntax_and_648_CPU_dry_runs':matrix['status'],
         'E_preservation_and_no_results_created':'PASS' if preservation['status']=='PASS' and matrix['no_training_results_created'] else 'FAIL',
         'F_future_inference_interface':interfaces['status'],
     }
     ready = all(v=='PASS' for v in categories.values())
     notes = [
-        'No scientific hyperparameter, optimizer, architecture, loss, or split changes from the 60 matching formal station/seed NCEP references.',
+        'No scientific hyperparameter, optimizer, architecture, loss, or split changes from the 72 matching formal station/seed NCEP references.',
         'Authorized operational changes: CMIP6 PastOnly roots, unique output/log/run paths, Derecho Python, USE_TMUX=0, timestamp_runname, independent PBS jobs, and requested walltimes.',
         'train.sh appends its launch timestamp to PYTHON_RUN_TAG_BASE; validation checks that existing behavior. Its fresh-directory mkdir refuses collisions, including reruns within one second.',
         'Historical 2014_2015 and future 2099_2100 boundary files have fewer windows than full winter groups. No requested year group is missing; existing groups are preserved intact. See shortened_year_groups.json for exact coverage.',
@@ -111,7 +114,7 @@ def main():
         'Numerical payload checks are sampled at file boundaries as detailed in the dataset audit; all graph shapes and target timestamps were checked.',
     ]
     stamp = datetime.now(timezone.utc)
-    report = dict(status='PASS' if ready else 'FAIL',ready_combinations=540 if ready else 0,total_combinations=540,
+    report = dict(status='PASS' if ready else 'FAIL',ready_combinations=648 if ready else 0,total_combinations=648,
                   generated_at_utc=stamp.isoformat(),generated_at_client_time=stamp.astimezone(ZoneInfo('America/New_York')).isoformat(),
                   repository_revision=preservation['revision'],categories=categories,
                   missing_files_or_invalid_data=[e for d in details for e in d['errors']],
@@ -120,15 +123,15 @@ def main():
                   manifest=str(DEST/'manifest.tsv'),year_summary=str(DEST/'year_groups.tsv'),
                   manual_commands=str(DEST/'manual_qsub_commands.txt'))
     write_json(OUT/'validation_report.json',report)
-    lines = [f'CMIP6 PastOnly preparation: {report["status"]}',f'{report["ready_combinations"]}/540 combinations ready for manual submission after CPU validation.',
+    lines = [f'CMIP6 PastOnly preparation: {report["status"]}',f'{report["ready_combinations"]}/648 combinations ready for manual submission after CPU validation.',
              f'Validated at {report["generated_at_client_time"]} (America/New_York).',f'Repository revision: {preservation["revision"]}',
              'No qsub, qdel, training, or future inference was executed.','', 'Category results:']
     lines += [f'{value}: {key}' for key,value in categories.items()]
-    lines += ['', 'Matrix: 540 configs, 540 independent PBS scripts, 540 unique tuples/output roots/run names/PBS names/log locations.',
-              'Distributions: 60/GCM; 135/station; 180/seed; 108/variant. Maximum PBS job-name length: 12.',
-              'All 1,080 generated shell/PBS files pass bash -n; all 540 PBS CPU DRY_RUNs pass.',
-              'All 540 effective scientific command lines match their exact formal station/seed reference.',
-              'All 540 command lines parse with the repository training argument parser.',
+    lines += ['', 'Matrix: 648 configs, 648 independent PBS scripts, 648 unique tuples/output roots/run names/PBS names/log locations.',
+              'Distributions: 72/GCM; 162/station; 216/seed; 108/variant. Maximum PBS job-name length: 12.',
+              'All 1,296 generated shell/PBS files pass bash -n; all 648 PBS CPU DRY_RUNs pass.',
+              'All 648 effective scientific command lines match their exact formal station/seed reference.',
+              'All 648 command lines parse with the repository training argument parser.',
               f'Data: {audit["historical_file_count"]} PastOnly files and {audit["future_file_count"]} future files; {audit["graph_count"]:,} graphs inspected.',
               'All 36 GCM/station pairs have the same chronological year split for seeds 42, 123, and 2026:',
               '  TRAIN: 22 groups, 1979_1980 through 2000_2001.',
@@ -141,9 +144,9 @@ def main():
     lines += ['', 'Validation scope:',scope,'', 'Runtime and PBS limits:'] + ['- '+r for r in risks]
     lines += ['', 'Preservation:',f'All {preservation["protected_tracked_file_count"]} pre-existing tracked files retain their SHA256 hashes.',
               'No tracked files changed. New repository files are confined to configs/cmip6 and PBS-launcher/cmip6.',
-              'The existing cmip6 results parent remains empty. Results are created only by actual training.',
+              'CPU previews create no run directories; existing experiment outputs are left untouched.',
               '', 'Artifacts:', 'manifest.tsv / manifest.json: one record per combination, with template and generated-file SHA256 provenance.',
-              'matrix_validation.json and dry_run/: per-combination checks and all 540 CPU previews.',
+              'matrix_validation.json and dry_run/: per-combination checks and all 648 CPU previews.',
               'dataset_audit.json, data_details/, graph_file_audit.tsv: exact graph/time/shape audit evidence.',
               'year_groups.tsv / year_groups.json: every GCM/station split and future year group.',
               'future_inference_compatibility.txt and interface_validation.json: deferred evaluation procedure and checks.',
@@ -159,7 +162,7 @@ def main():
               'Do not use --scope test with --test_root_dir. Architecture comes from the saved checkpoint; pressure_mode=raw is an assertion.',
               'All 36 actual target-root/station year selections passed infer.py\'s parser and selection logic using a filename-only test store.',
               'Missing, duplicate, malformed and empty year requests were rejected. Every future graph file was separately inspected for dimensions and timestamps.',
-              'Trained checkpoints do not exist yet; no end-to-end trained-model evaluation was attempted.',
+              'No end-to-end trained-model evaluation is performed by this preparation.',
               '', 'Exact future groups (identical for all nine GCMs and all four stations):', ','.join(inventory[0]['future_years']),
               '', 'The 2099_2100 tag is present, but its stored target coverage ends in 2099; see the per-file audit. Do not infer target calendar dates from filenames alone.',
               '', 'Manual example for later, inside a suitable GPU allocation. Replace the one historical_run placeholder with the completed run selected for Protocol A; do not select a rerun by future TEST scores. These commands have NOT been run:',
@@ -180,27 +183,11 @@ def main():
               '', 'For each other combination use its manifest data_root/full_data_root, station, variant and selected historical best_overall.pt.',
               'The fresh mktemp output directory prevents later future-evaluation reruns from overwriting earlier outputs.']
     (OUT/'future_inference_compatibility.txt').write_text('\n'.join(future)+'\n')
-    command_text = (DEST/'manual_qsub_commands.txt').read_text()
-    summary_commands = f'''Manual submission alternatives (not executed)
-
-cd {REPO}
-
-# Stage one GCM: 60 AWI runs. Change CMIP6_AWI to the desired GCM for later stages.
-for pbs in PBS-launcher/cmip6/CMIP6_AWI/*/seed*/run_*.pbs; do
-  qsub "$pbs" || break
-done
-
-# Alternatively submit all 540 exactly once. Do not also submit the staged set.
-while IFS= read -r pbs; do
-  qsub "$pbs" || break
-done < PBS-launcher/cmip6/validation/pbs_paths.txt
-
-All per-run commands follow. They are text only; this file is not a submission script.
-
-'''
-    (OUT/'manual_qsub_commands.txt').write_text(summary_commands+command_text)
-    for name in ['audit_data.py','generate.py','validate_matrix.py','validate_interfaces.py','finalize_reports.py']:
-        shutil.copy2(WORK/name,OUT/name)
+    write_submission_lists(manifest, OUT)
+    for name in ['audit_data.py','generate.py','validate_matrix.py','validate_interfaces.py','finalize_reports.py','pbs_failure_mail.py']:
+        source = Path(__file__).parent/name
+        if source.resolve() != (OUT/name).resolve():
+            shutil.copy2(source,OUT/name)
     print(json.dumps({k:v for k,v in report.items() if k in ['status','ready_combinations','categories','missing_files_or_invalid_data']}))
 
 

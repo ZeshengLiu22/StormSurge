@@ -1,27 +1,30 @@
 {
   "status": "PASS",
-  "ready_combinations": 540,
-  "total_combinations": 540,
-  "generated_at_utc": "2026-10-23T15:20:55.647722+00:00",
-  "generated_at_client_time": "2026-10-23T11:20:55.647722-04:00",
-  "repository_revision": "4fbee08e32dd7fc3c67d389ffffea0d43595d7eb",
+  "ready_combinations": 648,
+  "total_combinations": 648,
+  "generated_at_utc": "2026-10-25T00:40:31.637673+00:00",
+  "generated_at_client_time": "2026-10-24T20:40:31.637673-04:00",
+  "repository_revision": "f3a3bc0f791623834582590b455ec79f5c6cafe7",
   "categories": {
     "A_dataset_audit": "PASS",
     "B_exact_matrix_and_uniqueness": "PASS",
     "C_formal_NCEP_scientific_comparability": "PASS",
-    "D_PBS_syntax_and_540_CPU_dry_runs": "PASS",
     "E_preservation_and_no_results_created": "PASS",
     "F_future_inference_interface": "PASS",
     "G_failure_mail_notifications": "PASS",
-    "H_first_batch_walltimes": "PASS"
+    "H_first_batch_walltimes": "PASS",
+    "D_PBS_syntax_and_648_CPU_dry_runs": "PASS",
+    "I_CNN_GRU_Peak_extension": "PASS"
   },
   "missing_files_or_invalid_data": [],
   "scientific_deviations": [],
   "data_notes": [
-    "No scientific hyperparameter, optimizer, architecture, loss, or split changes from the 60 matching formal station/seed NCEP references.",
+    "No scientific hyperparameter, optimizer, architecture, loss, or split changes from the 72 matching formal station/seed NCEP references.",
     "Authorized operational changes: CMIP6 PastOnly roots, unique output/log/run paths, Derecho Python, USE_TMUX=0, timestamp_runname, independent PBS jobs, and requested walltimes.",
     "train.sh appends its launch timestamp to PYTHON_RUN_TAG_BASE; validation checks that existing behavior. Its fresh-directory mkdir refuses collisions, including reruns within one second.",
-    "Historical 2014_2015 and future 2099_2100 boundary files have fewer windows than full winter groups. No requested year group is missing; existing groups are preserved intact. See shortened_year_groups.json for exact coverage."
+    "Historical 2014_2015 and future 2099_2100 boundary files have fewer windows than full winter groups. No requested year group is missing; existing groups are preserved intact. See shortened_year_groups.json for exact coverage.",
+    "CNN_GRU_Peak adds 108 combinations using the exact 12 station/seed formal NCEP Peak-only references; all original 540 configs and 540 PBS files are preserved.",
+    "Graph filenames, station/year inventory and roots rechecked; the prior graph-payload audit is reused unchanged."
   ],
   "risks_and_limits": [
     "CUDA/NCCL/BF16 device preflight is retained but intentionally not executed on GPUs. CPU validation cannot establish GPU memory fit or the actual time required for 300 epochs.",
@@ -84,5 +87,19 @@
     "manifest_sha256": "70bcff0b491a6297f3953b12074defa07277d622515e062fa0d56801754e926a",
     "pbs_submissions": 0,
     "applies_to": "New submissions using the updated scripts."
+  },
+  "cnn_gru_peak_extension": {
+    "validated_at_utc": "2026-10-25T00:40:31.637673+00:00",
+    "added_variant": "CNN_GRU_Peak",
+    "added_configs": 108,
+    "added_pbs_scripts": 108,
+    "total_combinations": 648,
+    "original_run_configs_and_pbs_unchanged": 1080,
+    "cpu_dry_runs_passed": 648,
+    "training_cli_parses_passed": 648,
+    "output_root_pattern": "/glade/u/home/zel/scratch/PACT_StormSurge_FormalRuns_1021_LR5e-3_Clip0.25/cmip6/<GCM>/<station>/seed<seed>/CNN_GRU_Peak",
+    "new_only_commands": "/glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/validation/qsub_108_CNN_GRU_Peak_ordered.txt",
+    "all_commands": "/glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/validation/qsub_648_ordered.txt",
+    "report": "/glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/validation/cnn_gru_peak_extension_validation.json"
   }
 }

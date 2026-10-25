@@ -1,6 +1,6 @@
 {
   "status": "PASS",
-  "training_cli_count": 540,
+  "training_cli_count": 648,
   "station_metadata": {
     "Battery": {
       "status": "PASS",
@@ -1619,7 +1619,7 @@
   "no_training_or_model_forward": true,
   "no_future_inference": true,
   "selection_test_method": "Real infer.py parser and selection function; filename-only store substitute. Real graph dimensions/times audited separately.",
-  "checkpoint_limit": "Historical checkpoints do not exist yet. Strict weight loading and saved TRAIN statistics/threshold reuse are verified in source; end-to-end checkpoint inference is intentionally deferred.",
+  "checkpoint_limit": "Strict weight loading and saved TRAIN statistics/threshold reuse are verified in source; this preparation does not run end-to-end checkpoint inference.",
   "source_evidence": {
     "train_statistics": "stats_cpu = fit_statistics(\n        store,\n        splits[\"train\"],",
     "train_threshold": "store, splits[\"train\"], exceedance_percentile=args.exceedance_percentile",

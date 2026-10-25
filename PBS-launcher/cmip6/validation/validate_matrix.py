@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Validate the actual 540 installed launchers without training or submission."""
+"""Validate the actual 648 installed launchers without training or submission."""
 import argparse
 from collections import Counter
 from concurrent.futures import ThreadPoolExecutor
@@ -22,7 +22,7 @@ PYTHON = '/glade/work/zel/conda-envs/derecho-ml/bin/python'
 GCMS = ['CMIP6_'+x for x in ['AWI','BCC','Cane5','CNRM','EC_EARTH','IPSL','MIROC','MPI','MRI']]
 STATIONS = ['Battery','Boston','CBBT','Lewes']
 SEEDS = [42,123,2026]
-VARIANTS = ['PACT_MSE','PACT_Peak','PACT_Both','CNN_GRU_MSE','CNN_GRU_Tail']
+VARIANTS = ['PACT_MSE','PACT_Peak','PACT_Both','CNN_GRU_MSE','CNN_GRU_Tail','CNN_GRU_Peak']
 WALLTIMES = {
     'CMIP6_AWI': '01:00:00',
     'CMIP6_BCC': '00:45:00',
@@ -89,18 +89,17 @@ def main():
     errors = []
     expected = set(itertools.product(GCMS, STATIONS, SEEDS, VARIANTS))
     actual = [(r['gcm'],r['station'],r['seed'],r['variant']) for r in rows]
-    assert len(rows) == 540 and len(set(actual)) == 540 and set(actual) == expected
-    assert len(list((REPO/'configs/cmip6').rglob('*.sh'))) == 540
-    assert len(list((REPO/'PBS-launcher/cmip6').rglob('*.pbs'))) == 540
+    assert len(rows) == 648 and len(set(actual)) == 648 and set(actual) == expected
+    assert len(list((REPO/'configs/cmip6').rglob('*.sh'))) == 648
+    assert len(list((REPO/'PBS-launcher/cmip6').rglob('*.pbs'))) == 648
     for key in ['config','pbs','data_root','output_root','log_dir','pbs_name','run_name','python_run_tag_base']:
         if key != 'data_root':
-            assert len({r[key] for r in rows}) == 540, key
-    for key, number in [('gcm',60),('station',135),('seed',180),('variant',108)]:
+            assert len({r[key] for r in rows}) == 648, key
+    for key, number in [('gcm',72),('station',162),('seed',216),('variant',108)]:
         assert set(Counter(r[key] for r in rows).values()) == {number}
     for gcm, station, seed in itertools.product(GCMS,STATIONS,SEEDS):
         directory = REPO/f'configs/cmip6/{gcm}/{station}/seed{seed}'
         assert sorted(p.name for p in directory.iterdir()) == sorted('train_config_'+v+'.sh' for v in VARIANTS)
-    before_results = sorted(str(p.relative_to(RESULTS)) for p in RESULTS.rglob('*'))
     dry_env = dict(os.environ, CUDA_VISIBLE_DEVICES='', DRY_RUN='1', PYTHON_BIN=PYTHON,
                    S0_PYTHON_BIN=PYTHON, USE_TMUX='0', PYTHONDONTWRITEBYTECODE='1',
                    OMP_NUM_THREADS='1', MKL_NUM_THREADS='1', OPENBLAS_NUM_THREADS='1')
@@ -139,7 +138,7 @@ def main():
             for key,value in common.items():
                 assert vals.get(key) == value, f'{key}: {vals.get(key)!r} != {value!r}'
             tail, peak = {'PACT_MSE':(0,0),'PACT_Peak':(0,.01),'PACT_Both':(.025,.01),
-                          'CNN_GRU_MSE':(0,0),'CNN_GRU_Tail':(.025,0)}[row['variant']]
+                          'CNN_GRU_MSE':(0,0),'CNN_GRU_Tail':(.025,0),'CNN_GRU_Peak':(0,.01)}[row['variant']]
             assert float(vals['EXCEEDANCE_LOSS_WEIGHT']) == tail
             assert float(vals['EPISODE_GT_ALIGNED_PEAK_WEIGHT']) == peak
             if row['variant'].startswith('PACT'):
@@ -199,6 +198,8 @@ def main():
             assert not options.get('--test_root_dir')
             assert re.fullmatch(re.escape(row['run_name']) + r'_\d{8}_\d{6}', options['--run_tag']), 'train.sh must append its timestamp to the configured run-tag base'
             assert options['--output_dir'].startswith(row['output_root']+'/')
+            assert not Path(options['--output_dir']).exists(), 'CPU preview created its output directory'
+            checks['no_training_output'] = 'PASS'
             assert '--nproc_per_node=4' in proc.stdout and 'num_gpus:      4' in proc.stdout
             assert f'Config file:   {row["config"]}' in proc.stdout
             assert 'AMP=1 AMP_DTYPE=bf16 TF32=1' in proc.stdout
@@ -220,13 +221,14 @@ def main():
             if result['status']=='FAIL':
                 print(f'FAIL {result}', flush=True)
             if i%60 == 0:
-                print(f'{i}/540 installed scripts checked; {sum(r["status"]=="PASS" for r in results)} PASS.',flush=True)
-    after_results = sorted(str(p.relative_to(RESULTS)) for p in RESULTS.rglob('*'))
-    no_results_created = before_results == after_results
+                print(f'{i}/648 installed scripts checked; {sum(r["status"]=="PASS" for r in results)} PASS.',flush=True)
+    # Existing jobs may write their own results while these CPU previews run.
+    no_results_created = all(r['checks'].get('no_training_output') == 'PASS' for r in results)
     report = dict(status='PASS' if all(r['status']=='PASS' for r in results) and no_results_created else 'FAIL',
-                  total=540,passed=sum(r['status']=='PASS' for r in results),failed=sum(r['status']=='FAIL' for r in results),
-                  no_training_results_created=no_results_created,results_contents_before=before_results,
-                  results_contents_after=after_results,reference_count=len(references),
+                  total=648,passed=sum(r['status']=='PASS' for r in results),failed=sum(r['status']=='FAIL' for r in results),
+                  no_training_results_created=no_results_created,
+                  output_check='Each CPU preview reported a run directory that does not exist; existing training outputs are not traversed.',
+                  reference_count=len(references),
                   max_pbs_name_length=max(len(r['pbs_name']) for r in rows),
                   distributions={key:dict(Counter(r[key] for r in rows)) for key in ['gcm','station','seed','variant']},
                   seconds=time.monotonic()-began,combinations=results)

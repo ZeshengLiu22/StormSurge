@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Generate only the authorized CMIP6 configs, launchers, and preparation artifacts."""
+import argparse
 import csv
 import hashlib
 import itertools
@@ -17,7 +18,7 @@ STAGE = Path('/tmp/stormsurge_cmip6_prepare/package')
 RESULTS = Path('/glade/u/home/zel/scratch/PACT_StormSurge_FormalRuns_1021_LR5e-3_Clip0.25/cmip6')
 PYTHON = '/glade/work/zel/conda-envs/derecho-ml/bin/python'
 SEEDS = [42, 123, 2026]
-VARIANTS = ['PACT_MSE', 'PACT_Peak', 'PACT_Both', 'CNN_GRU_MSE', 'CNN_GRU_Tail']
+VARIANTS = ['PACT_MSE', 'PACT_Peak', 'PACT_Both', 'CNN_GRU_MSE', 'CNN_GRU_Tail', 'CNN_GRU_Peak']
 WALLTIMES = {
     'CMIP6_AWI': '01:00:00',
     'CMIP6_BCC': '00:45:00',
@@ -32,7 +33,7 @@ WALLTIMES = {
 PBS_SOURCE = REPO/'PBS-launcher/baselines_PeakAware/baseline_cnn_gru/Battery/seed42/run_T0250_EP0000.pbs'
 GCODES = dict(zip(GCMS, ['AW', 'BC', 'CA', 'CN', 'EC', 'IP', 'MI', 'MP', 'MR']))
 SCODES = dict(zip(STATIONS, ['Bt', 'Bo', 'Cb', 'Le']))
-VCODES = dict(zip(VARIANTS, ['PM', 'PP', 'PB', 'GM', 'GT']))
+VCODES = dict(zip(VARIANTS, ['PM', 'PP', 'PB', 'GM', 'GT', 'GP']))
 
 
 def digest(path):
@@ -49,7 +50,10 @@ def source_for(station, seed, variant):
         return root/f'train_config_NCEP_{station}_CNN_MLP_36H_G0_T{tail}_EP0100_seed{seed}.sh'
     if variant == 'CNN_GRU_MSE':
         return REPO/f'configs/baselines_MSEOnly/Derecho/baseline_cnn_gru/{station}/seed{seed}/train_config.sh'
-    return REPO/f'configs/baselines_PeakAware/baseline_cnn_gru/{station}/seed{seed}/train_config_T0250_EP0000.sh'
+    if variant in ['CNN_GRU_Tail', 'CNN_GRU_Peak']:
+        loss_tag = 'T0000_EP0100' if variant == 'CNN_GRU_Peak' else 'T0250_EP0000'
+        return REPO/f'configs/baselines_PeakAware/baseline_cnn_gru/{station}/seed{seed}/train_config_{loss_tag}.sh'
+    raise ValueError(f'Unknown CMIP6 variant: {variant}')
 
 
 def replace_assignments(text, values):
@@ -64,7 +68,50 @@ def replace_assignments(text, values):
     return text
 
 
+
+def write_submission_lists(rows, artifacts):
+    """Write GCM -> seed -> variant -> station lists without submitting jobs."""
+    lookup = {(r['gcm'],r['seed'],r['variant'],r['station']):r for r in rows}
+    ordered = [lookup[key] for key in itertools.product(GCMS,SEEDS,VARIANTS,STATIONS)]
+    peak = [r for r in ordered if r['variant'] == 'CNN_GRU_Peak']
+    def write_lists(selected, stem):
+        (artifacts/(stem+'_ordered.txt')).write_text(''.join('qsub '+r['pbs']+'\n' for r in selected))
+        lines = []
+        for gcm in GCMS:
+            group = [r for r in selected if r['gcm'] == gcm]
+            lines.append(f'# {gcm} — {len(group)} commands')
+            for seed in SEEDS:
+                seeded = [r for r in group if r['seed'] == seed]
+                lines.append(f'# seed{seed} — {len(seeded)} commands')
+                for variant in VARIANTS:
+                    matching = [r for r in seeded if r['variant'] == variant]
+                    if matching:
+                        lines.append('# '+variant+' — '+', '.join(STATIONS))
+                        lines.extend('qsub '+r['pbs'] for r in matching)
+                        lines.append('')
+            lines.append('')
+        (artifacts/(stem+'_grouped.txt')).write_text('\n'.join(lines).rstrip()+'\n')
+    full_stem = f'qsub_{len(ordered)}'
+    peak_stem = f'qsub_{len(peak)}_CNN_GRU_Peak'
+    write_lists(ordered, full_stem)
+    write_lists(peak, peak_stem)
+    (artifacts/'pbs_paths.txt').write_text(''.join(r['pbs']+'\n' for r in ordered))
+    (artifacts/'manual_qsub_commands.txt').write_text(
+        '# Manual submission lists. No commands have been executed by preparation.\n'
+        '# Order: GCM -> seed -> model/loss variant -> station.\n'
+        f'# New CNN_GRU_Peak only: {len(peak)} commands ({peak_stem}_ordered.txt or {peak_stem}_grouped.txt).\n'
+        f'# Full matrix: {len(ordered)} commands ({full_stem}_ordered.txt or {full_stem}_grouped.txt).\n'
+        '# The full matrix also includes the original 540 runs. Use the new-only list to add CNN_GRU_Peak.\n'
+        '# Original qsub_540 files and the user progress file remain historical lists.\n\n'
+        '# Example: one new run, submit manually when desired.\n'
+        + 'qsub '+peak[0]['pbs']+'\n')
+
+
 def main():
+    global STAGE
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--stage', type=Path, default=STAGE)
+    STAGE = parser.parse_args().stage
     inventory = discover()
     data = {(r['gcm'], r['station']): r for r in inventory}
     artifacts = STAGE/'PBS-launcher/cmip6/validation'
@@ -126,14 +173,7 @@ def main():
         writer = csv.DictWriter(f, fieldnames=list(rows[0]), delimiter='\t', lineterminator='\n')
         writer.writeheader()
         writer.writerows(rows)
-    (artifacts/'pbs_paths.txt').write_text(''.join(r['pbs']+'\n' for r in rows))
-    (artifacts/'manual_qsub_commands.txt').write_text(
-        '# Manual commands only. These commands have NOT been executed.\n'
-        '# One selected trial run:\nqsub ' + rows[0]['pbs'] + '\n\n'
-        '# Staged submission: all 60 CMIP6_AWI runs (execute once).\n'
-        + ''.join('qsub '+r['pbs']+'\n' for r in rows if r['gcm']=='CMIP6_AWI')
-        + '\n# Full submission: all 540 runs (do not also submit the staged set).\n'
-        + ''.join('qsub '+r['pbs']+'\n' for r in rows))
+    write_submission_lists(rows, artifacts)
     (artifacts/'pbs_name_codes.json').write_text(json.dumps(dict(prefix='c6', format='c6<GCM2><station2><seed><variant2>',
         gcm=GCODES, station=SCODES, variant=VCODES), indent=2)+'\n')
     for name in ['generate.py', 'audit_data.py', 'pbs_failure_mail.py', 'preservation_before.json']:

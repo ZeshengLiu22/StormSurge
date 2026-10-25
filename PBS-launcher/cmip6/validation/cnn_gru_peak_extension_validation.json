@@ -1,0 +1,79 @@
+{
+  "status": "PASS",
+  "validated_at_utc": "2026-10-25T00:40:31.637673+00:00",
+  "validated_at_client_time": "2026-10-24T20:40:31.637673-04:00",
+  "repository_revision_before_update": "f3a3bc0f791623834582590b455ec79f5c6cafe7",
+  "added_variant": "CNN_GRU_Peak",
+  "added_configs": 108,
+  "added_pbs_scripts": 108,
+  "total_combinations": 648,
+  "architecture": "baseline_cnn_gru",
+  "history_hours": 36,
+  "exceedance_loss_weight": 0.0,
+  "episode_gt_aligned_peak_weight": 0.01,
+  "formal_peak_reference_count": 12,
+  "original_run_configs_and_pbs_unchanged": 1080,
+  "original_manifest_records_unchanged": 540,
+  "protected_files_unchanged": 1160,
+  "cpu_dry_runs_passed": 648,
+  "shell_syntax_checks_passed": 1296,
+  "training_cli_parses_passed": 648,
+  "no_training_results_created": true,
+  "new_output_roots_created": 0,
+  "unique_output_roots": 648,
+  "output_root_pattern": "/glade/u/home/zel/scratch/PACT_StormSurge_FormalRuns_1021_LR5e-3_Clip0.25/cmip6/<GCM>/<station>/seed<seed>/CNN_GRU_Peak",
+  "run_subdirectory_style": "timestamp_runname",
+  "pbs_variant_code": "GP",
+  "mail_recipient": "zel220@lehigh.edu",
+  "walltimes": {
+    "CMIP6_AWI": "01:00:00",
+    "CMIP6_BCC": "00:45:00",
+    "CMIP6_Cane5": "00:20:00",
+    "CMIP6_CNRM": "00:40:00",
+    "CMIP6_EC_EARTH": "02:00:00",
+    "CMIP6_IPSL": "00:25:00",
+    "CMIP6_MIROC": "00:40:00",
+    "CMIP6_MPI": "01:00:00",
+    "CMIP6_MRI": "00:45:00"
+  },
+  "distributions": {
+    "gcm": {
+      "CMIP6_AWI": 72,
+      "CMIP6_BCC": 72,
+      "CMIP6_Cane5": 72,
+      "CMIP6_CNRM": 72,
+      "CMIP6_EC_EARTH": 72,
+      "CMIP6_IPSL": 72,
+      "CMIP6_MIROC": 72,
+      "CMIP6_MPI": 72,
+      "CMIP6_MRI": 72
+    },
+    "station": {
+      "Battery": 162,
+      "Boston": 162,
+      "CBBT": 162,
+      "Lewes": 162
+    },
+    "seed": {
+      "42": 216,
+      "123": 216,
+      "2026": 216
+    },
+    "variant": {
+      "PACT_MSE": 108,
+      "PACT_Peak": 108,
+      "PACT_Both": 108,
+      "CNN_GRU_MSE": 108,
+      "CNN_GRU_Tail": 108,
+      "CNN_GRU_Peak": 108
+    }
+  },
+  "submission_order": "GCM -> seed -> variant -> station; CNN_GRU_Peak follows the original five variants.",
+  "new_only_commands": "/glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/validation/qsub_108_CNN_GRU_Peak_ordered.txt",
+  "all_commands": "/glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/validation/qsub_648_ordered.txt",
+  "manifest_sha256": "2fe8b16eb391a876fdd9c84671b346fdd958b1fc2ee154e5d184bbf30b5a3998",
+  "dataset_validation_scope": "Graph filenames, station/year inventory and roots rechecked; the prior graph-payload audit is reused unchanged.",
+  "actual_training_launches": 0,
+  "pbs_submissions": 0,
+  "actual_emails_sent": 0
+}

@@ -23,6 +23,7 @@
     "PACT_Peak": "PP",
     "PACT_Both": "PB",
     "CNN_GRU_MSE": "GM",
-    "CNN_GRU_Tail": "GT"
+    "CNN_GRU_Tail": "GT",
+    "CNN_GRU_Peak": "GP"
   }
 }

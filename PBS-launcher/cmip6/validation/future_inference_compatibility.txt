@@ -8,7 +8,7 @@ An explicit --test_root_dir selects external data. Always supply --years and --s
 Do not use --scope test with --test_root_dir. Architecture comes from the saved checkpoint; pressure_mode=raw is an assertion.
 All 36 actual target-root/station year selections passed infer.py's parser and selection logic using a filename-only test store.
 Missing, duplicate, malformed and empty year requests were rejected. Every future graph file was separately inspected for dimensions and timestamps.
-Trained checkpoints do not exist yet; no end-to-end trained-model evaluation was attempted.
+This preparation performs no end-to-end trained-model evaluation; existing checkpoints are left untouched.
 
 Exact future groups (identical for all nine GCMs and all four stations):
 2070_2071,2071_2072,2072_2073,2073_2074,2074_2075,2075_2076,2076_2077,2077_2078,2078_2079,2079_2080,2080_2081,2081_2082,2082_2083,2083_2084,2084_2085,2085_2086,2086_2087,2087_2088,2088_2089,2089_2090,2090_2091,2091_2092,2092_2093,2093_2094,2094_2095,2095_2096,2096_2097,2097_2098,2098_2099,2099_2100

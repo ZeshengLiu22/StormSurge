@@ -1,84 +1,67 @@
 CMIP6 PastOnly preparation: PASS
-540/540 combinations ready for manual submission after CPU validation.
-Validated at 2026-10-23T11:20:55.647722-04:00 (America/New_York).
-Repository revision: 4fbee08e32dd7fc3c67d389ffffea0d43595d7eb
-No qsub, qdel, training, or future inference was executed.
+648/648 combinations validated; this update adds 108 CNN_GRU_Peak runs.
+Validated at 2026-10-24T20:40:31.637673-04:00 (America/New_York).
+Repository baseline revision: f3a3bc0f791623834582590b455ec79f5c6cafe7
+No qsub, qdel, training, future inference, or actual email was executed by this preparation.
 
-Category results:
-PASS: A_dataset_audit
-PASS: B_exact_matrix_and_uniqueness
-PASS: C_formal_NCEP_scientific_comparability
-PASS: D_PBS_syntax_and_540_CPU_dry_runs
-PASS: E_preservation_and_no_results_created
-PASS: F_future_inference_interface
+Matrix:
+9 GCMs x 4 stations x 3 seeds x 6 variants = 648 configurations and 648 independent PBS scripts.
+Variants: PACT_MSE, PACT_Peak, PACT_Both, CNN_GRU_MSE, CNN_GRU_Tail, CNN_GRU_Peak.
+Distributions: 72/GCM; 162/station; 216/seed; 108/variant.
+648 unique output roots, run names, PBS names and log locations.
 
-Matrix: 540 configs, 540 independent PBS scripts, 540 unique tuples/output roots/run names/PBS names/log locations.
-Distributions: 60/GCM; 135/station; 180/seed; 108/variant. Maximum PBS job-name length: 12.
-All 1,080 generated shell/PBS files pass bash -n; all 540 PBS CPU DRY_RUNs pass.
-All 540 effective scientific command lines match their exact formal station/seed reference.
-All 540 command lines parse with the repository training argument parser.
-Data: 1296 PastOnly files and 1080 future files; 1,401,696 graphs inspected.
-All 36 GCM/station pairs have the same chronological year split for seeds 42, 123, and 2026:
-  TRAIN: 22 groups, 1979_1980 through 2000_2001.
-  VAL:    7 groups, 2001_2002 through 2007_2008.
-  TEST:   7 groups, 2008_2009 through 2014_2015.
-Future availability: 30 groups, 2070_2071 through 2099_2100, for every pair.
-All observed target timestamps are unique; partitions and their requested 36H forcing contexts are chronologically separated; historical timestamps precede 2030.
-No missing requested GCM/station/year files or malformed filenames were detected.
+CNN_GRU_Peak:
+MODEL=baseline_cnn_gru; HISTORY_HOURS_LIST=(36); EXCEEDANCE_LOSS_WEIGHT=0; EPISODE_GT_ALIGNED_PEAK_WEIGHT=0.01.
+Uses the exact 12 formal station/seed NCEP train_config_T0000_EP0100.sh references.
+Architecture, optimizer, precision, chronological splits and operational settings follow the existing CMIP6 runs.
+Output root: /glade/u/home/zel/scratch/PACT_StormSurge_FormalRuns_1021_LR5e-3_Clip0.25/cmip6/<GCM>/<station>/seed<seed>/CNN_GRU_Peak
+train.sh creates its timestamp_runname child directory only during actual training.
+PBS variant code: GP. Four DDP ranks, preempt@desched1, account ULHI0005, no automatic rerun.
 
-Scientific comparability and data notes:
-- No scientific hyperparameter, optimizer, architecture, loss, or split changes from the 60 matching formal station/seed NCEP references.
-- Authorized operational changes: CMIP6 PastOnly roots, unique output/log/run paths, Derecho Python, USE_TMUX=0, timestamp_runname, independent PBS jobs, and requested walltimes.
-- train.sh appends its launch timestamp to PYTHON_RUN_TAG_BASE; validation checks that existing behavior. Its fresh-directory mkdir refuses collisions, including reruns within one second.
-- Historical 2014_2015 and future 2099_2100 boundary files have fewer windows than full winter groups. No requested year group is missing; existing groups are preserved intact. See shortened_year_groups.json for exact coverage.
+Validation:
+All 1,296 config/PBS shell files pass bash -n; all 648 installed PBS CPU DRY_RUNs pass.
+All 648 effective scientific command lines match their exact formal station/seed reference (72 unique source configs).
+All 648 command lines parse with the repository training argument parser.
+All 36 GCM/station strict future selections and all four station metadata checks pass without running inference.
+The new 108 output roots remain absent. Each CPU preview also reports a run directory that does not exist.
 
-Validation scope:
-All 1,296 PastOnly files and 1,080 future files were deserialized one file per CPU worker, with at most four workers. Every graph was checked for feature/target/history dimensions, CNN grid sizes, pressure metadata shape, and supervised timestamps. Actual target hours were checked for duplicates and chronological split separation. Numerical target/pressure values and raw-pressure transformation/forcing finiteness were checked at least on the first and last graph of every file; several cached initial pairs had all target/pressure values checked. This is not a bytewise checksum or exhaustive finiteness scan of all forcing tensors.
+Data and split evidence:
+Graph filenames, station/year inventory and roots rechecked; the prior graph-payload audit is reused unchanged.
+Prior payload audit: 1,296 PastOnly files, 1,080 future files, 1,401,696 graph shapes/timestamps checked.
+Numerical payload finiteness was sampled as described in dataset_audit.json; that full audit was not repeated for this model extension.
+TRAIN: 22 groups 1979_1980..2000_2001; VAL: 7 groups 2001_2002..2007_2008; TEST: 7 groups 2008_2009..2014_2015.
+Future: 30 groups 2070_2071..2099_2100. All seeds share the same chronological split.
 
-Runtime and PBS limits:
-- CUDA/NCCL/BF16 device preflight is retained but intentionally not executed on GPUs. CPU validation cannot establish GPU memory fit or the actual time required for 300 epochs.
-- First-batch PBS walltimes: Cane5 00:20:00; IPSL 00:25:00; CNRM/MIROC 00:40:00; BCC/MRI 00:45:00; AWI/MPI 01:00:00; EC_EARTH 02:00:00. These are user-specified limits, not measured CMIP6 completion estimates.
-- The preempt queue can interrupt runs. #PBS -r n prevents automatic reruns; no automatic resume mechanism was added.
-- Historical checkpoints do not exist until training completes. End-to-end inference with trained weights is deferred; source and interface checks passed.
-- Numerical payload checks are sampled at file boundaries as detailed in the dataset audit; all graph shapes and target timestamps were checked.
+PBS walltimes (all variants):
+CMIP6_AWI: 01:00:00
+CMIP6_BCC: 00:45:00
+CMIP6_Cane5: 00:20:00
+CMIP6_CNRM: 00:40:00
+CMIP6_EC_EARTH: 02:00:00
+CMIP6_IPSL: 00:25:00
+CMIP6_MIROC: 00:40:00
+CMIP6_MPI: 01:00:00
+CMIP6_MRI: 00:45:00
 
-Preservation at initial preparation (before the mail update):
-All 2835 pre-existing tracked files retain their SHA256 hashes.
-No tracked files changed. New repository files are confined to configs/cmip6 and PBS-launcher/cmip6.
-The existing cmip6 results parent remains empty. Results are created only by actual training.
+Failure email:
+All 648 scripts request scheduler-abort mail to zel220@lehigh.edu and preserve the common nonzero-exit mail handler.
+Success and DRY_RUN send no mail. Live compute-node email delivery was not tested.
 
-Artifacts:
-manifest.tsv / manifest.json: one record per combination, with template and generated-file SHA256 provenance.
-matrix_validation.json and dry_run/: per-combination checks and all 540 CPU previews.
-dataset_audit.json, data_details/, graph_file_audit.tsv: exact graph/time/shape audit evidence.
-year_groups.tsv / year_groups.json: every GCM/station split and future year group.
-future_inference_compatibility.txt and interface_validation.json: deferred evaluation procedure and checks.
-manual_qsub_commands.txt / pbs_paths.txt: manual staged/full submission commands.
+Preservation:
+All original 540 configs and 540 PBS scripts retain their SHA256 hashes and manifest records.
+All 1160 protected files retain their SHA256 hashes, including formal sources, training code, original qsub_540 lists and the user progress file.
+Existing results are left untouched; no new training output directories were created.
 
-Failure email update: PASS
-Validated at 2026-10-23T15:48:31.841470+00:00.
-All 540 PBS scripts now request scheduler abort mail (-m a) to zel220@lehigh.edu.
-A shell EXIT handler also emails ordinary nonzero exits and preserves the original exit status.
-Success and DRY_RUN do not send mail; runtime mail includes job ID/name, host, exit status, config, and PBS log directory.
-The generator, validator, and manifest SHA256 hashes include this change.
-All 540 installed CPU previews, shell syntax checks, and formal scientific comparisons pass; 9 stubbed mail scenarios pass.
-All 605 protected files (configs, formal references, training entry points, ordered/grouped submission lists) retain their hashes.
-This update applies to new submissions. No PBS jobs were submitted, no training was launched, and no actual email was sent.
-Live delivery is untested and depends on compute-node mail transport; scheduler abort delivery is handled by PBS.
-See mail_validation.json and validate_failure_mail.py for details and reproducible stub tests.
+Manual submission lists:
+qsub_108_CNN_GRU_Peak_ordered.txt: exactly the 108 new commands.
+qsub_108_CNN_GRU_Peak_grouped.txt: the same new commands with GCM/seed/model headings.
+qsub_648_ordered.txt / qsub_648_grouped.txt: the complete six-variant matrix, including original runs.
+Order: GCM -> seed -> model -> station; Peak follows the original five models in each seed.
 
-First-batch walltime update: PASS
-Validated at 2026-10-23T17:50:20.740265-04:00 (America/New_York).
-540/540 PBS walltime values match the requested table; 360 changed and 180 already matched.
-CMIP6_AWI: 01:00:00 (60 scripts).
-CMIP6_BCC: 00:45:00 (60 scripts).
-CMIP6_Cane5: 00:20:00 (60 scripts).
-CMIP6_CNRM: 00:40:00 (60 scripts).
-CMIP6_EC_EARTH: 02:00:00 (60 scripts).
-CMIP6_IPSL: 00:25:00 (60 scripts).
-CMIP6_MIROC: 00:40:00 (60 scripts).
-CMIP6_MPI: 01:00:00 (60 scripts).
-CMIP6_MRI: 00:45:00 (60 scripts).
-All 540 PBS syntax checks and CPU DRY_RUNs pass; all scientific command lines still match their formal reference.
-Only walltime changed within the PBS scripts. All 607 protected files retain their hashes, including training configs, sources, mail helpers, and manual qsub lists.
-Generator, validator, manifest hashes, and report text reflect the first-batch walltimes. No jobs were submitted.
+Limits:
+CPU validation does not establish GPU memory fit, walltime sufficiency, live email delivery, or trained-weight inference.
+The existing data audit and earlier mail/walltime update records retain their original validation scope and dates.
+
+Evidence:
+manifest.json / manifest.tsv; matrix_validation.json and dry_run/; interface_validation.json;
+cnn_gru_peak_extension_validation.json; dataset_audit.json; year_groups.json; future_inference_compatibility.txt.

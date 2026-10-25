@@ -118,7 +118,7 @@ def main():
                   runtime=runtime,future_selection=checks,
                   no_training_or_model_forward=True,no_future_inference=True,
                   selection_test_method='Real infer.py parser and selection function; filename-only store substitute. Real graph dimensions/times audited separately.',
-                  checkpoint_limit='Historical checkpoints do not exist yet. Strict weight loading and saved TRAIN statistics/threshold reuse are verified in source; end-to-end checkpoint inference is intentionally deferred.',
+                  checkpoint_limit='Strict weight loading and saved TRAIN statistics/threshold reuse are verified in source; this preparation does not run end-to-end checkpoint inference.',
                   source_evidence=evidence,
                   sha256={name:hashlib.sha256((REPO/name).read_bytes()).hexdigest() for name in ['train.py','train.sh','infer.py','emulator/data/graph_store.py','emulator/training/checkpoint_selection.py']})
     (args.out/'interface_validation.json').write_text(json.dumps(report,indent=2)+'\n')

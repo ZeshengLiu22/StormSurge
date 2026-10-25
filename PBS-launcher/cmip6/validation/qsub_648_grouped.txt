@@ -1,0 +1,1015 @@
+# CMIP6_AWI — 72 commands
+# seed42 — 24 commands
+# PACT_MSE — Battery, Boston, CBBT, Lewes
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_AWI/Battery/seed42/run_PACT_MSE.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_AWI/Boston/seed42/run_PACT_MSE.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_AWI/CBBT/seed42/run_PACT_MSE.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_AWI/Lewes/seed42/run_PACT_MSE.pbs
+
+# PACT_Peak — Battery, Boston, CBBT, Lewes
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_AWI/Battery/seed42/run_PACT_Peak.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_AWI/Boston/seed42/run_PACT_Peak.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_AWI/CBBT/seed42/run_PACT_Peak.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_AWI/Lewes/seed42/run_PACT_Peak.pbs
+
+# PACT_Both — Battery, Boston, CBBT, Lewes
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_AWI/Battery/seed42/run_PACT_Both.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_AWI/Boston/seed42/run_PACT_Both.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_AWI/CBBT/seed42/run_PACT_Both.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_AWI/Lewes/seed42/run_PACT_Both.pbs
+
+# CNN_GRU_MSE — Battery, Boston, CBBT, Lewes
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_AWI/Battery/seed42/run_CNN_GRU_MSE.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_AWI/Boston/seed42/run_CNN_GRU_MSE.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_AWI/CBBT/seed42/run_CNN_GRU_MSE.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_AWI/Lewes/seed42/run_CNN_GRU_MSE.pbs
+
+# CNN_GRU_Tail — Battery, Boston, CBBT, Lewes
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_AWI/Battery/seed42/run_CNN_GRU_Tail.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_AWI/Boston/seed42/run_CNN_GRU_Tail.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_AWI/CBBT/seed42/run_CNN_GRU_Tail.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_AWI/Lewes/seed42/run_CNN_GRU_Tail.pbs
+
+# CNN_GRU_Peak — Battery, Boston, CBBT, Lewes
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_AWI/Battery/seed42/run_CNN_GRU_Peak.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_AWI/Boston/seed42/run_CNN_GRU_Peak.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_AWI/CBBT/seed42/run_CNN_GRU_Peak.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_AWI/Lewes/seed42/run_CNN_GRU_Peak.pbs
+
+# seed123 — 24 commands
+# PACT_MSE — Battery, Boston, CBBT, Lewes
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_AWI/Battery/seed123/run_PACT_MSE.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_AWI/Boston/seed123/run_PACT_MSE.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_AWI/CBBT/seed123/run_PACT_MSE.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_AWI/Lewes/seed123/run_PACT_MSE.pbs
+
+# PACT_Peak — Battery, Boston, CBBT, Lewes
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_AWI/Battery/seed123/run_PACT_Peak.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_AWI/Boston/seed123/run_PACT_Peak.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_AWI/CBBT/seed123/run_PACT_Peak.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_AWI/Lewes/seed123/run_PACT_Peak.pbs
+
+# PACT_Both — Battery, Boston, CBBT, Lewes
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_AWI/Battery/seed123/run_PACT_Both.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_AWI/Boston/seed123/run_PACT_Both.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_AWI/CBBT/seed123/run_PACT_Both.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_AWI/Lewes/seed123/run_PACT_Both.pbs
+
+# CNN_GRU_MSE — Battery, Boston, CBBT, Lewes
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_AWI/Battery/seed123/run_CNN_GRU_MSE.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_AWI/Boston/seed123/run_CNN_GRU_MSE.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_AWI/CBBT/seed123/run_CNN_GRU_MSE.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_AWI/Lewes/seed123/run_CNN_GRU_MSE.pbs
+
+# CNN_GRU_Tail — Battery, Boston, CBBT, Lewes
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_AWI/Battery/seed123/run_CNN_GRU_Tail.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_AWI/Boston/seed123/run_CNN_GRU_Tail.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_AWI/CBBT/seed123/run_CNN_GRU_Tail.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_AWI/Lewes/seed123/run_CNN_GRU_Tail.pbs
+
+# CNN_GRU_Peak — Battery, Boston, CBBT, Lewes
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_AWI/Battery/seed123/run_CNN_GRU_Peak.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_AWI/Boston/seed123/run_CNN_GRU_Peak.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_AWI/CBBT/seed123/run_CNN_GRU_Peak.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_AWI/Lewes/seed123/run_CNN_GRU_Peak.pbs
+
+# seed2026 — 24 commands
+# PACT_MSE — Battery, Boston, CBBT, Lewes
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_AWI/Battery/seed2026/run_PACT_MSE.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_AWI/Boston/seed2026/run_PACT_MSE.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_AWI/CBBT/seed2026/run_PACT_MSE.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_AWI/Lewes/seed2026/run_PACT_MSE.pbs
+
+# PACT_Peak — Battery, Boston, CBBT, Lewes
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_AWI/Battery/seed2026/run_PACT_Peak.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_AWI/Boston/seed2026/run_PACT_Peak.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_AWI/CBBT/seed2026/run_PACT_Peak.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_AWI/Lewes/seed2026/run_PACT_Peak.pbs
+
+# PACT_Both — Battery, Boston, CBBT, Lewes
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_AWI/Battery/seed2026/run_PACT_Both.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_AWI/Boston/seed2026/run_PACT_Both.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_AWI/CBBT/seed2026/run_PACT_Both.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_AWI/Lewes/seed2026/run_PACT_Both.pbs
+
+# CNN_GRU_MSE — Battery, Boston, CBBT, Lewes
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_AWI/Battery/seed2026/run_CNN_GRU_MSE.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_AWI/Boston/seed2026/run_CNN_GRU_MSE.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_AWI/CBBT/seed2026/run_CNN_GRU_MSE.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_AWI/Lewes/seed2026/run_CNN_GRU_MSE.pbs
+
+# CNN_GRU_Tail — Battery, Boston, CBBT, Lewes
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_AWI/Battery/seed2026/run_CNN_GRU_Tail.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_AWI/Boston/seed2026/run_CNN_GRU_Tail.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_AWI/CBBT/seed2026/run_CNN_GRU_Tail.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_AWI/Lewes/seed2026/run_CNN_GRU_Tail.pbs
+
+# CNN_GRU_Peak — Battery, Boston, CBBT, Lewes
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_AWI/Battery/seed2026/run_CNN_GRU_Peak.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_AWI/Boston/seed2026/run_CNN_GRU_Peak.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_AWI/CBBT/seed2026/run_CNN_GRU_Peak.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_AWI/Lewes/seed2026/run_CNN_GRU_Peak.pbs
+
+
+# CMIP6_BCC — 72 commands
+# seed42 — 24 commands
+# PACT_MSE — Battery, Boston, CBBT, Lewes
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_BCC/Battery/seed42/run_PACT_MSE.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_BCC/Boston/seed42/run_PACT_MSE.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_BCC/CBBT/seed42/run_PACT_MSE.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_BCC/Lewes/seed42/run_PACT_MSE.pbs
+
+# PACT_Peak — Battery, Boston, CBBT, Lewes
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_BCC/Battery/seed42/run_PACT_Peak.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_BCC/Boston/seed42/run_PACT_Peak.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_BCC/CBBT/seed42/run_PACT_Peak.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_BCC/Lewes/seed42/run_PACT_Peak.pbs
+
+# PACT_Both — Battery, Boston, CBBT, Lewes
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_BCC/Battery/seed42/run_PACT_Both.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_BCC/Boston/seed42/run_PACT_Both.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_BCC/CBBT/seed42/run_PACT_Both.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_BCC/Lewes/seed42/run_PACT_Both.pbs
+
+# CNN_GRU_MSE — Battery, Boston, CBBT, Lewes
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_BCC/Battery/seed42/run_CNN_GRU_MSE.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_BCC/Boston/seed42/run_CNN_GRU_MSE.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_BCC/CBBT/seed42/run_CNN_GRU_MSE.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_BCC/Lewes/seed42/run_CNN_GRU_MSE.pbs
+
+# CNN_GRU_Tail — Battery, Boston, CBBT, Lewes
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_BCC/Battery/seed42/run_CNN_GRU_Tail.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_BCC/Boston/seed42/run_CNN_GRU_Tail.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_BCC/CBBT/seed42/run_CNN_GRU_Tail.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_BCC/Lewes/seed42/run_CNN_GRU_Tail.pbs
+
+# CNN_GRU_Peak — Battery, Boston, CBBT, Lewes
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_BCC/Battery/seed42/run_CNN_GRU_Peak.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_BCC/Boston/seed42/run_CNN_GRU_Peak.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_BCC/CBBT/seed42/run_CNN_GRU_Peak.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_BCC/Lewes/seed42/run_CNN_GRU_Peak.pbs
+
+# seed123 — 24 commands
+# PACT_MSE — Battery, Boston, CBBT, Lewes
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_BCC/Battery/seed123/run_PACT_MSE.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_BCC/Boston/seed123/run_PACT_MSE.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_BCC/CBBT/seed123/run_PACT_MSE.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_BCC/Lewes/seed123/run_PACT_MSE.pbs
+
+# PACT_Peak — Battery, Boston, CBBT, Lewes
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_BCC/Battery/seed123/run_PACT_Peak.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_BCC/Boston/seed123/run_PACT_Peak.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_BCC/CBBT/seed123/run_PACT_Peak.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_BCC/Lewes/seed123/run_PACT_Peak.pbs
+
+# PACT_Both — Battery, Boston, CBBT, Lewes
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_BCC/Battery/seed123/run_PACT_Both.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_BCC/Boston/seed123/run_PACT_Both.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_BCC/CBBT/seed123/run_PACT_Both.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_BCC/Lewes/seed123/run_PACT_Both.pbs
+
+# CNN_GRU_MSE — Battery, Boston, CBBT, Lewes
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_BCC/Battery/seed123/run_CNN_GRU_MSE.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_BCC/Boston/seed123/run_CNN_GRU_MSE.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_BCC/CBBT/seed123/run_CNN_GRU_MSE.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_BCC/Lewes/seed123/run_CNN_GRU_MSE.pbs
+
+# CNN_GRU_Tail — Battery, Boston, CBBT, Lewes
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_BCC/Battery/seed123/run_CNN_GRU_Tail.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_BCC/Boston/seed123/run_CNN_GRU_Tail.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_BCC/CBBT/seed123/run_CNN_GRU_Tail.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_BCC/Lewes/seed123/run_CNN_GRU_Tail.pbs
+
+# CNN_GRU_Peak — Battery, Boston, CBBT, Lewes
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_BCC/Battery/seed123/run_CNN_GRU_Peak.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_BCC/Boston/seed123/run_CNN_GRU_Peak.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_BCC/CBBT/seed123/run_CNN_GRU_Peak.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_BCC/Lewes/seed123/run_CNN_GRU_Peak.pbs
+
+# seed2026 — 24 commands
+# PACT_MSE — Battery, Boston, CBBT, Lewes
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_BCC/Battery/seed2026/run_PACT_MSE.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_BCC/Boston/seed2026/run_PACT_MSE.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_BCC/CBBT/seed2026/run_PACT_MSE.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_BCC/Lewes/seed2026/run_PACT_MSE.pbs
+
+# PACT_Peak — Battery, Boston, CBBT, Lewes
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_BCC/Battery/seed2026/run_PACT_Peak.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_BCC/Boston/seed2026/run_PACT_Peak.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_BCC/CBBT/seed2026/run_PACT_Peak.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_BCC/Lewes/seed2026/run_PACT_Peak.pbs
+
+# PACT_Both — Battery, Boston, CBBT, Lewes
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_BCC/Battery/seed2026/run_PACT_Both.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_BCC/Boston/seed2026/run_PACT_Both.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_BCC/CBBT/seed2026/run_PACT_Both.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_BCC/Lewes/seed2026/run_PACT_Both.pbs
+
+# CNN_GRU_MSE — Battery, Boston, CBBT, Lewes
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_BCC/Battery/seed2026/run_CNN_GRU_MSE.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_BCC/Boston/seed2026/run_CNN_GRU_MSE.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_BCC/CBBT/seed2026/run_CNN_GRU_MSE.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_BCC/Lewes/seed2026/run_CNN_GRU_MSE.pbs
+
+# CNN_GRU_Tail — Battery, Boston, CBBT, Lewes
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_BCC/Battery/seed2026/run_CNN_GRU_Tail.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_BCC/Boston/seed2026/run_CNN_GRU_Tail.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_BCC/CBBT/seed2026/run_CNN_GRU_Tail.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_BCC/Lewes/seed2026/run_CNN_GRU_Tail.pbs
+
+# CNN_GRU_Peak — Battery, Boston, CBBT, Lewes
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_BCC/Battery/seed2026/run_CNN_GRU_Peak.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_BCC/Boston/seed2026/run_CNN_GRU_Peak.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_BCC/CBBT/seed2026/run_CNN_GRU_Peak.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_BCC/Lewes/seed2026/run_CNN_GRU_Peak.pbs
+
+
+# CMIP6_Cane5 — 72 commands
+# seed42 — 24 commands
+# PACT_MSE — Battery, Boston, CBBT, Lewes
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_Cane5/Battery/seed42/run_PACT_MSE.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_Cane5/Boston/seed42/run_PACT_MSE.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_Cane5/CBBT/seed42/run_PACT_MSE.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_Cane5/Lewes/seed42/run_PACT_MSE.pbs
+
+# PACT_Peak — Battery, Boston, CBBT, Lewes
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_Cane5/Battery/seed42/run_PACT_Peak.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_Cane5/Boston/seed42/run_PACT_Peak.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_Cane5/CBBT/seed42/run_PACT_Peak.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_Cane5/Lewes/seed42/run_PACT_Peak.pbs
+
+# PACT_Both — Battery, Boston, CBBT, Lewes
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_Cane5/Battery/seed42/run_PACT_Both.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_Cane5/Boston/seed42/run_PACT_Both.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_Cane5/CBBT/seed42/run_PACT_Both.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_Cane5/Lewes/seed42/run_PACT_Both.pbs
+
+# CNN_GRU_MSE — Battery, Boston, CBBT, Lewes
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_Cane5/Battery/seed42/run_CNN_GRU_MSE.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_Cane5/Boston/seed42/run_CNN_GRU_MSE.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_Cane5/CBBT/seed42/run_CNN_GRU_MSE.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_Cane5/Lewes/seed42/run_CNN_GRU_MSE.pbs
+
+# CNN_GRU_Tail — Battery, Boston, CBBT, Lewes
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_Cane5/Battery/seed42/run_CNN_GRU_Tail.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_Cane5/Boston/seed42/run_CNN_GRU_Tail.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_Cane5/CBBT/seed42/run_CNN_GRU_Tail.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_Cane5/Lewes/seed42/run_CNN_GRU_Tail.pbs
+
+# CNN_GRU_Peak — Battery, Boston, CBBT, Lewes
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_Cane5/Battery/seed42/run_CNN_GRU_Peak.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_Cane5/Boston/seed42/run_CNN_GRU_Peak.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_Cane5/CBBT/seed42/run_CNN_GRU_Peak.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_Cane5/Lewes/seed42/run_CNN_GRU_Peak.pbs
+
+# seed123 — 24 commands
+# PACT_MSE — Battery, Boston, CBBT, Lewes
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_Cane5/Battery/seed123/run_PACT_MSE.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_Cane5/Boston/seed123/run_PACT_MSE.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_Cane5/CBBT/seed123/run_PACT_MSE.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_Cane5/Lewes/seed123/run_PACT_MSE.pbs
+
+# PACT_Peak — Battery, Boston, CBBT, Lewes
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_Cane5/Battery/seed123/run_PACT_Peak.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_Cane5/Boston/seed123/run_PACT_Peak.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_Cane5/CBBT/seed123/run_PACT_Peak.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_Cane5/Lewes/seed123/run_PACT_Peak.pbs
+
+# PACT_Both — Battery, Boston, CBBT, Lewes
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_Cane5/Battery/seed123/run_PACT_Both.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_Cane5/Boston/seed123/run_PACT_Both.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_Cane5/CBBT/seed123/run_PACT_Both.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_Cane5/Lewes/seed123/run_PACT_Both.pbs
+
+# CNN_GRU_MSE — Battery, Boston, CBBT, Lewes
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_Cane5/Battery/seed123/run_CNN_GRU_MSE.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_Cane5/Boston/seed123/run_CNN_GRU_MSE.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_Cane5/CBBT/seed123/run_CNN_GRU_MSE.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_Cane5/Lewes/seed123/run_CNN_GRU_MSE.pbs
+
+# CNN_GRU_Tail — Battery, Boston, CBBT, Lewes
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_Cane5/Battery/seed123/run_CNN_GRU_Tail.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_Cane5/Boston/seed123/run_CNN_GRU_Tail.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_Cane5/CBBT/seed123/run_CNN_GRU_Tail.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_Cane5/Lewes/seed123/run_CNN_GRU_Tail.pbs
+
+# CNN_GRU_Peak — Battery, Boston, CBBT, Lewes
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_Cane5/Battery/seed123/run_CNN_GRU_Peak.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_Cane5/Boston/seed123/run_CNN_GRU_Peak.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_Cane5/CBBT/seed123/run_CNN_GRU_Peak.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_Cane5/Lewes/seed123/run_CNN_GRU_Peak.pbs
+
+# seed2026 — 24 commands
+# PACT_MSE — Battery, Boston, CBBT, Lewes
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_Cane5/Battery/seed2026/run_PACT_MSE.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_Cane5/Boston/seed2026/run_PACT_MSE.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_Cane5/CBBT/seed2026/run_PACT_MSE.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_Cane5/Lewes/seed2026/run_PACT_MSE.pbs
+
+# PACT_Peak — Battery, Boston, CBBT, Lewes
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_Cane5/Battery/seed2026/run_PACT_Peak.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_Cane5/Boston/seed2026/run_PACT_Peak.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_Cane5/CBBT/seed2026/run_PACT_Peak.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_Cane5/Lewes/seed2026/run_PACT_Peak.pbs
+
+# PACT_Both — Battery, Boston, CBBT, Lewes
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_Cane5/Battery/seed2026/run_PACT_Both.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_Cane5/Boston/seed2026/run_PACT_Both.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_Cane5/CBBT/seed2026/run_PACT_Both.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_Cane5/Lewes/seed2026/run_PACT_Both.pbs
+
+# CNN_GRU_MSE — Battery, Boston, CBBT, Lewes
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_Cane5/Battery/seed2026/run_CNN_GRU_MSE.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_Cane5/Boston/seed2026/run_CNN_GRU_MSE.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_Cane5/CBBT/seed2026/run_CNN_GRU_MSE.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_Cane5/Lewes/seed2026/run_CNN_GRU_MSE.pbs
+
+# CNN_GRU_Tail — Battery, Boston, CBBT, Lewes
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_Cane5/Battery/seed2026/run_CNN_GRU_Tail.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_Cane5/Boston/seed2026/run_CNN_GRU_Tail.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_Cane5/CBBT/seed2026/run_CNN_GRU_Tail.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_Cane5/Lewes/seed2026/run_CNN_GRU_Tail.pbs
+
+# CNN_GRU_Peak — Battery, Boston, CBBT, Lewes
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_Cane5/Battery/seed2026/run_CNN_GRU_Peak.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_Cane5/Boston/seed2026/run_CNN_GRU_Peak.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_Cane5/CBBT/seed2026/run_CNN_GRU_Peak.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_Cane5/Lewes/seed2026/run_CNN_GRU_Peak.pbs
+
+
+# CMIP6_CNRM — 72 commands
+# seed42 — 24 commands
+# PACT_MSE — Battery, Boston, CBBT, Lewes
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_CNRM/Battery/seed42/run_PACT_MSE.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_CNRM/Boston/seed42/run_PACT_MSE.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_CNRM/CBBT/seed42/run_PACT_MSE.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_CNRM/Lewes/seed42/run_PACT_MSE.pbs
+
+# PACT_Peak — Battery, Boston, CBBT, Lewes
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_CNRM/Battery/seed42/run_PACT_Peak.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_CNRM/Boston/seed42/run_PACT_Peak.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_CNRM/CBBT/seed42/run_PACT_Peak.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_CNRM/Lewes/seed42/run_PACT_Peak.pbs
+
+# PACT_Both — Battery, Boston, CBBT, Lewes
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_CNRM/Battery/seed42/run_PACT_Both.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_CNRM/Boston/seed42/run_PACT_Both.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_CNRM/CBBT/seed42/run_PACT_Both.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_CNRM/Lewes/seed42/run_PACT_Both.pbs
+
+# CNN_GRU_MSE — Battery, Boston, CBBT, Lewes
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_CNRM/Battery/seed42/run_CNN_GRU_MSE.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_CNRM/Boston/seed42/run_CNN_GRU_MSE.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_CNRM/CBBT/seed42/run_CNN_GRU_MSE.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_CNRM/Lewes/seed42/run_CNN_GRU_MSE.pbs
+
+# CNN_GRU_Tail — Battery, Boston, CBBT, Lewes
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_CNRM/Battery/seed42/run_CNN_GRU_Tail.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_CNRM/Boston/seed42/run_CNN_GRU_Tail.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_CNRM/CBBT/seed42/run_CNN_GRU_Tail.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_CNRM/Lewes/seed42/run_CNN_GRU_Tail.pbs
+
+# CNN_GRU_Peak — Battery, Boston, CBBT, Lewes
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_CNRM/Battery/seed42/run_CNN_GRU_Peak.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_CNRM/Boston/seed42/run_CNN_GRU_Peak.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_CNRM/CBBT/seed42/run_CNN_GRU_Peak.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_CNRM/Lewes/seed42/run_CNN_GRU_Peak.pbs
+
+# seed123 — 24 commands
+# PACT_MSE — Battery, Boston, CBBT, Lewes
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_CNRM/Battery/seed123/run_PACT_MSE.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_CNRM/Boston/seed123/run_PACT_MSE.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_CNRM/CBBT/seed123/run_PACT_MSE.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_CNRM/Lewes/seed123/run_PACT_MSE.pbs
+
+# PACT_Peak — Battery, Boston, CBBT, Lewes
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_CNRM/Battery/seed123/run_PACT_Peak.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_CNRM/Boston/seed123/run_PACT_Peak.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_CNRM/CBBT/seed123/run_PACT_Peak.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_CNRM/Lewes/seed123/run_PACT_Peak.pbs
+
+# PACT_Both — Battery, Boston, CBBT, Lewes
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_CNRM/Battery/seed123/run_PACT_Both.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_CNRM/Boston/seed123/run_PACT_Both.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_CNRM/CBBT/seed123/run_PACT_Both.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_CNRM/Lewes/seed123/run_PACT_Both.pbs
+
+# CNN_GRU_MSE — Battery, Boston, CBBT, Lewes
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_CNRM/Battery/seed123/run_CNN_GRU_MSE.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_CNRM/Boston/seed123/run_CNN_GRU_MSE.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_CNRM/CBBT/seed123/run_CNN_GRU_MSE.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_CNRM/Lewes/seed123/run_CNN_GRU_MSE.pbs
+
+# CNN_GRU_Tail — Battery, Boston, CBBT, Lewes
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_CNRM/Battery/seed123/run_CNN_GRU_Tail.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_CNRM/Boston/seed123/run_CNN_GRU_Tail.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_CNRM/CBBT/seed123/run_CNN_GRU_Tail.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_CNRM/Lewes/seed123/run_CNN_GRU_Tail.pbs
+
+# CNN_GRU_Peak — Battery, Boston, CBBT, Lewes
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_CNRM/Battery/seed123/run_CNN_GRU_Peak.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_CNRM/Boston/seed123/run_CNN_GRU_Peak.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_CNRM/CBBT/seed123/run_CNN_GRU_Peak.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_CNRM/Lewes/seed123/run_CNN_GRU_Peak.pbs
+
+# seed2026 — 24 commands
+# PACT_MSE — Battery, Boston, CBBT, Lewes
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_CNRM/Battery/seed2026/run_PACT_MSE.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_CNRM/Boston/seed2026/run_PACT_MSE.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_CNRM/CBBT/seed2026/run_PACT_MSE.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_CNRM/Lewes/seed2026/run_PACT_MSE.pbs
+
+# PACT_Peak — Battery, Boston, CBBT, Lewes
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_CNRM/Battery/seed2026/run_PACT_Peak.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_CNRM/Boston/seed2026/run_PACT_Peak.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_CNRM/CBBT/seed2026/run_PACT_Peak.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_CNRM/Lewes/seed2026/run_PACT_Peak.pbs
+
+# PACT_Both — Battery, Boston, CBBT, Lewes
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_CNRM/Battery/seed2026/run_PACT_Both.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_CNRM/Boston/seed2026/run_PACT_Both.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_CNRM/CBBT/seed2026/run_PACT_Both.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_CNRM/Lewes/seed2026/run_PACT_Both.pbs
+
+# CNN_GRU_MSE — Battery, Boston, CBBT, Lewes
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_CNRM/Battery/seed2026/run_CNN_GRU_MSE.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_CNRM/Boston/seed2026/run_CNN_GRU_MSE.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_CNRM/CBBT/seed2026/run_CNN_GRU_MSE.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_CNRM/Lewes/seed2026/run_CNN_GRU_MSE.pbs
+
+# CNN_GRU_Tail — Battery, Boston, CBBT, Lewes
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_CNRM/Battery/seed2026/run_CNN_GRU_Tail.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_CNRM/Boston/seed2026/run_CNN_GRU_Tail.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_CNRM/CBBT/seed2026/run_CNN_GRU_Tail.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_CNRM/Lewes/seed2026/run_CNN_GRU_Tail.pbs
+
+# CNN_GRU_Peak — Battery, Boston, CBBT, Lewes
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_CNRM/Battery/seed2026/run_CNN_GRU_Peak.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_CNRM/Boston/seed2026/run_CNN_GRU_Peak.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_CNRM/CBBT/seed2026/run_CNN_GRU_Peak.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_CNRM/Lewes/seed2026/run_CNN_GRU_Peak.pbs
+
+
+# CMIP6_EC_EARTH — 72 commands
+# seed42 — 24 commands
+# PACT_MSE — Battery, Boston, CBBT, Lewes
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_EC_EARTH/Battery/seed42/run_PACT_MSE.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_EC_EARTH/Boston/seed42/run_PACT_MSE.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_EC_EARTH/CBBT/seed42/run_PACT_MSE.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_EC_EARTH/Lewes/seed42/run_PACT_MSE.pbs
+
+# PACT_Peak — Battery, Boston, CBBT, Lewes
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_EC_EARTH/Battery/seed42/run_PACT_Peak.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_EC_EARTH/Boston/seed42/run_PACT_Peak.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_EC_EARTH/CBBT/seed42/run_PACT_Peak.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_EC_EARTH/Lewes/seed42/run_PACT_Peak.pbs
+
+# PACT_Both — Battery, Boston, CBBT, Lewes
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_EC_EARTH/Battery/seed42/run_PACT_Both.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_EC_EARTH/Boston/seed42/run_PACT_Both.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_EC_EARTH/CBBT/seed42/run_PACT_Both.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_EC_EARTH/Lewes/seed42/run_PACT_Both.pbs
+
+# CNN_GRU_MSE — Battery, Boston, CBBT, Lewes
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_EC_EARTH/Battery/seed42/run_CNN_GRU_MSE.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_EC_EARTH/Boston/seed42/run_CNN_GRU_MSE.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_EC_EARTH/CBBT/seed42/run_CNN_GRU_MSE.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_EC_EARTH/Lewes/seed42/run_CNN_GRU_MSE.pbs
+
+# CNN_GRU_Tail — Battery, Boston, CBBT, Lewes
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_EC_EARTH/Battery/seed42/run_CNN_GRU_Tail.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_EC_EARTH/Boston/seed42/run_CNN_GRU_Tail.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_EC_EARTH/CBBT/seed42/run_CNN_GRU_Tail.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_EC_EARTH/Lewes/seed42/run_CNN_GRU_Tail.pbs
+
+# CNN_GRU_Peak — Battery, Boston, CBBT, Lewes
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_EC_EARTH/Battery/seed42/run_CNN_GRU_Peak.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_EC_EARTH/Boston/seed42/run_CNN_GRU_Peak.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_EC_EARTH/CBBT/seed42/run_CNN_GRU_Peak.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_EC_EARTH/Lewes/seed42/run_CNN_GRU_Peak.pbs
+
+# seed123 — 24 commands
+# PACT_MSE — Battery, Boston, CBBT, Lewes
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_EC_EARTH/Battery/seed123/run_PACT_MSE.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_EC_EARTH/Boston/seed123/run_PACT_MSE.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_EC_EARTH/CBBT/seed123/run_PACT_MSE.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_EC_EARTH/Lewes/seed123/run_PACT_MSE.pbs
+
+# PACT_Peak — Battery, Boston, CBBT, Lewes
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_EC_EARTH/Battery/seed123/run_PACT_Peak.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_EC_EARTH/Boston/seed123/run_PACT_Peak.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_EC_EARTH/CBBT/seed123/run_PACT_Peak.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_EC_EARTH/Lewes/seed123/run_PACT_Peak.pbs
+
+# PACT_Both — Battery, Boston, CBBT, Lewes
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_EC_EARTH/Battery/seed123/run_PACT_Both.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_EC_EARTH/Boston/seed123/run_PACT_Both.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_EC_EARTH/CBBT/seed123/run_PACT_Both.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_EC_EARTH/Lewes/seed123/run_PACT_Both.pbs
+
+# CNN_GRU_MSE — Battery, Boston, CBBT, Lewes
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_EC_EARTH/Battery/seed123/run_CNN_GRU_MSE.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_EC_EARTH/Boston/seed123/run_CNN_GRU_MSE.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_EC_EARTH/CBBT/seed123/run_CNN_GRU_MSE.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_EC_EARTH/Lewes/seed123/run_CNN_GRU_MSE.pbs
+
+# CNN_GRU_Tail — Battery, Boston, CBBT, Lewes
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_EC_EARTH/Battery/seed123/run_CNN_GRU_Tail.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_EC_EARTH/Boston/seed123/run_CNN_GRU_Tail.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_EC_EARTH/CBBT/seed123/run_CNN_GRU_Tail.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_EC_EARTH/Lewes/seed123/run_CNN_GRU_Tail.pbs
+
+# CNN_GRU_Peak — Battery, Boston, CBBT, Lewes
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_EC_EARTH/Battery/seed123/run_CNN_GRU_Peak.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_EC_EARTH/Boston/seed123/run_CNN_GRU_Peak.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_EC_EARTH/CBBT/seed123/run_CNN_GRU_Peak.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_EC_EARTH/Lewes/seed123/run_CNN_GRU_Peak.pbs
+
+# seed2026 — 24 commands
+# PACT_MSE — Battery, Boston, CBBT, Lewes
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_EC_EARTH/Battery/seed2026/run_PACT_MSE.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_EC_EARTH/Boston/seed2026/run_PACT_MSE.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_EC_EARTH/CBBT/seed2026/run_PACT_MSE.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_EC_EARTH/Lewes/seed2026/run_PACT_MSE.pbs
+
+# PACT_Peak — Battery, Boston, CBBT, Lewes
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_EC_EARTH/Battery/seed2026/run_PACT_Peak.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_EC_EARTH/Boston/seed2026/run_PACT_Peak.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_EC_EARTH/CBBT/seed2026/run_PACT_Peak.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_EC_EARTH/Lewes/seed2026/run_PACT_Peak.pbs
+
+# PACT_Both — Battery, Boston, CBBT, Lewes
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_EC_EARTH/Battery/seed2026/run_PACT_Both.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_EC_EARTH/Boston/seed2026/run_PACT_Both.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_EC_EARTH/CBBT/seed2026/run_PACT_Both.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_EC_EARTH/Lewes/seed2026/run_PACT_Both.pbs
+
+# CNN_GRU_MSE — Battery, Boston, CBBT, Lewes
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_EC_EARTH/Battery/seed2026/run_CNN_GRU_MSE.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_EC_EARTH/Boston/seed2026/run_CNN_GRU_MSE.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_EC_EARTH/CBBT/seed2026/run_CNN_GRU_MSE.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_EC_EARTH/Lewes/seed2026/run_CNN_GRU_MSE.pbs
+
+# CNN_GRU_Tail — Battery, Boston, CBBT, Lewes
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_EC_EARTH/Battery/seed2026/run_CNN_GRU_Tail.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_EC_EARTH/Boston/seed2026/run_CNN_GRU_Tail.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_EC_EARTH/CBBT/seed2026/run_CNN_GRU_Tail.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_EC_EARTH/Lewes/seed2026/run_CNN_GRU_Tail.pbs
+
+# CNN_GRU_Peak — Battery, Boston, CBBT, Lewes
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_EC_EARTH/Battery/seed2026/run_CNN_GRU_Peak.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_EC_EARTH/Boston/seed2026/run_CNN_GRU_Peak.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_EC_EARTH/CBBT/seed2026/run_CNN_GRU_Peak.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_EC_EARTH/Lewes/seed2026/run_CNN_GRU_Peak.pbs
+
+
+# CMIP6_IPSL — 72 commands
+# seed42 — 24 commands
+# PACT_MSE — Battery, Boston, CBBT, Lewes
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_IPSL/Battery/seed42/run_PACT_MSE.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_IPSL/Boston/seed42/run_PACT_MSE.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_IPSL/CBBT/seed42/run_PACT_MSE.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_IPSL/Lewes/seed42/run_PACT_MSE.pbs
+
+# PACT_Peak — Battery, Boston, CBBT, Lewes
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_IPSL/Battery/seed42/run_PACT_Peak.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_IPSL/Boston/seed42/run_PACT_Peak.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_IPSL/CBBT/seed42/run_PACT_Peak.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_IPSL/Lewes/seed42/run_PACT_Peak.pbs
+
+# PACT_Both — Battery, Boston, CBBT, Lewes
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_IPSL/Battery/seed42/run_PACT_Both.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_IPSL/Boston/seed42/run_PACT_Both.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_IPSL/CBBT/seed42/run_PACT_Both.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_IPSL/Lewes/seed42/run_PACT_Both.pbs
+
+# CNN_GRU_MSE — Battery, Boston, CBBT, Lewes
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_IPSL/Battery/seed42/run_CNN_GRU_MSE.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_IPSL/Boston/seed42/run_CNN_GRU_MSE.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_IPSL/CBBT/seed42/run_CNN_GRU_MSE.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_IPSL/Lewes/seed42/run_CNN_GRU_MSE.pbs
+
+# CNN_GRU_Tail — Battery, Boston, CBBT, Lewes
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_IPSL/Battery/seed42/run_CNN_GRU_Tail.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_IPSL/Boston/seed42/run_CNN_GRU_Tail.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_IPSL/CBBT/seed42/run_CNN_GRU_Tail.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_IPSL/Lewes/seed42/run_CNN_GRU_Tail.pbs
+
+# CNN_GRU_Peak — Battery, Boston, CBBT, Lewes
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_IPSL/Battery/seed42/run_CNN_GRU_Peak.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_IPSL/Boston/seed42/run_CNN_GRU_Peak.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_IPSL/CBBT/seed42/run_CNN_GRU_Peak.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_IPSL/Lewes/seed42/run_CNN_GRU_Peak.pbs
+
+# seed123 — 24 commands
+# PACT_MSE — Battery, Boston, CBBT, Lewes
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_IPSL/Battery/seed123/run_PACT_MSE.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_IPSL/Boston/seed123/run_PACT_MSE.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_IPSL/CBBT/seed123/run_PACT_MSE.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_IPSL/Lewes/seed123/run_PACT_MSE.pbs
+
+# PACT_Peak — Battery, Boston, CBBT, Lewes
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_IPSL/Battery/seed123/run_PACT_Peak.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_IPSL/Boston/seed123/run_PACT_Peak.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_IPSL/CBBT/seed123/run_PACT_Peak.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_IPSL/Lewes/seed123/run_PACT_Peak.pbs
+
+# PACT_Both — Battery, Boston, CBBT, Lewes
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_IPSL/Battery/seed123/run_PACT_Both.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_IPSL/Boston/seed123/run_PACT_Both.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_IPSL/CBBT/seed123/run_PACT_Both.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_IPSL/Lewes/seed123/run_PACT_Both.pbs
+
+# CNN_GRU_MSE — Battery, Boston, CBBT, Lewes
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_IPSL/Battery/seed123/run_CNN_GRU_MSE.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_IPSL/Boston/seed123/run_CNN_GRU_MSE.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_IPSL/CBBT/seed123/run_CNN_GRU_MSE.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_IPSL/Lewes/seed123/run_CNN_GRU_MSE.pbs
+
+# CNN_GRU_Tail — Battery, Boston, CBBT, Lewes
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_IPSL/Battery/seed123/run_CNN_GRU_Tail.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_IPSL/Boston/seed123/run_CNN_GRU_Tail.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_IPSL/CBBT/seed123/run_CNN_GRU_Tail.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_IPSL/Lewes/seed123/run_CNN_GRU_Tail.pbs
+
+# CNN_GRU_Peak — Battery, Boston, CBBT, Lewes
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_IPSL/Battery/seed123/run_CNN_GRU_Peak.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_IPSL/Boston/seed123/run_CNN_GRU_Peak.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_IPSL/CBBT/seed123/run_CNN_GRU_Peak.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_IPSL/Lewes/seed123/run_CNN_GRU_Peak.pbs
+
+# seed2026 — 24 commands
+# PACT_MSE — Battery, Boston, CBBT, Lewes
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_IPSL/Battery/seed2026/run_PACT_MSE.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_IPSL/Boston/seed2026/run_PACT_MSE.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_IPSL/CBBT/seed2026/run_PACT_MSE.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_IPSL/Lewes/seed2026/run_PACT_MSE.pbs
+
+# PACT_Peak — Battery, Boston, CBBT, Lewes
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_IPSL/Battery/seed2026/run_PACT_Peak.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_IPSL/Boston/seed2026/run_PACT_Peak.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_IPSL/CBBT/seed2026/run_PACT_Peak.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_IPSL/Lewes/seed2026/run_PACT_Peak.pbs
+
+# PACT_Both — Battery, Boston, CBBT, Lewes
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_IPSL/Battery/seed2026/run_PACT_Both.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_IPSL/Boston/seed2026/run_PACT_Both.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_IPSL/CBBT/seed2026/run_PACT_Both.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_IPSL/Lewes/seed2026/run_PACT_Both.pbs
+
+# CNN_GRU_MSE — Battery, Boston, CBBT, Lewes
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_IPSL/Battery/seed2026/run_CNN_GRU_MSE.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_IPSL/Boston/seed2026/run_CNN_GRU_MSE.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_IPSL/CBBT/seed2026/run_CNN_GRU_MSE.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_IPSL/Lewes/seed2026/run_CNN_GRU_MSE.pbs
+
+# CNN_GRU_Tail — Battery, Boston, CBBT, Lewes
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_IPSL/Battery/seed2026/run_CNN_GRU_Tail.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_IPSL/Boston/seed2026/run_CNN_GRU_Tail.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_IPSL/CBBT/seed2026/run_CNN_GRU_Tail.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_IPSL/Lewes/seed2026/run_CNN_GRU_Tail.pbs
+
+# CNN_GRU_Peak — Battery, Boston, CBBT, Lewes
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_IPSL/Battery/seed2026/run_CNN_GRU_Peak.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_IPSL/Boston/seed2026/run_CNN_GRU_Peak.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_IPSL/CBBT/seed2026/run_CNN_GRU_Peak.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_IPSL/Lewes/seed2026/run_CNN_GRU_Peak.pbs
+
+
+# CMIP6_MIROC — 72 commands
+# seed42 — 24 commands
+# PACT_MSE — Battery, Boston, CBBT, Lewes
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_MIROC/Battery/seed42/run_PACT_MSE.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_MIROC/Boston/seed42/run_PACT_MSE.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_MIROC/CBBT/seed42/run_PACT_MSE.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_MIROC/Lewes/seed42/run_PACT_MSE.pbs
+
+# PACT_Peak — Battery, Boston, CBBT, Lewes
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_MIROC/Battery/seed42/run_PACT_Peak.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_MIROC/Boston/seed42/run_PACT_Peak.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_MIROC/CBBT/seed42/run_PACT_Peak.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_MIROC/Lewes/seed42/run_PACT_Peak.pbs
+
+# PACT_Both — Battery, Boston, CBBT, Lewes
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_MIROC/Battery/seed42/run_PACT_Both.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_MIROC/Boston/seed42/run_PACT_Both.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_MIROC/CBBT/seed42/run_PACT_Both.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_MIROC/Lewes/seed42/run_PACT_Both.pbs
+
+# CNN_GRU_MSE — Battery, Boston, CBBT, Lewes
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_MIROC/Battery/seed42/run_CNN_GRU_MSE.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_MIROC/Boston/seed42/run_CNN_GRU_MSE.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_MIROC/CBBT/seed42/run_CNN_GRU_MSE.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_MIROC/Lewes/seed42/run_CNN_GRU_MSE.pbs
+
+# CNN_GRU_Tail — Battery, Boston, CBBT, Lewes
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_MIROC/Battery/seed42/run_CNN_GRU_Tail.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_MIROC/Boston/seed42/run_CNN_GRU_Tail.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_MIROC/CBBT/seed42/run_CNN_GRU_Tail.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_MIROC/Lewes/seed42/run_CNN_GRU_Tail.pbs
+
+# CNN_GRU_Peak — Battery, Boston, CBBT, Lewes
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_MIROC/Battery/seed42/run_CNN_GRU_Peak.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_MIROC/Boston/seed42/run_CNN_GRU_Peak.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_MIROC/CBBT/seed42/run_CNN_GRU_Peak.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_MIROC/Lewes/seed42/run_CNN_GRU_Peak.pbs
+
+# seed123 — 24 commands
+# PACT_MSE — Battery, Boston, CBBT, Lewes
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_MIROC/Battery/seed123/run_PACT_MSE.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_MIROC/Boston/seed123/run_PACT_MSE.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_MIROC/CBBT/seed123/run_PACT_MSE.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_MIROC/Lewes/seed123/run_PACT_MSE.pbs
+
+# PACT_Peak — Battery, Boston, CBBT, Lewes
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_MIROC/Battery/seed123/run_PACT_Peak.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_MIROC/Boston/seed123/run_PACT_Peak.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_MIROC/CBBT/seed123/run_PACT_Peak.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_MIROC/Lewes/seed123/run_PACT_Peak.pbs
+
+# PACT_Both — Battery, Boston, CBBT, Lewes
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_MIROC/Battery/seed123/run_PACT_Both.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_MIROC/Boston/seed123/run_PACT_Both.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_MIROC/CBBT/seed123/run_PACT_Both.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_MIROC/Lewes/seed123/run_PACT_Both.pbs
+
+# CNN_GRU_MSE — Battery, Boston, CBBT, Lewes
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_MIROC/Battery/seed123/run_CNN_GRU_MSE.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_MIROC/Boston/seed123/run_CNN_GRU_MSE.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_MIROC/CBBT/seed123/run_CNN_GRU_MSE.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_MIROC/Lewes/seed123/run_CNN_GRU_MSE.pbs
+
+# CNN_GRU_Tail — Battery, Boston, CBBT, Lewes
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_MIROC/Battery/seed123/run_CNN_GRU_Tail.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_MIROC/Boston/seed123/run_CNN_GRU_Tail.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_MIROC/CBBT/seed123/run_CNN_GRU_Tail.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_MIROC/Lewes/seed123/run_CNN_GRU_Tail.pbs
+
+# CNN_GRU_Peak — Battery, Boston, CBBT, Lewes
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_MIROC/Battery/seed123/run_CNN_GRU_Peak.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_MIROC/Boston/seed123/run_CNN_GRU_Peak.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_MIROC/CBBT/seed123/run_CNN_GRU_Peak.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_MIROC/Lewes/seed123/run_CNN_GRU_Peak.pbs
+
+# seed2026 — 24 commands
+# PACT_MSE — Battery, Boston, CBBT, Lewes
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_MIROC/Battery/seed2026/run_PACT_MSE.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_MIROC/Boston/seed2026/run_PACT_MSE.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_MIROC/CBBT/seed2026/run_PACT_MSE.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_MIROC/Lewes/seed2026/run_PACT_MSE.pbs
+
+# PACT_Peak — Battery, Boston, CBBT, Lewes
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_MIROC/Battery/seed2026/run_PACT_Peak.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_MIROC/Boston/seed2026/run_PACT_Peak.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_MIROC/CBBT/seed2026/run_PACT_Peak.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_MIROC/Lewes/seed2026/run_PACT_Peak.pbs
+
+# PACT_Both — Battery, Boston, CBBT, Lewes
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_MIROC/Battery/seed2026/run_PACT_Both.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_MIROC/Boston/seed2026/run_PACT_Both.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_MIROC/CBBT/seed2026/run_PACT_Both.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_MIROC/Lewes/seed2026/run_PACT_Both.pbs
+
+# CNN_GRU_MSE — Battery, Boston, CBBT, Lewes
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_MIROC/Battery/seed2026/run_CNN_GRU_MSE.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_MIROC/Boston/seed2026/run_CNN_GRU_MSE.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_MIROC/CBBT/seed2026/run_CNN_GRU_MSE.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_MIROC/Lewes/seed2026/run_CNN_GRU_MSE.pbs
+
+# CNN_GRU_Tail — Battery, Boston, CBBT, Lewes
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_MIROC/Battery/seed2026/run_CNN_GRU_Tail.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_MIROC/Boston/seed2026/run_CNN_GRU_Tail.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_MIROC/CBBT/seed2026/run_CNN_GRU_Tail.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_MIROC/Lewes/seed2026/run_CNN_GRU_Tail.pbs
+
+# CNN_GRU_Peak — Battery, Boston, CBBT, Lewes
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_MIROC/Battery/seed2026/run_CNN_GRU_Peak.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_MIROC/Boston/seed2026/run_CNN_GRU_Peak.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_MIROC/CBBT/seed2026/run_CNN_GRU_Peak.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_MIROC/Lewes/seed2026/run_CNN_GRU_Peak.pbs
+
+
+# CMIP6_MPI — 72 commands
+# seed42 — 24 commands
+# PACT_MSE — Battery, Boston, CBBT, Lewes
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_MPI/Battery/seed42/run_PACT_MSE.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_MPI/Boston/seed42/run_PACT_MSE.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_MPI/CBBT/seed42/run_PACT_MSE.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_MPI/Lewes/seed42/run_PACT_MSE.pbs
+
+# PACT_Peak — Battery, Boston, CBBT, Lewes
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_MPI/Battery/seed42/run_PACT_Peak.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_MPI/Boston/seed42/run_PACT_Peak.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_MPI/CBBT/seed42/run_PACT_Peak.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_MPI/Lewes/seed42/run_PACT_Peak.pbs
+
+# PACT_Both — Battery, Boston, CBBT, Lewes
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_MPI/Battery/seed42/run_PACT_Both.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_MPI/Boston/seed42/run_PACT_Both.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_MPI/CBBT/seed42/run_PACT_Both.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_MPI/Lewes/seed42/run_PACT_Both.pbs
+
+# CNN_GRU_MSE — Battery, Boston, CBBT, Lewes
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_MPI/Battery/seed42/run_CNN_GRU_MSE.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_MPI/Boston/seed42/run_CNN_GRU_MSE.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_MPI/CBBT/seed42/run_CNN_GRU_MSE.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_MPI/Lewes/seed42/run_CNN_GRU_MSE.pbs
+
+# CNN_GRU_Tail — Battery, Boston, CBBT, Lewes
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_MPI/Battery/seed42/run_CNN_GRU_Tail.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_MPI/Boston/seed42/run_CNN_GRU_Tail.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_MPI/CBBT/seed42/run_CNN_GRU_Tail.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_MPI/Lewes/seed42/run_CNN_GRU_Tail.pbs
+
+# CNN_GRU_Peak — Battery, Boston, CBBT, Lewes
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_MPI/Battery/seed42/run_CNN_GRU_Peak.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_MPI/Boston/seed42/run_CNN_GRU_Peak.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_MPI/CBBT/seed42/run_CNN_GRU_Peak.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_MPI/Lewes/seed42/run_CNN_GRU_Peak.pbs
+
+# seed123 — 24 commands
+# PACT_MSE — Battery, Boston, CBBT, Lewes
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_MPI/Battery/seed123/run_PACT_MSE.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_MPI/Boston/seed123/run_PACT_MSE.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_MPI/CBBT/seed123/run_PACT_MSE.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_MPI/Lewes/seed123/run_PACT_MSE.pbs
+
+# PACT_Peak — Battery, Boston, CBBT, Lewes
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_MPI/Battery/seed123/run_PACT_Peak.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_MPI/Boston/seed123/run_PACT_Peak.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_MPI/CBBT/seed123/run_PACT_Peak.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_MPI/Lewes/seed123/run_PACT_Peak.pbs
+
+# PACT_Both — Battery, Boston, CBBT, Lewes
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_MPI/Battery/seed123/run_PACT_Both.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_MPI/Boston/seed123/run_PACT_Both.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_MPI/CBBT/seed123/run_PACT_Both.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_MPI/Lewes/seed123/run_PACT_Both.pbs
+
+# CNN_GRU_MSE — Battery, Boston, CBBT, Lewes
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_MPI/Battery/seed123/run_CNN_GRU_MSE.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_MPI/Boston/seed123/run_CNN_GRU_MSE.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_MPI/CBBT/seed123/run_CNN_GRU_MSE.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_MPI/Lewes/seed123/run_CNN_GRU_MSE.pbs
+
+# CNN_GRU_Tail — Battery, Boston, CBBT, Lewes
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_MPI/Battery/seed123/run_CNN_GRU_Tail.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_MPI/Boston/seed123/run_CNN_GRU_Tail.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_MPI/CBBT/seed123/run_CNN_GRU_Tail.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_MPI/Lewes/seed123/run_CNN_GRU_Tail.pbs
+
+# CNN_GRU_Peak — Battery, Boston, CBBT, Lewes
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_MPI/Battery/seed123/run_CNN_GRU_Peak.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_MPI/Boston/seed123/run_CNN_GRU_Peak.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_MPI/CBBT/seed123/run_CNN_GRU_Peak.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_MPI/Lewes/seed123/run_CNN_GRU_Peak.pbs
+
+# seed2026 — 24 commands
+# PACT_MSE — Battery, Boston, CBBT, Lewes
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_MPI/Battery/seed2026/run_PACT_MSE.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_MPI/Boston/seed2026/run_PACT_MSE.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_MPI/CBBT/seed2026/run_PACT_MSE.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_MPI/Lewes/seed2026/run_PACT_MSE.pbs
+
+# PACT_Peak — Battery, Boston, CBBT, Lewes
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_MPI/Battery/seed2026/run_PACT_Peak.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_MPI/Boston/seed2026/run_PACT_Peak.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_MPI/CBBT/seed2026/run_PACT_Peak.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_MPI/Lewes/seed2026/run_PACT_Peak.pbs
+
+# PACT_Both — Battery, Boston, CBBT, Lewes
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_MPI/Battery/seed2026/run_PACT_Both.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_MPI/Boston/seed2026/run_PACT_Both.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_MPI/CBBT/seed2026/run_PACT_Both.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_MPI/Lewes/seed2026/run_PACT_Both.pbs
+
+# CNN_GRU_MSE — Battery, Boston, CBBT, Lewes
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_MPI/Battery/seed2026/run_CNN_GRU_MSE.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_MPI/Boston/seed2026/run_CNN_GRU_MSE.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_MPI/CBBT/seed2026/run_CNN_GRU_MSE.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_MPI/Lewes/seed2026/run_CNN_GRU_MSE.pbs
+
+# CNN_GRU_Tail — Battery, Boston, CBBT, Lewes
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_MPI/Battery/seed2026/run_CNN_GRU_Tail.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_MPI/Boston/seed2026/run_CNN_GRU_Tail.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_MPI/CBBT/seed2026/run_CNN_GRU_Tail.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_MPI/Lewes/seed2026/run_CNN_GRU_Tail.pbs
+
+# CNN_GRU_Peak — Battery, Boston, CBBT, Lewes
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_MPI/Battery/seed2026/run_CNN_GRU_Peak.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_MPI/Boston/seed2026/run_CNN_GRU_Peak.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_MPI/CBBT/seed2026/run_CNN_GRU_Peak.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_MPI/Lewes/seed2026/run_CNN_GRU_Peak.pbs
+
+
+# CMIP6_MRI — 72 commands
+# seed42 — 24 commands
+# PACT_MSE — Battery, Boston, CBBT, Lewes
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_MRI/Battery/seed42/run_PACT_MSE.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_MRI/Boston/seed42/run_PACT_MSE.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_MRI/CBBT/seed42/run_PACT_MSE.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_MRI/Lewes/seed42/run_PACT_MSE.pbs
+
+# PACT_Peak — Battery, Boston, CBBT, Lewes
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_MRI/Battery/seed42/run_PACT_Peak.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_MRI/Boston/seed42/run_PACT_Peak.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_MRI/CBBT/seed42/run_PACT_Peak.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_MRI/Lewes/seed42/run_PACT_Peak.pbs
+
+# PACT_Both — Battery, Boston, CBBT, Lewes
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_MRI/Battery/seed42/run_PACT_Both.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_MRI/Boston/seed42/run_PACT_Both.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_MRI/CBBT/seed42/run_PACT_Both.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_MRI/Lewes/seed42/run_PACT_Both.pbs
+
+# CNN_GRU_MSE — Battery, Boston, CBBT, Lewes
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_MRI/Battery/seed42/run_CNN_GRU_MSE.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_MRI/Boston/seed42/run_CNN_GRU_MSE.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_MRI/CBBT/seed42/run_CNN_GRU_MSE.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_MRI/Lewes/seed42/run_CNN_GRU_MSE.pbs
+
+# CNN_GRU_Tail — Battery, Boston, CBBT, Lewes
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_MRI/Battery/seed42/run_CNN_GRU_Tail.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_MRI/Boston/seed42/run_CNN_GRU_Tail.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_MRI/CBBT/seed42/run_CNN_GRU_Tail.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_MRI/Lewes/seed42/run_CNN_GRU_Tail.pbs
+
+# CNN_GRU_Peak — Battery, Boston, CBBT, Lewes
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_MRI/Battery/seed42/run_CNN_GRU_Peak.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_MRI/Boston/seed42/run_CNN_GRU_Peak.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_MRI/CBBT/seed42/run_CNN_GRU_Peak.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_MRI/Lewes/seed42/run_CNN_GRU_Peak.pbs
+
+# seed123 — 24 commands
+# PACT_MSE — Battery, Boston, CBBT, Lewes
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_MRI/Battery/seed123/run_PACT_MSE.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_MRI/Boston/seed123/run_PACT_MSE.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_MRI/CBBT/seed123/run_PACT_MSE.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_MRI/Lewes/seed123/run_PACT_MSE.pbs
+
+# PACT_Peak — Battery, Boston, CBBT, Lewes
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_MRI/Battery/seed123/run_PACT_Peak.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_MRI/Boston/seed123/run_PACT_Peak.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_MRI/CBBT/seed123/run_PACT_Peak.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_MRI/Lewes/seed123/run_PACT_Peak.pbs
+
+# PACT_Both — Battery, Boston, CBBT, Lewes
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_MRI/Battery/seed123/run_PACT_Both.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_MRI/Boston/seed123/run_PACT_Both.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_MRI/CBBT/seed123/run_PACT_Both.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_MRI/Lewes/seed123/run_PACT_Both.pbs
+
+# CNN_GRU_MSE — Battery, Boston, CBBT, Lewes
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_MRI/Battery/seed123/run_CNN_GRU_MSE.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_MRI/Boston/seed123/run_CNN_GRU_MSE.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_MRI/CBBT/seed123/run_CNN_GRU_MSE.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_MRI/Lewes/seed123/run_CNN_GRU_MSE.pbs
+
+# CNN_GRU_Tail — Battery, Boston, CBBT, Lewes
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_MRI/Battery/seed123/run_CNN_GRU_Tail.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_MRI/Boston/seed123/run_CNN_GRU_Tail.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_MRI/CBBT/seed123/run_CNN_GRU_Tail.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_MRI/Lewes/seed123/run_CNN_GRU_Tail.pbs
+
+# CNN_GRU_Peak — Battery, Boston, CBBT, Lewes
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_MRI/Battery/seed123/run_CNN_GRU_Peak.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_MRI/Boston/seed123/run_CNN_GRU_Peak.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_MRI/CBBT/seed123/run_CNN_GRU_Peak.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_MRI/Lewes/seed123/run_CNN_GRU_Peak.pbs
+
+# seed2026 — 24 commands
+# PACT_MSE — Battery, Boston, CBBT, Lewes
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_MRI/Battery/seed2026/run_PACT_MSE.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_MRI/Boston/seed2026/run_PACT_MSE.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_MRI/CBBT/seed2026/run_PACT_MSE.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_MRI/Lewes/seed2026/run_PACT_MSE.pbs
+
+# PACT_Peak — Battery, Boston, CBBT, Lewes
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_MRI/Battery/seed2026/run_PACT_Peak.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_MRI/Boston/seed2026/run_PACT_Peak.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_MRI/CBBT/seed2026/run_PACT_Peak.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_MRI/Lewes/seed2026/run_PACT_Peak.pbs
+
+# PACT_Both — Battery, Boston, CBBT, Lewes
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_MRI/Battery/seed2026/run_PACT_Both.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_MRI/Boston/seed2026/run_PACT_Both.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_MRI/CBBT/seed2026/run_PACT_Both.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_MRI/Lewes/seed2026/run_PACT_Both.pbs
+
+# CNN_GRU_MSE — Battery, Boston, CBBT, Lewes
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_MRI/Battery/seed2026/run_CNN_GRU_MSE.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_MRI/Boston/seed2026/run_CNN_GRU_MSE.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_MRI/CBBT/seed2026/run_CNN_GRU_MSE.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_MRI/Lewes/seed2026/run_CNN_GRU_MSE.pbs
+
+# CNN_GRU_Tail — Battery, Boston, CBBT, Lewes
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_MRI/Battery/seed2026/run_CNN_GRU_Tail.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_MRI/Boston/seed2026/run_CNN_GRU_Tail.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_MRI/CBBT/seed2026/run_CNN_GRU_Tail.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_MRI/Lewes/seed2026/run_CNN_GRU_Tail.pbs
+
+# CNN_GRU_Peak — Battery, Boston, CBBT, Lewes
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_MRI/Battery/seed2026/run_CNN_GRU_Peak.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_MRI/Boston/seed2026/run_CNN_GRU_Peak.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_MRI/CBBT/seed2026/run_CNN_GRU_Peak.pbs
+qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_MRI/Lewes/seed2026/run_CNN_GRU_Peak.pbs
