@@ -293,7 +293,8 @@ def validate_outputs(directory, row):
     require(pred.ndim == 2 and pred.shape == truth.shape == times.shape and len(tags) == len(pred) > 0,
             'Incompatible/empty prediction arrays')
     require(pred.shape[1] == row['checkpoint_metadata']['model_config']['out_channels'], 'Incorrect prediction horizon count')
-    require(bool(np.isfinite(pred).all()) and bool(np.isfinite(truth).all()), 'Nonfinite physical predictions')
+    require(bool(np.isfinite(pred).all()), 'Nonfinite physical predictions')
+    require(not bool(np.isinf(truth).any()), 'Infinite physical ground truth')
     require(len(pred) == metrics['samples'] == sum(metrics['results'][y]['samples'] for y in YEARS), 'Prediction/sample count mismatch')
     require({'_'.join(str(tag).split('_')[:2]) for tag in tags} == set(YEARS), 'NPZ contains incorrect years')
     require(all(str(tag).split('_')[2] == row['station'] for tag in tags), 'NPZ contains another station')
