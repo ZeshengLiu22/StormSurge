@@ -177,35 +177,7 @@ qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_BCC/Lewes/see
 
 # CMIP6_EC_EARTH — 60 commands
 # seed42 — 20 commands
-# PACT_MSE — Battery, Boston, CBBT, Lewes
-qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_EC_EARTH/Battery/seed42/run_PACT_MSE.pbs
-qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_EC_EARTH/Boston/seed42/run_PACT_MSE.pbs
-qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_EC_EARTH/CBBT/seed42/run_PACT_MSE.pbs
-qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_EC_EARTH/Lewes/seed42/run_PACT_MSE.pbs
 
-# PACT_Peak — Battery, Boston, CBBT, Lewes
-qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_EC_EARTH/Battery/seed42/run_PACT_Peak.pbs
-qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_EC_EARTH/Boston/seed42/run_PACT_Peak.pbs
-qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_EC_EARTH/CBBT/seed42/run_PACT_Peak.pbs
-qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_EC_EARTH/Lewes/seed42/run_PACT_Peak.pbs
-
-# PACT_Both — Battery, Boston, CBBT, Lewes
-qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_EC_EARTH/Battery/seed42/run_PACT_Both.pbs
-qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_EC_EARTH/Boston/seed42/run_PACT_Both.pbs
-qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_EC_EARTH/CBBT/seed42/run_PACT_Both.pbs
-qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_EC_EARTH/Lewes/seed42/run_PACT_Both.pbs
-
-# CNN_GRU_MSE — Battery, Boston, CBBT, Lewes
-qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_EC_EARTH/Battery/seed42/run_CNN_GRU_MSE.pbs
-qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_EC_EARTH/Boston/seed42/run_CNN_GRU_MSE.pbs
-qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_EC_EARTH/CBBT/seed42/run_CNN_GRU_MSE.pbs
-qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_EC_EARTH/Lewes/seed42/run_CNN_GRU_MSE.pbs
-
-# CNN_GRU_Tail — Battery, Boston, CBBT, Lewes
-qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_EC_EARTH/Battery/seed42/run_CNN_GRU_Tail.pbs
-qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_EC_EARTH/Boston/seed42/run_CNN_GRU_Tail.pbs
-qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_EC_EARTH/CBBT/seed42/run_CNN_GRU_Tail.pbs
-qsub /glade/u/home/zel/scratch/StormSurge/PBS-launcher/cmip6/CMIP6_EC_EARTH/Lewes/seed42/run_CNN_GRU_Tail.pbs
 
 # seed123 — 20 commands
 # PACT_MSE — Battery, Boston, CBBT, Lewes

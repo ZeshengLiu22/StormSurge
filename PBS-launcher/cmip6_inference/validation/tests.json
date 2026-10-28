@@ -1,0 +1,37 @@
+{
+  "status": "passed",
+  "total_tests": 30,
+  "suites": [
+    {
+      "path": "PBS-launcher/cmip6_inference/tests/test_launchers.py",
+      "tests": 15,
+      "seconds": 2.894
+    },
+    {
+      "paths": [
+        "tests/test_inference_reporting.py",
+        "tests/test_pressure_inference.py",
+        "tests/test_baseline_inference.py"
+      ],
+      "tests": 15,
+      "seconds": 7.099
+    }
+  ],
+  "checks": [
+    "all generated Bash files passed bash -n",
+    "all seven shared Python modules compiled and imported",
+    "432 checkpoints passed metadata validation and strict weight loading",
+    "1080 station/year graph files found",
+    "Derecho preview emitted 48 strict future inference commands",
+    "Casper preview emitted 12 strict future inference commands",
+    "submission previews emitted 9 and 36 qsub commands without executing them",
+    "478 generated files identical after regeneration",
+    "git diff --check passed"
+  ],
+  "pbs_jobs_submitted": 0,
+  "remaining_checks": [
+    "allocated-node CUDA driver and GPU kernel compatibility on each cluster",
+    "allocated-node peak CPU/GPU memory and throughput",
+    "actual account/queue scheduling permissions"
+  ]
+}

@@ -1,0 +1,13 @@
+{
+  "host": "crlogin1",
+  "python": "/glade/work/zel/conda-envs/derecho-ml/bin/python",
+  "torch": "2.8.0+cu126",
+  "cuda_runtime": "12.6",
+  "pyg": "2.8.0.post1",
+  "module": "cuda/12.9.0",
+  "module_files": [
+    "/glade/u/apps/derecho/modules/25.10/Core/cuda/12.9.0.lua",
+    "/glade/u/apps/casper/modules/25.10/Core/cuda/12.9.0.lua"
+  ],
+  "allocated_gpu_test": "not run; requires allocation"
+}

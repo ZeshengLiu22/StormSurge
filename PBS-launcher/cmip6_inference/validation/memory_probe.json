@@ -1,0 +1,16 @@
+{
+  "source": "CMIP6_EC_EARTH",
+  "station": "Battery",
+  "year": "2070_2071",
+  "pressure_mode": "raw",
+  "graphs": 600,
+  "serialized_gib": 0.6761096101254225,
+  "base_peak_gib": 0.5172004699707031,
+  "peak_gib": 1.8695144653320312,
+  "retained_rss_gib": 1.8695144653320312,
+  "shape": [
+    9,
+    6708,
+    5
+  ]
+}
